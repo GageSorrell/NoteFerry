@@ -1,0 +1,29 @@
+{
+  "name": "@notivex/ui",
+  "description": "The monorepo for the Notivex app and Command Palette extension.",
+  "private": true,
+  "workspaces": [
+    "./Application",
+    "./Package/NotionUi"
+  ],
+  "version": "1.0.0",
+  "author": {
+    "name": "Gage Sorrell",
+    "email": "gage@sorrell.sh",
+    "url": "https://sorrell.sh"
+  },
+  "bugs": {
+    "email": "gage@sorrell.sh",
+    "url": "https://github.com/GageSorrell/SorrellWm/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GageSorrell/Notivex.git"
+  },
+  "engines": {
+    "node": ">=26.6.0",
+    "npm": ">=12.0.2"
+  },
+  "type": "module"
+}

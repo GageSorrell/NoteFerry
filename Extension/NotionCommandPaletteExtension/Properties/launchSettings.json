@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "NotionCommandPaletteExtension (Package)": {
+      "commandName": "MsixPackage",
+      "doNotLaunchApp": true
+    },
+    "NotionCommandPaletteExtension (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
