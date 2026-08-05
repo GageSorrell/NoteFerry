@@ -8,8 +8,8 @@
  * @license   MIT
  */
 
-import { Separator, Text } from "@notivex/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
+import { Separator, Text } from "@notivex/ui/Primitive";
 import { View } from "react-native";
 
 const meta =

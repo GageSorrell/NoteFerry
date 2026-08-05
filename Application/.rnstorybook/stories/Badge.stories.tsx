@@ -16,8 +16,27 @@ const meta =
     {
         argTypes:
         {
-            Size: { control: "select", options: [ "Medium", "Small" ] },
-            Variant: { control: "select", options: [ "Default", "Gray", "Blue", "Orange", "Tag" ] }
+            Size:
+            {
+                control: "select",
+                options:
+                [
+                    "Medium",
+                    "Small"
+                ]
+            },
+            Variant:
+            {
+                control: "select",
+                options:
+                [
+                    "Default",
+                    "Gray",
+                    "Blue",
+                    "Orange",
+                    "Tag"
+                ]
+            }
         },
         component: Badge,
         title: "Primitive/Badge"

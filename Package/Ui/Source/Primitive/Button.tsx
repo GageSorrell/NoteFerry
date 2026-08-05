@@ -12,37 +12,67 @@
  * @license   MIT
  */
 
+import * as Radii from "../Token/Radii.js";
 import * as React from "react";
+import * as Semantic from "../Token/Semantic.js";
 import {
     type GestureResponderEvent,
     Pressable,
     type StyleProp,
     StyleSheet,
-    type ViewStyle,
+    type View,
+    type ViewStyle
 } from "react-native";
-
 import { UseColor, useRadii } from "../ThemeProvider.js";
-import * as Radii from "../Token/Radii.js";
-import * as Semantic from "../Token/Semantic.js";
-import { WithAlpha } from "../Utility/index.js";
+import { Body } from "./Text.js";
 import { Spinner } from "./Spinner.js";
-import { Text } from "./Text.js";
+import { WithAlpha } from "../Utility/index.js";
 
+/**
+ * The visual style and intent of a given `Button` component.
+ *
+ * @category Input
+ * @since 1.0.0
+ */
 export type ButtonVariant =
-    | "Primary" | "Icon" | "NavIcon" | "Link" | "Blue" | "SoftBlue"
-    | "Hint" | "Red" | "RedFill" | "White" | "Cell" | "Close";
+    | "Primary"
+    | "Icon"
+    | "NavIcon"
+    | "Link"
+    | "Blue"
+    | "SoftBlue"
+    | "Hint"
+    | "Red"
+    | "RedFill"
+    | "White"
+    | "Cell"
+    | "Close";
 
-export type ButtonSize = "ExtraSmall" | "Small" | "Medium" | "Large" | "Circle";
+/**
+ * The size of a given `Button` component.
+ *
+ * @category Input
+ * @since 1.0.0
+ */
+export type ButtonSize =
+    | "ExtraSmall"
+    | "Small"
+    | "Medium"
+    | "Large"
+    | "Circle";
 
-const SizeStyle: Record<ButtonSize, ViewStyle> = {
-    ExtraSmall: { height: 24, paddingHorizontal: 6 },
-    Small: { height: 32, paddingHorizontal: 12 },
-    Medium: { height: 36, paddingHorizontal: 16 },
-    Large: { height: 40, paddingHorizontal: 32 },
-    Circle: {},
-};
+const SizeStyle: Record<ButtonSize, ViewStyle> =
+    Object.freeze({
+        Circle: { },
+        ExtraSmall: { height: 24, paddingHorizontal: 6 },
+        Large: { height: 40, paddingHorizontal: 32 },
+        Medium: { height: 36, paddingHorizontal: 16 },
+        Small: { height: 32, paddingHorizontal: 12 }
+    } as const);
 
-export interface ButtonProps {
+/** {@inheritDoc Button} */
+export interface ButtonProps
+{
     readonly Variant?: ButtonVariant;
     readonly Size?: ButtonSize;
     readonly Disabled?: boolean;
@@ -53,13 +83,16 @@ export interface ButtonProps {
     readonly children?: React.ReactNode;
 }
 
-/**
- * Forwards its ref to the underlying `Pressable` — needed so `Button` can
- * be used directly as `*Trigger`'s `AsChild` child (`DialogTrigger`,
- * `PopoverTrigger`, ...), which measure/attach to that node rather than
- * wrapping it in a second, touch-swallowing `Pressable` of their own.
- */
-export const Button = React.forwardRef<React.ComponentRef<typeof Pressable>, ButtonProps>(({
+export/**
+       * Forwards its ref to the underlying `Pressable` — needed so `Button` can
+       * be used directly as `*Trigger`'s `AsChild` child (`DialogTrigger`,
+       * `PopoverTrigger`, ...), which measure/attach to that node rather than
+       * wrapping it in a second, touch-swallowing `Pressable` of their own.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Button = React.forwardRef<React.ComponentRef<typeof Pressable>, ButtonProps>(({
     Variant = "Primary",
     Size = "Medium",
     Disabled = false,
@@ -67,8 +100,8 @@ export const Button = React.forwardRef<React.ComponentRef<typeof Pressable>, But
     OnPress,
     Style,
     AccessibilityLabel,
-    children,
-}: ButtonProps, ForwardedRef): React.JSX.Element =>
+    children
+}: ButtonProps, ForwardedRef: React.ForwardedRef<View>): React.JSX.Element =>
 {
     const PrimaryColor = UseColor(Semantic.Primary);
     const IconColor = UseColor(Semantic.Icon);
@@ -90,74 +123,154 @@ export const Button = React.forwardRef<React.ComponentRef<typeof Pressable>, But
         {
             case "Icon":
                 return {
-                    Container: { width: 36, height: 36, borderWidth: 1, borderColor: BorderButtonColor, borderRadius: MediumRadius },
-                    TextColor: IconColor,
+                    Container:
+                    {
+                        borderColor: BorderButtonColor,
+                        borderRadius: MediumRadius,
+                        borderWidth: 1,
+                        height: 36,
+                        width: 36
+                    },
+                    TextColor: IconColor
                 };
             case "NavIcon":
-                return { Container: { width: 28, height: 28 }, TextColor: IconColor };
+                return {
+                    Container:
+                    {
+                        height: 28,
+                        width: 28
+                    },
+                    TextColor: IconColor
+                } as const;
             case "Link":
-                return { Container: {}, TextColor: PrimaryColor };
+                return {
+                    Container: { },
+                    TextColor: PrimaryColor
+                } as const;
             case "Blue":
                 return {
-                    Container: { backgroundColor: BlueColor, borderWidth: 1, borderColor: BorderColor },
-                    TextColor: "#FFFFFF",
-                };
+                    Container:
+                    {
+                        backgroundColor: BlueColor,
+                        borderColor: BorderColor,
+                        borderWidth: 1
+                    },
+                    TextColor: "#FFFFFF"
+                } as const;
             case "SoftBlue":
-                return { Container: { backgroundColor: WithAlpha(BlueColor, 0.1) }, TextColor: BlueColor };
+                return {
+                    Container:
+                    {
+                        backgroundColor: WithAlpha(BlueColor, 0.1)
+                    },
+                    TextColor: BlueColor
+                } as const;
             case "Hint":
-                return { Container: {}, TextColor: MutedColor };
+                return {
+                    Container: { },
+                    TextColor: MutedColor
+                } as const;
             case "Red":
-                return { Container: { borderWidth: 1, borderColor: WithAlpha(RedColor, 0.5) }, TextColor: RedColor };
+                return {
+                    Container:
+                    {
+                        borderColor: WithAlpha(RedColor, 0.5),
+                        borderWidth: 1
+                    },
+                    TextColor: RedColor
+                } as const;
             case "RedFill":
-                return { Container: { backgroundColor: RedColor }, TextColor: "#FFFFFF" };
+                return {
+                    Container:
+                    {
+                        backgroundColor: RedColor
+                    },
+                    TextColor: "#FFFFFF"
+                } as const;
             case "White":
-                return { Container: { borderWidth: 1, borderColor: "#FFFFFF" }, TextColor: "#FFFFFF" };
+                return {
+                    Container:
+                    {
+                        borderColor: "#FFFFFF",
+                        borderWidth: 1
+                    },
+                    TextColor: "#FFFFFF"
+                } as const;
             case "Cell":
-                return { Container: { justifyContent: "flex-start", borderRadius: 0 }, TextColor: PrimaryColor };
+                return {
+                    Container:
+                    {
+                        borderRadius: 0,
+                        justifyContent: "flex-start"
+                    },
+                    TextColor: PrimaryColor
+                } as const;
             case "Close":
                 return {
-                    Container: { width: 18, height: 18, borderRadius: FullRadius, backgroundColor: WithAlpha(DefaultColor, 0.05) },
-                    TextColor: MutedColor,
-                };
+                    Container:
+                    {
+                        backgroundColor: WithAlpha(DefaultColor, 0.05),
+                        borderRadius: FullRadius,
+                        height: 18,
+                        width: 18
+                    },
+                    TextColor: MutedColor
+                } as const;
             case "Primary":
             default:
                 return {
-                    Container: { borderWidth: 1, borderColor: BorderButtonColor },
-                    TextColor: PrimaryColor,
-                };
+                    Container:
+                    {
+                        borderColor: BorderButtonColor,
+                        borderWidth: 1
+                    },
+                    TextColor: PrimaryColor
+                } as const;
         }
-    }, [ Variant, BorderButtonColor, BorderColor, BlueColor, IconColor, PrimaryColor, RedColor, MutedColor, DefaultColor, MediumRadius, FullRadius ]);
+    }, [
+        Variant,
+        BorderButtonColor,
+        BorderColor,
+        BlueColor,
+        IconColor,
+        PrimaryColor,
+        RedColor,
+        MutedColor,
+        DefaultColor,
+        MediumRadius,
+        FullRadius
+    ]);
 
     return (
         <Pressable
-            ref={ ForwardedRef }
-            disabled={ Disabled || Loading }
-            onPress={ OnPress }
-            accessibilityRole="button"
             accessibilityLabel={ AccessibilityLabel }
+            accessibilityRole="button"
             accessibilityState={ { disabled: Disabled || Loading } }
+            disabled={ Disabled || Loading }
             hitSlop={ IsIconOnly ? 8 : undefined }
-            style={ ({ pressed }) => [
+            onPress={ OnPress }
+            ref={ ForwardedRef }
+            style={ ({ pressed }: { readonly pressed: boolean; }) => [
                 Styles.Base,
                 Size !== "Circle" ? SizeStyle[ Size ] : undefined,
                 { borderRadius: Size === "Large" ? MediumRadius : SmallRadius },
                 VariantStyle.Container,
                 pressed && !Disabled ? { backgroundColor: WithAlpha(DefaultColor, 0.05) } : undefined,
                 (Disabled || Loading) && Styles.Disabled,
-                Style,
-            ] }
-        >
+                Style
+            ] }>
             { Loading
-                ? <Spinner Size={ 16 } Color={ VariantStyle.TextColor } />
+                ? <Spinner
+                    Color={ VariantStyle.TextColor }
+                    Size={ 16 }
+                />
                 : typeof children === "string"
                     ? (
-                        <Text
-                            Variant="Body"
+                        <Body
                             Color={ VariantStyle.TextColor }
-                            Weight={ Variant === "Blue" || Variant === "RedFill" ? "500" : "400" }
-                        >
+                            Weight={ Variant === "Blue" || Variant === "RedFill" ? "500" : "400" }>
                             { children }
-                        </Text>
+                        </Body>
                     )
                     : children }
         </Pressable>
@@ -166,21 +279,32 @@ export const Button = React.forwardRef<React.ComponentRef<typeof Pressable>, But
 
 Button.displayName = "Button";
 
-/** `@notion-kit/ui`'s `CloseButton` — a `Button` preconfigured as `Variant="Close"`. */
-export const CloseButton = ({ OnPress, AccessibilityLabel = "Close" }: Pick<ButtonProps, "OnPress" | "AccessibilityLabel">): React.JSX.Element => (
-    <Button Variant="Close" OnPress={ OnPress } AccessibilityLabel={ AccessibilityLabel }>
-        <Text Variant="Body">✕</Text>
-    </Button>
-);
+export/**
+       * `@notion-kit/ui`'s `CloseButton` — a `Button` preconfigured as `Variant="Close"`.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const CloseButton = ({
+    OnPress,
+    AccessibilityLabel = "Close"
+}: Pick<ButtonProps, "OnPress" | "AccessibilityLabel">): React.JSX.Element =>
+    <Button
+        { ...{ AccessibilityLabel, OnPress } }
+        Variant="Close">
+        <Body>✕</Body>
+    </Button>;
 
 const Styles = StyleSheet.create({
-    Base: {
-        flexDirection: "row",
+    Base:
+    {
         alignItems: "center",
-        justifyContent: "center",
+        flexDirection: "row",
         gap: 6,
+        justifyContent: "center"
     },
-    Disabled: {
-        opacity: 0.4,
-    },
+    Disabled:
+    {
+        opacity: 0.4
+    }
 });

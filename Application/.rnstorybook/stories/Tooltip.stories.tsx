@@ -9,9 +9,9 @@
  * @license   MIT
  */
 
-import { Text, Tooltip, TooltipContent, TooltipPreset, TooltipTrigger } from "@notivex/ui/Primitive";
-import type { Meta, StoryObj } from "@storybook/react-native";
 import * as React from "react";
+import type { Meta, StoryObj } from "@storybook/react-native";
+import { Text, Tooltip, TooltipContent, TooltipPreset, TooltipTrigger } from "@notivex/ui/Primitive";
 import { View } from "react-native";
 
 // `TooltipTrigger` owns the only `Pressable` here deliberately — it needs
@@ -19,7 +19,14 @@ import { View } from "react-native";
 // would swallow before either ever reached the trigger. Use inert content
 // (a styled `View`/`Text`, not `Button`) as `TooltipTrigger`'s children.
 const IconBadge = (): React.JSX.Element => (
-    <View style={{ alignItems: "center", borderRadius: 14, borderWidth: 1, height: 28, justifyContent: "center", width: 28 }}>
+    <View style={ {
+        alignItems: "center",
+        borderRadius: 14,
+        borderWidth: 1,
+        height: 28,
+        justifyContent: "center",
+        width: 28
+    } }>
         <Text Variant="Label">i</Text>
     </View>
 );

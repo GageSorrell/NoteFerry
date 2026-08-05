@@ -7,9 +7,9 @@
  * @license   MIT
  */
 
+import * as React from "react";
 import { Button, Popover, PopoverClose, PopoverContent, PopoverTrigger, Text } from "@notivex/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
-import * as React from "react";
 import { View } from "react-native";
 
 const PopoverExample = (): React.JSX.Element => (

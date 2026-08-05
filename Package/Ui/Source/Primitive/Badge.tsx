@@ -9,26 +9,53 @@
  * @license   MIT
  */
 
-import * as React from "react";
-import { View, type StyleProp, type ViewStyle } from "react-native";
-
-import { UseColor, useRadii } from "../ThemeProvider.js";
 import * as Radii from "../Token/Radii.js";
+import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
+import { type StyleProp, View, type ViewStyle } from "react-native";
+import { UseColor, useRadii } from "../ThemeProvider.js";
+import { Description } from "./Text.js";
 import { WithAlpha } from "../Utility/index.js";
-import { Text } from "./Text.js";
 
-export type BadgeVariant = "Default" | "Gray" | "Blue" | "Orange" | "Tag";
-export type BadgeSize = "Medium" | "Small";
+/**
+ * The visual style of a given `Badge` component.
+ *
+ * @category Miscellaneous
+ * @since 1.0.0
+ */
+export type BadgeVariant =
+    |"Default"
+    |"Gray"
+    |"Blue"
+    |"Orange"
+    |"Tag";
 
-export interface BadgeProps {
+/**
+ * The size of a given `Badge` component.
+ *
+ * @category Miscellaneous
+ * @since 1.0.0
+ */
+export type BadgeSize =
+    | "Medium"
+    | "Small";
+
+/** {@inheritDoc Badge} */
+export interface BadgeProps
+{
     readonly Variant?: BadgeVariant;
     readonly Size?: BadgeSize;
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode;
 }
 
-export const Badge = ({ Variant = "Default", Size = "Medium", Style, children }: BadgeProps): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Badge = ({ Variant = "Default", Size = "Medium", Style, children }: BadgeProps): React.JSX.Element =>
 {
     const PrimaryColor = UseColor(Semantic.Primary);
     const SecondaryColor = UseColor(Semantic.Secondary);
@@ -52,25 +79,22 @@ export const Badge = ({ Variant = "Default", Size = "Medium", Style, children }:
         <View
             style={ [
                 {
-                    alignSelf: "flex-start",
-                    flexDirection: "row",
                     alignItems: "center",
-                    borderRadius: SmallRadius,
+                    alignSelf: "flex-start",
                     backgroundColor: Background,
+                    borderRadius: SmallRadius,
+                    flexDirection: "row",
                     paddingHorizontal: Size === "Medium" ? 10 : 6,
-                    paddingVertical: Size === "Medium" ? 2 : 0,
+                    paddingVertical: Size === "Medium" ? 2 : 0
                 },
-                Style,
-            ] }
-        >
-            <Text
-                Variant="Description"
-                Weight={ Size === "Medium" ? "600" : "500" }
+                Style
+            ] }>
+            <Description
                 Color={ TextColor }
                 Style={ Size === "Small" ? { fontSize: 9, lineHeight: 12 } : undefined }
-            >
+                Weight={ Size === "Medium" ? "600" : "500" }>
                 { children }
-            </Text>
+            </Description>
         </View>
     );
 };

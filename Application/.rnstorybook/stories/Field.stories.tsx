@@ -30,14 +30,20 @@ const FieldExample = (): React.JSX.Element => (
                 <FieldContent>
                     <FieldLabel>Name</FieldLabel>
                     <Input Placeholder="Ada Lovelace" />
-                    <FieldDescription>Shown on your public profile.</FieldDescription>
+                    <FieldDescription>
+                        Shown on your public profile.
+                    </FieldDescription>
                 </FieldContent>
             </Field>
             <Field Invalid>
                 <FieldContent>
-                    <FieldLabel>Email</FieldLabel>
-                    <Input Invalid
-                        Placeholder="you@example.com" />
+                    <FieldLabel>
+                        Email
+                    </FieldLabel>
+                    <Input
+                        Invalid
+                        Placeholder="you@example.com"
+                    />
                     <FieldError Errors={ [ { Message: "Enter a valid email address." } ] } />
                 </FieldContent>
             </Field>

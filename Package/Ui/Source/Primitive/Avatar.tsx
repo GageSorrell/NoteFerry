@@ -13,17 +13,21 @@
  * @license   MIT
  */
 
-import { Image, type ImageSource } from "expo-image";
 import * as React from "react";
-import { StyleSheet, View, type ImageStyle, type StyleProp, type ViewStyle } from "react-native";
+import * as Semantic from "../Token/Semantic.js";
+import { Image, type ImageSource } from "expo-image";
+import { type ImageStyle, type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
 
 import { UseColor } from "../ThemeProvider.js";
-import * as Semantic from "../Token/Semantic.js";
 import { WithAlpha } from "../Utility/index.js";
 
-type AvatarStatus = "Idle" | "Loaded" | "Error";
+type AvatarStatus =
+    | "Idle"
+    | "Loaded"
+    | "Error";
 
-interface AvatarContextValue {
+interface AvatarContextValue
+{
     readonly Status: AvatarStatus;
     readonly SetStatus: (Status: AvatarStatus) => void;
 }
@@ -42,58 +46,86 @@ const useAvatarContext = (): AvatarContextValue =>
     return Value;
 };
 
-export interface AvatarProps {
+/** {@inheritDoc Avatar} */
+export interface AvatarProps
+{
     readonly Size?: number;
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode;
 }
 
-export const Avatar = ({ Size = 40, Style, children }: AvatarProps): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Avatar = ({ Size = 40, Style, children }: AvatarProps): React.JSX.Element =>
 {
     const [ Status, SetStatus ] = React.useState<AvatarStatus>("Idle");
     const BorderColor = UseColor(Semantic.Border);
 
-    const ContextValue = React.useMemo<AvatarContextValue>(() => ({ Status, SetStatus }), [ Status ]);
+    const ContextValue = React.useMemo<AvatarContextValue>(() => ({ SetStatus, Status }), [ Status ]);
 
     return (
         <AvatarContext.Provider value={ ContextValue }>
             <View
                 style={ [
                     Styles.Root,
-                    { width: Size, height: Size, borderRadius: Size / 2, borderColor: BorderColor },
-                    Style,
-                ] }
-            >
+                    {
+                        borderColor: BorderColor,
+                        borderRadius: Size / 2,
+                        height: Size,
+                        width: Size
+                    },
+                    Style
+                ] }>
                 { children }
             </View>
         </AvatarContext.Provider>
     );
 };
 
-export interface AvatarImageProps {
+/** {@inheritDoc AvatarImage} */
+export interface AvatarImageProps
+{
     readonly Source: ImageSource | string;
     readonly Style?: StyleProp<ImageStyle>;
 }
 
-export const AvatarImage = ({ Source, Style }: AvatarImageProps): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const AvatarImage = ({ Source, Style }: AvatarImageProps): React.JSX.Element =>
 {
     const { SetStatus } = useAvatarContext();
 
     return (
         <Image
+            onError={ () => SetStatus("Error") }
+            onLoad={ () => SetStatus("Loaded") }
             source={ typeof Source === "string" ? { uri: Source } : Source }
             style={ [ Styles.Fill, Style ] }
-            onLoad={ () => SetStatus("Loaded") }
-            onError={ () => SetStatus("Error") }
         />
     );
 };
 
-export interface AvatarFallbackProps {
+/** {@inheritDoc AvatarFallback} */
+export interface AvatarFallbackProps
+{
     readonly children?: React.ReactNode;
 }
 
-export const AvatarFallback = ({ children }: AvatarFallbackProps): React.JSX.Element | null =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const AvatarFallback = ({ children }: AvatarFallbackProps): React.JSX.Element | null =>
 {
     const { Status } = useAvatarContext();
     const DefaultColor = UseColor(Semantic.Default);
@@ -111,16 +143,19 @@ export const AvatarFallback = ({ children }: AvatarFallbackProps): React.JSX.Ele
 };
 
 const Styles = StyleSheet.create({
-    Root: {
-        overflow: "hidden",
-        borderWidth: 1,
-    },
-    Fill: {
-        width: "100%",
-        height: "100%",
-    },
-    Fallback: {
+    Fallback:
+    {
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "center"
     },
+    Fill:
+    {
+        height: "100%",
+        width: "100%"
+    },
+    Root:
+    {
+        borderWidth: 1,
+        overflow: "hidden"
+    }
 });

@@ -8,9 +8,9 @@
  * @license   MIT
  */
 
+import * as React from "react";
 import { Checkbox, type CheckboxProps } from "@notivex/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
-import * as React from "react";
 import { View } from "react-native";
 
 const ControlledCheckbox = (Props: CheckboxProps): React.JSX.Element =>

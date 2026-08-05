@@ -13,14 +13,20 @@
  */
 
 import * as React from "react";
-import { Pressable, View, type GestureResponderEvent, type StyleProp, type ViewStyle } from "react-native";
-
-import { useSpacing } from "../ThemeProvider.js";
 import * as Spacing from "../Token/Spacing.js";
-import { CloseButton, type ButtonProps } from "./Button.js";
-import { CloneTrigger, type PopupAnchor, type PopupPlacement, Popup } from "./Popup.js";
+import { type ButtonProps, CloseButton } from "./Button.js";
+import { CloneTrigger, Popup, type PopupAnchor, type PopupPlacement } from "./Popup.js";
+import {
+    type GestureResponderEvent,
+    Pressable,
+    type StyleProp,
+    View,
+    type ViewStyle
+} from "react-native";
+import { useSpacing } from "../ThemeProvider.js";
 
-interface PopoverContextValue {
+interface PopoverContextValue
+{
     readonly IsOpen: boolean;
     readonly SetIsOpen: (Open: boolean) => void;
     readonly AnchorRef: PopupAnchor;
@@ -40,14 +46,22 @@ const usePopoverContext = (): PopoverContextValue =>
     return Value;
 };
 
-export interface PopoverProps {
+/** {@inheritDoc Popover} */
+export interface PopoverProps
+{
     readonly Open?: boolean;
     readonly DefaultOpen?: boolean;
     readonly OnOpenChange?: (Open: boolean) => void;
     readonly children?: React.ReactNode;
 }
 
-export const Popover = ({ Open, DefaultOpen = false, OnOpenChange, children }: PopoverProps): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Popover = ({ Open, DefaultOpen = false, OnOpenChange, children }: PopoverProps): React.JSX.Element =>
 {
     const [ UncontrolledOpen, SetUncontrolledOpen ] = React.useState(DefaultOpen);
     const IsOpen = Open ?? UncontrolledOpen;
@@ -60,72 +74,108 @@ export const Popover = ({ Open, DefaultOpen = false, OnOpenChange, children }: P
     }, [ OnOpenChange ]);
 
     const ContextValue = React.useMemo<PopoverContextValue>(
-        () => ({ IsOpen, SetIsOpen, AnchorRef }),
-        [ IsOpen, SetIsOpen ],
+        () => ({ AnchorRef, IsOpen, SetIsOpen }),
+        [ IsOpen, SetIsOpen ]
     );
 
     return <PopoverContext.Provider value={ ContextValue }>{ children }</PopoverContext.Provider>;
 };
 
-export interface PopoverTriggerProps {
-    /** Clone `children` (e.g. a `Button`) instead of wrapping it in a second `Pressable` — see `CloneTrigger` in `Popup.tsx`. */
+/** {@inheritDoc PopoverTrigger} */
+export interface PopoverTriggerProps
+{
+    /**
+     * Clone `children` (e.g. a `Button`) instead of wrapping it in a second `Pressable`
+     *
+     * @see {@link CloneTrigger}
+     */
     readonly AsChild?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode;
 }
 
-export const PopoverTrigger = ({ AsChild = false, Style, children }: PopoverTriggerProps): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const PopoverTrigger = ({ AsChild = false, Style, children }: PopoverTriggerProps): React.JSX.Element =>
 {
     const { IsOpen, SetIsOpen, AnchorRef } = usePopoverContext();
     const Toggle = React.useCallback(() => SetIsOpen(!IsOpen), [ IsOpen, SetIsOpen ]);
 
     if (AsChild)
     {
-        return CloneTrigger(children as React.ReactElement<{ OnPress?: (Event: GestureResponderEvent) => void }>, Toggle, AnchorRef);
+        return CloneTrigger(
+            children as React.ReactElement<{ OnPress?: (Event: GestureResponderEvent) => void }>,
+            Toggle,
+            AnchorRef
+        );
     }
 
     return (
-        <Pressable ref={ AnchorRef } onPress={ Toggle } style={ Style }>
+        <Pressable
+            onPress={ Toggle }
+            ref={ AnchorRef }
+            style={ Style }>
             { children }
         </Pressable>
     );
 };
 
-export interface PopoverContentProps {
+/** {@inheritDoc PopoverContent} */
+export interface PopoverContentProps
+{
     readonly Placement?: PopupPlacement;
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode;
 }
 
-export const PopoverContent = ({ Placement = "Bottom", Style, children }: PopoverContentProps): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const PopoverContent = ({ Placement = "Bottom", Style, children }: PopoverContentProps): React.JSX.Element =>
 {
     const { IsOpen, SetIsOpen, AnchorRef } = usePopoverContext();
     const Padding = useSpacing(Spacing.Small);
 
     return (
         <Popup
+            Anchor={ AnchorRef }
             IsVisible={ IsOpen }
             OnRequestClose={ () => SetIsOpen(false) }
-            Anchor={ AnchorRef }
             Placement={ Placement }
-            Style={ [ { width: 288, padding: Padding }, Style ] }
-        >
-            <View>{ children }</View>
+            Style={ [ { padding: Padding, width: 288 }, Style ] }>
+            <View>
+                { children }
+            </View>
         </Popup>
     );
 };
 
-export interface PopoverCloseProps {
+/** {@inheritDoc PopoverClose} */
+export interface PopoverCloseProps
+{
     readonly OnPress?: ButtonProps["OnPress"];
 }
 
-export const PopoverClose = ({ OnPress }: PopoverCloseProps): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const PopoverClose = ({ OnPress }: PopoverCloseProps): React.JSX.Element =>
 {
     const { SetIsOpen } = usePopoverContext();
 
     return (
         <CloseButton
-            OnPress={ (Event) =>
+            OnPress={ (Event: GestureResponderEvent) =>
             {
                 OnPress?.(Event);
                 SetIsOpen(false);

@@ -15,26 +15,75 @@
 
 import * as Typography from "./Typography.js";
 
+/**
+ * The font weight (of some text).
+ *
+ * @category Typography
+ * @since 1.0.0
+ */
 export type FontWeight =
     | "400"
     | "500"
     | "600"
     | "700";
 
+/**
+ * The collection of style properties used to style text in `@notivex/ui`.
+ *
+ * @category Typography
+ * @since 1.0.0
+ */
 export interface TypographyValue
 {
     readonly FontSize: number;
-    readonly LineHeight: number;
     readonly FontWeight: FontWeight;
+    readonly LineHeight: number;
 }
 
-const Value: ReadonlyMap<Typography.Typography, TypographyValue> = new Map<Typography.Typography, TypographyValue>([
-    [ Typography.Heading1, { FontSize: 40, LineHeight: 48, FontWeight: "700" } ],
-    [ Typography.Heading2, { FontSize: 18, LineHeight: 22, FontWeight: "600" } ],
-    [ Typography.Heading3, { FontSize: 14, LineHeight: 20, FontWeight: "600" } ],
-    [ Typography.Body, { FontSize: 14, LineHeight: 20, FontWeight: "400" } ],
-    [ Typography.Label, { FontSize: 12, LineHeight: 18, FontWeight: "500" } ],
-    [ Typography.Description, { FontSize: 12, LineHeight: 16, FontWeight: "400" } ],
-]);
+const Value = Object.freeze({
+    [ Typography.Heading1 ]:
+    {
+        FontSize: 40,
+        FontWeight: "700",
+        LineHeight: 48
+    },
+    [ Typography.Heading2 ]:
+    {
+        FontSize: 18,
+        FontWeight: "600",
+        LineHeight: 22
+    },
+    [ Typography.Heading3 ]:
+    {
+        FontSize: 14,
+        FontWeight: "600",
+        LineHeight: 20
+    },
+    [ Typography.Body ]:
+    {
+        FontSize: 14,
+        FontWeight: "400",
+        LineHeight: 20
+    },
+    [ Typography.Label ]:
+    {
+        FontSize: 12,
+        FontWeight: "500",
+        LineHeight: 18
+    },
+    [ Typography.Description ]:
+    {
+        FontSize: 12,
+        FontWeight: "400",
+        LineHeight: 16
+    }
+} as const);
 
-export const Resolve = (Token: Typography.Typography): TypographyValue | undefined => Value.get(Token);
+export/**
+       * Resolve a `Typography` token to its value.
+       *
+       * @internal
+       * @since 1.0.0
+       */
+const Resolve =
+    (Token: Typography.Typography): TypographyValue | undefined => Value[Token];

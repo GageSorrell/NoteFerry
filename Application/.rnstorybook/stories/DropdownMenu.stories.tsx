@@ -10,6 +10,7 @@
  * @license   MIT
  */
 
+import * as React from "react";
 import {
     Button,
     DropdownMenu,
@@ -24,7 +25,6 @@ import {
     DropdownMenuTrigger
 } from "@notivex/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
-import * as React from "react";
 
 const DropdownMenuExample = (): React.JSX.Element =>
 {

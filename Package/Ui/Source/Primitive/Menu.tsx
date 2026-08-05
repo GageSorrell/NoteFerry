@@ -13,60 +13,103 @@
  * @license   MIT
  */
 
-import { Check, ChevronRight } from "lucide-react-native";
-import * as React from "react";
-import {
-    Pressable,
-    View,
-    type GestureResponderEvent,
-    type StyleProp,
-    type ViewStyle,
-} from "react-native";
-
-import { UseColor, useRadii } from "../ThemeProvider.js";
 import * as Radii from "../Token/Radii.js";
+import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
+import { Body, Description, LabelText } from "./Text.js";
+import { Check, ChevronRight } from "lucide-react-native";
+import {
+    type GestureResponderEvent,
+    Pressable,
+    type StyleProp,
+    View,
+    type ViewStyle
+} from "react-native";
+import { UseColor, useRadii } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
-import { Text } from "./Text.js";
 
-export interface MenuGroupProps {
+/** {@inheritDoc MenuGroup} */
+export interface MenuGroupProps
+{
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode;
 }
 
-export const MenuGroup = ({ Style, children }: MenuGroupProps): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const MenuGroup = ({ Style, children }: MenuGroupProps): React.JSX.Element =>
     <View style={ [ { paddingVertical: 4 }, Style ] }>{ children }</View>;
 
-export interface MenuLabelProps {
+/** {@inheritDoc MenuLabel} */
+export interface MenuLabelProps
+{
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode;
 }
 
-export const MenuLabel = ({ Style, children }: MenuLabelProps): React.JSX.Element =>
-    <Text Variant="Label" Color={ Semantic.Secondary } Style={ [ { paddingHorizontal: 14, marginVertical: 4 }, Style ] }>{ children }</Text>;
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const MenuLabel = ({ Style, children }: MenuLabelProps): React.JSX.Element =>
+    <LabelText
+        Color={ Semantic.Secondary }
+        Style={ [
+            {
+                marginVertical: 4,
+                paddingHorizontal: 14
+            },
+            Style
+        ] }>
+        { children }
+    </LabelText>;
 
-export type MenuItemVariant = "Default" | "Secondary" | "Warning" | "Error";
+/**
+ * The visual style of a menu item.
+ *
+ * @category Navigation
+ * @since 1.0.0
+ */
+export type MenuItemVariant =
+    | "Default"
+    | "Secondary"
+    | "Warning"
+    | "Error";
 
-export interface MenuItemProps {
-    readonly Variant?: MenuItemVariant;
+/** {@inheritDoc MenuItem} */
+export interface MenuItemProps
+{
+    readonly Variant?: MenuItemVariant | undefined;
     readonly Icon?: React.ReactNode;
     readonly Label?: React.ReactNode;
-    readonly Description?: string;
+    readonly Description?: string | undefined;
     readonly Disabled?: boolean;
     readonly OnPress?: (Event: GestureResponderEvent) => void;
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode;
 }
 
-export const MenuItem = ({
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const MenuItem = ({
     Variant = "Default",
     Icon,
     Label,
-    Description,
+    Description: DescriptionText,
     Disabled = false,
     OnPress,
     Style,
-    children,
+    children
 }: MenuItemProps): React.JSX.Element =>
 {
     const PrimaryColor = UseColor(Semantic.Primary);
@@ -75,86 +118,182 @@ export const MenuItem = ({
     const DefaultColor = UseColor(Semantic.Default);
     const MediumRadius = useRadii(Radii.Medium);
 
-    const TextColor = Variant === "Secondary" ? SecondaryColor : Variant === "Error" ? RedColor : PrimaryColor;
+    const TextColor = Variant === "Secondary"
+        ? SecondaryColor
+        : Variant === "Error"
+            ? RedColor
+            : PrimaryColor;
 
     return (
         <Pressable
+            accessibilityLabel={ typeof Label === "string" ? Label : undefined }
+            accessibilityRole="menuitem"
+            accessibilityState={ { disabled: Disabled } }
             disabled={ Disabled }
             onPress={ OnPress }
-            accessibilityRole="menuitem"
-            accessibilityLabel={ typeof Label === "string" ? Label : undefined }
-            accessibilityState={ { disabled: Disabled } }
-            style={ ({ pressed }) => [
-                { flexDirection: "row", alignItems: "center", minHeight: 28, marginHorizontal: 4, paddingHorizontal: 8, borderRadius: MediumRadius },
+            style={ ({ pressed }: { readonly pressed: boolean; }) => [
+                {
+                    alignItems: "center",
+                    borderRadius: MediumRadius,
+                    flexDirection: "row",
+                    marginHorizontal: 4,
+                    minHeight: 28,
+                    paddingHorizontal: 8
+                },
                 pressed && !Disabled ? { backgroundColor: WithAlpha(DefaultColor, 0.1) } : undefined,
                 Disabled ? { opacity: 0.4 } : undefined,
-                Style,
-            ] }
-        >
-            { Icon !== undefined && <View style={ { marginRight: 8, alignItems: "center", justifyContent: "center" } }>{ Icon }</View> }
+                Style
+            ] }>
+            { Icon !== undefined && (
+                <View style={ {
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginRight: 8
+                } }>
+                    { Icon }
+                </View>
+            ) }
             <View style={ { flex: 1, minWidth: 0 } }>
-                { Description !== undefined
+                { DescriptionText !== undefined
                     ? (
                         <View style={ { gap: 2, marginVertical: 4 } }>
-                            <Text Variant="Body" Color={ TextColor } NumberOfLines={ 1 }>{ Label }</Text>
-                            <Text Variant="Description" Color={ Semantic.Secondary } NumberOfLines={ 2 }>{ Description }</Text>
+                            <Body
+                                Color={ TextColor }
+                                NumberOfLines={ 1 }>
+                                { Label }
+                            </Body>
+                            <Description
+                                Color={ Semantic.Secondary }
+                                NumberOfLines={ 2 }>
+                                { DescriptionText }
+                            </Description>
                         </View>
                     )
                     : typeof Label === "string"
-                        ? <Text Variant="Body" Color={ TextColor } NumberOfLines={ 1 }>{ Label }</Text>
-                        : Label }
+                        ? <Body
+                            Color={ TextColor }
+                            NumberOfLines={ 1 }>
+                            { Label }
+                        </Body>
+                        : Label
+                }
             </View>
             { children }
         </Pressable>
     );
 };
 
-export interface MenuItemActionProps {
+/** {@inheritDoc MenuItemAction} */
+export interface MenuItemActionProps
+{
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode;
 }
 
-export const MenuItemAction = ({ Style, children }: MenuItemActionProps): React.JSX.Element =>
-    <View style={ [ { marginLeft: "auto", flexShrink: 0 }, Style ] }>{ children }</View>;
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const MenuItemAction = ({ Style, children }: MenuItemActionProps): React.JSX.Element =>
+    <View style={ [ { flexShrink: 0, marginLeft: "auto" }, Style ] }>
+        { children }
+    </View>;
 
-export const MenuItemCheck = (): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const MenuItemCheck = (): React.JSX.Element =>
 {
     const PrimaryColor = UseColor(Semantic.Primary);
 
     return (
         <MenuItemAction Style={ { width: 14 } }>
-            <Check size={ 14 } color={ PrimaryColor } />
+            <Check
+                color={ PrimaryColor }
+                size={ 14 }
+            />
         </MenuItemAction>
     );
 };
 
-export interface MenuItemSelectProps {
+/** {@inheritDoc MenuItemSelect} */
+export interface MenuItemSelectProps
+{
     readonly children?: React.ReactNode;
 }
 
-export const MenuItemSelect = ({ children }: MenuItemSelectProps): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const MenuItemSelect = ({ children }: MenuItemSelectProps): React.JSX.Element =>
 {
     const MutedColor = UseColor(Semantic.Muted);
 
     return (
-        <MenuItemAction Style={ { flexDirection: "row", alignItems: "center" } }>
+        <MenuItemAction Style={ {
+            alignItems: "center",
+            flexDirection: "row"
+        } }>
             { children }
-            <ChevronRight size={ 12 } color={ MutedColor } style={ { marginLeft: 6 } } />
+            <ChevronRight
+                color={ MutedColor }
+                size={ 12 }
+                style={ { marginLeft: 6 } }
+            />
         </MenuItemAction>
     );
 };
 
-export interface MenuItemShortcutProps {
+/** {@inheritDoc MenuItemShortcut} */
+export interface MenuItemShortcutProps
+{
     readonly children?: React.ReactNode;
 }
 
-export const MenuItemShortcut = ({ children }: MenuItemShortcutProps): React.JSX.Element =>
-    <MenuItemAction><Text Variant="Description" Color={ Semantic.Muted }>{ children }</Text></MenuItemAction>;
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const MenuItemShortcut = ({ children }: MenuItemShortcutProps): React.JSX.Element =>
+    <MenuItemAction>
+        <Description Color={ Semantic.Muted }>
+            { children }
+        </Description>
+    </MenuItemAction>;
 
-export interface MenuFooterProps {
+/** {@inheritDoc MenuFooter} */
+export interface MenuFooterProps
+{
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode;
 }
 
-export const MenuFooter = ({ Style, children }: MenuFooterProps): React.JSX.Element =>
-    <View style={ [ { minHeight: 28, width: "100%", alignItems: "center", paddingHorizontal: 12, paddingVertical: 4 }, Style ] }>{ children }</View>;
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const MenuFooter = ({ Style, children }: MenuFooterProps): React.JSX.Element =>
+    <View style={ [
+        {
+            alignItems: "center",
+            minHeight: 28,
+            paddingHorizontal: 12,
+            paddingVertical: 4,
+            width: "100%"
+        },
+        Style
+    ] }>
+        { children }
+    </View>;

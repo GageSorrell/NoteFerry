@@ -12,27 +12,51 @@
  */
 
 import * as React from "react";
-import { Animated, Pressable, type StyleProp, type ViewStyle } from "react-native";
-
-import { UseColor } from "../ThemeProvider.js";
 import * as Semantic from "../Token/Semantic.js";
+import { Animated, Pressable, type StyleProp, type ViewStyle } from "react-native";
+import type { ReadonlyRecord } from "effect/Record";
+import { UseColor } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
-export type SwitchSize = "Medium" | "Small";
+/**
+ * The size of a `Switch` component.
+ *
+ * @category Input
+ * @since 1.0.0
+ */
+export type SwitchSize =
+    | "Medium"
+    | "Small";
 
-interface SwitchDimensions {
+interface SwitchDimensions
+{
     readonly Width: number;
     readonly Height: number;
     readonly Thumb: number;
     readonly Travel: number;
 }
 
-const DimensionsBySize: Record<SwitchSize, SwitchDimensions> = {
-    Medium: { Width: 44, Height: 24, Thumb: 20, Travel: 20 },
-    Small: { Width: 28, Height: 16, Thumb: 12, Travel: 12 },
-};
+const DimensionsBySize: ReadonlyRecord<SwitchSize, SwitchDimensions> =
+    Object.freeze({
+        Medium:
+        {
+            Height: 24,
+            Thumb: 20,
+            Travel: 20,
+            Width: 44
+        },
+        Small:
+        {
+            Height: 16,
+            Thumb: 12,
+            Travel: 12,
+            Width: 28
+        }
+    } as const);
 
-export interface SwitchProps {
+/** {@inheritDoc Switch} */
+export interface SwitchProps
+{
     readonly Value?: boolean;
     readonly OnValueChange?: (Value: boolean) => void;
     readonly Size?: SwitchSize;
@@ -41,13 +65,19 @@ export interface SwitchProps {
     readonly AccessibilityLabel?: string;
 }
 
-export const Switch = ({
-    Value = false,
+export/**
+       * A binary switch.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Switch = ({
+    AccessibilityLabel,
+    Disabled = false,
     OnValueChange,
     Size = "Medium",
-    Disabled = false,
     Style,
-    AccessibilityLabel,
+    Value = false
 }: SwitchProps): React.JSX.Element =>
 {
     const BlueColor = UseColor(Semantic.Blue);
@@ -57,38 +87,45 @@ export const Switch = ({
 
     React.useEffect(() =>
     {
-        Animated.timing(Progress, { toValue: Value ? 1 : 0, duration: 150, useNativeDriver: true }).start();
+        Animated.timing(Progress, {
+            duration: 150,
+            toValue: Value ? 1 : 0,
+            useNativeDriver: true
+        }).start();
     }, [ Value, Progress ]);
 
     return (
         <Pressable
+            accessibilityLabel={ AccessibilityLabel }
+            accessibilityRole="switch"
+            accessibilityState={ { checked: Value, disabled: Disabled } }
             disabled={ Disabled }
             onPress={ () => OnValueChange?.(!Value) }
-            accessibilityRole="switch"
-            accessibilityLabel={ AccessibilityLabel }
-            accessibilityState={ { checked: Value, disabled: Disabled } }
             style={ [
                 {
-                    width: Dimensions.Width,
-                    height: Dimensions.Height,
-                    borderRadius: Dimensions.Height / 2,
                     backgroundColor: Value ? BlueColor : WithAlpha(DefaultColor, 0.15),
-                    padding: 2,
+                    borderRadius: Dimensions.Height / 2,
+                    height: Dimensions.Height,
                     justifyContent: "center",
                     opacity: Disabled ? 0.5 : 1,
+                    padding: 2,
+                    width: Dimensions.Width
                 },
-                Style,
+                Style
             ] }
         >
             <Animated.View
                 style={ {
-                    width: Dimensions.Thumb,
-                    height: Dimensions.Thumb,
-                    borderRadius: Dimensions.Thumb / 2,
                     backgroundColor: "#FFFFFF",
+                    borderRadius: Dimensions.Thumb / 2,
+                    height: Dimensions.Thumb,
                     transform: [ {
-                        translateX: Progress.interpolate({ inputRange: [ 0, 1 ], outputRange: [ 0, Dimensions.Travel ] }),
+                        translateX: Progress.interpolate({
+                            inputRange: [ 0, 1 ],
+                            outputRange: [ 0, Dimensions.Travel ]
+                        })
                     } ],
+                    width: Dimensions.Thumb
                 } }
             />
         </Pressable>

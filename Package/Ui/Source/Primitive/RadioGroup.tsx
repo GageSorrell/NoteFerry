@@ -12,12 +12,12 @@
  */
 
 import * as React from "react";
-import { Pressable, View, type StyleProp, type ViewStyle } from "react-native";
-
-import { UseColor } from "../ThemeProvider.js";
 import * as Semantic from "../Token/Semantic.js";
+import { Pressable, type StyleProp, View, type ViewStyle } from "react-native";
+import { UseColor } from "../ThemeProvider.js";
 
-interface RadioGroupContextValue {
+interface RadioGroupContextValue
+{
     readonly Value?: string | undefined;
     readonly OnValueChange?: ((Value: string) => void) | undefined;
     readonly Disabled?: boolean | undefined;
@@ -25,7 +25,9 @@ interface RadioGroupContextValue {
 
 const RadioGroupContext = React.createContext<RadioGroupContextValue | undefined>(undefined);
 
-export interface RadioGroupProps {
+/** {@inheritDoc RadioGroup} */
+export interface RadioGroupProps
+{
     readonly Value?: string;
     readonly OnValueChange?: (Value: string) => void;
     readonly Disabled?: boolean;
@@ -33,29 +35,55 @@ export interface RadioGroupProps {
     readonly children?: React.ReactNode;
 }
 
-export const RadioGroup = ({ Value, OnValueChange, Disabled, Style, children }: RadioGroupProps): React.JSX.Element =>
+export/**
+       * A group of items from which at most one item may be selected.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const RadioGroup = ({
+    Value,
+    OnValueChange,
+    Disabled,
+    Style,
+    children
+}: RadioGroupProps): React.JSX.Element =>
 {
     const ContextValue = React.useMemo<RadioGroupContextValue>(
-        () => ({ Value, OnValueChange, Disabled }),
-        [ Value, OnValueChange, Disabled ],
+        () => ({ Disabled, OnValueChange, Value }),
+        [ Disabled, OnValueChange, Value ]
     );
 
     return (
         <RadioGroupContext.Provider value={ ContextValue }>
-            <View accessibilityRole="radiogroup" style={ [ { gap: 8, width: "100%" }, Style ] }>
+            <View
+                accessibilityRole="radiogroup"
+                style={ [ { gap: 8, width: "100%" }, Style ] }>
                 { children }
             </View>
         </RadioGroupContext.Provider>
     );
 };
 
-export interface RadioGroupItemProps {
+/** {@inheritDoc RadioGroupItem} */
+export interface RadioGroupItemProps
+{
     readonly Value: string;
     readonly Disabled?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
 }
 
-export const RadioGroupItem = ({ Value: ItemValue, Disabled: ItemDisabled, Style }: RadioGroupItemProps): React.JSX.Element =>
+export/**
+       * An item in a `RadioGroup`.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const RadioGroupItem = ({
+    Value: ItemValue,
+    Disabled: ItemDisabled,
+    Style
+}: RadioGroupItemProps): React.JSX.Element =>
 {
     const Context = React.useContext(RadioGroupContext);
 
@@ -72,27 +100,31 @@ export const RadioGroupItem = ({ Value: ItemValue, Disabled: ItemDisabled, Style
 
     return (
         <Pressable
-            disabled={ IsDisabled }
-            onPress={ () => Context.OnValueChange?.(ItemValue) }
             accessibilityRole="radio"
             accessibilityState={ { checked: IsChecked, disabled: IsDisabled } }
+            disabled={ IsDisabled }
             hitSlop={ 8 }
+            onPress={ () => Context.OnValueChange?.(ItemValue) }
             style={ [
                 {
-                    width: 18,
-                    height: 18,
+                    alignItems: "center",
+                    backgroundColor: IsChecked ? BlueColor : "transparent",
+                    borderColor: BorderColor,
                     borderRadius: 9,
                     borderWidth: IsChecked ? 0 : 1,
-                    borderColor: BorderColor,
-                    backgroundColor: IsChecked ? BlueColor : "transparent",
-                    alignItems: "center",
+                    height: 18,
                     justifyContent: "center",
                     opacity: IsDisabled ? 0.5 : 1,
+                    width: 18
                 },
-                Style,
-            ] }
-        >
-            { IsChecked ? <View style={ { width: 8, height: 8, borderRadius: 4, backgroundColor: "#FFFFFF" } } /> : null }
+                Style
+            ] }>
+            { IsChecked ? <View style={ {
+                backgroundColor: "#FFFFFF",
+                borderRadius: 4,
+                height: 8,
+                width: 8
+            } } /> : null }
         </Pressable>
     );
 };

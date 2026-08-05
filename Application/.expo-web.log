@@ -1,0 +1,30 @@
+npm notice run notivex-monorepo@1.0.0 npx
+npm notice run expo start --web --port 8150
+Starting project at E:\Notivex\Application
+Using src/app as the root directory for Expo Router.
+React Compiler enabled
+Expo Autolinking module resolution enabled
+Starting Metro Bundler
+
+Waiting on http://localhost:8150
+
+Logs for your project will appear below.
+λ Bundled 3500ms node_modules\@expo\router-server\node\render.js (5520 modules)
+Web Bundled 5819ms node_modules\expo-router\entry.js (5281 modules)
+Web Bundled 1143ms node_modules\expo-router\entry.js (5285 modules)
+Web  INFO  %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+Web  LOG  Running application "main" with appParams:
+ {"hydrate": undefined, "rootTag": "#root"} 
+Development-level warnings: ON.
+Performance optimizations: OFF.
+Web  WARN  props.pointerEvents is deprecated. Use style.pointerEvents
+Web  WARN  [Reanimated] useAnimatedKeyboard is not available on web yet.
+λ Bundling failed 3372ms node_modules\@expo\router-server\node\render.js (1 module)
+Web Bundling failed 3509ms node_modules\expo-router\entry.js (1 module)
+
+Metro error: EMFILE: too many open files, open 'C:\Users\Gage\AppData\Local\Temp\metro-cache\23\4284032f555972f71658b218dcce85ca093003f4870f5db0edc14eb7783b04c61196bd.mp'
+
+Call Stack
+  async open (node:internal\fs\promises)
+  async Object.readFile (node:internal\fs\promises)
+Web Bundled 85ms node_modules\expo-router\_error.js (1 module)

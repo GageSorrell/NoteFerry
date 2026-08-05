@@ -14,20 +14,26 @@
  */
 
 import * as React from "react";
+import { DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./Dialog.js";
+import { Button } from "./Button.js";
 import { StyleSheet } from "react-native";
 
-import { Button } from "./Button.js";
-import { DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./Dialog.js";
-
-export interface AlertModalProps {
+/** {@inheritDoc AlertModel} */
+export interface AlertModalProps
+{
     readonly Title: string;
     readonly Primary: string;
     readonly Secondary: string;
     readonly OnTrigger?: () => void | Promise<void>;
 }
 
-/** A `Dialog.Content` preset for "are you sure?" confirmations — use inside a `<Dialog>`. */
-export const AlertModal = ({ Title, Primary, Secondary, OnTrigger }: AlertModalProps): React.JSX.Element =>
+export/**
+       * A `Dialog.Content` preset for "are you sure?" confirmations — use inside a `<Dialog>`.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const AlertModal = ({ Title, Primary, Secondary, OnTrigger }: AlertModalProps): React.JSX.Element =>
 {
     const [ Loading, SetLoading ] = React.useState(false);
 
@@ -46,34 +52,49 @@ export const AlertModal = ({ Title, Primary, Secondary, OnTrigger }: AlertModalP
     }, [ OnTrigger ]);
 
     return (
-        <DialogContent HideClose Style={ Styles.Content }>
+        <DialogContent
+            HideClose
+            Style={ Styles.Content }>
             <DialogHeader>
                 <DialogTitle Style={ Styles.Title }>{ Title }</DialogTitle>
             </DialogHeader>
             <DialogFooter Style={ Styles.Footer }>
-                <Button Variant="Red" Size="Small" Style={ Styles.FullWidth } OnPress={ Trigger } Loading={ Loading }>
+                <Button
+                    Loading={ Loading }
+                    OnPress={ Trigger }
+                    Size="Small"
+                    Style={ Styles.FullWidth }
+                    Variant="Red">
                     { Primary }
                 </Button>
-                <DialogClose Size="Small" Style={ Styles.FullWidth }>{ Secondary }</DialogClose>
+                <DialogClose
+                    Size="Small"
+                    Style={ Styles.FullWidth }>
+                    { Secondary }
+                </DialogClose>
             </DialogFooter>
         </DialogContent>
     );
 };
 
 const Styles = StyleSheet.create({
-    Content: {
-        width: 300,
+    Content:
+    {
         alignItems: "flex-start",
+        width: 300
     },
-    Title: {
-        fontWeight: "400",
-        textAlign: "left",
-    },
-    Footer: {
+    Footer:
+    {
         alignItems: "stretch",
-        paddingVertical: 6,
+        paddingVertical: 6
     },
-    FullWidth: {
-        width: "100%",
+    FullWidth:
+    {
+        width: "100%"
     },
+    Title:
+    {
+        fontWeight: "400",
+        textAlign: "left"
+    }
 });

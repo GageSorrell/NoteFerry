@@ -16,7 +16,6 @@
 
 import * as React from "react";
 import { Pressable, type StyleProp, type ViewStyle } from "react-native";
-
 import { useDropdownMenuContext } from "./DropdownMenu.js";
 
 export {
@@ -35,20 +34,32 @@ export {
     DropdownMenuGroup as ContextMenuGroup,
     DropdownMenuLabel as ContextMenuLabel,
     DropdownMenuFooter as ContextMenuFooter,
-    DropdownMenuSeparator as ContextMenuSeparator,
+    DropdownMenuSeparator as ContextMenuSeparator
 } from "./DropdownMenu.js";
 
-export interface ContextMenuTriggerProps {
+/** {@inheritDoc ContextMenuTrigger} */
+export interface ContextMenuTriggerProps
+{
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode;
 }
 
-export const ContextMenuTrigger = ({ Style, children }: ContextMenuTriggerProps): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const ContextMenuTrigger = ({ Style, children }: ContextMenuTriggerProps): React.JSX.Element =>
 {
     const { SetIsOpen, AnchorRef } = useDropdownMenuContext();
 
     return (
-        <Pressable ref={ AnchorRef } onLongPress={ () => SetIsOpen(true) } delayLongPress={ 350 } style={ Style }>
+        <Pressable
+            delayLongPress={ 350 }
+            onLongPress={ () => SetIsOpen(true) }
+            ref={ AnchorRef }
+            style={ Style }>
             { children }
         </Pressable>
     );

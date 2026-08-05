@@ -10,19 +10,26 @@
  * @license   MIT
  */
 
-import * as React from "react";
-import { Animated, Easing, type StyleProp, type ViewStyle } from "react-native";
-
-import { UseColor, useRadii } from "../ThemeProvider.js";
 import * as Radii from "../Token/Radii.js";
+import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
+import { Animated, Easing, type StyleProp, type ViewStyle } from "react-native";
+import { UseColor, useRadii } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
-export interface SkeletonProps {
+/** {@inheritDoc Skeleton} */
+export interface SkeletonProps
+{
     readonly Style?: StyleProp<ViewStyle>;
 }
 
-export const Skeleton = ({ Style }: SkeletonProps): React.JSX.Element =>
+export/**
+       * A placeholder for remote content that is currently being fetched.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Skeleton = ({ Style }: SkeletonProps): React.JSX.Element =>
 {
     const DefaultColor = UseColor(Semantic.Default);
     const SmallRadius = useRadii(Radii.Small);
@@ -32,21 +39,35 @@ export const Skeleton = ({ Style }: SkeletonProps): React.JSX.Element =>
     {
         const Animation = Animated.loop(
             Animated.sequence([
-                Animated.timing(Opacity, { toValue: 0.5, duration: 1000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-                Animated.timing(Opacity, { toValue: 1, duration: 1000, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-            ]),
+                Animated.timing(Opacity, {
+                    duration: 1000,
+                    easing: Easing.inOut(Easing.ease),
+                    toValue: 0.5,
+                    useNativeDriver: true
+                }),
+                Animated.timing(Opacity, {
+                    duration: 1000,
+                    easing: Easing.inOut(Easing.ease),
+                    toValue: 1,
+                    useNativeDriver: true
+                })
+            ])
         );
 
         Animation.start();
 
-        return () => Animation.stop();
+        return Animation.stop;
     }, [ Opacity ]);
 
     return (
         <Animated.View
             style={ [
-                { opacity: Opacity, borderRadius: SmallRadius, backgroundColor: WithAlpha(DefaultColor, 0.1) },
-                Style,
+                {
+                    backgroundColor: WithAlpha(DefaultColor, 0.1),
+                    borderRadius: SmallRadius,
+                    opacity: Opacity
+                },
+                Style
             ] }
         />
     );

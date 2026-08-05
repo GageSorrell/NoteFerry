@@ -20,21 +20,20 @@
  * @license   MIT
  */
 
-import { ChevronDown } from "lucide-react-native";
-import * as React from "react";
-import { Pressable, ScrollView, type StyleProp, type ViewStyle } from "react-native";
-
-import { UseColor, useRadii } from "../ThemeProvider.js";
 import * as Radii from "../Token/Radii.js";
+import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { MenuItem, MenuItemCheck, type MenuItemProps } from "./Menu.js";
-import { type PopupAnchor, type PopupPlacement, Popup } from "./Popup.js";
-import { Text } from "./Text.js";
-
+import { Popup, type PopupAnchor, type PopupPlacement } from "./Popup.js";
+import { Pressable, ScrollView, type StyleProp, type ViewStyle } from "react-native";
 export { MenuGroup as SelectGroup, MenuLabel as SelectLabel } from "./Menu.js";
+import { UseColor, useRadii } from "../ThemeProvider.js";
+import { Body } from "./Text.js";
+import { ChevronDown } from "lucide-react-native";
 export { Separator as SelectSeparator } from "./Separator.js";
 
-interface SelectContextValue {
+interface SelectContextValue
+{
     readonly Value?: string | undefined;
     readonly OnValueChange?: ((Value: string) => void) | undefined;
     readonly IsOpen: boolean;
@@ -58,7 +57,9 @@ const useSelectContext = (): SelectContextValue =>
     return Value;
 };
 
-export interface SelectProps {
+/** {@inheritDoc Select} */
+export interface SelectProps
+{
     readonly Value?: string;
     readonly DefaultValue?: string;
     readonly OnValueChange?: (Value: string) => void;
@@ -68,14 +69,20 @@ export interface SelectProps {
     readonly children?: React.ReactNode;
 }
 
-export const Select = ({
+export/**
+       * Choose an item from a given list.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Select = ({
     Value,
     DefaultValue,
     OnValueChange,
     Open,
     DefaultOpen = false,
     OnOpenChange,
-    children,
+    children
 }: SelectProps): React.JSX.Element =>
 {
     const [ UncontrolledValue, SetUncontrolledValue ] = React.useState(DefaultValue);
@@ -85,7 +92,7 @@ export const Select = ({
     const AnchorRef = React.useRef<React.Component>(null);
     const Labels = React.useRef(new Map<string, string>());
     const [ , SetVersion ] = React.useState(0);
-    const BumpVersion = React.useCallback(() => SetVersion((V) => V + 1), []);
+    const BumpVersion = React.useCallback(() => SetVersion((V: number) => V + 1), [ ]);
 
     const HandleValueChange = React.useCallback((NextValue: string) =>
     {
@@ -100,25 +107,33 @@ export const Select = ({
     }, [ OnOpenChange ]);
 
     const ContextValue = React.useMemo<SelectContextValue>(() => ({
-        Value: CurrentValue,
-        OnValueChange: HandleValueChange,
-        IsOpen,
-        SetIsOpen,
         AnchorRef,
-        Labels,
         BumpVersion,
+        IsOpen,
+        Labels,
+        OnValueChange: HandleValueChange,
+        SetIsOpen,
+        Value: CurrentValue
     }), [ CurrentValue, HandleValueChange, IsOpen, SetIsOpen, BumpVersion ]);
 
     return <SelectContext.Provider value={ ContextValue }>{ children }</SelectContext.Provider>;
 };
 
-export interface SelectTriggerProps {
+/** {@inheritDoc SelectTrigger} */
+export interface SelectTriggerProps
+{
     readonly Disabled?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode;
 }
 
-export const SelectTrigger = ({ Disabled = false, Style, children }: SelectTriggerProps): React.JSX.Element =>
+export/**
+       * A trigger to prompt the user to select an item via an associated `Select` component.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const SelectTrigger = ({ Disabled = false, Style, children }: SelectTriggerProps): React.JSX.Element =>
 {
     const { IsOpen, SetIsOpen, AnchorRef } = useSelectContext();
     const RingColor = UseColor(Semantic.Ring);
@@ -127,75 +142,120 @@ export const SelectTrigger = ({ Disabled = false, Style, children }: SelectTrigg
 
     return (
         <Pressable
-            ref={ AnchorRef }
-            disabled={ Disabled }
-            onPress={ () => SetIsOpen(!IsOpen) }
             accessibilityRole="button"
             accessibilityState={ { disabled: Disabled, expanded: IsOpen } }
+            disabled={ Disabled }
+            onPress={ () => SetIsOpen(!IsOpen) }
+            ref={ AnchorRef }
             style={ [
                 {
-                    flexDirection: "row",
                     alignItems: "center",
-                    height: 28,
-                    minWidth: 0,
-                    paddingHorizontal: 8,
-                    borderWidth: 1,
                     borderColor: RingColor,
                     borderRadius: MediumRadius,
+                    borderWidth: 1,
+                    flexDirection: "row",
+                    height: 28,
+                    minWidth: 0,
+                    paddingHorizontal: 8
                 },
                 Disabled ? { opacity: 0.3 } : undefined,
-                Style,
+                Style
             ] }
         >
             { children }
-            <ChevronDown size={ 14 } color={ MutedColor } style={ { marginLeft: "auto" } } />
+            <ChevronDown
+                color={ MutedColor }
+                size={ 14 }
+                style={ { marginLeft: "auto" } }
+            />
         </Pressable>
     );
 };
 
-export interface SelectValueProps {
+/** {@inheritDoc SelectValue} */
+export interface SelectValueProps
+{
     readonly Placeholder?: string;
 }
 
-export const SelectValue = ({ Placeholder }: SelectValueProps): React.JSX.Element =>
+export/**
+       * The representation of a selected item.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const SelectValue = ({ Placeholder }: SelectValueProps): React.JSX.Element =>
 {
     const { Value, Labels } = useSelectContext();
     const MutedColor = UseColor(Semantic.Muted);
     const Label = Value === undefined ? undefined : Labels.current.get(Value);
 
     return (
-        <Text Variant="Body" Color={ Label === undefined ? MutedColor : undefined } NumberOfLines={ 1 } Style={ { flexShrink: 1 } }>
+        <Body
+            Color={ Label === undefined ? MutedColor : undefined }
+            NumberOfLines={ 1 }
+            Style={ { flexShrink: 1 } }>
             { Label ?? Placeholder ?? "" }
-        </Text>
+        </Body>
     );
 };
 
-export interface SelectContentProps {
+/** {@inheritDoc SelectContent} */
+export interface SelectContentProps
+{
     readonly Placement?: PopupPlacement;
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode;
 }
 
-export const SelectContent = ({ Placement = "Bottom", Style, children }: SelectContentProps): React.JSX.Element =>
+export/**
+       * The representation of an item that can be selected by the user.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const SelectContent = ({ Placement = "Bottom", Style, children }: SelectContentProps): React.JSX.Element =>
 {
     const { IsOpen, SetIsOpen, AnchorRef } = useSelectContext();
 
     return (
-        <Popup IsVisible={ IsOpen } OnRequestClose={ () => SetIsOpen(false) } Anchor={ AnchorRef } Placement={ Placement } Style={ [ { minWidth: 144 }, Style ] }>
-            <ScrollView style={ { maxHeight: 320 } } contentContainerStyle={ { paddingVertical: 4 } }>
+        <Popup
+            Anchor={ AnchorRef }
+            IsVisible={ IsOpen }
+            OnRequestClose={ () => SetIsOpen(false) }
+            Placement={ Placement }
+            Style={ [ { minWidth: 144 }, Style ] }>
+            <ScrollView
+                contentContainerStyle={ { paddingVertical: 4 } }
+                style={ { maxHeight: 320 } }>
                 { children }
             </ScrollView>
         </Popup>
     );
 };
 
-export interface SelectItemProps extends Omit<MenuItemProps, "OnPress" | "Label"> {
+/** {@inheritDoc SelectItem} */
+export interface SelectItemProps extends Omit<MenuItemProps, "OnPress" | "Label">
+{
     readonly Value: string;
     readonly Label: string;
     readonly HideCheck?: boolean;
 }
 
-export const SelectItem = ({ Value, Label, HideCheck = false, children, ...Rest }: SelectItemProps): React.JSX.Element =>
+export/**
+       * The representation of an item that may be selected by the user.
+       * // TODO Improve the descriptions of this component and others in this module.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const SelectItem = ({
+    Value,
+    Label,
+    HideCheck = false,
+    children,
+    ...Rest
+}: SelectItemProps): React.JSX.Element =>
 {
     const { Value: SelectedValue, OnValueChange, SetIsOpen, Labels, BumpVersion } = useSelectContext();
     const IsSelected = SelectedValue === Value;

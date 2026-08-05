@@ -17,29 +17,23 @@
  * @license   MIT
  */
 
-import { Context, Effect } from "effect";
-import * as React from "react";
-import { useColorScheme } from "react-native";
-
-import * as Color from "./Token/Color.js";
+import type * as Color from "./Token/Color.js";
 import * as ColorValue from "./Token/ColorValue.js";
-import * as Radii from "./Token/Radii.js";
+import type * as Radii from "./Token/Radii.js";
 import * as RadiiValue from "./Token/RadiiValue.js";
-import * as Semantic from "./Token/Semantic.js";
+import * as React from "react";
+import type * as Semantic from "./Token/Semantic.js";
 import * as SemanticValue from "./Token/SemanticValue.js";
-import * as Shadow from "./Token/Shadow.js";
+import type * as Shadow from "./Token/Shadow.js";
 import * as ShadowValue from "./Token/ShadowValue.js";
-import * as Size from "./Token/Size.js";
+import type * as Size from "./Token/Size.js";
 import * as SizeValue from "./Token/SizeValue.js";
-import * as Spacing from "./Token/Spacing.js";
+import type * as Spacing from "./Token/Spacing.js";
 import * as SpacingValue from "./Token/SpacingValue.js";
-import * as Typography from "./Token/Typography.js";
+import type * as Typography from "./Token/Typography.js";
 import * as TypographyValue from "./Token/TypographyValue.js";
-
-// -----------------------------------------------------------------------
-// Internal Effect plumbing — never exported. Everything below this block
-// is plain React.
-// -----------------------------------------------------------------------
+import { Context, Effect } from "effect";
+import { useColorScheme } from "react-native";
 
 type ThemeMode =
     | "Light"
@@ -67,20 +61,16 @@ const BuildResolver: Effect.Effect<TokenResolver, never, ThemeModeTag> = Effect.
 
     return {
         ResolveColor,
+        ResolveRadii: RadiiValue.Resolve,
+        ResolveShadow: ShadowValue.Resolve,
         ResolveSize: SizeValue.Resolve,
         ResolveSpacing: SpacingValue.Resolve,
-        ResolveRadii: RadiiValue.Resolve,
-        ResolveTypography: TypographyValue.Resolve,
-        ResolveShadow: ShadowValue.Resolve,
+        ResolveTypography: TypographyValue.Resolve
     } as const;
 });
 
 const ResolveTokensForMode = (Mode: ThemeMode): TokenResolver =>
     Effect.runSync(Effect.provideService(BuildResolver, ThemeModeTag, Mode));
-
-// -----------------------------------------------------------------------
-// Public, plain-React surface.
-// -----------------------------------------------------------------------
 
 const TokenResolverContext = React.createContext<TokenResolver | undefined>(undefined);
 
@@ -92,6 +82,7 @@ interface ThemeState
 
 const ThemeContext = React.createContext<ThemeState | undefined>(undefined);
 
+/** {@inheritDoc ThemeProvider} */
 export interface ThemeProviderProps
 {
     /**
@@ -103,27 +94,27 @@ export interface ThemeProviderProps
     readonly children?: React.ReactNode;
 }
 
-/**
- * Root provider for `@notivex/ui`. Wrap your app once, near the root:
- *
- * ```tsx
- * <ThemeProvider>
- *   <App />
- * </ThemeProvider>
- * ```
- *
- * Deliberately does NOT wrap `children` in `@expo/ui`'s `<Host>` — on web,
- * `Host` renders its subtree through a separate native-bridging root that
- * does not forward React context, which would silently detach every
- * descendant from this provider's `Token`/theme context. Components that
- * need `Host` (e.g. `BottomSheet`, in a later phase) wrap only their own
- * local subtree in it instead.
- */
-export const ThemeProvider = ({ ColorScheme = "System", children }: ThemeProviderProps): React.JSX.Element =>
+export/**
+       * Root provider for `@notivex/ui`. Wrap your app once, near the root:
+       *
+       * ```tsx
+       * <ThemeProvider>
+       *   <App />
+       * </ThemeProvider>
+       * ```
+       *
+       * Deliberately does NOT wrap `children` in `@expo/ui`'s `<Host>` — on web,
+       * `Host` renders its subtree through a separate native-bridging root that
+       * does not forward React context, which would silently detach every
+       * descendant from this provider's `Token`/theme context. Components that
+       * need `Host` (e.g. `BottomSheet`, in a later phase) wrap only their own
+       * local subtree in it instead.
+       */
+const ThemeProvider = ({ ColorScheme = "System", children }: ThemeProviderProps): React.JSX.Element =>
 {
     const SystemColorScheme = useColorScheme();
     const [ Override, SetOverride ] = React.useState<ThemeMode | undefined>(
-        ColorScheme === "System" ? undefined : ColorScheme,
+        ColorScheme === "System" ? undefined : ColorScheme
     );
 
     React.useEffect(() =>
@@ -141,7 +132,7 @@ export const ThemeProvider = ({ ColorScheme = "System", children }: ThemeProvide
     const SetMode = React.useCallback((NextMode: ThemeMode | "System") =>
     {
         SetOverride(NextMode === "System" ? undefined : NextMode);
-    }, []);
+    }, [ ]);
 
     const ThemeState = React.useMemo<ThemeState>(() => ({ Mode, SetMode }), [ Mode, SetMode ]);
 
@@ -166,8 +157,10 @@ const useTokenResolver = (): TokenResolver =>
     return Resolver;
 };
 
-/** The current resolved theme mode, plus a setter to override light/dark/system. */
-export const UseTheme = (): ThemeState =>
+export/**
+       * The current resolved theme mode, plus a setter to override light/dark/system.
+       */
+const UseTheme = (): ThemeState =>
 {
     const Value = React.useContext(ThemeContext);
 
@@ -179,8 +172,10 @@ export const UseTheme = (): ThemeState =>
     return Value;
 };
 
-/** Resolves a `Token.Color.*` or `Token.Semantic.*` symbol to an RN-compatible color string. */
-export const UseColor = (Token: Color.Color | Semantic.Semantic): string =>
+export/**
+       * Resolves a `Token.Color.*` or `Token.Semantic.*` symbol to an RN-compatible color string.
+       */
+const UseColor = (Token: Color.Color | Semantic.Semantic): string =>
 {
     const Resolved = useTokenResolver().ResolveColor(Token);
 
@@ -192,8 +187,10 @@ export const UseColor = (Token: Color.Color | Semantic.Semantic): string =>
     return Resolved;
 };
 
-/** Resolves a `Token.Size.*` symbol to a pixel number. */
-export const useSize = (Token: Size.Size): number =>
+export/**
+       * Resolves a `Token.Size.*` symbol to a pixel number.
+       */
+const useSize = (Token: Size.Size): number =>
 {
     const Resolved = useTokenResolver().ResolveSize(Token);
 
@@ -205,8 +202,10 @@ export const useSize = (Token: Size.Size): number =>
     return Resolved;
 };
 
-/** Resolves a `Token.Spacing.*` symbol to a pixel number. */
-export const useSpacing = (Token: Spacing.Spacing): number =>
+export/**
+       * Resolves a `Token.Spacing.*` symbol to a pixel number.
+       */
+const useSpacing = (Token: Spacing.Spacing): number =>
 {
     const Resolved = useTokenResolver().ResolveSpacing(Token);
 
@@ -218,8 +217,10 @@ export const useSpacing = (Token: Spacing.Spacing): number =>
     return Resolved;
 };
 
-/** Resolves a `Token.Radii.*` symbol to a pixel number. */
-export const useRadii = (Token: Radii.Radii): number =>
+export/**
+       * Resolves a `Token.Radii.*` symbol to a pixel number.
+       */
+const useRadii = (Token: Radii.Radii): number =>
 {
     const Resolved = useTokenResolver().ResolveRadii(Token);
 
@@ -231,8 +232,10 @@ export const useRadii = (Token: Radii.Radii): number =>
     return Resolved;
 };
 
-/** Resolves a `Token.Shadow.*` symbol to an RN shadow/border style object. */
-export const useShadow = (Token: Shadow.Shadow): ShadowValue.ShadowValue =>
+export/**
+       * Resolves a `Token.Shadow.*` symbol to an RN shadow/border style object.
+       */
+const useShadow = (Token: Shadow.Shadow): ShadowValue.ShadowValue =>
 {
     const Resolved = useTokenResolver().ResolveShadow(Token);
 
@@ -244,8 +247,10 @@ export const useShadow = (Token: Shadow.Shadow): ShadowValue.ShadowValue =>
     return Resolved;
 };
 
-/** Resolves a `Token.Typography.*` symbol to `{FontSize, LineHeight, FontWeight}`. */
-export const useTypography = (Token: Typography.Typography): TypographyValue.TypographyValue =>
+export/**
+       * Resolves a `Token.Typography.*` symbol to `{ FontSize, LineHeight, FontWeight }`.
+       */
+const useTypography = (Token: Typography.Typography): TypographyValue.TypographyValue =>
 {
     const Resolved = useTokenResolver().ResolveTypography(Token);
 

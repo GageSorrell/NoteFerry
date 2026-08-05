@@ -8,9 +8,9 @@
  * @license   MIT
  */
 
+import * as React from "react";
 import { Label, RadioGroup, RadioGroupItem, type RadioGroupProps } from "@notivex/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
-import * as React from "react";
 import { View } from "react-native";
 
 const ControlledRadioGroup = (Props: RadioGroupProps): React.JSX.Element =>

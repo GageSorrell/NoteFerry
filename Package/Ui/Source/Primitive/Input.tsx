@@ -12,8 +12,9 @@
  * @license   MIT
  */
 
-import { Search, X } from "lucide-react-native";
+import * as Radii from "../Token/Radii.js";
 import * as React from "react";
+import * as Semantic from "../Token/Semantic.js";
 import {
     Pressable,
     type StyleProp,
@@ -21,18 +22,36 @@ import {
     TextInput,
     type TextInputProps,
     View,
-    type ViewStyle,
+    type ViewStyle
 } from "react-native";
-
+import { Search, X } from "lucide-react-native";
 import { UseColor, useRadii } from "../ThemeProvider.js";
-import * as Radii from "../Token/Radii.js";
-import * as Semantic from "../Token/Semantic.js";
 import { WithAlpha } from "../Utility/index.js";
 
-export type InputVariant = "Default" | "Plain" | "Flat";
-export type InputSize = "Default" | "Large";
+/**
+ * The visual style of a given `Input` component.
+ *
+ * @category Input
+ * @since 1.0.0
+ */
+export type InputVariant =
+    | "Default"
+    | "Plain"
+    | "Flat";
 
-export interface InputProps {
+/**
+ * The size of a given `Input` component.
+ *
+ * @category Input
+ * @since 1.0.0
+ */
+export type InputSize =
+    | "Default"
+    | "Large";
+
+/** {@inheritDoc Input} */
+export interface InputProps
+{
     readonly Variant?: InputVariant;
     readonly Size?: InputSize;
     readonly Value?: string;
@@ -46,14 +65,22 @@ export interface InputProps {
     readonly EndIcon?: React.ReactNode;
     readonly SecureTextEntry?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly AutoFocus?: boolean;
+    readonly AutoFocus?: boolean | undefined;
     readonly OnSubmitEditing?: TextInputProps[ "onSubmitEditing" ];
+    readonly OnFocus?: TextInputProps[ "onFocus" ];
+    readonly OnBlur?: TextInputProps[ "onBlur" ];
 }
 
 const HeightBySize: Record<InputSize, number> = { Default: 28, Large: 34 };
 const FontSizeBySize: Record<InputSize, number> = { Default: 14, Large: 15 };
 
-export const Input = ({
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Input = ({
     Variant = "Default",
     Size = "Default",
     Value,
@@ -69,6 +96,8 @@ export const Input = ({
     Style,
     AutoFocus,
     OnSubmitEditing,
+    OnFocus,
+    OnBlur
 }: InputProps): React.JSX.Element =>
 {
     const RingColor = UseColor(Semantic.Ring);
@@ -81,36 +110,55 @@ export const Input = ({
     const ShowClear = Clear && !Disabled && typeof Value === "string" && Value.length > 0;
 
     const ContainerStyle: ViewStyle = {
-        height: HeightBySize[ Size ],
-        borderRadius: MediumRadius,
         backgroundColor: Variant === "Flat" ? "transparent" : InputBackground,
-        borderWidth: Variant === "Flat" ? 0 : 1,
         borderColor: Invalid ? WithAlpha(RedColor, 0.5) : RingColor,
+        borderRadius: MediumRadius,
+        borderWidth: Variant === "Flat" ? 0 : 1,
+        height: HeightBySize[ Size ]
     };
 
     return (
         <View style={ [ Styles.Container, ContainerStyle, Style ] }>
-            { ShowSearch ? <Search size={ 14 } color={ MutedColor } style={ Styles.LeadingIcon } /> : null }
+            { ShowSearch
+                ? <Search
+                    color={ MutedColor }
+                    size={ 14 }
+                    style={ Styles.LeadingIcon }
+                />
+                : null
+            }
             <TextInput
-                value={ Value }
+                autoFocus={ AutoFocus }
+                editable={ !Disabled }
+                onBlur={ OnBlur }
                 onChangeText={ OnChangeText }
+                onFocus={ OnFocus }
+                onSubmitEditing={ OnSubmitEditing }
                 placeholder={ Placeholder }
                 placeholderTextColor={ WithAlpha(PrimaryColor, 0.45) }
-                editable={ !Disabled }
                 secureTextEntry={ SecureTextEntry }
-                autoFocus={ AutoFocus }
-                onSubmitEditing={ OnSubmitEditing }
                 style={ [
                     Styles.Input,
-                    { color: PrimaryColor, fontSize: FontSizeBySize[ Size ], opacity: Disabled ? 0.5 : 1 },
+                    {
+                        color: PrimaryColor,
+                        fontSize: FontSizeBySize[Size],
+                        opacity: Disabled ? 0.5 : 1
+                    }
                 ] }
+                value={ Value }
             />
             { ShowClear
-                ? (
-                    <Pressable accessibilityRole="button" accessibilityLabel="Clear input" onPress={ OnCancel } hitSlop={ 8 } style={ Styles.TrailingIcon }>
-                        <X size={ 14 } color={ MutedColor } />
-                    </Pressable>
-                )
+                ? <Pressable
+                    accessibilityLabel="Clear input"
+                    accessibilityRole="button"
+                    hitSlop={ 8 }
+                    onPress={ OnCancel }
+                    style={ Styles.TrailingIcon }>
+                    <X
+                        color={ MutedColor }
+                        size={ 14 }
+                    />
+                </Pressable>
                 : null }
             { EndIcon ? <View style={ Styles.TrailingIcon }>{ EndIcon }</View> : null }
         </View>
@@ -118,21 +166,25 @@ export const Input = ({
 };
 
 const Styles = StyleSheet.create({
-    Container: {
-        flexDirection: "row",
+    Container:
+    {
         alignItems: "center",
-        width: "100%",
+        flexDirection: "row",
         paddingHorizontal: 8,
+        width: "100%"
     },
-    Input: {
+    Input:
+    {
         flex: 1,
-        padding: 0,
         margin: 0,
+        padding: 0
     },
-    LeadingIcon: {
-        marginRight: 6,
+    LeadingIcon:
+    {
+        marginRight: 6
     },
-    TrailingIcon: {
-        marginLeft: 6,
-    },
+    TrailingIcon:
+    {
+        marginLeft: 6
+    }
 });

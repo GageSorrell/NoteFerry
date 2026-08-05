@@ -12,15 +12,24 @@
  */
 
 import * as React from "react";
+import * as Semantic from "../Token/Semantic.js";
 import { Animated, Easing, type StyleProp, type ViewStyle } from "react-native";
 import Svg, { Circle } from "react-native-svg";
-
 import { UseColor } from "../ThemeProvider.js";
-import * as Semantic from "../Token/Semantic.js";
 
-export type SpinnerVariant = "Solid" | "Dashed";
+/**
+ * The visual style of a `Spinner` component.
+ *
+ * @category Input
+ * @since 1.0.0
+ */
+export type SpinnerVariant =
+    | "Solid"
+    | "Dashed";
 
-export interface SpinnerProps {
+/** {@inheritDoc Spinner} */
+export interface SpinnerProps
+{
     readonly Variant?: SpinnerVariant;
     readonly Size?: number;
     readonly Color?: string;
@@ -29,7 +38,13 @@ export interface SpinnerProps {
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
-export const Spinner = ({ Variant = "Solid", Size = 16, Color, Style }: SpinnerProps): React.JSX.Element =>
+export/**
+       * An animated spinner, to communicate that a task is being performed on behalf of the user.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Spinner = ({ Variant = "Solid", Size = 16, Color, Style }: SpinnerProps): React.JSX.Element =>
 {
     const BorderColor = UseColor(Semantic.Border);
     const IconColor = UseColor(Semantic.Icon);
@@ -40,22 +55,25 @@ export const Spinner = ({ Variant = "Solid", Size = 16, Color, Style }: SpinnerP
     {
         const Animation = Animated.loop(
             Animated.timing(Rotation, {
-                toValue: 1,
                 duration: Variant === "Dashed" ? 900 : 1100,
                 easing: Variant === "Dashed" ? Easing.linear : Easing.inOut(Easing.ease),
-                useNativeDriver: true,
-            }),
+                toValue: 1,
+                useNativeDriver: true
+            })
         );
 
         Animation.start();
 
-        return () => Animation.stop();
+        return Animation.stop;
     }, [ Rotation, Variant ]);
 
     const RotateStyle = {
         transform: [ {
-            rotate: Rotation.interpolate({ inputRange: [ 0, 1 ], outputRange: [ "0deg", "360deg" ] }),
-        } ],
+            rotate: Rotation.interpolate({
+                inputRange: [ 0, 1 ],
+                outputRange: [ "0deg", "360deg" ]
+            })
+        } ]
     };
 
     const Radius = (Size / 2) - 1.5;
@@ -63,28 +81,30 @@ export const Spinner = ({ Variant = "Solid", Size = 16, Color, Style }: SpinnerP
 
     return (
         <Animated.View
-            accessibilityRole="progressbar"
             accessibilityLabel="Loading"
-            style={ [ { width: Size, height: Size }, RotateStyle, Style ] }
-        >
-            <Svg width={ Size } height={ Size } viewBox={ `0 0 ${ Size } ${ Size }` }>
+            accessibilityRole="progressbar"
+            style={ [ { height: Size, width: Size }, RotateStyle, Style ] }>
+            <Svg
+                height={ Size }
+                viewBox={ `0 0 ${ Size } ${ Size }` }
+                width={ Size }>
                 <Circle
                     cx={ Size / 2 }
                     cy={ Size / 2 }
-                    r={ Radius }
                     fill="none"
+                    r={ Radius }
                     stroke={ BorderColor }
                     strokeWidth={ 1.5 }
                 />
                 <AnimatedCircle
                     cx={ Size / 2 }
                     cy={ Size / 2 }
-                    r={ Radius }
                     fill="none"
+                    r={ Radius }
                     stroke={ ActiveColor }
-                    strokeWidth={ 1.5 }
-                    strokeLinecap="round"
                     strokeDasharray={ `${ Circumference * 0.7 } ${ Circumference }` }
+                    strokeLinecap="round"
+                    strokeWidth={ 1.5 }
                 />
             </Svg>
         </Animated.View>

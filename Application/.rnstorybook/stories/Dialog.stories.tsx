@@ -9,6 +9,7 @@
  * @license   MIT
  */
 
+import * as React from "react";
 import {
     Button,
     Dialog,
@@ -21,7 +22,6 @@ import {
     DialogTrigger
 } from "@notivex/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
-import * as React from "react";
 
 const DialogExample = (): React.JSX.Element => (
     <Dialog>

@@ -31,14 +31,17 @@
  * @license   MIT
  */
 
-import { BottomSheet as ExpoBottomSheet, Host, type SnapPoint as ExpoSnapPoint } from "@expo/ui";
 import * as React from "react";
-import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
-
-import { ThemeProvider, UseColor, UseTheme, useSpacing } from "../ThemeProvider.js";
 import * as Semantic from "../Token/Semantic.js";
 import * as Spacing from "../Token/Spacing.js";
-import { Text } from "./Text.js";
+import { Description, Heading3 } from "./Text.js";
+import {
+    BottomSheet as ExpoBottomSheet,
+    type SnapPoint as ExpoSnapPoint,
+    Host
+} from "@expo/ui";
+import { type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
+import { ThemeProvider, UseColor, UseTheme, useSpacing } from "../ThemeProvider.js";
 
 /**
  * A height the sheet can rest at. `{Fraction}`/`{Height}` are iOS/web
@@ -66,7 +69,9 @@ const ToExpoSnapPoint = (Point: BottomSheetSnapPoint): ExpoSnapPoint =>
     return "Fraction" in Point ? { fraction: Point.Fraction } : { height: Point.Height };
 };
 
-export interface BottomSheetProps {
+/** {@inheritDoc BottomSheet} */
+export interface BottomSheetProps
+{
     readonly IsPresented: boolean;
     readonly OnDismiss: () => void;
     /** Heights the sheet can rest at. Omit to auto-size to content. */
@@ -76,32 +81,35 @@ export interface BottomSheetProps {
     readonly children?: React.ReactNode;
 }
 
-/**
- * A modal sheet that slides up from the bottom of the screen, built on
- * `@expo/ui`'s native `BottomSheet`. Compose with `BottomSheetHeader`,
- * `BottomSheetTitle`, `BottomSheetDescription`, and `BottomSheetFooter`.
- */
-export const BottomSheet = ({
+export/**
+       * A modal sheet that slides up from the bottom of the screen, built on
+       * `@expo/ui`'s native `BottomSheet`. Compose with `BottomSheetHeader`,
+       * `BottomSheetTitle`, `BottomSheetDescription`, and `BottomSheetFooter`.
+       * @category Component
+       * @since 1.0.0
+       */
+const BottomSheet = ({
     IsPresented,
     OnDismiss,
     SnapPoints,
     ShowDragIndicator = true,
     TestID,
-    children,
+    children
 }: BottomSheetProps): React.JSX.Element =>
 {
     const { Mode } = UseTheme();
     const BackgroundColor = UseColor(Semantic.BackgroundModal);
 
     return (
-        <Host style={ Styles.Host } matchContents>
+        <Host
+            matchContents
+            style={ Styles.Host }>
             <ExpoBottomSheet
                 isPresented={ IsPresented }
                 onDismiss={ OnDismiss }
                 showDragIndicator={ ShowDragIndicator }
                 { ...(SnapPoints === undefined ? {} : { snapPoints: SnapPoints.map(ToExpoSnapPoint) }) }
-                { ...(TestID === undefined ? {} : { testID: TestID }) }
-            >
+                { ...(TestID === undefined ? {} : { testID: TestID }) }>
                 <ThemeProvider ColorScheme={ Mode }>
                     <View style={ [ Styles.Content, { backgroundColor: BackgroundColor } ] }>
                         { children }
@@ -112,12 +120,20 @@ export const BottomSheet = ({
     );
 };
 
-export interface BottomSheetHeaderProps {
+/** {@inheritDoc BottomSheetHeader} */
+export interface BottomSheetHeaderProps
+{
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode;
 }
 
-export const BottomSheetHeader = ({ Style, children }: BottomSheetHeaderProps): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const BottomSheetHeader = ({ Style, children }: BottomSheetHeaderProps): React.JSX.Element =>
 {
     const Gap = useSpacing(Spacing.ExtraSmall);
     const Padding = useSpacing(Spacing.SheetHorizontal);
@@ -125,35 +141,76 @@ export const BottomSheetHeader = ({ Style, children }: BottomSheetHeaderProps): 
     return <View style={ [ { gap: Gap, padding: Padding }, Style ] }>{ children }</View>;
 };
 
-export interface BottomSheetTitleProps {
+/** {@inheritDoc BottomSheetTitle} */
+export interface BottomSheetTitleProps
+{
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode;
 }
 
-export const BottomSheetTitle = ({ Style, children }: BottomSheetTitleProps): React.JSX.Element =>
-    <Text Variant="Heading3" Style={ Style }>{ children }</Text>;
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const BottomSheetTitle = ({ Style, children }: BottomSheetTitleProps): React.JSX.Element =>
+    <Heading3 { ...{ Style } }>
+        { children }
+    </Heading3>;
 
-export interface BottomSheetDescriptionProps {
+/** {@inheritDoc BottomSheetDescription} */
+export interface BottomSheetDescriptionProps
+{
     readonly children?: React.ReactNode;
 }
 
-export const BottomSheetDescription = ({ children }: BottomSheetDescriptionProps): React.JSX.Element =>
-    <Text Variant="Description" Color={ Semantic.Muted }>{ children }</Text>;
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const BottomSheetDescription = ({ children }: BottomSheetDescriptionProps): React.JSX.Element =>
+    <Description Color={ Semantic.Muted }>
+        { children }
+    </Description>;
 
-export interface BottomSheetFooterProps {
+/** {@inheritDoc BottomSheetFooter} */
+export interface BottomSheetFooterProps
+{
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode;
 }
 
-export const BottomSheetFooter = ({ Style, children }: BottomSheetFooterProps): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const BottomSheetFooter = ({ Style, children }: BottomSheetFooterProps): React.JSX.Element =>
 {
     const Gap = useSpacing(Spacing.Small);
     const Padding = useSpacing(Spacing.SheetHorizontal);
 
-    return <View style={ [ Styles.Footer, { gap: Gap, padding: Padding }, Style ] }>{ children }</View>;
+    return (
+        <View style={ [ Styles.Footer, { gap: Gap, padding: Padding }, Style ] }>
+            { children }
+        </View>
+    );
 };
 
 const Styles = StyleSheet.create({
+    Content:
+    {
+        minHeight: 1
+    },
+    Footer:
+    {
+        flexDirection: "column",
+        marginTop: "auto"
+    },
     /*
      * `ExpoBottomSheet`'s native presentation (a SwiftUI `.sheet()`
      * modifier / Jetpack Compose `ModalBottomSheet` / a fixed-position
@@ -162,14 +219,8 @@ const Styles = StyleSheet.create({
      * dismissed) `Host` mount point out of the surrounding document flow;
      * `matchContents` on `<Host>` governs its actual size.
      */
-    Host: {
-        position: "absolute",
-    },
-    Content: {
-        minHeight: 1,
-    },
-    Footer: {
-        marginTop: "auto",
-        flexDirection: "column",
-    },
+    Host:
+    {
+        position: "absolute"
+    }
 });

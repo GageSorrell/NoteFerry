@@ -10,19 +10,34 @@
  */
 
 import * as React from "react";
-import { View, type StyleProp, type ViewStyle } from "react-native";
-
-import { UseColor } from "../ThemeProvider.js";
 import * as Semantic from "../Token/Semantic.js";
+import { type StyleProp, View, type ViewStyle } from "react-native";
+import { UseColor } from "../ThemeProvider.js";
 
-export type SeparatorOrientation = "Horizontal" | "Vertical";
+/**
+ * The orientation of a given `Separator` component.
+ *
+ * @category Miscellaneous
+ * @since 1.0.0
+ */
+export type SeparatorOrientation =
+    | "Horizontal"
+    | "Vertical";
 
-export interface SeparatorProps {
+/** {@inheritDoc Separator} */
+export interface SeparatorProps
+{
     readonly Orientation?: SeparatorOrientation;
     readonly Style?: StyleProp<ViewStyle>;
 }
 
-export const Separator = ({ Orientation = "Horizontal", Style }: SeparatorProps): React.JSX.Element =>
+export/**
+       * A thin bar that visually separates content.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Separator = ({ Orientation = "Horizontal", Style }: SeparatorProps): React.JSX.Element =>
 {
     const BorderColor = UseColor(Semantic.Border);
 
@@ -31,8 +46,10 @@ export const Separator = ({ Orientation = "Horizontal", Style }: SeparatorProps)
             accessibilityRole="none"
             style={ [
                 { backgroundColor: BorderColor },
-                Orientation === "Horizontal" ? { height: 1, width: "100%" } : { width: 1, alignSelf: "stretch" },
-                Style,
+                Orientation === "Horizontal"
+                    ? { height: 1, width: "100%" }
+                    : { alignSelf: "stretch", width: 1 },
+                Style
             ] }
         />
     );

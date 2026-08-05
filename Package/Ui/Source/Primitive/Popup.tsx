@@ -17,26 +17,40 @@
  * @license   MIT
  */
 
+import * as Radii from "../Token/Radii.js";
 import * as React from "react";
+import * as Semantic from "../Token/Semantic.js";
+import * as Shadow from "../Token/Shadow.js";
 import { type GestureResponderEvent, type StyleProp, type ViewStyle } from "react-native";
 import RNPopover, { PopoverPlacement } from "react-native-popover-view";
 
-import { useRadii, UseColor, useShadow } from "../ThemeProvider.js";
-import * as Radii from "../Token/Radii.js";
-import * as Semantic from "../Token/Semantic.js";
-import * as Shadow from "../Token/Shadow.js";
+import { UseColor, useRadii, useShadow } from "../ThemeProvider.js";
 
-export type PopupPlacement = "Top" | "Bottom" | "Left" | "Right" | "Auto" | "Center" | "Floating";
+/**
+ * The relative location where a given `Popup` component may be placed.
+ *
+ * @category Miscellaneous
+ * @since 1.0.0
+ */
+export type PopupPlacement =
+    | "Top"
+    | "Bottom"
+    | "Left"
+    | "Right"
+    | "Auto"
+    | "Center"
+    | "Floating";
 
-const PlacementMap: Record<PopupPlacement, PopoverPlacement> = {
-    Top: PopoverPlacement.TOP,
-    Bottom: PopoverPlacement.BOTTOM,
-    Left: PopoverPlacement.LEFT,
-    Right: PopoverPlacement.RIGHT,
-    Auto: PopoverPlacement.AUTO,
-    Center: PopoverPlacement.CENTER,
-    Floating: PopoverPlacement.FLOATING,
-};
+const PlacementMap: Record<PopupPlacement, PopoverPlacement> =
+    Object.freeze({
+        Auto: PopoverPlacement.AUTO,
+        Bottom: PopoverPlacement.BOTTOM,
+        Center: PopoverPlacement.CENTER,
+        Floating: PopoverPlacement.FLOATING,
+        Left: PopoverPlacement.LEFT,
+        Right: PopoverPlacement.RIGHT,
+        Top: PopoverPlacement.TOP
+    } as const);
 
 /**
  * An anchor for a `Popup` — a ref to whatever component the popup should
@@ -51,24 +65,24 @@ const PlacementMap: Record<PopupPlacement, PopoverPlacement> = {
  */
 export type PopupAnchor = React.RefObject<any>;
 
-/**
- * Implements the `AsChild` pattern every `*Trigger` component supports:
- * clones the single child element, merging in an `OnPress` handler (the
- * child's own `OnPress`, if any, still fires first) and — when an anchor
- * ref is given — attaching it directly to that child, instead of wrapping
- * the child in a second `Pressable`. Nested `Pressable`s in RN don't bubble
- * touches from child to parent, so wrapping an already-interactive child
- * (e.g. a `Button`) in another `Pressable` would silently swallow every
- * press; cloning the child avoids that entirely. Any `ref` the caller
- * already attached to `Child` is intentionally not preserved here — none
- * of this library's own trigger usages need that, and merging an
- * unknown, possibly-forwardRef'd child ref safely isn't worth the
- * complexity it would add.
- */
-export const CloneTrigger = (
+export/**
+       * Implements the `AsChild` pattern every `*Trigger` component supports:
+       * clones the single child element, merging in an `OnPress` handler (the
+       * child's own `OnPress`, if any, still fires first) and — when an anchor
+       * ref is given — attaching it directly to that child, instead of wrapping
+       * the child in a second `Pressable`. Nested `Pressable`s in RN don't bubble
+       * touches from child to parent, so wrapping an already-interactive child
+       * (e.g. a `Button`) in another `Pressable` would silently swallow every
+       * press; cloning the child avoids that entirely. Any `ref` the caller
+       * already attached to `Child` is intentionally not preserved here — none
+       * of this library's own trigger usages need that, and merging an
+       * unknown, possibly-forwardRef'd child ref safely isn't worth the
+       * complexity it would add.
+       */
+const CloneTrigger = (
     Child: React.ReactElement<{ readonly OnPress?: ((Event: GestureResponderEvent) => void) | undefined }>,
     OnPress: (Event: GestureResponderEvent) => void,
-    Ref?: PopupAnchor,
+    Ref?: PopupAnchor
 ): React.ReactElement =>
     React.cloneElement(Child, {
         OnPress: (Event: GestureResponderEvent) =>
@@ -76,29 +90,40 @@ export const CloneTrigger = (
             Child.props.OnPress?.(Event);
             OnPress(Event);
         },
-        ...(Ref === undefined ? {} : { ref: Ref }),
+        ...(Ref === undefined ? {} : { ref: Ref })
     });
 
-export interface PopupProps {
+/** {@inheritDoc Popup} */
+export interface PopupProps
+{
     readonly IsVisible: boolean;
     readonly OnRequestClose: () => void;
     readonly Anchor: PopupAnchor;
     readonly Placement?: PopupPlacement;
-    /** `"Tooltip"` uses the tooltip color/shape; `"Popup"` (the default) is the generic card look shared by popovers, menus, and selects. */
+
+    /**
+     * `"Tooltip"` uses the tooltip color/shape; `"Popup"` (the default) is
+     * the generic card look shared by popovers, menus, and selects.
+     */
     readonly Variant?: "Popup" | "Tooltip";
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode;
 }
 
-/** The shared anchored-overlay shell behind `Popover`/`Tooltip`/`DropdownMenu`/`ContextMenu`/`Select`. */
-export const Popup = ({
+export/**
+       * The shared anchored-overlay shell behind `Popover`/`Tooltip`/`DropdownMenu`/`ContextMenu`/`Select`.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Popup = ({
     IsVisible,
     OnRequestClose,
     Anchor,
     Placement = "Bottom",
     Variant = "Popup",
     Style,
-    children,
+    children
 }: PopupProps): React.JSX.Element =>
 {
     const PopoverBackground = UseColor(Semantic.BackgroundPopover);
@@ -112,26 +137,28 @@ export const Popup = ({
         ? { backgroundColor: TooltipBackground, borderRadius: SmallRadius }
         : {
             backgroundColor: PopoverBackground,
+            borderColor: BorderColor,
             borderRadius: LargeRadius,
             borderWidth: 1,
-            borderColor: BorderColor,
+            elevation: CardShadow.Elevation,
             shadowColor: CardShadow.ShadowColor,
             shadowOffset: CardShadow.ShadowOffset === undefined
                 ? undefined
-                : { width: CardShadow.ShadowOffset.Width, height: CardShadow.ShadowOffset.Height },
+                : {
+                    height: CardShadow.ShadowOffset.Height,
+                    width: CardShadow.ShadowOffset.Width
+                },
             shadowOpacity: CardShadow.ShadowOpacity,
-            shadowRadius: CardShadow.ShadowRadius,
-            elevation: CardShadow.Elevation,
+            shadowRadius: CardShadow.ShadowRadius
         };
 
     return (
         <RNPopover
-            isVisible={ IsVisible }
             from={ Anchor }
-            placement={ PlacementMap[ Placement ] }
+            isVisible={ IsVisible }
             onRequestClose={ OnRequestClose }
-            popoverStyle={ [ { overflow: "hidden" }, VariantStyle, Style ] as StyleProp<ViewStyle> }
-        >
+            placement={ PlacementMap[ Placement ] }
+            popoverStyle={ [ { overflow: "hidden" }, VariantStyle, Style ] as StyleProp<ViewStyle> }>
             { children }
         </RNPopover>
     );
