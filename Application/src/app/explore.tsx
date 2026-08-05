@@ -1,3 +1,12 @@
+/**
+ * @module notivex/app/explore
+ *
+ * @file      explore.tsx
+ * @author    Gage Sorrell <gage@sorrell.sh>
+ * @copyright (c) 2026 Gage Sorrell
+ * @license   MIT
+ */
+
 import { Image } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
 import { Platform, Pressable, ScrollView, StyleSheet } from 'react-native';
@@ -11,12 +20,15 @@ import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
-export default function TabTwoScreen() {
+export default function TabTwoScreen()
+{
   const safeAreaInsets = useSafeAreaInsets();
-  const insets = {
-    ...safeAreaInsets,
-    bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
-  };
+  const insets =
+    {
+        ...safeAreaInsets,
+        bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
+    } as const;
+
   const theme = useTheme();
 
   const contentPlatformStyle = Platform.select({

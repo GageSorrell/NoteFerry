@@ -28,7 +28,10 @@
   },
   "type": "module",
   "devDependencies": {
+    "@eslint/eslintrc": "3.3.6",
     "@notivex/ui": "1.0.0",
+    "@sorrell/eslint-config": "1.0.1",
+    "eslint": "9.39.5",
     "typescript": "6.0.3"
   }
 }

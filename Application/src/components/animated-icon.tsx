@@ -8,38 +8,45 @@ import { scheduleOnRN } from 'react-native-worklets';
 const INITIAL_SCALE_FACTOR = Dimensions.get('screen').height / 90;
 const DURATION = 600;
 
-export function AnimatedSplashOverlay() {
+export function AnimatedSplashOverlay()
+{
   const [animate, setAnimate] = useState(false);
   const [visible, setVisible] = useState(true);
 
   if (!visible) return null;
 
   const splashKeyframe = new Keyframe({
-    0: {
+    0:
+    {
       transform: [{ scale: 1 }],
       opacity: 1,
     },
-    20: {
+    20:
+    {
       opacity: 1,
     },
-    70: {
+    70:
+    {
       opacity: 0,
       easing: Easing.elastic(0.7),
     },
-    100: {
+    100:
+    {
       opacity: 0,
       transform: [{ scale: 1 }],
       easing: Easing.elastic(0.7),
-    },
+    }
   });
 
   const image = <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />;
 
   return animate ? (
     <Animated.View
-      entering={splashKeyframe.duration(DURATION).withCallback((finished) => {
-        'worklet';
-        if (finished) {
+      entering={splashKeyframe.duration(DURATION).withCallback((finished) =>
+        {
+        "worklet";
+        if (finished)
+        {
           scheduleOnRN(setVisible, false);
         }
       })}

@@ -5,13 +5,24 @@
   "version": "1.0.0",
   "dependencies": {
     "@expo/ui": "~57.0.9",
-    "effect": "^4.0.0-beta",
+    "@gorhom/bottom-sheet": "^5.2.14",
+    "@notivex/ui": "1.0.0",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-community/datetimepicker": "^9.1.0",
+    "@react-native-community/slider": "^5.2.0",
+    "@storybook/addon-ondevice-actions": "^10.5.4",
+    "@storybook/addon-ondevice-controls": "^10.5.4",
+    "@storybook/react-native": "^10.5.4",
+    "@storybook/react-native-ui-lite": "^10.5.4",
+    "cross-env": "^10.1.0",
+    "effect": "3.22.1",
     "expo": "~57.0.10",
     "expo-constants": "~57.0.9",
     "expo-device": "~57.0.1",
     "expo-font": "~57.0.1",
     "expo-glass-effect": "~57.0.1",
     "expo-image": "~57.0.2",
+    "expo-image-picker": "~57.0.7",
     "expo-linking": "~57.0.5",
     "expo-router": "~57.0.10",
     "expo-splash-screen": "~57.0.5",
@@ -26,11 +37,12 @@
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
+    "react-native-svg": "15.15.4",
     "react-native-web": "~0.21.0",
-    "react-native-worklets": "0.10.1"
+    "react-native-worklets": "0.10.1",
+    "storybook": "^10.5.6"
   },
   "devDependencies": {
-    "@notivex/ui": "1.0.0",
     "@sorrell/tsconfig": "1.0.0",
     "@types/react": "~19.2.2",
     "typescript": "~6.0.3"
@@ -40,8 +52,10 @@
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "storybook": "cross-env STORYBOOK_ENABLED=true expo start",
+    "storybook:ios": "cross-env STORYBOOK_ENABLED=true expo start --ios",
+    "storybook:android": "cross-env STORYBOOK_ENABLED=true expo start --android"
   },
   "private": true
 }

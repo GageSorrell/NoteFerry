@@ -1,2 +1,27 @@
 {
+    "editor.codeActionsOnSave":
+    {
+        "source.fixAll": "explicit",
+        "source.organizeImports": "explicit",
+        "source.sortMembers": "explicit"
+    },
+    "eslint.options": {
+        "overrideConfigFile": "./Configuration/eslint.config.js"
+    },
+    "eslint.enable": true,
+    "eslint.nodePath": "node_modules",
+    "eslint.codeActionsOnSave.rules": null,
+    "editor.formatOnSave": false,
+    "eslint.format.enable": false,
+  	"eslint.workingDirectories":
+	[
+        { "!cwd": false, "directory": "**" }
+  	],
+    "eslint.validate":
+    [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact"
+    ],
 }

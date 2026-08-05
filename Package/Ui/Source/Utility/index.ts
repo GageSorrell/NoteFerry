@@ -1,6 +1,4 @@
 /**
- *
- *
  * @module @notivex/ui/Utility
  * @internal
  *
@@ -10,4 +8,8 @@
  * @license   MIT
  */
 
+export * from "./ComposeRefs.js";
+export * from "./MakeVariants.js";
 export * from "./Utility.js";
+export * from "./WithAlpha.js";
+

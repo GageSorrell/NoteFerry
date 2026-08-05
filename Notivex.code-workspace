@@ -9,7 +9,15 @@
     {
 		"cSpell.words":
         [
-			"notivex"
+			"datetimepicker",
+			"gorhom",
+			"notivex",
+			"ondevice",
+			"Pressable",
+			"rnstorybook",
+			"RRGGBB",
+			"uistorybook",
+			"worklets"
 		],
         "sorrellWmCodeExtension.headers.insertOnAnyFileCreation": false
 	}

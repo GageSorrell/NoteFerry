@@ -11,7 +11,7 @@
 
 import { MakeGetSymbolKey } from "../Utility/index.js";
 
-const TypeId = "~notivex/ui/Token/Size" as const;
+const TypeId = "~notivex/ui/Token/Text" as const;
 
 type TypeId = typeof TypeId;
 

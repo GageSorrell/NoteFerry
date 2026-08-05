@@ -1,0 +1,68 @@
+/**
+ * Storybook stories for `@notivex/ui`'s `Toast` primitive. `<Toaster>` must
+ * be mounted once; each story mounts its own instance rather than relying
+ * on a real one at the app root, since these stories run standalone.
+ *
+ * @module notivex/app/.rnstorybook/stories/Toast
+ *
+ * @file      Toast.stories.tsx
+ * @author    Gage Sorrell <gage@sorrell.sh>
+ * @copyright (c) 2026 Gage Sorrell
+ * @license   MIT
+ */
+
+import { Button, Toast, Toaster } from "@notivex/ui/Primitive";
+import type { Meta, StoryObj } from "@storybook/react-native";
+import * as React from "react";
+import { View } from "react-native";
+
+const ToastExample = (): React.JSX.Element => (
+    <View
+        style={ {
+            height: 320,
+            width: 260
+        } }>
+        <View
+            style={ {
+                alignItems: "stretch",
+                gap: 8
+            } }>
+            <Button OnPress={ () => Toast("Saved changes") }>Default</Button>
+            <Button
+                OnPress={ () => Toast.Success("Page published") }
+                Variant="Blue">
+                Success
+            </Button>
+            <Button
+                OnPress={ () => Toast.Error("Could not connect") }
+                Variant="Red">
+                Error
+            </Button>
+            <Button
+                OnPress={ () =>
+                    Toast.Promise(
+                        new Promise((Resolve: (Value: unknown) => void) => setTimeout(Resolve, 1500)),
+                        {
+                            Error: "Upload failed",
+                            Loading: "Uploading…",
+                            Success: "Uploaded"
+                        })
+                }>
+                Promise
+            </Button>
+        </View>
+        <Toaster />
+    </View>
+);
+
+const meta =
+    {
+        component: ToastExample,
+        title: "Primitive/Toast"
+    } satisfies Meta<typeof ToastExample>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Playground: Story = { };
