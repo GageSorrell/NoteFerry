@@ -1,12 +1,16 @@
 {
-	"folders": [
+	"folders":
+    [
 		{
 			"path": "."
 		}
 	],
-	"settings": {
-		"cSpell.words": [
+	"settings":
+    {
+		"cSpell.words":
+        [
 			"notivex"
-		]
+		],
+        "sorrellWmCodeExtension.headers.insertOnAnyFileCreation": false
 	}
 }

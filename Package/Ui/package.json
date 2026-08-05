@@ -1,11 +1,8 @@
 {
   "name": "@notivex/ui",
-  "description": "The monorepo for the Notivex app and Command Palette extension.",
-  "private": true,
-  "workspaces": [
-    "./Application",
-    "./Package/NotionUi"
-  ],
+  "description": "The UI library of notivex.",
+  "private": false,
+  "homepage": "https://notivex.sorrell.sh",
   "version": "1.0.0",
   "author": {
     "name": "Gage Sorrell",
@@ -13,8 +10,7 @@
     "url": "https://sorrell.sh"
   },
   "bugs": {
-    "email": "gage@sorrell.sh",
-    "url": "https://github.com/GageSorrell/SorrellWm/issues"
+    "url": "https://github.com/GageSorrell/Notivex/issues"
   },
   "license": "MIT",
   "repository": {
@@ -22,8 +18,23 @@
     "url": "git+https://github.com/GageSorrell/Notivex.git"
   },
   "engines": {
-    "node": ">=26.6.0",
+    "node": "24.19.0",
     "npm": ">=12.0.2"
   },
-  "type": "module"
+  "type": "module",
+  "exports": {
+    ".": {
+        "import": "./Distribution/index.js",
+        "types": "./Distribution/index.d.ts"
+    },
+    "./Token": {
+        "import": "./Distribution/Token/index.js",
+        "types": "./Distribution/Token/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc -p ./tsconfig.json"
+  }
 }
+
