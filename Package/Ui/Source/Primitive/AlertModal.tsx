@@ -55,7 +55,7 @@ const AlertModal = ({ Title, Primary, Secondary, OnTrigger }: AlertModalProps): 
         <DialogContent
             HideClose
             Style={ Styles.Content }>
-            <DialogHeader>
+            <DialogHeader Style={ Styles.Header }>
                 <DialogTitle Style={ Styles.Title }>{ Title }</DialogTitle>
             </DialogHeader>
             <DialogFooter Style={ Styles.Footer }>
@@ -80,7 +80,6 @@ const AlertModal = ({ Title, Primary, Secondary, OnTrigger }: AlertModalProps): 
 const Styles = StyleSheet.create({
     Content:
     {
-        alignItems: "flex-start",
         width: 300
     },
     Footer:
@@ -91,6 +90,10 @@ const Styles = StyleSheet.create({
     FullWidth:
     {
         width: "100%"
+    },
+    Header:
+    {
+        alignSelf: "flex-start"
     },
     Title:
     {

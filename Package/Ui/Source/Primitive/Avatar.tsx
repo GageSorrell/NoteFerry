@@ -47,11 +47,10 @@ const useAvatarContext = (): AvatarContextValue =>
 };
 
 /** {@inheritDoc Avatar} */
-export interface AvatarProps
+export interface AvatarProps extends React.PropsWithChildren
 {
     readonly Size?: number;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -114,10 +113,7 @@ const AvatarImage = ({ Source, Style }: AvatarImageProps): React.JSX.Element =>
 };
 
 /** {@inheritDoc AvatarFallback} */
-export interface AvatarFallbackProps
-{
-    readonly children?: React.ReactNode;
-}
+export interface AvatarFallbackProps extends React.PropsWithChildren { }
 
 export/**
        * TODO Write description.

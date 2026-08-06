@@ -81,7 +81,7 @@ const useAutocompleteContext = (): AutocompleteContextValue =>
 };
 
 /** {@inheritDoc Autocomplete} */
-export interface AutocompleteProps
+export interface AutocompleteProps extends React.PropsWithChildren
 {
     readonly Query?: string | undefined;
     readonly DefaultQuery?: string | undefined;
@@ -90,7 +90,6 @@ export interface AutocompleteProps
     readonly DefaultOpen?: boolean | undefined;
     readonly OnOpenChange?: ((Open: boolean) => void) | undefined;
     readonly Filter?: AutocompleteFilter | undefined;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -180,7 +179,7 @@ const AutocompleteInput = ({ OpenOnFocus = true, ...Rest }: AutocompleteInputPro
 };
 
 /** {@inheritDoc AutocompleteTrigger} */
-export interface AutocompleteTriggerProps
+export interface AutocompleteTriggerProps extends React.PropsWithChildren
 {
     /**
      * Clone `children` instead of wrapping it in a second `Pressable`.
@@ -189,7 +188,6 @@ export interface AutocompleteTriggerProps
      */
     readonly AsChild?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -216,7 +214,7 @@ const AutocompleteTrigger = ({
 };
 
 /** {@inheritDoc AutocompleteTrigger} */
-export interface AutocompleteContentProps
+export interface AutocompleteContentProps extends React.PropsWithChildren
 {
     /**
      * `"Floating"` (the default) anchors a `Popup` to the input; `"Inline"` renders `children` directly.
@@ -227,7 +225,6 @@ export interface AutocompleteContentProps
         | "Inline";
     readonly Placement?: PopupPlacement;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -263,10 +260,9 @@ const AutocompleteContent = ({
 };
 
 /** {@inheritDoc AutocompleteList} */
-export interface AutocompleteListProps
+export interface AutocompleteListProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -285,10 +281,9 @@ const AutocompleteList = ({ Style, children }: AutocompleteListProps): React.JSX
 );
 
 /** {@inheritDoc AutocompleteGroup} */
-export interface AutocompleteGroupProps
+export interface AutocompleteGroupProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -323,7 +318,7 @@ const AutocompleteLabel = ({ title }: AutocompleteLabelProps): React.JSX.Element
 };
 
 /** {@inheritDoc AutocompleteItem} */
-export interface AutocompleteItemProps
+export interface AutocompleteItemProps extends React.PropsWithChildren
 {
     readonly Value: string;
     readonly Label?: string | undefined;
@@ -332,7 +327,6 @@ export interface AutocompleteItemProps
     readonly Variant?: MenuItemVariant | undefined;
     readonly OnSelect?: ((Value: string) => void) | undefined;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -362,6 +356,7 @@ const AutocompleteItem = ({
 
         return () =>
         {
+            /* eslint-disable-next-line react-hooks/exhaustive-deps */
             MatchRegistry.current.delete(Value);
             BumpVersion();
         };
@@ -384,10 +379,7 @@ const AutocompleteItem = ({
 };
 
 /** {@inheritDoc AutocompleteEmpty} */
-export interface AutocompleteEmptyProps
-{
-    readonly children?: React.ReactNode;
-}
+export interface AutocompleteEmptyProps extends React.PropsWithChildren { }
 
 export/**
        * TODO Write description.

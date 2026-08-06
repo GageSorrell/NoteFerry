@@ -33,7 +33,7 @@ const ScrollAreaExample = (): React.JSX.Element => (
                         borderBottomWidth: 1,
                         padding: 10
                     } }>
-                    <Text>
+                    <Text Variant="Body">
                         { Row }
                     </Text>
                 </View>

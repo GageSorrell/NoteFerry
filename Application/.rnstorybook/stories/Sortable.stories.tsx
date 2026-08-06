@@ -40,7 +40,10 @@ const SortableExample = (): React.JSX.Element =>
                                 paddingHorizontal: 8
                             } }>
                                 <Sortable.Handle />
-                                <Text Style={ { marginLeft: 8 } }>{ Id }</Text>
+                                <Text Style={ { marginLeft: 8 } }
+                                    Variant="Body">
+                                    { Id }
+                                </Text>
                             </View>
                         </Sortable.Item>
                     )) }

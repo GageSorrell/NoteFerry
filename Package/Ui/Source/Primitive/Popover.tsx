@@ -47,12 +47,11 @@ const usePopoverContext = (): PopoverContextValue =>
 };
 
 /** {@inheritDoc Popover} */
-export interface PopoverProps
+export interface PopoverProps extends React.PropsWithChildren
 {
     readonly Open?: boolean;
     readonly DefaultOpen?: boolean;
     readonly OnOpenChange?: (Open: boolean) => void;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -82,7 +81,7 @@ const Popover = ({ Open, DefaultOpen = false, OnOpenChange, children }: PopoverP
 };
 
 /** {@inheritDoc PopoverTrigger} */
-export interface PopoverTriggerProps
+export interface PopoverTriggerProps extends React.PropsWithChildren
 {
     /**
      * Clone `children` (e.g. a `Button`) instead of wrapping it in a second `Pressable`
@@ -91,7 +90,6 @@ export interface PopoverTriggerProps
      */
     readonly AsChild?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -125,11 +123,10 @@ const PopoverTrigger = ({ AsChild = false, Style, children }: PopoverTriggerProp
 };
 
 /** {@inheritDoc PopoverContent} */
-export interface PopoverContentProps
+export interface PopoverContentProps extends React.PropsWithChildren
 {
     readonly Placement?: PopupPlacement;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**

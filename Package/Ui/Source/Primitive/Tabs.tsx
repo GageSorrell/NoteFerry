@@ -46,13 +46,12 @@ const useTabsContext = (): TabsContextValue =>
 };
 
 /** {@inheritDoc Tabs} */
-export interface TabsProps
+export interface TabsProps extends React.PropsWithChildren
 {
     readonly Value?: string;
     readonly DefaultValue?: string;
     readonly OnValueChange?: (Value: string) => void;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -91,10 +90,9 @@ const Tabs = ({
 };
 
 /** {@inheritDoc TabsList} */
-export interface TabsListProps
+export interface TabsListProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -126,12 +124,11 @@ const TabsList = ({ Style, children }: TabsListProps): React.JSX.Element =>
 };
 
 /** {@inheritDoc TabsTrigger} */
-export interface TabsTriggerProps
+export interface TabsTriggerProps extends React.PropsWithChildren
 {
     readonly Value: string;
     readonly Disabled?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -178,11 +175,10 @@ const TabsTrigger = ({ Value, Disabled = false, Style, children }: TabsTriggerPr
 };
 
 /** {@inheritDoc TabsContent} */
-export interface TabsContentProps
+export interface TabsContentProps extends React.PropsWithChildren
 {
     readonly Value: string;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**

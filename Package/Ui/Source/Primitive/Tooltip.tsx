@@ -17,15 +17,21 @@
  * @license   MIT
  */
 
-import { Image } from "expo-image";
 import * as React from "react";
-import { Pressable, type ImageStyle, type StyleProp, type TextStyle, type ViewStyle } from "react-native";
-
 import * as Semantic from "../Token/Semantic.js";
-import { type PopupAnchor, type PopupPlacement, Popup } from "./Popup.js";
-import { Text } from "./Text.js";
+import {
+    type ImageStyle,
+    Pressable,
+    type StyleProp,
+    type TextStyle,
+    type ViewStyle
+} from "react-native";
+import { Popup, type PopupAnchor, type PopupPlacement } from "./Popup.js";
+import { Image } from "expo-image";
+import { LabelText } from "./Text.js";
 
-interface TooltipContextValue {
+interface TooltipContextValue
+{
     readonly IsOpen: boolean;
     readonly Show: () => void;
     readonly Hide: () => void;
@@ -46,12 +52,19 @@ const useTooltipContext = (): TooltipContextValue =>
     return Value;
 };
 
-export interface TooltipProps {
+/** {@inheritDoc Tooltip} */
+export interface TooltipProps extends React.PropsWithChildren
+{
     readonly Disabled?: boolean | undefined;
-    readonly children?: React.ReactNode;
 }
 
-export const Tooltip = ({ Disabled = false, children }: TooltipProps): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Tooltip = ({ Disabled = false, children }: TooltipProps): React.JSX.Element =>
 {
     const [ IsOpen, SetIsOpen ] = React.useState(false);
     const AnchorRef = React.useRef<React.Component>(null);
@@ -67,94 +80,163 @@ export const Tooltip = ({ Disabled = false, children }: TooltipProps): React.JSX
     const Hide = React.useCallback(() => SetIsOpen(false), []);
 
     const ContextValue = React.useMemo<TooltipContextValue>(
-        () => ({ IsOpen, Show, Hide, AnchorRef }),
-        [ IsOpen, Show, Hide ],
+        () => ({ AnchorRef, Hide, IsOpen, Show }),
+        [ Hide, IsOpen, Show ]
     );
 
-    return <TooltipContext.Provider value={ ContextValue }>{ children }</TooltipContext.Provider>;
+    return (
+        <TooltipContext.Provider value={ ContextValue }>
+            { children }
+        </TooltipContext.Provider>
+    );
 };
 
-export interface TooltipTriggerProps {
+/** {@inheritDoc TooltipTrigger} */
+export interface TooltipTriggerProps extends React.PropsWithChildren
+{
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
-export const TooltipTrigger = ({ Style, children }: TooltipTriggerProps): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const TooltipTrigger = ({ Style, children }: TooltipTriggerProps): React.JSX.Element =>
 {
     const { Show, Hide, AnchorRef } = useTooltipContext();
 
     return (
         <Pressable
-            ref={ AnchorRef }
+            delayLongPress={ 400 }
             onHoverIn={ Show }
             onHoverOut={ Hide }
             onLongPress={ Show }
             onPressOut={ Hide }
-            delayLongPress={ 400 }
-            style={ Style }
-        >
+            ref={ AnchorRef }
+            style={ Style }>
             { children }
         </Pressable>
     );
 };
 
-export interface TooltipContentProps {
+/** {@inheritDoc  TooltipContent} */
+export interface TooltipContentProps extends React.PropsWithChildren
+{
     readonly Placement?: PopupPlacement;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
-export const TooltipContent = ({ Placement = "Top", Style, children }: TooltipContentProps): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const TooltipContent = ({ Placement = "Top", Style, children }: TooltipContentProps): React.JSX.Element =>
 {
-    const { IsOpen, Hide, AnchorRef } = useTooltipContext();
+    const { IsOpen, Hide, AnchorRef: Anchor } = useTooltipContext();
 
     return (
-        <Popup IsVisible={ IsOpen } OnRequestClose={ Hide } Anchor={ AnchorRef } Placement={ Placement } Variant="Tooltip" Style={ Style }>
-            { typeof children === "string" ? <TooltipDescription Text={ children } /> : children }
+        <Popup
+            { ...{ Anchor, Placement, Style } }
+            IsVisible={ IsOpen }
+            OnRequestClose={ Hide }
+            Variant="Tooltip">
+            { typeof children === "string"
+                ? <TooltipDescription Text={ children } />
+                : children
+            }
         </Popup>
     );
 };
 
-export type TooltipDescriptionType = "Primary" | "Secondary" | "Image";
+/**
+ * The visual style of a given tooltip's description.
+ *
+ * @category Display
+ * @since 1.0.0
+ */
+export type TooltipDescriptionType =
+    | "Primary"
+    | "Secondary"
+    | "Image";
 
-export interface TooltipDescriptionProps {
+/** {@inheritDoc Tooltip} */
+export interface TooltipDescriptionProps
+{
     readonly Type?: TooltipDescriptionType;
     readonly Text: string;
     /** Applied as `TextStyle` for `"Primary"`/`"Secondary"`, `ImageStyle` for `"Image"`. */
     readonly Style?: StyleProp<TextStyle & ImageStyle>;
 }
 
-export const TooltipDescription = ({ Type = "Primary", Text: TextValue, Style }: TooltipDescriptionProps): React.JSX.Element =>
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const TooltipDescription = ({
+    Style,
+    Text: TextValue,
+    Type = "Primary"
+}: TooltipDescriptionProps): React.JSX.Element =>
 {
     if (Type === "Image")
     {
-        return <Image source={ { uri: TextValue } } style={ [ { width: 140, height: 90, borderRadius: 4 }, Style ] } />;
+        return (
+            <Image
+                source={ { uri: TextValue } }
+                style={ [
+                    {
+                        borderRadius: 4,
+                        height: 90,
+                        width: 140
+                    },
+                    Style
+                ] }
+            />
+        );
     }
 
     return (
-        <Text
-            Variant="Label"
+        <LabelText
             Color={ Type === "Secondary" ? Semantic.TooltipSecondary : Semantic.TooltipPrimary }
-            Style={ Style }
-        >
+            Style={ Style }>
             { TextValue }
-        </Text>
+        </LabelText>
     );
 };
 
-export interface TooltipPresetProps {
+/** {@inheritDoc TooltipPreset} */
+export interface TooltipPresetProps extends React.PropsWithChildren
+{
     readonly Disabled?: boolean;
     readonly Placement?: PopupPlacement;
     readonly Description: React.ReactNode;
-    readonly children?: React.ReactNode;
 }
 
-/** `<Tooltip>`+`<TooltipTrigger>`+`<TooltipContent>` collapsed into one call for the common case. */
-export const TooltipPreset = ({ Disabled, Placement = "Top", Description, children }: TooltipPresetProps): React.JSX.Element => (
+export/**
+       * `<Tooltip>`+`<TooltipTrigger>`+`<TooltipContent>` collapsed into one call for the common case.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const TooltipPreset = ({
+    Disabled,
+    Placement = "Top",
+    Description,
+    children
+}: TooltipPresetProps): React.JSX.Element => (
     <Tooltip Disabled={ Disabled }>
         <TooltipTrigger>{ children }</TooltipTrigger>
         <TooltipContent Placement={ Placement }>
-            { typeof Description === "string" ? <TooltipDescription Text={ Description } /> : Description }
+            { typeof Description === "string"
+                ? <TooltipDescription Text={ Description } />
+                : Description
+            }
         </TooltipContent>
     </Tooltip>
 );

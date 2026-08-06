@@ -38,14 +38,13 @@ import { MenuItemShortcut } from "./Menu.js";
 export { AutocompleteSeparator as CommandSeparator } from "./Autocomplete.js";
 
 /** {@inheritDoc Command} */
-export interface CommandProps
+export interface CommandProps extends React.PropsWithChildren
 {
     readonly Query?: string | undefined;
     readonly DefaultQuery?: string | undefined;
     readonly OnQueryChange?: ((Query: string) => void) | undefined;
     readonly Filter?: AutocompleteFilter | undefined;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -94,10 +93,9 @@ const CommandInput = ({
     />;
 
 /** {@inheritDoc CommandList} */
-export interface CommandListProps
+export interface CommandListProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -110,11 +108,10 @@ const CommandList = ({ Style, children }: CommandListProps): React.JSX.Element =
     <AutocompleteList Style={ Style }>{ children }</AutocompleteList>;
 
 /** {@inheritDoc CommandGroup} */
-export interface CommandGroupProps
+export interface CommandGroupProps extends React.PropsWithChildren
 {
     readonly Heading?: React.ReactNode;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -154,10 +151,10 @@ const CommandEmpty = AutocompleteEmpty;
 /** {@inheritDoc CommandDialog} */
 export interface CommandDialogProps extends
     DialogProps,
-    Pick<CommandProps, "Query" | "DefaultQuery" | "OnQueryChange" | "Filter">
+    Pick<CommandProps, "Query" | "DefaultQuery" | "OnQueryChange" | "Filter">,
+    React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**

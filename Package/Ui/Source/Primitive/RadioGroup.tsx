@@ -26,13 +26,12 @@ interface RadioGroupContextValue
 const RadioGroupContext = React.createContext<RadioGroupContextValue | undefined>(undefined);
 
 /** {@inheritDoc RadioGroup} */
-export interface RadioGroupProps
+export interface RadioGroupProps extends React.PropsWithChildren
 {
     readonly Value?: string;
     readonly OnValueChange?: (Value: string) => void;
     readonly Disabled?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**

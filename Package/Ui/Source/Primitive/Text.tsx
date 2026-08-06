@@ -57,7 +57,7 @@ const VariantToken: ReadonlyRecord<TextVariant, Typography.Typography> =
     };
 
 /** {@inheritDoc Text} */
-export interface TextProps extends Omit<RNTextProps, "style" | "numberOfLines" | "children">
+export interface TextProps extends Omit<RNTextProps, "style" | "numberOfLines">
 {
     readonly Variant: TextVariant;
     readonly Weight?: TextStyle[ "fontWeight" ];
@@ -66,10 +66,13 @@ export interface TextProps extends Omit<RNTextProps, "style" | "numberOfLines" |
      * A `Token.Color.*` / `Token.Semantic.*` symbol, or a raw color string.
      * Defaults to `Semantic.Primary`.
      */
-    readonly Color?: Color.Color | Semantic.Semantic | string | undefined;
+    readonly Color?:
+        | Color.Color
+        | Semantic.Semantic
+        | string
+        | undefined;
     readonly NumberOfLines?: number;
     readonly Style?: StyleProp<TextStyle>;
-    readonly children?: React.ReactNode;
 }
 
 const FontFamilies = Object.freeze({

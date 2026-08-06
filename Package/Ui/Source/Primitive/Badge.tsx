@@ -41,12 +41,11 @@ export type BadgeSize =
     | "Small";
 
 /** {@inheritDoc Badge} */
-export interface BadgeProps
+export interface BadgeProps extends React.PropsWithChildren
 {
     readonly Variant?: BadgeVariant;
     readonly Size?: BadgeSize;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**

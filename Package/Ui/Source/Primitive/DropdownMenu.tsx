@@ -61,12 +61,11 @@ const useDropdownMenuContext = (): DropdownMenuContextValue =>
 };
 
 /** {@inheritDoc DropdownMenu} */
-export interface DropdownMenuProps
+export interface DropdownMenuProps extends React.PropsWithChildren
 {
     readonly Open?: boolean;
     readonly DefaultOpen?: boolean;
     readonly OnOpenChange?: (Open: boolean) => void;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -105,7 +104,7 @@ const DropdownMenu = ({
 };
 
 /** {@inheritDoc DropdownMenuTrigger} */
-export interface DropdownMenuTriggerProps
+export interface DropdownMenuTriggerProps extends React.PropsWithChildren
 {
     /**
      * Clone `children` (e.g. a `Button`) instead of wrapping it in a second `Pressable`
@@ -114,7 +113,6 @@ export interface DropdownMenuTriggerProps
      */
     readonly AsChild?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -168,11 +166,10 @@ const useDropdownMenuClose = (): (() => void) =>
 };
 
 /** {@inheritDoc DropdownMenuContent} */
-export interface DropdownMenuContentProps
+export interface DropdownMenuContentProps extends React.PropsWithChildren
 {
     readonly Placement?: PopupPlacement;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -297,11 +294,10 @@ interface DropdownMenuRadioContextValue
 const DropdownMenuRadioContext = React.createContext<DropdownMenuRadioContextValue | undefined>(undefined);
 
 /** {@inheritDoc DropdownMenuRadioGroup} */
-export interface DropdownMenuRadioGroupProps
+export interface DropdownMenuRadioGroupProps extends React.PropsWithChildren
 {
     readonly Value?: string;
     readonly OnValueChange?: (Value: string) => void;
-    readonly children?: React.ReactNode;
 }
 
 export/**

@@ -21,13 +21,12 @@ import { UseColor } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /** {@inheritDoc MeterBar} */
-export interface MeterBarProps
+export interface MeterBarProps extends React.PropsWithChildren
 {
     readonly Value: number;
     readonly Max?: number;
     readonly TrackColor?: string;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -72,14 +71,13 @@ const MeterBar = ({ Value, Max = 100, TrackColor, Style, children }: MeterBarPro
 };
 
 /** {@inheritDoc MeterRing} */
-export interface MeterRingProps
+export interface MeterRingProps extends React.PropsWithChildren
 {
     readonly Value: number;
     readonly Max?: number;
     readonly TrackColor?: string;
     readonly Size?: number;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**

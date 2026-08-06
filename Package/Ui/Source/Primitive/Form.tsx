@@ -105,10 +105,9 @@ const useFormField = () =>
 };
 
 /** {@inheritDoc FormItem} */
-export interface FormItemProps
+export interface FormItemProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**

@@ -30,10 +30,9 @@ export type FieldOrientation =
     | "Horizontal";
 
 /** {@inheritDoc FieldSet} */
-export interface FieldSetProps
+export interface FieldSetProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -48,10 +47,9 @@ const FieldSet = ({ Style, children }: FieldSetProps): React.JSX.Element =>
     </View>;
 
 /** {@inheritDoc FieldLegend} */
-export interface FieldLegendProps
+export interface FieldLegendProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -66,10 +64,9 @@ const FieldLegend = ({ children }: FieldLegendProps): React.JSX.Element =>
     </Heading3>;
 
 /** {@inheritDoc FieldGroup} */
-export interface FieldGroupProps
+export interface FieldGroupProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -84,12 +81,11 @@ const FieldGroup = ({ Style, children }: FieldGroupProps): React.JSX.Element =>
     </View>;
 
 /** {@inheritDoc Field} */
-export interface FieldProps
+export interface FieldProps extends React.PropsWithChildren
 {
     readonly Orientation?: FieldOrientation;
     readonly Invalid?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -104,10 +100,9 @@ const Field = ({ Orientation = "Vertical", Style, children }: FieldProps): React
     </View>;
 
 /** {@inheritDoc FieldContent} */
-export interface FieldContentProps
+export interface FieldContentProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -124,10 +119,7 @@ export/** {@inheritDoc Label} */
 const FieldLabel = Label;
 
 /** {@inheritDoc FieldDescription} */
-export interface FieldDescriptionProps
-{
-    readonly children?: React.ReactNode;
-}
+export interface FieldDescriptionProps extends React.PropsWithChildren { }
 
 export/**
        * TODO Write description.
@@ -146,10 +138,9 @@ const FieldDescription = ({ children }: FieldDescriptionProps): React.JSX.Elemen
 };
 
 /** {@inheritDoc FieldError} */
-export interface FieldErrorProps
+export interface FieldErrorProps extends React.PropsWithChildren
 {
     readonly Errors?: ReadonlyArray<{ readonly Message?: string } | undefined>;
-    readonly children?: React.ReactNode;
 }
 
 export/**

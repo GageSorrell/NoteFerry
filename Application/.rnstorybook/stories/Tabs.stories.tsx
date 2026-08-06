@@ -29,13 +29,16 @@ const TabsExample = (): React.JSX.Element => (
                 <TabsTrigger Value="calendar">Calendar</TabsTrigger>
             </TabsList>
             <TabsContent Value="board">
-                <Text Style={ { paddingTop: 12 } }>Board view content.</Text>
+                <Text Style={ { paddingTop: 12 } }
+                    Variant="Body">Board view content.</Text>
             </TabsContent>
             <TabsContent Value="table">
-                <Text Style={ { paddingTop: 12 } }>Table view content.</Text>
+                <Text Style={ { paddingTop: 12 } }
+                    Variant="Body">Table view content.</Text>
             </TabsContent>
             <TabsContent Value="calendar">
-                <Text Style={ { paddingTop: 12 } }>Calendar view content.</Text>
+                <Text Style={ { paddingTop: 12 } }
+                    Variant="Body">Calendar view content.</Text>
             </TabsContent>
         </Tabs>
     </View>

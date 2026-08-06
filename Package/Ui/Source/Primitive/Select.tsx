@@ -58,7 +58,7 @@ const useSelectContext = (): SelectContextValue =>
 };
 
 /** {@inheritDoc Select} */
-export interface SelectProps
+export interface SelectProps extends React.PropsWithChildren
 {
     readonly Value?: string;
     readonly DefaultValue?: string;
@@ -66,7 +66,6 @@ export interface SelectProps
     readonly Open?: boolean;
     readonly DefaultOpen?: boolean;
     readonly OnOpenChange?: (Open: boolean) => void;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -120,11 +119,10 @@ const Select = ({
 };
 
 /** {@inheritDoc SelectTrigger} */
-export interface SelectTriggerProps
+export interface SelectTriggerProps extends React.PropsWithChildren
 {
     readonly Disabled?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -201,11 +199,10 @@ const SelectValue = ({ Placeholder }: SelectValueProps): React.JSX.Element =>
 };
 
 /** {@inheritDoc SelectContent} */
-export interface SelectContentProps
+export interface SelectContentProps extends React.PropsWithChildren
 {
     readonly Placement?: PopupPlacement;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -257,7 +254,14 @@ const SelectItem = ({
     ...Rest
 }: SelectItemProps): React.JSX.Element =>
 {
-    const { Value: SelectedValue, OnValueChange, SetIsOpen, Labels, BumpVersion } = useSelectContext();
+    const {
+        BumpVersion,
+        Labels,
+        OnValueChange,
+        Value: SelectedValue,
+        SetIsOpen
+    } = useSelectContext();
+
     const IsSelected = SelectedValue === Value;
 
     React.useEffect(() =>
@@ -267,6 +271,7 @@ const SelectItem = ({
 
         return () =>
         {
+            /* eslint-disable-next-line react-hooks/exhaustive-deps */
             Labels.current.delete(Value);
             BumpVersion();
         };

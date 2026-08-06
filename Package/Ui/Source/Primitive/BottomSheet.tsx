@@ -70,7 +70,7 @@ const ToExpoSnapPoint = (Point: BottomSheetSnapPoint): ExpoSnapPoint =>
 };
 
 /** {@inheritDoc BottomSheet} */
-export interface BottomSheetProps
+export interface BottomSheetProps extends React.PropsWithChildren
 {
     readonly IsPresented: boolean;
     readonly OnDismiss: () => void;
@@ -78,7 +78,6 @@ export interface BottomSheetProps
     readonly SnapPoints?: ReadonlyArray<BottomSheetSnapPoint>;
     readonly ShowDragIndicator?: boolean;
     readonly TestID?: string;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -121,10 +120,9 @@ const BottomSheet = ({
 };
 
 /** {@inheritDoc BottomSheetHeader} */
-export interface BottomSheetHeaderProps
+export interface BottomSheetHeaderProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -142,10 +140,9 @@ const BottomSheetHeader = ({ Style, children }: BottomSheetHeaderProps): React.J
 };
 
 /** {@inheritDoc BottomSheetTitle} */
-export interface BottomSheetTitleProps
+export interface BottomSheetTitleProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -160,10 +157,7 @@ const BottomSheetTitle = ({ Style, children }: BottomSheetTitleProps): React.JSX
     </Heading3>;
 
 /** {@inheritDoc BottomSheetDescription} */
-export interface BottomSheetDescriptionProps
-{
-    readonly children?: React.ReactNode;
-}
+export interface BottomSheetDescriptionProps extends React.PropsWithChildren { }
 
 export/**
        * TODO Write description.
@@ -177,10 +171,9 @@ const BottomSheetDescription = ({ children }: BottomSheetDescriptionProps): Reac
     </Description>;
 
 /** {@inheritDoc BottomSheetFooter} */
-export interface BottomSheetFooterProps
+export interface BottomSheetFooterProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**

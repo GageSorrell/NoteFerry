@@ -52,6 +52,7 @@ export const Playground: Story =
 /** Every `Variant` rendered together, for side-by-side comparison. */
 export const AllVariants: Story =
     {
+        args: { Variant: "Body" },
         render: () => (
             <View style={ { alignItems: "flex-start", gap: 12 } }>
                 <Text Variant="Heading1">Heading1</Text>

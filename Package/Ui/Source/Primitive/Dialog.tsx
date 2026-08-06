@@ -64,12 +64,11 @@ const useDialogContext = (): DialogContextValue =>
 };
 
 /** {@inheritDoc Dialog} */
-export interface DialogProps
+export interface DialogProps extends React.PropsWithChildren
 {
     readonly Open?: boolean | undefined;
     readonly DefaultOpen?: boolean | undefined;
     readonly OnOpenChange?: ((Open: boolean) => void) | undefined;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -102,7 +101,7 @@ const Dialog = ({ Open, DefaultOpen = false, OnOpenChange, children }: DialogPro
 };
 
 /** {@inheritDoc DialogTrigger} */
-export interface DialogTriggerProps
+export interface DialogTriggerProps extends React.PropsWithChildren
 {
     /**
      * Clone `children` (e.g. a `Button`) instead of wrapping it in a second `Pressable`
@@ -111,7 +110,6 @@ export interface DialogTriggerProps
      */
     readonly AsChild?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -143,11 +141,10 @@ const DialogTrigger = ({ AsChild = false, Style, children }: DialogTriggerProps)
 };
 
 /** {@inheritDoc DialogContent} */
-export interface DialogContentProps
+export interface DialogContentProps extends React.PropsWithChildren
 {
     readonly HideClose?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -202,13 +199,12 @@ const DialogContent = ({ HideClose = false, Style, children }: DialogContentProp
 };
 
 /** {@inheritDoc DialogClose} */
-export interface DialogCloseProps
+export interface DialogCloseProps extends React.PropsWithChildren
 {
     readonly Variant?: ButtonProps["Variant"];
     readonly Size?: ButtonProps["Size"];
     readonly Style?: StyleProp<ViewStyle>;
     readonly OnPress?: (Event: GestureResponderEvent) => void;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -245,10 +241,9 @@ const DialogClose = ({ Variant, Size, Style, OnPress, children }: DialogClosePro
 };
 
 /** {@inheritDoc DialogHeader} */
-export interface DialogHeaderProps
+export interface DialogHeaderProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -265,10 +260,9 @@ const DialogHeader = ({ Style, children }: DialogHeaderProps): React.JSX.Element
 };
 
 /** {@inheritDoc DialogFooter} */
-export interface DialogFooterProps
+export interface DialogFooterProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -285,10 +279,9 @@ const DialogFooter = ({ Style, children }: DialogFooterProps): React.JSX.Element
 };
 
 /** {@inheritDoc DialogIcon} */
-export interface DialogIconProps
+export interface DialogIconProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -301,10 +294,9 @@ const DialogIcon = ({ Style, children }: DialogIconProps): React.JSX.Element =>
     <View style={ [ Styles.Icon, Style ] }>{ children }</View>;
 
 /** {@inheritDoc DialogTitle} */
-export interface DialogTitleProps
+export interface DialogTitleProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<TextStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -319,10 +311,7 @@ const DialogTitle = ({ Style, children }: DialogTitleProps): React.JSX.Element =
     </Heading3>;
 
 /** {@inheritDoc DialogDescription} */
-export interface DialogDescriptionProps
-{
-    readonly children?: React.ReactNode;
-}
+export interface DialogDescriptionProps extends React.PropsWithChildren { }
 
 export/**
        * TODO Write description.

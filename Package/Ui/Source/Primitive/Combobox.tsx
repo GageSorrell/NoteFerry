@@ -64,13 +64,12 @@ const useComboboxValueContext = (): ComboboxValueContextValue =>
 };
 
 /** {@inheritDoc Combobox} */
-export interface ComboboxProps
+export interface ComboboxProps extends React.PropsWithChildren
 {
     readonly Value?: string;
     readonly DefaultValue?: string;
     readonly OnValueChange?: (Value: string) => void;
     readonly Filter?: AutocompleteFilter;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -116,11 +115,10 @@ const Combobox = ({
 };
 
 /** {@inheritDoc ComboboxTrigger} */
-export interface ComboboxTriggerProps
+export interface ComboboxTriggerProps extends React.PropsWithChildren
 {
     readonly Disabled?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -156,8 +154,7 @@ const ComboboxTrigger = ({ Disabled = false, Style, children }: ComboboxTriggerP
                 },
                 Disabled ? { opacity: 0.3 } : undefined,
                 Style
-            ] }
-        >
+            ] }>
             { children }
             <ChevronDown
                 color={ MutedColor }

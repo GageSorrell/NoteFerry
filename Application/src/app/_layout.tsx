@@ -7,12 +7,12 @@
  * @license   MIT
  */
 
-import * as SplashScreen from "expo-splash-screen";
+// import * as SplashScreen from "expo-splash-screen";
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
 import { ThemeProvider as NotivexThemeProvider } from "@notivex/ui";
 import { useColorScheme } from "react-native";
 
-SplashScreen.preventAutoHideAsync();
+// SplashScreen.preventAutoHideAsync();
 
 // import { AnimatedSplashOverlay } from '@/components/animated-icon';
 // import AppTabs from '@/components/app-tabs';

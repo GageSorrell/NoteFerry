@@ -83,7 +83,7 @@ interface ThemeState
 const ThemeContext = React.createContext<ThemeState | undefined>(undefined);
 
 /** {@inheritDoc ThemeProvider} */
-export interface ThemeProviderProps
+export interface ThemeProviderProps extends React.PropsWithChildren
 {
     /**
      * `"Light"` / `"Dark"` pin the theme; `"System"` (the default) follows
@@ -91,7 +91,6 @@ export interface ThemeProviderProps
      * runtime via `useTheme().SetMode`.
      */
     readonly ColorScheme?: ThemeMode | "System";
-    readonly children?: React.ReactNode;
 }
 
 export/**

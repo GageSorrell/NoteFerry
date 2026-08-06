@@ -39,11 +39,11 @@ export const Playground: Story =
         args: { Orientation: "Horizontal" },
         render: (args: any) =>
             <View style={ { width: 220 } }>
-                <Text>Above</Text>
+                <Text Variant="Body">Above</Text>
                 <View style={ { marginVertical: 8 } }>
                     <Separator { ...args } />
                 </View>
-                <Text>Below</Text>
+                <Text Variant="Body">Below</Text>
             </View>
     };
 
@@ -56,8 +56,8 @@ export const Vertical: Story =
                 gap: 8,
                 height: 24
             } }>
-                <Text>Left</Text>
+                <Text Variant="Body">Left</Text>
                 <Separator Orientation="Vertical" />
-                <Text>Right</Text>
+                <Text Variant="Body">Right</Text>
             </View>
     };

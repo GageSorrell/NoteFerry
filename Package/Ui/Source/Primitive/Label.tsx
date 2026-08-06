@@ -18,11 +18,10 @@ import type { StyleProp, TextStyle } from "react-native";
 import { Text } from "./Text.js";
 
 /** {@inheritDoc Label} */
-export interface LabelProps
+export interface LabelProps extends React.PropsWithChildren
 {
     readonly Disabled?: boolean;
     readonly Style?: StyleProp<TextStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**

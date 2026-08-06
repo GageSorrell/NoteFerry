@@ -1,17 +1,17 @@
 npm notice run notivex-monorepo@1.0.0 npx
-npm notice run expo start --web --port 8150
+npm notice run expo start --web --port 8170
 Starting project at E:\Notivex\Application
 Using src/app as the root directory for Expo Router.
 React Compiler enabled
 Expo Autolinking module resolution enabled
 Starting Metro Bundler
 
-Waiting on http://localhost:8150
+Waiting on http://localhost:8170
 
 Logs for your project will appear below.
-λ Bundled 3500ms node_modules\@expo\router-server\node\render.js (5520 modules)
-Web Bundled 5819ms node_modules\expo-router\entry.js (5281 modules)
-Web Bundled 1143ms node_modules\expo-router\entry.js (5285 modules)
+λ Bundled 3743ms node_modules\@expo\router-server\node\render.js (5445 modules)
+Web Bundled 5350ms node_modules\expo-router\entry.js (5302 modules)
+Web Bundled 5806ms node_modules\expo-router\entry.js (5306 modules)
 Web  INFO  %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
 Web  LOG  Running application "main" with appParams:
  {"hydrate": undefined, "rootTag": "#root"} 
@@ -19,12 +19,95 @@ Development-level warnings: ON.
 Performance optimizations: OFF.
 Web  WARN  props.pointerEvents is deprecated. Use style.pointerEvents
 Web  WARN  [Reanimated] useAnimatedKeyboard is not available on web yet.
-λ Bundling failed 3372ms node_modules\@expo\router-server\node\render.js (1 module)
-Web Bundling failed 3509ms node_modules\expo-router\entry.js (1 module)
+Web  ERROR  
 
-Metro error: EMFILE: too many open files, open 'C:\Users\Gage\AppData\Local\Temp\metro-cache\23\4284032f555972f71658b218dcce85ca093003f4870f5db0edc14eb7783b04c61196bd.mp'
-
+Code: Meter.js
+[0m [90m 60 |[39m             now[33m:[39m [33mValue[39m[33m,[39m
+ [90m 61 |[39m             text[33m:[39m [32m`Loading progress: ${Value}%`[39m
+[31m[1m>[22m[39m[90m 62 |[39m         }[33m,[39m style[33m:[39m [33mStyle[39m[33m,[39m children[33m:[39m [children[33m,[39m _jsxs([33mSvg[39m[33m,[39m { height[33m:[39m [33mSize[39m[33m,[39m viewBox[33m:[39m [32m"0 0 14 14"[39m[33m,[39m width[33m:[39m [33mSize[39m[33m,[39m children[33m:[39m [_jsx([33mCircle[39m[33m,[39m { cx[33m:[39m [35m7[39m[33m,[39m cy[33m:[39m [35m7[39m[33m,[39m fill[33m:[39m [32m"none"[39m[33m,[39m r[33m:[39m [33mRadius[39m[33m,[39m stroke[33m:[39m [33mWithAlpha[39m([33mDefaultColor[39m[33m,[39m [35m0.1[39m)[33m,[39m strokeWidth[33m:[39m [35m2[39m })[33m,[39m _jsx([33mG[39m[33m,[39m { origin[33m:[39m [32m"7, 7"[39m[33m,[39m rotation[33m:[39m [33m-[39m[35m90[39m[33m,[39m children[33m:[39m _jsx([33mCircle[39m[33m,[39m { cx[33m:[39m [35m7[39m[33m,[39m cy[33m:[39m [35m7[39m[33m,[39m fill[33m:[39m [32m"none"[39m[33m,[39m r[33m:[39m [33mRadius[39m[33m,[39m stroke[33m:[39m [33mTrackColor[39m [33m?[39m[33m?[39m [33mBlueColor[39m[33m,[39m strokeDasharray[33m:[39m [32m`${Circumference}`[39m[33m,[39m strokeDashoffset[33m:[39m [33mOffset[39m[33m,[39m strokeLinecap[33m:[39m [32m"round"[39m[33m,[39m strokeWidth[33m:[39m [35m2[39m }) })] })] }))[33m;[39m
+ [90m    |[39m                                                                                                                                                                                                                                           [31m[1m^[22m[39m
+ [90m 63 |[39m }[33m;[39m
+ [90m 64 |[39m [90m//# sourceMappingURL=Meter.js.map[39m[0m
 Call Stack
-  async open (node:internal\fs\promises)
-  async Object.readFile (node:internal\fs\promises)
-Web Bundled 85ms node_modules\expo-router\_error.js (1 module)
+  MeterRing (Package\Ui\Distribution\Primitive\Meter.js:62:235)
+  AllExample (Application\.rnstorybook\stories\All.stories.tsx:263:29)
+  withNotivexTheme (Application\.rnstorybook\preview.tsx:24:13)
+  RootLayout (Application\src\app\_layout.tsx:40:17)
+Web  ERROR  
+
+Code: Spinner.js
+[0m [90m 48 |[39m     [36mconst[39m [33mRadius[39m [33m=[39m ([33mSize[39m [33m/[39m [35m2[39m) [33m-[39m [35m1.5[39m[33m;[39m
+ [90m 49 |[39m     [36mconst[39m [33mCircumference[39m [33m=[39m [35m2[39m [33m*[39m [33mMath[39m[33m.[39m[33mPI[39m [33m*[39m [33mRadius[39m[33m;[39m
+[31m[1m>[22m[39m[90m 50 |[39m     [36mreturn[39m (_jsx([33mAnimated[39m[33m.[39m[33mView[39m[33m,[39m { accessibilityLabel[33m:[39m [32m"Loading"[39m[33m,[39m accessibilityRole[33m:[39m [32m"progressbar"[39m[33m,[39m style[33m:[39m [{ height[33m:[39m [33mSize[39m[33m,[39m width[33m:[39m [33mSize[39m }[33m,[39m [33mRotateStyle[39m[33m,[39m [33mStyle[39m][33m,[39m children[33m:[39m _jsxs([33mSvg[39m[33m,[39m { height[33m:[39m [33mSize[39m[33m,[39m viewBox[33m:[39m [32m`0 0 ${Size} ${Size}`[39m[33m,[39m width[33m:[39m [33mSize[39m[33m,[39m children[33m:[39m [_jsx([33mCircle[39m[33m,[39m { cx[33m:[39m [33mSize[39m [33m/[39m [35m2[39m[33m,[39m cy[33m:[39m [33mSize[39m [33m/[39m [35m2[39m[33m,[39m fill[33m:[39m [32m"none"[39m[33m,[39m r[33m:[39m [33mRadius[39m[33m,[39m stroke[33m:[39m [33mBorderColor[39m[33m,[39m strokeWidth[33m:[39m [35m1.5[39m })[33m,[39m _jsx([33mAnimatedCircle[39m[33m,[39m { cx[33m:[39m [33mSize[39m [33m/[39m [35m2[39m[33m,[39m cy[33m:[39m [33mSize[39m [33m/[39m [35m2[39m[33m,[39m fill[33m:[39m [32m"none"[39m[33m,[39m r[33m:[39m [33mRadius[39m[33m,[39m stroke[33m:[39m [33mActiveColor[39m[33m,[39m strokeDasharray[33m:[39m [32m`${Circumference * 0.7} ${Circumference}`[39m[33m,[39m strokeLinecap[33m:[39m [32m"round"[39m[33m,[39m strokeWidth[33m:[39m [35m1.5[39m })] }) }))[33m;[39m
+ [90m    |[39m                                                                                                                                                                                                                                                                                                                                                                               [31m[1m^[22m[39m
+ [90m 51 |[39m }[33m;[39m
+ [90m 52 |[39m [90m//# sourceMappingURL=Spinner.js.map[39m[0m
+Call Stack
+  Spinner (Package\Ui\Distribution\Primitive\Spinner.js:50:367)
+  AllExample (Application\.rnstorybook\stories\All.stories.tsx:322:25)
+  withNotivexTheme (Application\.rnstorybook\preview.tsx:24:13)
+  RootLayout (Application\src\app\_layout.tsx:40:17)
+Web  LOG  Error rendering story for All Playground
+Web  ERROR  
+
+Code: ThemeProvider.js
+[0m [90m 125 |[39m     [36mconst[39m [33mResolved[39m [33m=[39m useTokenResolver()[33m.[39m[33mResolveTypography[39m([33mToken[39m)[33m;[39m
+ [90m 126 |[39m     [36mif[39m ([33mResolved[39m [33m===[39m undefined) {
+[31m[1m>[22m[39m[90m 127 |[39m         [36mthrow[39m [36mnew[39m [33mError[39m([32m"[@notivex/ui] Unknown typography token."[39m)[33m;[39m
+ [90m     |[39m               [31m[1m^[22m[39m
+ [90m 128 |[39m     }
+ [90m 129 |[39m     [36mreturn[39m [33mResolved[39m[33m;[39m
+ [90m 130 |[39m }[33m;[39m[0m
+Call Stack
+  useTypography (Package\Ui\Distribution\ThemeProvider.js:127:15)
+  Text (Package\Ui\Distribution\Primitive\Text.js:28:45)
+  AllExample (Application\.rnstorybook\stories\All.stories.tsx:551:33)
+  withNotivexTheme (Application\.rnstorybook\preview.tsx:24:13)
+  RootLayout (Application\src\app\_layout.tsx:40:17)
+λ Bundled 661ms node_modules\@expo\router-server\node\render.js (1 module)
+RNCONTROLS was loaded twice, this could have bad side-effects
+storybook/actions was loaded twice, this could have bad side-effects
+Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.
+Web Bundled 2276ms node_modules\expo-router\entry.js (1 module)
+Web Bundled 412ms node_modules\expo-router\entry.js (1 module)
+Web  INFO  %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+Web  LOG  Running application "main" with appParams:
+ {"hydrate": undefined, "rootTag": "#root"} 
+Development-level warnings: ON.
+Performance optimizations: OFF.
+Web  WARN  props.pointerEvents is deprecated. Use style.pointerEvents
+Web  WARN  [Reanimated] useAnimatedKeyboard is not available on web yet.
+Web  ERROR  
+
+Code: Meter.js
+[0m [90m 60 |[39m             now[33m:[39m [33mValue[39m[33m,[39m
+ [90m 61 |[39m             text[33m:[39m [32m`Loading progress: ${Value}%`[39m
+[31m[1m>[22m[39m[90m 62 |[39m         }[33m,[39m style[33m:[39m [33mStyle[39m[33m,[39m children[33m:[39m [children[33m,[39m _jsxs([33mSvg[39m[33m,[39m { height[33m:[39m [33mSize[39m[33m,[39m viewBox[33m:[39m [32m"0 0 14 14"[39m[33m,[39m width[33m:[39m [33mSize[39m[33m,[39m children[33m:[39m [_jsx([33mCircle[39m[33m,[39m { cx[33m:[39m [35m7[39m[33m,[39m cy[33m:[39m [35m7[39m[33m,[39m fill[33m:[39m [32m"none"[39m[33m,[39m r[33m:[39m [33mRadius[39m[33m,[39m stroke[33m:[39m [33mWithAlpha[39m([33mDefaultColor[39m[33m,[39m [35m0.1[39m)[33m,[39m strokeWidth[33m:[39m [35m2[39m })[33m,[39m _jsx([33mG[39m[33m,[39m { origin[33m:[39m [32m"7, 7"[39m[33m,[39m rotation[33m:[39m [33m-[39m[35m90[39m[33m,[39m children[33m:[39m _jsx([33mCircle[39m[33m,[39m { cx[33m:[39m [35m7[39m[33m,[39m cy[33m:[39m [35m7[39m[33m,[39m fill[33m:[39m [32m"none"[39m[33m,[39m r[33m:[39m [33mRadius[39m[33m,[39m stroke[33m:[39m [33mTrackColor[39m [33m?[39m[33m?[39m [33mBlueColor[39m[33m,[39m strokeDasharray[33m:[39m [32m`${Circumference}`[39m[33m,[39m strokeDashoffset[33m:[39m [33mOffset[39m[33m,[39m strokeLinecap[33m:[39m [32m"round"[39m[33m,[39m strokeWidth[33m:[39m [35m2[39m }) })] })] }))[33m;[39m
+ [90m    |[39m                                                                                                                                                                                                                                           [31m[1m^[22m[39m
+ [90m 63 |[39m }[33m;[39m
+ [90m 64 |[39m [90m//# sourceMappingURL=Meter.js.map[39m[0m
+Call Stack
+  MeterRing (Package\Ui\Distribution\Primitive\Meter.js:62:235)
+  AllExample (Application\.rnstorybook\stories\All.stories.tsx:263:29)
+  withNotivexTheme (Application\.rnstorybook\preview.tsx:24:13)
+  RootLayout (Application\src\app\_layout.tsx:40:17)
+Web  ERROR  
+
+Code: Spinner.js
+[0m [90m 48 |[39m     [36mconst[39m [33mRadius[39m [33m=[39m ([33mSize[39m [33m/[39m [35m2[39m) [33m-[39m [35m1.5[39m[33m;[39m
+ [90m 49 |[39m     [36mconst[39m [33mCircumference[39m [33m=[39m [35m2[39m [33m*[39m [33mMath[39m[33m.[39m[33mPI[39m [33m*[39m [33mRadius[39m[33m;[39m
+[31m[1m>[22m[39m[90m 50 |[39m     [36mreturn[39m (_jsx([33mAnimated[39m[33m.[39m[33mView[39m[33m,[39m { accessibilityLabel[33m:[39m [32m"Loading"[39m[33m,[39m accessibilityRole[33m:[39m [32m"progressbar"[39m[33m,[39m style[33m:[39m [{ height[33m:[39m [33mSize[39m[33m,[39m width[33m:[39m [33mSize[39m }[33m,[39m [33mRotateStyle[39m[33m,[39m [33mStyle[39m][33m,[39m children[33m:[39m _jsxs([33mSvg[39m[33m,[39m { height[33m:[39m [33mSize[39m[33m,[39m viewBox[33m:[39m [32m`0 0 ${Size} ${Size}`[39m[33m,[39m width[33m:[39m [33mSize[39m[33m,[39m children[33m:[39m [_jsx([33mCircle[39m[33m,[39m { cx[33m:[39m [33mSize[39m [33m/[39m [35m2[39m[33m,[39m cy[33m:[39m [33mSize[39m [33m/[39m [35m2[39m[33m,[39m fill[33m:[39m [32m"none"[39m[33m,[39m r[33m:[39m [33mRadius[39m[33m,[39m stroke[33m:[39m [33mBorderColor[39m[33m,[39m strokeWidth[33m:[39m [35m1.5[39m })[33m,[39m _jsx([33mAnimatedCircle[39m[33m,[39m { cx[33m:[39m [33mSize[39m [33m/[39m [35m2[39m[33m,[39m cy[33m:[39m [33mSize[39m [33m/[39m [35m2[39m[33m,[39m fill[33m:[39m [32m"none"[39m[33m,[39m r[33m:[39m [33mRadius[39m[33m,[39m stroke[33m:[39m [33mActiveColor[39m[33m,[39m strokeDasharray[33m:[39m [32m`${Circumference * 0.7} ${Circumference}`[39m[33m,[39m strokeLinecap[33m:[39m [32m"round"[39m[33m,[39m strokeWidth[33m:[39m [35m1.5[39m })] }) }))[33m;[39m
+ [90m    |[39m                                                                                                                                                                                                                                                                                                                                                                               [31m[1m^[22m[39m
+ [90m 51 |[39m }[33m;[39m
+ [90m 52 |[39m [90m//# sourceMappingURL=Spinner.js.map[39m[0m
+Call Stack
+  Spinner (Package\Ui\Distribution\Primitive\Spinner.js:50:367)
+  AllExample (Application\.rnstorybook\stories\All.stories.tsx:322:25)
+  withNotivexTheme (Application\.rnstorybook\preview.tsx:24:13)
+  RootLayout (Application\src\app\_layout.tsx:40:17)
+Web  WARN  Image: style.tintColor is deprecated. Please use props.tintColor.
+Web  WARN  Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md

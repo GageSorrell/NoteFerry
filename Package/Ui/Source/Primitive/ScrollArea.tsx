@@ -29,13 +29,12 @@ export type ScrollAreaOrientation =
     | "Horizontal";
 
 /** {@inheritDoc ScrollArea} */
-export interface ScrollAreaProps
+export interface ScrollAreaProps extends React.PropsWithChildren
 {
     readonly Orientation?: ScrollAreaOrientation;
     readonly ShowsScrollIndicator?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
     readonly ContentStyle?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**

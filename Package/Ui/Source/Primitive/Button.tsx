@@ -71,16 +71,15 @@ const SizeStyle: Record<ButtonSize, ViewStyle> =
     } as const);
 
 /** {@inheritDoc Button} */
-export interface ButtonProps
+export interface ButtonProps extends React.PropsWithChildren
 {
-    readonly Variant?: ButtonVariant;
-    readonly Size?: ButtonSize;
+    readonly AccessibilityLabel?: string | undefined;
     readonly Disabled?: boolean;
     readonly Loading?: boolean;
     readonly OnPress?: ((Event: GestureResponderEvent) => void) | undefined;
+    readonly Size?: ButtonSize;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly AccessibilityLabel?: string | undefined;
-    readonly children?: React.ReactNode;
+    readonly Variant?: ButtonVariant;
 }
 
 export/**
@@ -291,8 +290,13 @@ const CloseButton = ({
 }: Pick<ButtonProps, "OnPress" | "AccessibilityLabel">): React.JSX.Element =>
     <Button
         { ...{ AccessibilityLabel, OnPress } }
+        Size="Circle"
         Variant="Close">
-        <Body>✕</Body>
+        <Body
+            Color={ Semantic.Muted }
+            Style={ Styles.CloseGlyph }>
+            ✕
+        </Body>
     </Button>;
 
 const Styles = StyleSheet.create({
@@ -302,6 +306,11 @@ const Styles = StyleSheet.create({
         flexDirection: "row",
         gap: 6,
         justifyContent: "center"
+    },
+    CloseGlyph:
+    {
+        fontSize: 12,
+        lineHeight: 18
     },
     Disabled:
     {

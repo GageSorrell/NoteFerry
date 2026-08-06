@@ -86,6 +86,7 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
+    Heading3,
     Input,
     Label,
     MeterBar,
@@ -125,19 +126,19 @@ import { ScrollView, View } from "react-native";
 import { Array } from "effect";
 import { useForm } from "react-hook-form";
 
-interface SectionProps
+interface SectionProps extends React.PropsWithChildren
 {
     readonly Title: string;
-    readonly children?: React.ReactNode;
 }
 
-const Section = ({ Title, children }: SectionProps): React.JSX.Element => (
+const Section = ({ Title, children }: SectionProps): React.JSX.Element =>
     <View style={ { gap: 12 } }>
-        <Text Variant="Heading3">{Title}</Text>
-        {children}
+        <Heading3>
+            { Title }
+        </Heading3>
+        { children }
         <Separator />
-    </View>
-);
+    </View>;
 
 // `TooltipTrigger`/`ContextMenuTrigger` need to own their `Pressable`
 // (long-press/hover), so their demo content here is inert — see
@@ -548,12 +549,14 @@ const AllExample = (): React.JSX.Element =>
                                 </TabsTrigger>
                             </TabsList>
                             <TabsContent Value="board">
-                                <Text Style={ { paddingTop: 12 } }>
+                                <Text Style={ { paddingTop: 12 } }
+                                    Variant="Body">
                                     Board view content.
                                 </Text>
                             </TabsContent>
                             <TabsContent Value="table">
-                                <Text Style={ { paddingTop: 12 } }>
+                                <Text Style={ { paddingTop: 12 } }
+                                    Variant="Body">
                                     Table view content.
                                 </Text>
                             </TabsContent>
@@ -704,7 +707,10 @@ const AllExample = (): React.JSX.Element =>
                                                 paddingHorizontal: 8
                                             } }>
                                             <Sortable.Handle />
-                                            <Text Style={ { marginLeft: 8 } }>{Id}</Text>
+                                            <Text Style={ { marginLeft: 8 } }
+                                                Variant="Body">
+                                                {Id}
+                                            </Text>
                                         </View>
                                     </Sortable.Item>
                                 ))}
@@ -731,7 +737,7 @@ const AllExample = (): React.JSX.Element =>
                                             borderBottomWidth: 1,
                                             padding: 10
                                         } }>
-                                        <Text>{ Row }</Text>
+                                        <Text Variant="Body">{ Row }</Text>
                                     </View>
                                 )
                             }

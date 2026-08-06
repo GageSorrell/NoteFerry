@@ -94,7 +94,7 @@ const CloneTrigger = (
     });
 
 /** {@inheritDoc Popup} */
-export interface PopupProps
+export interface PopupProps extends React.PropsWithChildren
 {
     readonly IsVisible: boolean;
     readonly OnRequestClose: () => void;
@@ -107,7 +107,6 @@ export interface PopupProps
      */
     readonly Variant?: "Popup" | "Tooltip";
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -134,7 +133,16 @@ const Popup = ({
     const CardShadow = useShadow(Shadow.Card);
 
     const VariantStyle: ViewStyle = Variant === "Tooltip"
-        ? { backgroundColor: TooltipBackground, borderRadius: SmallRadius }
+        ? {
+            alignItems: "center",
+            backgroundColor: TooltipBackground,
+            borderRadius: SmallRadius,
+            flexDirection: "row",
+            gap: 6,
+            maxWidth: 220,
+            paddingHorizontal: 8,
+            paddingVertical: 4
+        }
         : {
             backgroundColor: PopoverBackground,
             borderColor: BorderColor,

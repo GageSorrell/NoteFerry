@@ -29,10 +29,9 @@ import { UseColor, useRadii } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /** {@inheritDoc MenuGroup} */
-export interface MenuGroupProps
+export interface MenuGroupProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -45,10 +44,9 @@ const MenuGroup = ({ Style, children }: MenuGroupProps): React.JSX.Element =>
     <View style={ [ { paddingVertical: 4 }, Style ] }>{ children }</View>;
 
 /** {@inheritDoc MenuLabel} */
-export interface MenuLabelProps
+export interface MenuLabelProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -83,7 +81,7 @@ export type MenuItemVariant =
     | "Error";
 
 /** {@inheritDoc MenuItem} */
-export interface MenuItemProps
+export interface MenuItemProps extends React.PropsWithChildren
 {
     readonly Variant?: MenuItemVariant | undefined;
     readonly Icon?: React.ReactNode;
@@ -92,7 +90,6 @@ export interface MenuItemProps
     readonly Disabled?: boolean;
     readonly OnPress?: (Event: GestureResponderEvent) => void;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -184,10 +181,9 @@ const MenuItem = ({
 };
 
 /** {@inheritDoc MenuItemAction} */
-export interface MenuItemActionProps
+export interface MenuItemActionProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
@@ -222,10 +218,7 @@ const MenuItemCheck = (): React.JSX.Element =>
 };
 
 /** {@inheritDoc MenuItemSelect} */
-export interface MenuItemSelectProps
-{
-    readonly children?: React.ReactNode;
-}
+export interface MenuItemSelectProps extends React.PropsWithChildren { }
 
 export/**
        * TODO Write description.
@@ -253,10 +246,7 @@ const MenuItemSelect = ({ children }: MenuItemSelectProps): React.JSX.Element =>
 };
 
 /** {@inheritDoc MenuItemShortcut} */
-export interface MenuItemShortcutProps
-{
-    readonly children?: React.ReactNode;
-}
+export interface MenuItemShortcutProps extends React.PropsWithChildren { }
 
 export/**
        * TODO Write description.
@@ -272,10 +262,9 @@ const MenuItemShortcut = ({ children }: MenuItemShortcutProps): React.JSX.Elemen
     </MenuItemAction>;
 
 /** {@inheritDoc MenuFooter} */
-export interface MenuFooterProps
+export interface MenuFooterProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**

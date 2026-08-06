@@ -38,10 +38,9 @@ export {
 } from "./DropdownMenu.js";
 
 /** {@inheritDoc ContextMenuTrigger} */
-export interface ContextMenuTriggerProps
+export interface ContextMenuTriggerProps extends React.PropsWithChildren
 {
     readonly Style?: StyleProp<ViewStyle>;
-    readonly children?: React.ReactNode;
 }
 
 export/**
