@@ -7,21 +7,19 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet } from "react-native";
+import type * as Domain from "@notivex/domain";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Body, Heading1 } from "@notivex/ui/Primitive";
 import { ConnectNotion } from "@/features/connections/connect";
 import { DisconnectNotion } from "@/runtime/notivex-api";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Spacing } from "@/constants/theme";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { useAuth } from "@/providers/auth-provider";
+import { UseAuth } from "@/Domain/Auth";
 import { useConnections } from "@/features/connections/use-connections";
 import { useState } from "react";
 
 const HomeScreen = () =>
 {
-    const { SignOut } = useAuth();
+    const { SignOut } = UseAuth();
     const { Connections, IsLoading, Refetch } = useConnections();
     const [ Busy, SetBusy ] = useState(false);
 
@@ -66,23 +64,20 @@ const HomeScreen = () =>
     }
 
     return (
-        <ThemedView style={ styles.container }>
+        <View style={ styles.container }>
             <SafeAreaView style={ styles.safeArea }>
-                <ThemedText type="title">Notivex</ThemedText>
-                <ThemedText
-                    style={ styles.subtitle }
-                    themeColor="textSecondary"
-                    type="default">
+                <Heading1>Notivex</Heading1>
+                <Body Style={ styles.subtitle }>
                     Notion connections
-                </ThemedText>
+                </Body>
 
                 <Pressable
                     disabled={ Busy }
                     onPress={ HandleConnect }
                     style={ styles.primaryButton }>
-                    <ThemedText type="smallBold">
-                        {Busy ? "Working…" : "Connect a Notion workspace"}
-                    </ThemedText>
+                    <Body>
+                        { Busy ? "Working…" : "Connect a Notion workspace" }
+                    </Body>
                 </Pressable>
 
                 <ScrollView
@@ -92,44 +87,37 @@ const HomeScreen = () =>
                         ? <ActivityIndicator />
                         : Connections.length === 0
                             ? (
-                                <ThemedText
-                                    themeColor="textSecondary"
-                                    type="small">
+                                <Body>
                                     No connections yet.
-                                </ThemedText>
+                                </Body>
                             )
-                            : Connections.map((Connection) => (
-                                <ThemedView
+                            : Connections.map((Connection: Domain.NotionConnection.NotionConnection) => (
+                                <View
                                     key={ Connection.Id }
-                                    style={ styles.row }
-                                    type="backgroundElement">
-                                    <ThemedText type="smallBold">
-                                        {Connection.WorkspaceName}
-                                    </ThemedText>
+                                    style={ styles.row }>
+                                    <Body>
+                                        { Connection.WorkspaceName }
+                                    </Body>
                                     <Pressable
                                         disabled={ Busy }
                                         onPress={ () => HandleDisconnect(Connection.Id) }>
-                                        <ThemedText
-                                            themeColor="textSecondary"
-                                            type="small">
+                                        <Body>
                                             Disconnect
-                                        </ThemedText>
+                                        </Body>
                                     </Pressable>
-                                </ThemedView>
+                                </View>
                             ))}
                 </ScrollView>
 
                 <Pressable
-                    onPress={ () => { void SignOut(); } }
+                    onPress={ () => void SignOut() }
                     style={ styles.signOut }>
-                    <ThemedText
-                        themeColor="textSecondary"
-                        type="small">
+                    <Body>
                         Sign out
-                    </ThemedText>
+                    </Body>
                 </Pressable>
             </SafeAreaView>
-        </ThemedView>
+        </View>
     );
 };
 
@@ -140,8 +128,8 @@ const styles = StyleSheet.create({
     },
     list:
     {
-        gap: Spacing.M,
-        paddingVertical: Spacing.L
+        gap: 32,
+        paddingVertical: 48
     },
     listContainer:
     {
@@ -153,35 +141,35 @@ const styles = StyleSheet.create({
         alignItems: "center",
         alignSelf: "stretch",
         borderColor: "#8883",
-        borderRadius: Spacing.L,
+        borderRadius: 32,
         borderWidth: StyleSheet.hairlineWidth,
         justifyContent: "center",
         minHeight: 48,
-        paddingHorizontal: Spacing.XL
+        paddingHorizontal: 64
     },
     row:
     {
         alignItems: "center",
-        borderRadius: Spacing.M,
+        borderRadius: 32,
         flexDirection: "row",
         justifyContent: "space-between",
-        padding: Spacing.L
+        padding: 32
     },
     safeArea:
     {
         flex: 1,
-        gap: Spacing.L,
-        paddingHorizontal: Spacing.XL,
-        paddingVertical: Spacing.L
+        gap: 3,
+        paddingHorizontal: 64,
+        paddingVertical: 48
     },
     signOut:
     {
         alignItems: "center",
-        paddingVertical: Spacing.M
+        paddingVertical: 48
     },
     subtitle:
     {
-        marginTop: Spacing.XS
+        marginTop: 8
     }
 });
 

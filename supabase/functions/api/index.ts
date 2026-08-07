@@ -3,8 +3,8 @@
  * `@notivex/api` HttpApi contract via Effect so the app can use a derived,
  * fully typed client (ArchitectureInitialDraft.md §16).
  *
- * The `Connections` group is implemented; `DataSources`, `Destinations` and
- * `Pages` are stubbed with 501 so the contract stays whole and the client
+ * The `Connections` and `DataSources` groups are implemented; `Destinations`
+ * and `Pages` are stubbed with 501 so the contract stays whole and the client
  * covers every endpoint. Those groups land in later slices.
  *
  * @module notivex/functions/api
@@ -15,6 +15,7 @@
  * @license   MIT
  */
 
+import * as DataSources from "../_shared/DataSources.ts";
 import * as Domain from "@notivex/domain";
 import * as FileSystem from "effect/FileSystem";
 import * as Path from "effect/Path";
@@ -136,9 +137,34 @@ const ConnectionsLive = HttpApiBuilder.group(NotivexApi, "Connections", (Handler
 
 const DataSourcesLive = HttpApiBuilder.group(NotivexApi, "DataSources", (Handlers) =>
     Handlers
-        .handle("List", NotImplemented)
-        .handle("Refresh", NotImplemented)
-        .handle("Get", NotImplemented));
+        .handle("Search", (Input) =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                return yield* DataSources.SearchForUser(UserId, Input.params.ConnectionId);
+            }))
+        .handle("List", () =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                return yield* DataSources.ListForUser(UserId);
+            }))
+        .handle("Refresh", (Input) =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                return yield* DataSources.RefreshForUser(UserId, Input.payload.ConnectionId, Input.payload.DataSourceId);
+            }))
+        .handle("Get", (Input) =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                return yield* DataSources.GetForUser(UserId, Input.params.DataSourceId);
+            })));
 
 const DestinationsLive = HttpApiBuilder.group(NotivexApi, "Destinations", (Handlers) =>
     Handlers
@@ -168,4 +194,20 @@ const AppLayer = HttpApiBuilder.layer(NotivexApi).pipe(
 
 const { handler } = HttpRouter.toWebHandler(AppLayer);
 
-Deno.serve(handler);
+/* Supabase mounts this function under `.../functions/v1/api`, so the request
+ * path arrives prefixed with the function name (`/api/...`). Strip that prefix
+ * so it matches the HttpApi routes, which begin at each group's prefix (e.g.
+ * `/Connections`). */
+Deno.serve((Request_: Request) =>
+{
+    const Url = new URL(Request_.url);
+    const Marker = "/api";
+    const Index = Url.pathname.indexOf(Marker);
+
+    if (Index >= 0)
+    {
+        Url.pathname = Url.pathname.slice(Index + Marker.length) || "/";
+    }
+
+    return handler(new Request(Url.toString(), Request_ as unknown as RequestInit));
+});

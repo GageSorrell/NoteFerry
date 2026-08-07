@@ -4,31 +4,29 @@
  * §34: "React should sit at the outside edge of Effect"); the Effect-facing
  * seam is {@link CurrentUser}.
  *
- * @module notivex/providers/auth-provider
+ * @module notivex/Domain/Auth/NotivexAuthProvider
  *
- * @file      auth-provider.tsx
+ * @file      NotivexAuthProvider.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
  * @copyright (c) 2026 Gage Sorrell
  * @license   MIT
  */
 
+import * as React from "react";
 import type { AuthChangeEvent, AuthError, Session } from "@supabase/supabase-js";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import type { PropsWithChildren } from "react";
 import { Supabase } from "@/runtime/supabase";
 
-/** The shape provided to consumers of {@link useAuth}. */
-export interface AuthContextValue
+/** The shape provided to consumers of {@link UseAuth}. */
+export interface NotivexAuth
 {
     readonly IsLoading: boolean;
     readonly Session: Session | null;
     readonly SignOut: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextValue>({
+const AuthContext = React.createContext<NotivexAuth>({
     IsLoading: true,
     Session: null,
-    /* eslint-disable-next-line @typescript-eslint/no-empty-function */
     SignOut: async () => { }
 });
 
@@ -39,12 +37,12 @@ const AuthContext = createContext<AuthContextValue>({
  * @category Providers
  * @since 1.0.0
  */
-export function AuthProvider({ children }: PropsWithChildren)
+export function NotivexAuthProvider({ children }: React.PropsWithChildren)
 {
-    const [ Session, SetSession ] = useState<Session | null>(null);
-    const [ IsLoading, SetIsLoading ] = useState(true);
+    const [ Session, SetSession ] = React.useState<Session | null>(null);
+    const [ IsLoading, SetIsLoading ] = React.useState(true);
 
-    useEffect(() =>
+    React.useEffect(() =>
     {
         type SessionArg =
             | {
@@ -89,7 +87,7 @@ export function AuthProvider({ children }: PropsWithChildren)
         return data.subscription.unsubscribe;
     }, [ ]);
 
-    const Value = useMemo<AuthContextValue>(() => ({
+    const value = React.useMemo<NotivexAuth>(() => ({
         IsLoading,
         Session,
         SignOut: async () =>
@@ -98,16 +96,17 @@ export function AuthProvider({ children }: PropsWithChildren)
         }
     }), [ IsLoading, Session ]);
 
-    return <AuthContext.Provider value={ Value }>{ children }</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider { ...{ value } }>
+            { children }
+        </AuthContext.Provider>
+    );
 }
 
-/**
- * Reads the current auth context.
- *
- * @category Providers
- * @since 1.0.0
- */
-export function useAuth(): AuthContextValue
-{
-    return useContext(AuthContext);
-}
+export/**
+       * Reads the current auth context.
+       *
+       * @category Auth
+       * @since 1.0.0
+       */
+const UseAuth = (): NotivexAuth => React.useContext(AuthContext);

@@ -31,7 +31,7 @@ export interface UseConnections
 export function useConnections(): UseConnections
 {
     const [ Connections, SetConnections ] =
-        useState<ReadonlyArray<Domain.NotionConnection.NotionConnection>>([]);
+        useState<ReadonlyArray<Domain.NotionConnection.NotionConnection>>([ ]);
     const [ IsLoading, SetIsLoading ] = useState(true);
 
     const Refetch = useCallback(async () =>

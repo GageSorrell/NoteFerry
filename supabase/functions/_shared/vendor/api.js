@@ -52,7 +52,8 @@ __export(DataSourcesApi_exports, {
   Get: () => Get,
   List: () => List2,
   Refresh: () => Refresh,
-  RefreshDataSourcePayload: () => RefreshDataSourcePayload
+  RefreshDataSourcePayload: () => RefreshDataSourcePayload,
+  Search: () => Search
 });
 import * as Domain2 from "@notivex/domain";
 import { HttpApiEndpoint as HttpApiEndpoint2, HttpApiGroup as HttpApiGroup2 } from "effect/unstable/httpapi";
@@ -60,6 +61,21 @@ import { Schema as Schema2 } from "effect";
 var RefreshDataSourcePayload = Schema2.Struct({
   ConnectionId: Domain2.Id.NotionConnectionId,
   DataSourceId: Domain2.Id.NotionDataSourceId
+});
+var Search = HttpApiEndpoint2.get("Search", "/Search/:ConnectionId", {
+  error: [
+    Domain2.Error.AuthenticationRequired,
+    Domain2.Error.NotionConnectionNotFound,
+    Domain2.Error.NotionConnectionRevoked,
+    Domain2.Error.NotionUnauthorized,
+    Domain2.Error.NotionRateLimited,
+    Domain2.Error.NotionUnavailable,
+    Domain2.Error.DatabaseError
+  ],
+  params: {
+    ConnectionId: Domain2.Id.NotionConnectionId
+  },
+  success: Schema2.Array(Domain2.DataSource.DiscoveredDataSource)
 });
 var List2 = HttpApiEndpoint2.get("List", "/", {
   error: [
@@ -94,7 +110,7 @@ var Get = HttpApiEndpoint2.get("Get", "/:DataSourceId", {
   },
   success: Domain2.DataSource.CachedDataSourceSchema
 });
-var DataSourcesApi = HttpApiGroup2.make("DataSources").add(List2, Refresh, Get);
+var DataSourcesApi = HttpApiGroup2.make("DataSources").add(Search, List2, Refresh, Get);
 
 // Package/Api/Distribution/DestinationsApi.js
 var DestinationsApi_exports = {};

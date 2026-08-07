@@ -6,6 +6,13 @@
  * `Effect.catchTag("NotionRateLimited", ...)` rather than inspecting an HTTP
  * status code. See `ArchitectureInitialDraft.md` §14.
  *
+ * Each error also carries an `httpApiStatus` annotation. When these errors are
+ * used as an `HttpApiEndpoint` failure schema, Effect's HttpApi tooling reads
+ * that annotation to choose the response status (equivalent to
+ * `HttpApiSchema.status(code)`); without it every tagged error would encode as
+ * a 500. The annotation is inert metadata everywhere else — the domain stays
+ * free of any HTTP dependency.
+ *
  * @module @notivex/domain/Error
  *
  * @file      Error.ts
@@ -25,7 +32,8 @@ import { Schema } from "effect";
  */
 export class AuthenticationRequired extends Schema.TaggedError<AuthenticationRequired>()(
     "AuthenticationRequired",
-    { }
+    { },
+    { httpApiStatus: 401 }
 ) { }
 
 /**
@@ -37,7 +45,8 @@ export class AuthenticationRequired extends Schema.TaggedError<AuthenticationReq
  */
 export class NotionConnectionNotFound extends Schema.TaggedError<NotionConnectionNotFound>()(
     "NotionConnectionNotFound",
-    { ConnectionId: Id.NotionConnectionId }
+    { ConnectionId: Id.NotionConnectionId },
+    { httpApiStatus: 404 }
 ) { }
 
 /**
@@ -49,7 +58,8 @@ export class NotionConnectionNotFound extends Schema.TaggedError<NotionConnectio
  */
 export class NotionConnectionRevoked extends Schema.TaggedError<NotionConnectionRevoked>()(
     "NotionConnectionRevoked",
-    { ConnectionId: Id.NotionConnectionId }
+    { ConnectionId: Id.NotionConnectionId },
+    { httpApiStatus: 409 }
 ) { }
 
 /**
@@ -62,7 +72,8 @@ export class NotionConnectionRevoked extends Schema.TaggedError<NotionConnection
  */
 export class NotionResourceNotShared extends Schema.TaggedError<NotionResourceNotShared>()(
     "NotionResourceNotShared",
-    { DataSourceId: Schema.optional(Id.NotionDataSourceId) }
+    { DataSourceId: Schema.optional(Id.NotionDataSourceId) },
+    { httpApiStatus: 403 }
 ) { }
 
 /**
@@ -74,7 +85,8 @@ export class NotionResourceNotShared extends Schema.TaggedError<NotionResourceNo
  */
 export class NotionUnauthorized extends Schema.TaggedError<NotionUnauthorized>()(
     "NotionUnauthorized",
-    { Message: Schema.optional(Schema.String) }
+    { Message: Schema.optional(Schema.String) },
+    { httpApiStatus: 502 }
 ) { }
 
 /**
@@ -86,7 +98,8 @@ export class NotionUnauthorized extends Schema.TaggedError<NotionUnauthorized>()
  */
 export class NotionRateLimited extends Schema.TaggedError<NotionRateLimited>()(
     "NotionRateLimited",
-    { RetryAfterSeconds: Schema.optional(Schema.Number) }
+    { RetryAfterSeconds: Schema.optional(Schema.Number) },
+    { httpApiStatus: 429 }
 ) { }
 
 /**
@@ -98,7 +111,8 @@ export class NotionRateLimited extends Schema.TaggedError<NotionRateLimited>()(
  */
 export class NotionValidationError extends Schema.TaggedError<NotionValidationError>()(
     "NotionValidationError",
-    { Message: Schema.String }
+    { Message: Schema.String },
+    { httpApiStatus: 422 }
 ) { }
 
 /**
@@ -110,7 +124,8 @@ export class NotionValidationError extends Schema.TaggedError<NotionValidationEr
  */
 export class NotionUnavailable extends Schema.TaggedError<NotionUnavailable>()(
     "NotionUnavailable",
-    { Message: Schema.optional(Schema.String) }
+    { Message: Schema.optional(Schema.String) },
+    { httpApiStatus: 503 }
 ) { }
 
 /**
@@ -122,7 +137,8 @@ export class NotionUnavailable extends Schema.TaggedError<NotionUnavailable>()(
  */
 export class DataSourceNotFound extends Schema.TaggedError<DataSourceNotFound>()(
     "DataSourceNotFound",
-    { DataSourceId: Id.NotionDataSourceId }
+    { DataSourceId: Id.NotionDataSourceId },
+    { httpApiStatus: 404 }
 ) { }
 
 /**
@@ -135,7 +151,8 @@ export class DataSourceNotFound extends Schema.TaggedError<DataSourceNotFound>()
  */
 export class DataSourceSchemaChanged extends Schema.TaggedError<DataSourceSchemaChanged>()(
     "DataSourceSchemaChanged",
-    { DataSourceId: Id.NotionDataSourceId }
+    { DataSourceId: Id.NotionDataSourceId },
+    { httpApiStatus: 409 }
 ) { }
 
 /**
@@ -147,7 +164,8 @@ export class DataSourceSchemaChanged extends Schema.TaggedError<DataSourceSchema
  */
 export class InvalidPageDraft extends Schema.TaggedError<InvalidPageDraft>()(
     "InvalidPageDraft",
-    { Message: Schema.String }
+    { Message: Schema.String },
+    { httpApiStatus: 422 }
 ) { }
 
 /**
@@ -158,7 +176,8 @@ export class InvalidPageDraft extends Schema.TaggedError<InvalidPageDraft>()(
  */
 export class DatabaseError extends Schema.TaggedError<DatabaseError>()(
     "DatabaseError",
-    { Message: Schema.String }
+    { Message: Schema.String },
+    { httpApiStatus: 500 }
 ) { }
 
 /**
@@ -170,7 +189,8 @@ export class DatabaseError extends Schema.TaggedError<DatabaseError>()(
  */
 export class NetworkError extends Schema.TaggedError<NetworkError>()(
     "NetworkError",
-    { Message: Schema.String }
+    { Message: Schema.String },
+    { httpApiStatus: 502 }
 ) { }
 
 export/**

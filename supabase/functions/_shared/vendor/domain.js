@@ -247,10 +247,18 @@ var PropertyInput = Schema4.Union([
 var DataSource_exports = {};
 __export(DataSource_exports, {
   CachedDataSourceSchema: () => CachedDataSourceSchema,
-  CachedDataSourceSchemaVersion: () => CachedDataSourceSchemaVersion
+  CachedDataSourceSchemaVersion: () => CachedDataSourceSchemaVersion,
+  DiscoveredDataSource: () => DiscoveredDataSource
 });
 import { Schema as Schema5 } from "effect";
 var CachedDataSourceSchemaVersion = Schema5.Literal(1);
+var DiscoveredDataSource = Schema5.Struct({
+  ConnectionId: NotionConnectionId,
+  DatabaseId: NotionDatabaseId,
+  DataSourceId: NotionDataSourceId,
+  Icon: Schema5.optional(Schema5.String),
+  Title: Schema5.String
+});
 var CachedDataSourceSchema = Schema5.Struct({
   ConnectionId: NotionConnectionId,
   DataSourceId: NotionDataSourceId,
@@ -385,31 +393,31 @@ __export(Error_exports, {
   NotionValidationError: () => NotionValidationError
 });
 import { Schema as Schema10 } from "effect";
-var AuthenticationRequired = class extends Schema10.TaggedError()("AuthenticationRequired", {}) {
+var AuthenticationRequired = class extends Schema10.TaggedError()("AuthenticationRequired", {}, { httpApiStatus: 401 }) {
 };
-var NotionConnectionNotFound = class extends Schema10.TaggedError()("NotionConnectionNotFound", { ConnectionId: NotionConnectionId }) {
+var NotionConnectionNotFound = class extends Schema10.TaggedError()("NotionConnectionNotFound", { ConnectionId: NotionConnectionId }, { httpApiStatus: 404 }) {
 };
-var NotionConnectionRevoked = class extends Schema10.TaggedError()("NotionConnectionRevoked", { ConnectionId: NotionConnectionId }) {
+var NotionConnectionRevoked = class extends Schema10.TaggedError()("NotionConnectionRevoked", { ConnectionId: NotionConnectionId }, { httpApiStatus: 409 }) {
 };
-var NotionResourceNotShared = class extends Schema10.TaggedError()("NotionResourceNotShared", { DataSourceId: Schema10.optional(NotionDataSourceId) }) {
+var NotionResourceNotShared = class extends Schema10.TaggedError()("NotionResourceNotShared", { DataSourceId: Schema10.optional(NotionDataSourceId) }, { httpApiStatus: 403 }) {
 };
-var NotionUnauthorized = class extends Schema10.TaggedError()("NotionUnauthorized", { Message: Schema10.optional(Schema10.String) }) {
+var NotionUnauthorized = class extends Schema10.TaggedError()("NotionUnauthorized", { Message: Schema10.optional(Schema10.String) }, { httpApiStatus: 502 }) {
 };
-var NotionRateLimited = class extends Schema10.TaggedError()("NotionRateLimited", { RetryAfterSeconds: Schema10.optional(Schema10.Number) }) {
+var NotionRateLimited = class extends Schema10.TaggedError()("NotionRateLimited", { RetryAfterSeconds: Schema10.optional(Schema10.Number) }, { httpApiStatus: 429 }) {
 };
-var NotionValidationError = class extends Schema10.TaggedError()("NotionValidationError", { Message: Schema10.String }) {
+var NotionValidationError = class extends Schema10.TaggedError()("NotionValidationError", { Message: Schema10.String }, { httpApiStatus: 422 }) {
 };
-var NotionUnavailable = class extends Schema10.TaggedError()("NotionUnavailable", { Message: Schema10.optional(Schema10.String) }) {
+var NotionUnavailable = class extends Schema10.TaggedError()("NotionUnavailable", { Message: Schema10.optional(Schema10.String) }, { httpApiStatus: 503 }) {
 };
-var DataSourceNotFound = class extends Schema10.TaggedError()("DataSourceNotFound", { DataSourceId: NotionDataSourceId }) {
+var DataSourceNotFound = class extends Schema10.TaggedError()("DataSourceNotFound", { DataSourceId: NotionDataSourceId }, { httpApiStatus: 404 }) {
 };
-var DataSourceSchemaChanged = class extends Schema10.TaggedError()("DataSourceSchemaChanged", { DataSourceId: NotionDataSourceId }) {
+var DataSourceSchemaChanged = class extends Schema10.TaggedError()("DataSourceSchemaChanged", { DataSourceId: NotionDataSourceId }, { httpApiStatus: 409 }) {
 };
-var InvalidPageDraft = class extends Schema10.TaggedError()("InvalidPageDraft", { Message: Schema10.String }) {
+var InvalidPageDraft = class extends Schema10.TaggedError()("InvalidPageDraft", { Message: Schema10.String }, { httpApiStatus: 422 }) {
 };
-var DatabaseError = class extends Schema10.TaggedError()("DatabaseError", { Message: Schema10.String }) {
+var DatabaseError = class extends Schema10.TaggedError()("DatabaseError", { Message: Schema10.String }, { httpApiStatus: 500 }) {
 };
-var NetworkError = class extends Schema10.TaggedError()("NetworkError", { Message: Schema10.String }) {
+var NetworkError = class extends Schema10.TaggedError()("NetworkError", { Message: Schema10.String }, { httpApiStatus: 502 }) {
 };
 var DomainError = Schema10.Union([
   AuthenticationRequired,
@@ -591,6 +599,13 @@ export {
  * into one of these instead, so callers can write
  * `Effect.catchTag("NotionRateLimited", ...)` rather than inspecting an HTTP
  * status code. See `ArchitectureInitialDraft.md` §14.
+ *
+ * Each error also carries an `httpApiStatus` annotation. When these errors are
+ * used as an `HttpApiEndpoint` failure schema, Effect's HttpApi tooling reads
+ * that annotation to choose the response status (equivalent to
+ * `HttpApiSchema.status(code)`); without it every tagged error would encode as
+ * a 500. The annotation is inert metadata everywhere else — the domain stays
+ * free of any HTTP dependency.
  *
  * @module @notivex/domain/Error
  *

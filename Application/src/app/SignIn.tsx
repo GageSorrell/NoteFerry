@@ -1,19 +1,17 @@
 /**
- * @module notivex/app/sign-in
+ * @module notivex/app/SignIn
  *
- * @file      sign-in.tsx
+ * @file      SignIn.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
  * @copyright (c) 2026 Gage Sorrell
  * @license   MIT
  */
 
-import { type OAuthProvider, SignInWithOAuth } from "@/features/auth/oauth";
-import { Platform, Pressable, StyleSheet } from "react-native";
+import { Body, Button, Heading1 } from "@notivex/ui/Primitive";
+import { type OAuthProvider, SignInWithOAuth } from "@/Domain/Auth/OAuth";
+import { Platform, StyleSheet, View } from "react-native";
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Spacing } from "@/constants/theme";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
 import { useState } from "react";
 
 const SignInScreen = () =>
@@ -42,25 +40,20 @@ const SignInScreen = () =>
     }
 
     return (
-        <ThemedView style={ styles.container }>
+        <View style={ styles.container }>
             <SafeAreaView style={ styles.safeArea }>
-                <ThemedText type="title">Notivex</ThemedText>
-                <ThemedText
-                    style={ styles.subtitle }
-                    themeColor="textSecondary"
-                    type="default">
+                <Heading1>
+                    Notivex
+                </Heading1>
+                <Body Style={ styles.subtitle }>
                     Sign in to connect your Notion workspace.
-                </ThemedText>
+                </Body>
 
-                {Platform.OS === "ios"
+                { Platform.OS === "ios"
                     ? (
-                        <Pressable
-                            /* No-op until Apple sign-in is configured — see
-                             * AUTH_SETUP.md §3. */
-                            onPress={ () => { } }
-                            style={ styles.button }>
-                            <ThemedText type="smallBold">Continue with Apple</ThemedText>
-                        </Pressable>
+                        <Button Style={ styles.button }>
+                            Continue with Apple
+                        </Button>
                     )
                     : (
                         <GoogleSigninButton
@@ -72,21 +65,15 @@ const SignInScreen = () =>
                         />
                     )}
             </SafeAreaView>
-        </ThemedView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     button:
     {
-        alignItems: "center",
-        alignSelf: "stretch",
-        borderColor: "#8883",
-        borderRadius: Spacing.L,
-        borderWidth: StyleSheet.hairlineWidth,
-        justifyContent: "center",
         minHeight: 48,
-        paddingHorizontal: Spacing.XL
+        paddingHorizontal: 64
     },
     container:
     {
@@ -101,14 +88,20 @@ const styles = StyleSheet.create({
     {
         alignItems: "center",
         flex: 1,
-        gap: Spacing.L,
+        gap: 48,
         justifyContent: "center",
-        paddingHorizontal: Spacing.XL
+        paddingHorizontal: 64
     },
     subtitle:
     {
-        marginBottom: Spacing.L,
+        marginBottom: 32,
         textAlign: "center"
+    },
+    title:
+    {
+        fontSize: 48,
+        fontWeight: 600,
+        lineHeight: 52
     }
 });
 

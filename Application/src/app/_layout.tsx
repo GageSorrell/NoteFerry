@@ -7,14 +7,12 @@
  * @license   MIT
  */
 
-// import * as SplashScreen from "expo-splash-screen";
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
-import { AuthProvider, useAuth } from "@/providers/auth-provider";
+import { NotivexAuthProvider, UseAuth } from "@/Domain/Auth/NotivexAuthProvider";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider as NotivexThemeProvider } from "@notivex/ui";
 import { useColorScheme } from "react-native";
-// SplashScreen.preventAutoHideAsync();
 
 /**
  * The navigator, split out so it can read the auth context provided above it.
@@ -25,7 +23,7 @@ import { useColorScheme } from "react-native";
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 function RootNavigator()
 {
-    const { Session, IsLoading } = useAuth();
+    const { Session, IsLoading } = UseAuth();
 
     if (IsLoading)
     {
@@ -61,9 +59,9 @@ export default function RootLayout()
             <GestureHandlerRootView>
                 <ThemeProvider value={ ColorScheme === "dark" ? DarkTheme : DefaultTheme }>
                     <BottomSheetModalProvider>
-                        <AuthProvider>
+                        <NotivexAuthProvider>
                             <RootNavigator />
-                        </AuthProvider>
+                        </NotivexAuthProvider>
                     </BottomSheetModalProvider>
                 </ThemeProvider>
             </GestureHandlerRootView>

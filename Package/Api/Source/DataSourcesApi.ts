@@ -30,6 +30,38 @@ const RefreshDataSourcePayload = Schema.Struct({
 export type RefreshDataSourcePayload = typeof RefreshDataSourcePayload.Type;
 
 export/**
+       * Discover the data sources a connection can currently see in Notion,
+       * without caching them. This is how a user finds a data source to cache
+       * (via {@link Refresh}) in the first place — the cache endpoints below all
+       * assume a `DataSourceId` you already have. See
+       * `ArchitectureInitialDraft.md` §32, §36.
+       *
+       * @category DataSources
+       * @since 1.0.0
+       */
+const Search = HttpApiEndpoint.get(
+    "Search",
+    "/Search/:ConnectionId",
+    {
+        error:
+        [
+            Domain.Error.AuthenticationRequired,
+            Domain.Error.NotionConnectionNotFound,
+            Domain.Error.NotionConnectionRevoked,
+            Domain.Error.NotionUnauthorized,
+            Domain.Error.NotionRateLimited,
+            Domain.Error.NotionUnavailable,
+            Domain.Error.DatabaseError
+        ],
+        params:
+        {
+            ConnectionId: Domain.Id.NotionConnectionId
+        },
+        success: Schema.Array(Domain.DataSource.DiscoveredDataSource)
+    }
+);
+
+export/**
        * Every data source cached for the current user's connections.
        *
        * @category DataSources
@@ -107,4 +139,4 @@ export/**
        * @category DataSources
        * @since 1.0.0
        */
-const DataSourcesApi = HttpApiGroup.make("DataSources").add(List, Refresh, Get);
+const DataSourcesApi = HttpApiGroup.make("DataSources").add(Search, List, Refresh, Get);

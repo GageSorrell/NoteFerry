@@ -1,7 +1,10 @@
 {
   "imports": {
     "effect": "npm:effect@4.0.0-beta.104",
-    "effect/": "npm:effect@4.0.0-beta.104/",
+    "effect/unstable/http": "npm:effect@4.0.0-beta.104/unstable/http",
+    "effect/unstable/httpapi": "npm:effect@4.0.0-beta.104/unstable/httpapi",
+    "effect/FileSystem": "npm:effect@4.0.0-beta.104/FileSystem",
+    "effect/Path": "npm:effect@4.0.0-beta.104/Path",
     "@supabase/supabase-js": "npm:@supabase/supabase-js@2",
     "@notivex/domain": "../_shared/vendor/domain.js",
     "@notivex/api": "../_shared/vendor/api.js"

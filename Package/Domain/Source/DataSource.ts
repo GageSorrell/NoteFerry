@@ -32,6 +32,26 @@ export/**
 const CachedDataSourceSchemaVersion = Schema.Literal(1);
 
 export/**
+       * A data source surfaced by discovery (Notion search) but not yet cached:
+       * enough to list and pick one, without the full property schema. The
+       * schema itself arrives via `DataSources.Refresh`, which produces a
+       * {@link CachedDataSourceSchema}. See `ArchitectureInitialDraft.md` §36.
+       *
+       * @category DataSource
+       * @since 1.0.0
+       */
+const DiscoveredDataSource = Schema.Struct({
+    ConnectionId: Id.NotionConnectionId,
+    DatabaseId: Id.NotionDatabaseId,
+    DataSourceId: Id.NotionDataSourceId,
+    Icon: Schema.optional(Schema.String),
+    Title: Schema.String
+});
+
+/** {@inheritDoc DiscoveredDataSource} */
+export type DiscoveredDataSource = Schema.Schema.Type<typeof DiscoveredDataSource>;
+
+export/**
        * The versioned, normalized cache of a Notion data source's schema.
        *
        * @category DataSource
