@@ -21,4 +21,5 @@ export * as DataSource from "./DataSource.js";
 export * as NotionConnection from "./NotionConnection.js";
 export * as Destination from "./Destination.js";
 export * as PageDraft from "./PageDraft.js";
+export * as Command from "./Command.js";
 export * as Error from "./Error.js";

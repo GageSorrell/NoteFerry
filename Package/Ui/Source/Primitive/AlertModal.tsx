@@ -64,7 +64,7 @@ const AlertModal = ({ Title, Primary, Secondary, OnTrigger }: AlertModalProps): 
                     OnPress={ Trigger }
                     Size="Small"
                     Style={ Styles.FullWidth }
-                    Variant="Red">
+                    Appearance="Red">
                     { Primary }
                 </Button>
                 <DialogClose

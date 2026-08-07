@@ -96,9 +96,9 @@ const UploadTab = ({ OnSelect }: UploadTabProps): React.JSX.Element =>
     return (
         <View style={ Styles.TabBody }>
             <Button
+                Appearance="Primary"
                 Loading={ IsPicking }
-                OnPress={ () => void HandlePress() }
-                Variant="Primary">
+                OnPress={ () => void HandlePress() }>
                 <Image
                     color={ IconColor }
                     size={ 16 }
@@ -145,15 +145,15 @@ const LinkTab = ({ OnSelect }: LinkTabProps): React.JSX.Element =>
                     OnCancel={ () => SetValue("") }
                     OnChangeText={ SetValue }
                     OnSubmitEditing={ HandleSubmit }
-                    Placeholder="Paste an image link..."
+                    Placeholder="Paste an image link…"
                     Style={ Styles.LinkInput }
                     Value={ Value }
                 />
                 <Button
+                    Appearance="Blue"
                     Disabled={ !IsValid }
                     OnPress={ HandleSubmit }
-                    Size="Small"
-                    Variant="Blue">
+                    Size="Small">
                     Submit
                 </Button>
             </View>
@@ -186,27 +186,33 @@ const CoverPicker = ({ OnDismiss, Ref, OnSelect, OnRemove, TestID }: CoverPicker
     <BottomSheet
         { ...{ OnDismiss, Ref } }
         { ...(TestID === undefined ? { } : { TestId: TestID }) }>
-        <Tabs
-            DefaultValue="Upload"
-            Style={ Styles.Root }>
-            <BottomSheetView>
-                <TabsList>
-                    <TabsTrigger Value="Upload">Upload</TabsTrigger>
-                    <TabsTrigger Value="Link">Link</TabsTrigger>
-                    { OnRemove !== undefined && (
-                        <Button
-                            OnPress={ OnRemove }
-                            Size="Small"
-                            Style={ Styles.RemoveButton }
-                            Variant="Hint">
-                            Remove
-                        </Button>
-                    ) }
-                </TabsList>
-            </BottomSheetView>
-            <TabsContent Value="Upload"><UploadTab OnSelect={ OnSelect } /></TabsContent>
-            <TabsContent Value="Link"><LinkTab OnSelect={ OnSelect } /></TabsContent>
-        </Tabs>
+        <BottomSheetView>
+            <Tabs
+                DefaultValue="Upload"
+                Style={ Styles.Root }>
+                <BottomSheetView>
+                    <TabsList>
+                        <TabsTrigger Value="Upload" />
+                        <TabsTrigger Value="Link" />
+                        { OnRemove !== undefined && (
+                            <Button
+                                Appearance="Hint"
+                                OnPress={ OnRemove }
+                                Size="Small"
+                                Style={ Styles.RemoveButton }>
+                                Remove
+                            </Button>
+                        ) }
+                    </TabsList>
+                </BottomSheetView>
+                <TabsContent Value="Upload">
+                    <UploadTab { ...{ OnSelect } } />
+                </TabsContent>
+                <TabsContent Value="Link">
+                    <LinkTab { ...{ OnSelect } } />
+                </TabsContent>
+            </Tabs>
+        </BottomSheetView>
     </BottomSheet>;
 
 const Styles = StyleSheet.create({
@@ -233,7 +239,10 @@ const Styles = StyleSheet.create({
     },
     Root:
     {
-        flex: 1
+        flex: 1,
+        flexDirection: "column",
+        gap: 32,
+        justifyContent: "space-between"
     },
     TabBody:
     {

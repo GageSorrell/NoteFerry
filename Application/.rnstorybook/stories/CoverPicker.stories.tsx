@@ -22,7 +22,10 @@ import { View } from "react-native";
 
 const CoverPickerExample = (): React.JSX.Element =>
 {
-    const [ Url, SetUrl ] = React.useState<string | undefined>(undefined);
+    const [ Url, SetUrl ] = React.useState<string | undefined>(
+        "https://images.unsplash.com/photo-1784239608832-a23eff7a2b4c"
+    );
+
     const Ref = React.useRef<BottomSheet>(null);
 
     const OnChangeCoverPress = () => Ref.current?.present();
@@ -35,22 +38,21 @@ const CoverPickerExample = (): React.JSX.Element =>
 
     const OnRemove = () =>
     {
+        if (Url === undefined)
+        {
+            return;
+        }
+
         SetUrl(undefined);
         Ref.current?.dismiss();
     };
 
+    const OnRemovePress = OnRemove;
+
     return (
         <View style={ { width: 320 } }>
-            <Cover
-                OnChangeCoverPress={ OnChangeCoverPress }
-                OnRemovePress={ Url === undefined ? undefined : OnRemove }
-                Url={ Url }
-            />
-            <CoverPicker
-                OnRemove={ Url === undefined ? undefined : OnRemove }
-                OnSelect={ OnSelect }
-                Ref={ Ref }
-            />
+            <Cover { ...{ OnChangeCoverPress, OnRemovePress,  Url } } />
+            <CoverPicker { ...{ OnRemove, OnSelect, Ref } } />
         </View>
     );
 };

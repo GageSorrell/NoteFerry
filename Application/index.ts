@@ -24,5 +24,10 @@ import { polyfillWebCrypto } from "expo-standard-web-crypto";
 
 polyfillWebCrypto();
 
+/* `@supabase/supabase-js` relies on a WHATWG-complete `URL`/`URLSearchParams`,
+ * which Hermes does not fully provide; load the polyfill before any module
+ * that imports the Supabase client. */
+import "react-native-url-polyfill/auto";
+
 /* Defers to Expo Router's default entrypoint to actually render the app. */
 import "expo-router/entry";

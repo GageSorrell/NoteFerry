@@ -80,7 +80,7 @@ export interface ButtonProps extends React.PropsWithChildren
     readonly OnPress?: ((Event: GestureResponderEvent) => void) | undefined;
     readonly Size?: ButtonSize;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly Variant?: ButtonVariant;
+    readonly Appearance?: ButtonVariant;
 }
 
 export/**
@@ -93,7 +93,7 @@ export/**
        * @since 1.0.0
        */
 const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, ButtonProps>(({
-    Variant = "Primary",
+    Appearance = "Primary",
     Size = "Medium",
     Disabled = false,
     Loading = false,
@@ -115,11 +115,11 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
     const SmallRadius = useRadii(Radii.Small);
     const FullRadius = useRadii(Radii.Full);
 
-    const IsIconOnly = Variant === "Icon" || Variant === "NavIcon" || Variant === "Close";
+    const IsIconOnly = Appearance === "Icon" || Appearance === "NavIcon" || Appearance === "Close";
 
     const VariantStyle = React.useMemo<{ Container: ViewStyle; TextColor: string }>(() =>
     {
-        switch (Variant)
+        switch (Appearance)
         {
             case "Icon":
                 return {
@@ -228,7 +228,7 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
                 } as const;
         }
     }, [
-        Variant,
+        Appearance,
         BorderButtonColor,
         BorderColor,
         BlueColor,
@@ -275,7 +275,7 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
                     ? (
                         <Body
                             Color={ VariantStyle.TextColor }
-                            Weight={ Variant === "Blue" || Variant === "RedFill" ? "500" : "400" }>
+                            Weight={ Appearance === "Blue" || Appearance === "RedFill" ? "500" : "400" }>
                             { children }
                         </Body>
                     )
@@ -299,7 +299,7 @@ const CloseButton = ({
     <Button
         { ...{ AccessibilityLabel, OnPress } }
         Size="Circle"
-        Variant="Close">
+        Appearance="Close">
         <Body
             Color={ Semantic.Muted }
             Style={ Styles.CloseGlyph }>

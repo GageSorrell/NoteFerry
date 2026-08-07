@@ -163,3 +163,19 @@ const DestinationId = pipe(
 
 /** {@inheritDoc DestinationId} */
 export type DestinationId = Schema.Schema.Type<typeof DestinationId>;
+
+export/**
+       * Identifies a single page-creation attempt, generated client-side before
+       * the request is sent so it can be tracked (and, later, safely retried)
+       * across a crash or offline period — see `ArchitectureInitialDraft.md` §20.
+       *
+       * @category Id
+       * @since 1.0.0
+       */
+const OperationId = pipe(
+    Schema.String,
+    Schema.brand("OperationId")
+);
+
+/** {@inheritDoc OperationId} */
+export type OperationId = Schema.Schema.Type<typeof OperationId>;

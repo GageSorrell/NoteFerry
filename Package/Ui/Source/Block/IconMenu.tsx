@@ -272,7 +272,7 @@ const EmojiTab = ({ OnSelect }: EmojiTabProps): React.JSX.Element =>
                 Clear
                 OnCancel={ () => SetQuery("") }
                 OnChangeText={ SetQuery }
-                Placeholder="Search emoji..."
+                Placeholder="Search emoji…"
                 Search
                 Style={ Styles.SearchInput }
                 Value={ Query }
@@ -434,7 +434,7 @@ const IconsTab = ({ OnSelect }: IconsTabProps): React.JSX.Element =>
                 Clear
                 OnCancel={ () => SetQuery("") }
                 OnChangeText={ SetQuery }
-                Placeholder="Search icons..."
+                Placeholder="Search icons…"
                 Search
                 Style={ Styles.SearchInput }
                 Value={ Query }
@@ -540,11 +540,13 @@ const UploadTab = ({ OnSelect }: UploadTabProps): React.JSX.Element =>
     return (
         <View style={ Styles.UploadBody }>
             <Button
+                Appearance="Primary"
                 Loading={ IsPicking }
-                OnPress={ () => void HandlePress() }
-                Variant="Primary">
+                OnPress={ () => void HandlePress() }>
                 <Upload size={ 16 } />
-                <Body>Choose from Photos</Body>
+                <Body>
+                    Choose from Photos
+                </Body>
             </Button>
         </View>
     );
@@ -580,18 +582,24 @@ const IconMenu = ({ OnDismiss, Ref, OnSelect, OnRemove, TestID }: IconMenuProps)
                     <TabsTrigger Value="Upload">Upload</TabsTrigger>
                     { OnRemove !== undefined && (
                         <Button
+                            Appearance="Hint"
                             OnPress={ OnRemove }
                             Size="Small"
-                            Style={ Styles.RemoveButton }
-                            Variant="Hint">
+                            Style={ Styles.RemoveButton }>
                             Remove
                         </Button>
                     ) }
                 </TabsList>
             </BottomSheetView>
-            <TabsContent Value="Emoji"><EmojiTab OnSelect={ OnSelect } /></TabsContent>
-            <TabsContent Value="Icons"><IconsTab OnSelect={ OnSelect } /></TabsContent>
-            <TabsContent Value="Upload"><UploadTab OnSelect={ OnSelect } /></TabsContent>
+            <TabsContent Value="Emoji">
+                <EmojiTab OnSelect={ OnSelect } />
+            </TabsContent>
+            <TabsContent Value="Icons">
+                <IconsTab OnSelect={ OnSelect } />
+            </TabsContent>
+            <TabsContent Value="Upload">
+                <UploadTab OnSelect={ OnSelect } />
+            </TabsContent>
         </Tabs>
     </BottomSheet>;
 

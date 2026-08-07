@@ -1,5 +1,5 @@
 {
-    "extends": "@sorrell/tsconfig",
+    "extends": "@sorrell/tsconfig/expo",
     "compilerOptions": {
         "noEmit": false,
         "allowJs": true,

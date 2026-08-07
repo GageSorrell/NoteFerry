@@ -45,16 +45,17 @@
   "scripts": {
     "build": "tsc -p ./tsconfig.json"
   },
-  "peerDependencies": {
-    "@expo/ui": ">=57.0.9",
-    "expo": "~57.0.11",
+  "peerDependencies":
+  {
+    "@expo/ui": "57.0.9",
+    "expo": "57.0.11",
     "expo-image": ">=57.0.2",
     "expo-image-picker": "~57.0.8",
     "react": ">=19.2.0",
     "react-native": ">=0.86.0",
     "react-native-gesture-handler": ">=2.32.0",
     "react-native-reanimated": ">=4.5.0",
-    "react-native-safe-area-context": "~5.7.0",
+    "react-native-safe-area-context": "5.8.0",
     "react-native-svg": "15.15.4"
   },
   "dependencies": {
@@ -62,7 +63,6 @@
     "@emoji-mart/data": "1.2.1",
     "@expo-google-fonts/inter": "0.4.2",
     "@gorhom/bottom-sheet": "5.2.14",
-    "@hookform/resolvers": "5.7.1",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@shopify/flash-list": "2.0.2",
     "date-fns": "4.4.0",
@@ -78,7 +78,7 @@
   },
   "devDependencies": {
     "@react-native/jest-preset": "0.86.2",
-    "@sorrell/tsconfig": "1.0.0",
+    "@sorrell/tsconfig": "2.1.0",
     "@testing-library/react-native": "14.0.1",
     "@types/react": "19.2.18",
     "jest-expo": "57.0.3",

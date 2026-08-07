@@ -84,7 +84,7 @@ export/**
        */
 const CommandInput = ({
     AutoFocus,
-    Placeholder = "Search for a command to run..."
+    Placeholder = "Search for a command to run…"
 }: CommandInputProps): React.JSX.Element =>
     <AutocompleteInput
         { ...{ AutoFocus, Placeholder } }

@@ -24,11 +24,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Playground: Story =
     {
-        render: () => <Skeleton Style={ { height: 16, width: 160 } } />
-    };
-
-export const CardShape: Story =
-    {
+        name: "Skeleton",
         render: () =>
             <View style={ { gap: 8, width: 200 } }>
                 <Skeleton

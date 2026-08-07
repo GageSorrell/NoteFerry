@@ -39,7 +39,7 @@ const Fruits =
 const AutocompleteExample = (): React.JSX.Element => (
     <View style={ { width: 260 } }>
         <Autocomplete>
-            <AutocompleteInput Placeholder="Search fruit..." />
+            <AutocompleteInput Placeholder="Search fruit…" />
             <AutocompleteContent Variant="Inline">
                 <AutocompleteList>
                     { Fruits.map((Fruit: string) => (

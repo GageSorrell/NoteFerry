@@ -43,18 +43,19 @@ const ComboboxExample = (): React.JSX.Element =>
 
     return (
         <View style={ { width: 220 } }>
-            <Combobox OnValueChange={ SetValue }
+            <Combobox
+                OnValueChange={ SetValue }
                 Value={ Value }>
                 <ComboboxTrigger>
                     <ComboboxValue Placeholder="Choose a timezone" />
                 </ComboboxTrigger>
                 <ComboboxContent>
-                    <ComboboxInput Placeholder="Search timezone..." />
+                    <ComboboxInput Placeholder="Search timezone…" />
                     <ComboboxList>
-                        { Timezone.map((Timezone: Timezone) => (
+                        { Timezone.map((Value: Timezone) => (
                             <ComboboxItem
-                                Value={ Timezone }
-                                key={ Timezone }
+                                { ...{ Value } }
+                                key={ Value }
                             />
                         )) }
                         <ComboboxEmpty />

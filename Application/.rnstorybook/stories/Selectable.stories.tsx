@@ -48,9 +48,9 @@ const SelectableToolbar = (): React.JSX.Element =>
         } }>
             <Description>{ SelectedIds.size } selected</Description>
             <Button
+                Appearance="Hint"
                 OnPress={ Deactivate }
-                Size="Small"
-                Variant="Hint">
+                Size="Small">
                 Done
             </Button>
         </View>
@@ -74,7 +74,7 @@ const SelectableExample = (): React.JSX.Element =>
                                 height: 44,
                                 paddingHorizontal: 4
                             } }>
-                                { IsActive && <SelectableCheckmark IsSelected={ IsSelected } /> }
+                                { IsActive && <SelectableCheckmark { ...{ IsSelected } } /> }
                                 <IconBlock
                                     Icon={ {
                                         Src: "file-text",

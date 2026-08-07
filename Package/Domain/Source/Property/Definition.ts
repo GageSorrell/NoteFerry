@@ -4,8 +4,7 @@
  * union of all of them.
  *
  * Deliberately kept separate from {@link Property.Input} ("what the user
- * wants to put into it") and from Notion's own API representation — see
- * `ArchitectureInitialDraft.md` §3 and §33.
+ * wants to put into it") and from Notion's own API representation.
  *
  * @module @notivex/domain/Property/Definition
  *

@@ -714,7 +714,7 @@ const DateSheet = ({
                             OnPress={ OnHelpPress }
                             Size="Circle"
                             Style={ { paddingBottom: 10 } }
-                            Variant="NavIcon">
+                            Appearance="NavIcon">
                             <HelpCircle
                                 color={ IconColor }
                                 size={ 18 }

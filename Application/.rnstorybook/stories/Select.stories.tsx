@@ -32,14 +32,22 @@ const SelectExample = (): React.JSX.Element =>
                     <SelectValue Placeholder="Choose a view" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem Label="Board"
-                        Value="board" />
-                    <SelectItem Label="Table"
-                        Value="table" />
-                    <SelectItem Label="Calendar"
-                        Value="calendar" />
-                    <SelectItem Label="List"
-                        Value="list" />
+                    <SelectItem
+                        Label="Board"
+                        Value="board"
+                    />
+                    <SelectItem
+                        Label="Table"
+                        Value="table"
+                    />
+                    <SelectItem
+                        Label="Calendar"
+                        Value="calendar"
+                    />
+                    <SelectItem
+                        Label="List"
+                        Value="list"
+                    />
                 </SelectContent>
             </Select>
         </View>
@@ -56,7 +64,4 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Playground: Story =
-    {
-        name: "Select"
-    } as const;
+export const Playground: Story = { name: "Select" } as const;

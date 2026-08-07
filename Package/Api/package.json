@@ -28,17 +28,33 @@
       "import": "./Distribution/index.js",
       "types": "./Distribution/index.d.ts"
     },
+    "./Connections": {
+      "import": "./Distribution/Connections.js",
+      "types": "./Distribution/Connections.d.ts"
+    },
+    "./DataSources": {
+      "import": "./Distribution/DataSources.js",
+      "types": "./Distribution/DataSources.d.ts"
+    },
+    "./Destinations": {
+      "import": "./Distribution/Destinations.js",
+      "types": "./Distribution/Destinations.d.ts"
+    },
+    "./Pages": {
+      "import": "./Distribution/Pages.js",
+      "types": "./Distribution/Pages.d.ts"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {
     "build": "tsc -p ./tsconfig.json"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "2.2.0",
+    "@notivex/domain": "1.0.0",
     "effect": "4.0.0-beta.104"
   },
   "devDependencies": {
-    "@sorrell/tsconfig": "1.0.0",
+    "@sorrell/tsconfig": "2.1.0",
     "@testing-library/react-native": "14.0.1",
     "typescript": "6.0.3"
   }

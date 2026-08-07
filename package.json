@@ -29,6 +29,11 @@
     "npm": ">=12.0.2"
   },
   "type": "module",
+  "overrides": {
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-server-dom-webpack": "19.2.3"
+  },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.6",
     "@notivex/ui": "1.0.0",

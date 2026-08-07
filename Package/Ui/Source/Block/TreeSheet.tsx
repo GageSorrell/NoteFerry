@@ -280,7 +280,7 @@ const TreeSheet = <A extends TreeItemData,>({
     Title = "Select a page",
     Value,
     OnValueChange,
-    Placeholder = "Search pages...",
+    Placeholder = "Search pages…",
     EmptyLabel = "No pages found",
     TestID
 }: TreeSheetProps<A>): React.JSX.Element =>

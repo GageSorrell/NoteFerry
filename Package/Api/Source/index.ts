@@ -1,4 +1,10 @@
 /**
+ * Public entry point for `@notivex/api`.
+ *
+ * The Effect `HttpApi` contract shared between the Expo app and the
+ * Notivex Supabase Edge Function: request/response schemas built on top of
+ * `@notivex/domain`, one module per resource group.
+ *
  * @module @notivex/api
  *
  * @file      index.ts
@@ -7,3 +13,8 @@
  * @license   MIT
  */
 
+export * from "./Api.js";
+export * as ConnectionsApi from "./ConnectionsApi.js";
+export * as DataSourcesApi from "./DataSourcesApi.js";
+export * as DestinationsApi from "./DestinationsApi.js";
+export * as PagesApi from "./PagesApi.js";

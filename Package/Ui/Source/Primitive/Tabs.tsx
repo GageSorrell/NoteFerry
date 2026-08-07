@@ -84,7 +84,9 @@ const Tabs = ({
 
     return (
         <TabsContext.Provider value={ ContextValue }>
-            <View style={ Style }>{ children }</View>
+            <View style={ Style }>
+                { children }
+            </View>
         </TabsContext.Provider>
     );
 };
@@ -162,13 +164,13 @@ const TabsTrigger = ({ Value, Disabled = false, Style, children }: TabsTriggerPr
                 Disabled ? { opacity: 0.5 } : undefined,
                 Style
             ] }>
-            { typeof children === "string"
+            { typeof (children ?? Value) === "string"
                 ? <LabelText
                     Color={ IsActive ? PrimaryColor : MutedColor }
                     Weight="500">
-                    { children }
+                    { children ?? Value }
                 </LabelText>
-                : children
+                : (children ?? Value)
             }
         </Pressable>
     );

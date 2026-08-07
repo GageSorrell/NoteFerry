@@ -201,7 +201,7 @@ const DialogContent = ({ HideClose = false, Style, children }: DialogContentProp
 /** {@inheritDoc DialogClose} */
 export interface DialogCloseProps extends React.PropsWithChildren
 {
-    readonly Variant?: ButtonProps["Variant"];
+    readonly Variant?: ButtonProps["Appearance"];
     readonly Size?: ButtonProps["Size"];
     readonly Style?: StyleProp<ViewStyle>;
     readonly OnPress?: (Event: GestureResponderEvent) => void;
@@ -234,7 +234,7 @@ const DialogClose = ({ Variant, Size, Style, OnPress, children }: DialogClosePro
             OnPress={ Handle }
             Size={ Size ?? "Medium" }
             Style={ Style }
-            Variant={ Variant ?? "Primary" }>
+            Appearance={ Variant ?? "Primary" }>
             { children }
         </Button>
     );
