@@ -26,7 +26,7 @@ export default function TabTwoScreen()
   const insets =
     {
         ...safeAreaInsets,
-        bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
+        bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.L,
     } as const;
 
   const theme = useTheme();
@@ -39,8 +39,8 @@ export default function TabTwoScreen()
       paddingBottom: insets.bottom,
     },
     web: {
-      paddingTop: Spacing.six,
-      paddingBottom: Spacing.four,
+      paddingTop: Spacing.XXXL,
+      paddingBottom: Spacing.XL,
     },
   });
 
@@ -150,10 +150,10 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   titleContainer: {
-    gap: Spacing.three,
+    gap: Spacing.L,
     alignItems: 'center',
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.six,
+    paddingHorizontal: Spacing.XL,
+    paddingVertical: Spacing.XXXL,
   },
   centerText: {
     textAlign: 'center',
@@ -163,17 +163,17 @@ const styles = StyleSheet.create({
   },
   linkButton: {
     flexDirection: 'row',
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.two,
-    borderRadius: Spacing.five,
+    paddingHorizontal: Spacing.XL,
+    paddingVertical: Spacing.M,
+    borderRadius: Spacing.XXL,
     justifyContent: 'center',
-    gap: Spacing.one,
+    gap: Spacing.S,
     alignItems: 'center',
   },
   sectionsWrapper: {
-    gap: Spacing.five,
-    paddingHorizontal: Spacing.four,
-    paddingTop: Spacing.three,
+    gap: Spacing.XXL,
+    paddingHorizontal: Spacing.XL,
+    paddingTop: Spacing.L,
   },
   collapsibleContent: {
     alignItems: 'center',
@@ -181,8 +181,8 @@ const styles = StyleSheet.create({
   imageTutorial: {
     width: '100%',
     aspectRatio: 296 / 171,
-    borderRadius: Spacing.three,
-    marginTop: Spacing.two,
+    borderRadius: Spacing.L,
+    marginTop: Spacing.M,
   },
   imageReact: {
     width: 100,

@@ -1,5 +1,5 @@
 /**
- *
+ * TODO Temporary.
  *
  * @module notivex/components/external-link
  *
@@ -16,7 +16,11 @@ import type { GestureResponderEvent } from "react-native";
 
 /* eslint-disable jsdoc/require-jsdoc */
 
-type Props = Omit<ComponentProps<typeof Link>, "href"> & { href: Href & string };
+type Props =
+    Omit<ComponentProps<typeof Link>, "href"> &
+    {
+        readonly href: Href & string
+    };
 
 export function ExternalLink({ href, ...rest }: Props)
 {

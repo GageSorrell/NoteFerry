@@ -11,6 +11,7 @@
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/datetimepicker": "^9.1.0",
     "@react-native-community/slider": "^5.2.0",
+    "@react-native-google-signin/google-signin": "16.1.4",
     "@storybook/addon-ondevice-actions": "^10.5.4",
     "@storybook/addon-ondevice-controls": "^10.5.4",
     "@storybook/react-native": "^10.5.4",
@@ -23,6 +24,7 @@
     "expo-auth-session": "~57.0.6",
     "expo-constants": "~57.0.9",
     "expo-crypto": "~57.0.1",
+    "expo-dev-client": "~57.0.10",
     "expo-device": "~57.0.1",
     "expo-font": "~57.0.1",
     "expo-glass-effect": "~57.0.1",
@@ -57,15 +59,15 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
-    "dev": "expo start --android",
-    "start": "expo start",
+    "dev": "expo start --android --dev-client",
+    "start": "expo start --dev-client",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo start --android --dev-client",
+    "ios": "expo start --ios --dev-client",
     "lint": "expo lint",
-    "storybook": "cross-env STORYBOOK_ENABLED=true expo start",
-    "storybook:ios": "cross-env STORYBOOK_ENABLED=true expo start --ios",
-    "storybook:android": "cross-env STORYBOOK_ENABLED=true expo start --android"
+    "storybook": "cross-env STORYBOOK_ENABLED=true expo start --dev-client",
+    "storybook:ios": "cross-env STORYBOOK_ENABLED=true expo start --ios --dev-client",
+    "storybook:android": "cross-env STORYBOOK_ENABLED=true expo start --android --dev-client"
   },
   "private": true
 }

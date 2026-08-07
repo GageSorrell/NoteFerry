@@ -48,10 +48,13 @@ be set in the dashboard.
 
 **Supabase dashboard → Authentication → Providers → Google:**
 - Enable, paste **Client ID** + **Client secret**, save. Leave "Authorized
-  Client IDs" empty (that field is for the native-SDK flow, not used here).
+  Client IDs" empty (that field is for the native-SDK flow, which we are not
+  using).
 
-> A native Google button (`@react-native-google-signin` + `signInWithIdToken`)
-> is a later UX upgrade; the current web flow needs only the Web client above.
+> The sign-in **button** is the native `GoogleSigninButton` component (so it
+> needs a dev build, not Expo Go), but the **flow** is the standard web OAuth —
+> `signInWithOAuth` + `WebBrowser` in `src/features/auth/oauth.ts`. No
+> `webClientId` or Android OAuth client is required.
 
 ---
 

@@ -1,0 +1,21 @@
+{
+  "//": "Workspace-only harness: type-checks the Deno edge functions with the same effect + @notivex/* types they resolve at deploy time. Not used by Deno. See deno-shim.d.ts.",
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "noEmit": true,
+    "types": [],
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "esModuleInterop": true
+  },
+  "include": [
+    "./deno-shim.d.ts",
+    "../_shared/**/*.ts",
+    "../api/**/*.ts",
+    "../notion-oauth-callback/**/*.ts"
+  ]
+}

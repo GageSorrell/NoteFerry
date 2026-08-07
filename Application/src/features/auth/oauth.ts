@@ -27,8 +27,13 @@ WebBrowser.maybeCompleteAuthSession();
 export type OAuthProvider = "apple" | "google";
 
 /* The deep link Supabase redirects back to after authorization. Must be added
- * to the project's Auth "Redirect URLs" allow-list (see AUTH_SETUP.md). */
+ * to the project's Auth "Redirect URLs" allow-list (see AUTH_SETUP.md). In a
+ * dev/standalone build this is `notivex://`; in Expo Go it is an `exp://…` URL.
+ * The log makes the exact value visible in the Metro terminal. */
 const RedirectTo = makeRedirectUri();
+
+/* eslint-disable-next-line no-console */
+console.log("[Notivex] OAuth redirectTo:", RedirectTo);
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 async function CreateSessionFromUrl(Url: string): Promise<Session | null>

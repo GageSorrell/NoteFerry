@@ -15,6 +15,7 @@
 import * as Domain from "@notivex/domain";
 import { Context, Effect } from "effect";
 import { Supabase } from "./supabase";
+import type { UserResponse } from "@supabase/supabase-js";
 
 /**
  * Provides the id of the authenticated Supabase user, or fails with
@@ -27,16 +28,16 @@ export class CurrentUser extends Context.Service<CurrentUser, {
     readonly UserId: Effect.Effect<Domain.Id.UserId, Domain.Error.AuthenticationRequired>;
 }>()("CurrentUser") { }
 
-/**
- * The production implementation, backed by the app's Supabase session.
- *
- * @category Runtime
- * @since 1.0.0
- */
-export const CurrentUserLive = Context.make(CurrentUser, {
+export/**
+       * The production implementation, backed by the app's Supabase session.
+       *
+       * @category Runtime
+       * @since 1.0.0
+       */
+const CurrentUserLive = Context.make(CurrentUser, {
     UserId: Effect.flatMap(
         Effect.promise(() => Supabase.auth.getUser()),
-        (Response) => Response.data.user
+        (Response: UserResponse) => Response.data.user
             ? Effect.succeed(Response.data.user.id as Domain.Id.UserId)
             : Effect.fail(new Domain.Error.AuthenticationRequired())
     )

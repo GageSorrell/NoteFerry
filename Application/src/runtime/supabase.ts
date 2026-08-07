@@ -13,7 +13,7 @@
  * @license   MIT
  */
 
-import { AppState } from "react-native";
+import { AppState, type AppStateStatus } from "react-native";
 import { SecureSessionStore } from "./secure-session-store";
 import { createClient } from "@supabase/supabase-js";
 
@@ -28,14 +28,14 @@ if (!SupabaseUrl || !SupabaseKey)
     );
 }
 
-/**
- * The app-wide Supabase client. Import this rather than constructing clients
- * ad hoc so there is exactly one session/refresh lifecycle.
- *
- * @category Runtime
- * @since 1.0.0
- */
-export const Supabase = createClient(SupabaseUrl, SupabaseKey, {
+export/**
+       * The app-wide Supabase client. Import this rather than constructing clients
+       * ad hoc so there is exactly one session/refresh lifecycle.
+       *
+       * @category Runtime
+       * @since 1.0.0
+       */
+const Supabase = createClient(SupabaseUrl, SupabaseKey, {
     auth:
     {
         autoRefreshToken: true,
@@ -49,7 +49,7 @@ export const Supabase = createClient(SupabaseUrl, SupabaseKey, {
 
 /* Supabase only refreshes tokens while told the app is active. Tie that to the
  * foreground/background lifecycle so a returning user has a fresh session. */
-AppState.addEventListener("change", (State) =>
+AppState.addEventListener("change", (State: AppStateStatus) =>
 {
     if (State === "active")
     {

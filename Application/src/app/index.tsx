@@ -7,124 +7,182 @@
  * @license   MIT
  */
 
-import * as Device from "expo-device";
-import { BottomTabInset, MaxContentWidth, Spacing } from "@/constants/theme";
-import { Platform, StyleSheet } from "react-native";
-import { AnimatedIcon } from "@/components/animated-icon";
-import { HintRow } from "@/components/hint-row";
+import * as Domain from "@notivex/domain";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet } from "react-native";
+import { ConnectNotion } from "@/features/connections/connect";
+import { DisconnectNotion } from "@/runtime/notivex-api";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Spacing } from "@/constants/theme";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { WebBadge } from "@/components/web-badge";
+import { useAuth } from "@/providers/auth-provider";
+import { useConnections } from "@/features/connections/use-connections";
+import { useState } from "react";
 
-/* eslint-disable-next-line jsdoc/require-jsdoc */
-function getDevMenuHint()
+const HomeScreen = () =>
 {
-    if (Platform.OS === "web")
+    const { SignOut } = useAuth();
+    const { Connections, IsLoading, Refetch } = useConnections();
+    const [ Busy, SetBusy ] = useState(false);
+
+    /* eslint-disable-next-line jsdoc/require-jsdoc */
+    async function HandleConnect()
     {
-        return <ThemedText type="small">use browser devtools</ThemedText>;
+        try
+        {
+            SetBusy(true);
+            await ConnectNotion();
+            await Refetch();
+        }
+        catch (Error)
+        {
+            /* eslint-disable-next-line no-console */
+            console.error("Connect Notion failed", Error);
+        }
+        finally
+        {
+            SetBusy(false);
+        }
     }
 
-    if (Device.isDevice)
+    /* eslint-disable-next-line jsdoc/require-jsdoc */
+    async function HandleDisconnect(ConnectionId: Domain.Id.NotionConnectionId)
     {
-        return (
-            <ThemedText type="small">
-                shake device or press <ThemedText type="code">m</ThemedText> in terminal
-            </ThemedText>
-        );
+        try
+        {
+            SetBusy(true);
+            await DisconnectNotion(ConnectionId);
+            await Refetch();
+        }
+        catch (Error)
+        {
+            /* eslint-disable-next-line no-console */
+            console.error("Disconnect failed", Error);
+        }
+        finally
+        {
+            SetBusy(false);
+        }
     }
 
-    const shortcut = Platform.OS === "android" ? "cmd+m (or ctrl+m)" : "cmd+d";
-
-    return (
-        <ThemedText type="small">
-            press <ThemedText type="code">{shortcut}</ThemedText>
-        </ThemedText>
-    );
-}
-
-/* eslint-disable-next-line jsdoc/require-jsdoc */
-export default function HomeScreen()
-{
     return (
         <ThemedView style={ styles.container }>
             <SafeAreaView style={ styles.safeArea }>
-                <ThemedView style={ styles.heroSection }>
-                    <AnimatedIcon />
-                    <ThemedText
-                        style={ styles.title }
-                        type="title">
-                        Welcome to&nbsp;Expo
-                    </ThemedText>
-                </ThemedView>
-
+                <ThemedText type="title">Notivex</ThemedText>
                 <ThemedText
-                    style={ styles.code }
-                    type="code">
-                    get started
+                    style={ styles.subtitle }
+                    themeColor="textSecondary"
+                    type="default">
+                    Notion connections
                 </ThemedText>
 
-                <ThemedView
-                    style={ styles.stepContainer }
-                    type="backgroundElement">
-                    <HintRow
-                        hint={ <ThemedText type="code">src/app/index.tsx</ThemedText> }
-                        title="Try editing"
-                    />
-                    <HintRow
-                        hint={ getDevMenuHint() }
-                        title="Dev tools"
-                    />
-                    <HintRow
-                        hint={ <ThemedText type="code">npm run reset-project</ThemedText> }
-                        title="Fresh start"
-                    />
-                </ThemedView>
+                <Pressable
+                    disabled={ Busy }
+                    onPress={ HandleConnect }
+                    style={ styles.primaryButton }>
+                    <ThemedText type="smallBold">
+                        {Busy ? "Working…" : "Connect a Notion workspace"}
+                    </ThemedText>
+                </Pressable>
 
-                {Platform.OS === "web" && <WebBadge />}
+                <ScrollView
+                    contentContainerStyle={ styles.list }
+                    style={ styles.listContainer }>
+                    {IsLoading
+                        ? <ActivityIndicator />
+                        : Connections.length === 0
+                            ? (
+                                <ThemedText
+                                    themeColor="textSecondary"
+                                    type="small">
+                                    No connections yet.
+                                </ThemedText>
+                            )
+                            : Connections.map((Connection) => (
+                                <ThemedView
+                                    key={ Connection.Id }
+                                    style={ styles.row }
+                                    type="backgroundElement">
+                                    <ThemedText type="smallBold">
+                                        {Connection.WorkspaceName}
+                                    </ThemedText>
+                                    <Pressable
+                                        disabled={ Busy }
+                                        onPress={ () => HandleDisconnect(Connection.Id) }>
+                                        <ThemedText
+                                            themeColor="textSecondary"
+                                            type="small">
+                                            Disconnect
+                                        </ThemedText>
+                                    </Pressable>
+                                </ThemedView>
+                            ))}
+                </ScrollView>
+
+                <Pressable
+                    onPress={ () => { void SignOut(); } }
+                    style={ styles.signOut }>
+                    <ThemedText
+                        themeColor="textSecondary"
+                        type="small">
+                        Sign out
+                    </ThemedText>
+                </Pressable>
             </SafeAreaView>
         </ThemedView>
     );
-}
+};
 
 const styles = StyleSheet.create({
-    code:
-    {
-        textTransform: "uppercase"
-    },
     container:
     {
-        flex: 1,
-        flexDirection: "row",
-        justifyContent: "center"
+        flex: 1
     },
-    heroSection:
+    list:
+    {
+        gap: Spacing.M,
+        paddingVertical: Spacing.L
+    },
+    listContainer:
+    {
+        alignSelf: "stretch",
+        flex: 1
+    },
+    primaryButton:
     {
         alignItems: "center",
-        flex: 1,
-        gap: Spacing.four,
+        alignSelf: "stretch",
+        borderColor: "#8883",
+        borderRadius: Spacing.L,
+        borderWidth: StyleSheet.hairlineWidth,
         justifyContent: "center",
-        paddingHorizontal: Spacing.four
+        minHeight: 48,
+        paddingHorizontal: Spacing.XL
+    },
+    row:
+    {
+        alignItems: "center",
+        borderRadius: Spacing.M,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        padding: Spacing.L
     },
     safeArea:
     {
-        alignItems: "center",
         flex: 1,
-        gap: Spacing.three,
-        maxWidth: MaxContentWidth,
-        paddingBottom: BottomTabInset + Spacing.three,
-        paddingHorizontal: Spacing.four
+        gap: Spacing.L,
+        paddingHorizontal: Spacing.XL,
+        paddingVertical: Spacing.L
     },
-    stepContainer:
+    signOut:
     {
-        alignSelf: "stretch",
-        borderRadius: Spacing.four,
-        gap: Spacing.three,
-        paddingHorizontal: Spacing.three,
-        paddingVertical: Spacing.four
+        alignItems: "center",
+        paddingVertical: Spacing.M
     },
-    title:
+    subtitle:
     {
-        textAlign: "center"
+        marginTop: Spacing.XS
     }
 });
+
+export default HomeScreen;

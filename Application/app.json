@@ -2,6 +2,7 @@
   "expo": {
     "name": "notivex",
     "slug": "notivex",
+    "owner": "gagesorrell",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -14,6 +15,7 @@
       }
     },
     "android": {
+      "package": "sh.sorrell.notivex",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -36,11 +38,18 @@
           "imageWidth": 76
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "@react-native-google-signin/google-signin"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "1962a247-404a-4a87-ad8a-db4c4e7a7094"
+      }
     }
   }
 }

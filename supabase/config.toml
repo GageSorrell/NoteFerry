@@ -157,11 +157,14 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-site_url = "http://127.0.0.1:3000"
+# NOTE: this configures the LOCAL `supabase start` stack only. The deployed app
+# talks to the remote project, whose Site URL / Redirect URLs live in the
+# dashboard (Authentication -> URL Configuration) and must be set there.
+site_url = "notivex://"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+additional_redirect_urls = ["notivex://**"]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to auth.external_url.
@@ -391,6 +394,15 @@ enabled = true
 port = 54327
 # Configure one of the supported backends: `postgres`, `bigquery`.
 backend = "postgres"
+
+# Per-function settings. The `api` function requires a valid Supabase user
+# (§17); the Notion OAuth callback is a browser redirect from Notion carrying a
+# one-time state, so it cannot present a Supabase JWT and must be public.
+[functions.api]
+verify_jwt = true
+
+[functions.notion-oauth-callback]
+verify_jwt = false
 
 # Experimental features may be deprecated any time
 [experimental]

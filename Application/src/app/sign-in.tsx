@@ -7,16 +7,16 @@
  * @license   MIT
  */
 
-import { ActivityIndicator, Pressable, StyleSheet } from "react-native";
-import { OAuthProvider, SignInWithOAuth } from "@/features/auth/oauth";
+import { type OAuthProvider, SignInWithOAuth } from "@/features/auth/oauth";
+import { Platform, Pressable, StyleSheet } from "react-native";
+import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Spacing } from "@/constants/theme";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useState } from "react";
 
-/* eslint-disable-next-line jsdoc/require-jsdoc */
-export default function SignInScreen()
+const SignInScreen = () =>
 {
     const [ Pending, SetPending ] = useState<OAuthProvider | null>(null);
 
@@ -32,6 +32,7 @@ export default function SignInScreen()
         {
             /* Routing on the resulting session/error is a later slice; surface
              * it in the log for now. */
+            /* eslint-disable-next-line no-console */
             console.error("OAuth sign-in failed", Error);
         }
         finally
@@ -51,27 +52,29 @@ export default function SignInScreen()
                     Sign in to connect your Notion workspace.
                 </ThemedText>
 
-                <Pressable
-                    /* No-op until Apple sign-in is configured — see
-                     * AUTH_SETUP.md §3. Tapping does nothing rather than
-                     * throwing "provider not enabled". */
-                    onPress={ () => { } }
-                    style={ styles.button }>
-                    <ThemedText type="smallBold">Continue with Apple</ThemedText>
-                </Pressable>
-
-                <Pressable
-                    disabled={ Pending !== null }
-                    onPress={ () => HandleSignIn("google") }
-                    style={ styles.button }>
-                    {Pending === "google"
-                        ? <ActivityIndicator />
-                        : <ThemedText type="smallBold">Continue with Google</ThemedText>}
-                </Pressable>
+                {Platform.OS === "ios"
+                    ? (
+                        <Pressable
+                            /* No-op until Apple sign-in is configured — see
+                             * AUTH_SETUP.md §3. */
+                            onPress={ () => { } }
+                            style={ styles.button }>
+                            <ThemedText type="smallBold">Continue with Apple</ThemedText>
+                        </Pressable>
+                    )
+                    : (
+                        <GoogleSigninButton
+                            color={ GoogleSigninButton.Color.Dark }
+                            disabled={ Pending !== null }
+                            onPress={ () => HandleSignIn("google") }
+                            size={ GoogleSigninButton.Size.Wide }
+                            style={ styles.googleButton }
+                        />
+                    )}
             </SafeAreaView>
         </ThemedView>
     );
-}
+};
 
 const styles = StyleSheet.create({
     button:
@@ -79,27 +82,34 @@ const styles = StyleSheet.create({
         alignItems: "center",
         alignSelf: "stretch",
         borderColor: "#8883",
-        borderRadius: Spacing.three,
+        borderRadius: Spacing.L,
         borderWidth: StyleSheet.hairlineWidth,
         justifyContent: "center",
         minHeight: 48,
-        paddingHorizontal: Spacing.four
+        paddingHorizontal: Spacing.XL
     },
     container:
     {
         flex: 1
     },
+    googleButton:
+    {
+        height: 48,
+        width: 240
+    },
     safeArea:
     {
         alignItems: "center",
         flex: 1,
-        gap: Spacing.three,
+        gap: Spacing.L,
         justifyContent: "center",
-        paddingHorizontal: Spacing.four
+        paddingHorizontal: Spacing.XL
     },
     subtitle:
     {
-        marginBottom: Spacing.three,
+        marginBottom: Spacing.L,
         textAlign: "center"
     }
 });
+
+export default SignInScreen;

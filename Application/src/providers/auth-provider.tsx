@@ -12,18 +12,18 @@
  * @license   MIT
  */
 
+import type { AuthChangeEvent, AuthError, Session } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { PropsWithChildren } from "react";
-import type { Session } from "@supabase/supabase-js";
 import { Supabase } from "@/runtime/supabase";
 
 /** The shape provided to consumers of {@link useAuth}. */
-export type AuthContextValue =
+export interface AuthContextValue
 {
     readonly IsLoading: boolean;
     readonly Session: Session | null;
     readonly SignOut: () => Promise<void>;
-};
+}
 
 const AuthContext = createContext<AuthContextValue>({
     IsLoading: true,
@@ -46,19 +46,48 @@ export function AuthProvider({ children }: PropsWithChildren)
 
     useEffect(() =>
     {
-        Supabase.auth.getSession().then(({ data }) =>
+        type SessionArg =
+            | {
+                readonly data:
+                {
+                    readonly session: Session;
+                };
+
+                readonly error: null;
+            }
+            | {
+                data:
+                {
+                    session: null;
+                };
+
+                error: AuthError;
+            }
+            | {
+                readonly data:
+                {
+                    readonly session: null;
+                };
+
+                readonly error: null;
+            };
+
+        Supabase.auth.getSession().then(({ data }: SessionArg) =>
         {
             SetSession(data.session);
             SetIsLoading(false);
         });
 
-        const { data } = Supabase.auth.onAuthStateChange((_Event, NextSession) =>
+        const { data } = Supabase.auth.onAuthStateChange((
+            _Event: AuthChangeEvent,
+            NextSession: Session | null
+        ) =>
         {
             SetSession(NextSession);
         });
 
-        return () => data.subscription.unsubscribe();
-    }, []);
+        return data.subscription.unsubscribe;
+    }, [ ]);
 
     const Value = useMemo<AuthContextValue>(() => ({
         IsLoading,

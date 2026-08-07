@@ -1,5 +1,5 @@
 /**
- *
+ * TODO Temporary.
  *
  * @module notivex/components/hint-row
  *
@@ -44,9 +44,9 @@ export function HintRow({ title = "Try editing", hint = "app/index.tsx" }: HintR
 const styles = StyleSheet.create({
     codeSnippet:
     {
-        borderRadius: Spacing.two,
-        paddingHorizontal: Spacing.two,
-        paddingVertical: Spacing.half
+        borderRadius: Spacing.M,
+        paddingHorizontal: Spacing.M,
+        paddingVertical: Spacing.XS
     },
     stepRow:
     {
