@@ -29,15 +29,21 @@ const BottomSheetExample = (): React.JSX.Element =>
 
     const OnDismiss = () => SetIsPresented(false);
 
+    const Ref = React.useRef(null);
+
     return (
         <>
-            <Button OnPress={ () => SetIsPresented(true) }>Open bottom sheet</Button>
-            <BottomSheet
-                { ...{ IsPresented, OnDismiss } }
-                SnapPoints={ [ "Half" ] }>
+            <Button OnPress={ () => SetIsPresented(true) }>
+                Open bottom sheet
+            </Button>
+            <BottomSheet { ...{ IsPresented, OnDismiss, Ref } }>
                 <BottomSheetHeader>
-                    <BottomSheetTitle>Share this page</BottomSheetTitle>
-                    <BottomSheetDescription>Anyone with the link can view.</BottomSheetDescription>
+                    <BottomSheetTitle>
+                        Share this page
+                    </BottomSheetTitle>
+                    <BottomSheetDescription>
+                        Anyone with the link can view.
+                    </BottomSheetDescription>
                 </BottomSheetHeader>
                 <BottomSheetFooter>
                     <Button
@@ -61,4 +67,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Playground: Story = { };
+export const Playground: Story =
+    {
+        name: "BottomSheet"
+    } as const;

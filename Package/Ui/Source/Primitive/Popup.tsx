@@ -25,6 +25,7 @@ import { type GestureResponderEvent, type StyleProp, type ViewStyle } from "reac
 import RNPopover, { PopoverPlacement } from "react-native-popover-view";
 
 import { UseColor, useRadii, useShadow } from "../ThemeProvider.js";
+import type { ReadonlyRecord } from "effect/Record";
 
 /**
  * The relative location where a given `Popup` component may be placed.
@@ -41,7 +42,7 @@ export type PopupPlacement =
     | "Center"
     | "Floating";
 
-const PlacementMap: Record<PopupPlacement, PopoverPlacement> =
+const PlacementMap: ReadonlyRecord<PopupPlacement, PopoverPlacement> =
     Object.freeze({
         Auto: PopoverPlacement.AUTO,
         Bottom: PopoverPlacement.BOTTOM,
@@ -90,7 +91,7 @@ const CloneTrigger = (
             Child.props.OnPress?.(Event);
             OnPress(Event);
         },
-        ...(Ref === undefined ? {} : { ref: Ref })
+        ...(Ref === undefined ? { } : { ref: Ref })
     });
 
 /** {@inheritDoc Popup} */
@@ -148,12 +149,15 @@ const Popup = ({
             borderColor: BorderColor,
             borderRadius: LargeRadius,
             borderWidth: 1,
-            elevation: CardShadow.Elevation,
-            shadowColor: CardShadow.ShadowColor,
+            // elevation: CardShadow.Elevation,
+            elevation: 5,
+            shadowColor: "#333333",
+            // shadowColor: CardShadow.ShadowColor,
             shadowOffset: CardShadow.ShadowOffset === undefined
                 ? undefined
                 : {
-                    height: CardShadow.ShadowOffset.Height,
+                    // height: CardShadow.ShadowOffset.Height,
+                    height: 8,
                     width: CardShadow.ShadowOffset.Width
                 },
             shadowOpacity: CardShadow.ShadowOpacity,
@@ -162,8 +166,15 @@ const Popup = ({
 
     return (
         <RNPopover
+            // animationConfig={ {
+            //     delay: 0,
+            //     duration: 100
+            // } }
+            arrowSize={ { height: 0, width: 0 } }
+            backgroundStyle={ { opacity: 0 } }
             from={ Anchor }
             isVisible={ IsVisible }
+            offset={ -1 }
             onRequestClose={ OnRequestClose }
             placement={ PlacementMap[ Placement ] }
             popoverStyle={ [ { overflow: "hidden" }, VariantStyle, Style ] as StyleProp<ViewStyle> }>

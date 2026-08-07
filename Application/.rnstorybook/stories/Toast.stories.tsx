@@ -16,7 +16,7 @@ import { Button, Toast, Toaster } from "@notivex/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 
-const ToastExample = (): React.JSX.Element => (
+const ToastExample = (): React.JSX.Element =>
     <View
         style={ {
             height: 320,
@@ -52,8 +52,7 @@ const ToastExample = (): React.JSX.Element => (
             </Button>
         </View>
         <Toaster />
-    </View>
-);
+    </View>;
 
 const meta =
     {
@@ -65,4 +64,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Playground: Story = { };
+export const Playground: Story =
+    {
+        name: "Toast"
+    } as const;

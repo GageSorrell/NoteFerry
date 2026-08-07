@@ -4,7 +4,19 @@
  * `Dialog`, `Popover`, `Tooltip`, the `Menu`/`DropdownMenu`/`ContextMenu`
  * family, `Select`, `Toast`), and Phase 3 (`Tabs`, `Autocomplete`,
  * `Combobox`, `Command`, `Calendar`, `Form`, `TagsInput`, `Sortable`,
- * `ScrollArea`) — see the project plan.
+ * `ScrollArea`) — see the project plan. `DateSheet` (a composite built on
+ * `BottomSheet` + `Calendar` + `Switch` + `Popup`/`Menu`, replicating
+ * Notion's mobile "edit Date property" sheet) sits above these phases
+ * rather than in one of them.
+ *
+ * Phase 4 ports `@notion-kit/ui`'s higher-level "Block" tier (its top-level
+ * `src/` directories other than `primitives/`) rather than any more
+ * primitives: `IconBlock`/`IconMenu` (page icons — an emoji, a Lucide icon,
+ * or an uploaded image), `Selectable` (long-press-to-enter, tap-to-toggle
+ * multi-select), `TreeSheet` (a searchable/expandable page picker, after
+ * source's `tree/` block), and `Cover`/`CoverPicker` (page cover images).
+ * Each file's own header comment details how it maps back to its
+ * `@notion-kit/ui` source and what was deliberately simplified or dropped.
  *
  * @module @notivex/ui/Primitive
  *
@@ -51,3 +63,4 @@ export * from "./Form.js";
 export * from "./TagsInput.js";
 export * from "./Sortable.js";
 export * from "./ScrollArea.js";
+export * from "./DateSheet.js";

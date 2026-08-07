@@ -39,28 +39,19 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-/** A single `Text`, driven by the `Variant`/`NumberOfLines` controls. */
-export const Playground: Story =
-    {
-        args:
-        {
-            Variant: "Body",
-            children: "The quick brown fox jumps over the lazy dog."
-        }
-    };
-
 /** Every `Variant` rendered together, for side-by-side comparison. */
 export const AllVariants: Story =
     {
         args: { Variant: "Body" },
+        name: "Text",
         render: () => (
             <View style={ { alignItems: "flex-start", gap: 12 } }>
                 <Text Variant="Heading1">Heading1</Text>
                 <Text Variant="Heading2">Heading2</Text>
                 <Text Variant="Heading3">Heading3</Text>
-                <Text Variant="Body">Body — the quick brown fox.</Text>
-                <Text Variant="Label">Label</Text>
-                <Text Variant="Description">Description — muted, small print.</Text>
+                <Text Variant="Body">The quick brown fox.</Text>
+                <Text Variant="Label">Label Text</Text>
+                <Text Variant="Description">Description (muted, small print).</Text>
             </View>
         )
-    };
+    } as const;

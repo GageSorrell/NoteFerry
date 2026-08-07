@@ -8,21 +8,6 @@
  * sheet (SwiftUI on iOS, Jetpack Compose on Android, a CSS-animated `View`
  * on web) instead of an RN `Modal`.
  *
- * **`Host` boundary**: `@expo/ui` components must live under a `<Host>`.
- * Per `ThemeProvider`'s doc comment, `Host` must NOT wrap the whole app —
- * on web it renders through a bridging root that does not forward React
- * context, silently detaching descendants from `ThemeProvider`. This
- * component wraps only its own `Host`/`ExpoBottomSheet` subtree, which
- * means `children` (the sheet's content) sits on the far side of that same
- * broken-context boundary. The fix: re-establish a fresh, nested
- * `ThemeProvider` immediately inside `Host`, seeded with the *outer*
- * `Mode` (via `useTheme()`, read here — before the boundary — so it stays
- * in sync with any manual light/dark override) rather than re-deriving
- * `"System"` independently. `ThemeProvider` computes its tokens from
- * `useColorScheme()`/props alone (no ancestor context read), so this needs
- * no context to actually cross the `Host` boundary — it just rebuilds the
- * same state on the other side.
- *
  * @module @notivex/ui/Primitive/BottomSheet
  *
  * @file      BottomSheet.tsx
@@ -31,91 +16,84 @@
  * @license   MIT
  */
 
+import * as Gorhom from "@gorhom/bottom-sheet";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import * as Spacing from "../Token/Spacing.js";
 import { Description, Heading3 } from "./Text.js";
 import {
-    BottomSheet as ExpoBottomSheet,
-    type SnapPoint as ExpoSnapPoint,
-    Host
-} from "@expo/ui";
-import { type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
-import { ThemeProvider, UseColor, UseTheme, useSpacing } from "../ThemeProvider.js";
+    type StyleProp,
+    StyleSheet,
+    type TextStyle,
+    type ViewStyle,
+    useWindowDimensions
+} from "react-native";
+import { ThemeProvider, UseColor, useSpacing } from "../ThemeProvider.js";
+import { useTheme } from "../index.js";
 
-/**
- * A height the sheet can rest at. `{Fraction}`/`{Height}` are iOS/web
- * only — on Android, `@expo/ui` snaps them to the nearest of `"Half"`/
- * `"Full"`.
- */
-export type BottomSheetSnapPoint =
-    | "Half"
-    | "Full"
-    | { readonly Fraction: number }
-    | { readonly Height: number };
-
-const ToExpoSnapPoint = (Point: BottomSheetSnapPoint): ExpoSnapPoint =>
-{
-    if (Point === "Half")
-    {
-        return "half";
-    }
-
-    if (Point === "Full")
-    {
-        return "full";
-    }
-
-    return "Fraction" in Point ? { fraction: Point.Fraction } : { height: Point.Height };
-};
+/** {@inheritDoc BottomSheet} */
+export interface BottomSheet extends Gorhom.BottomSheetModal { }
 
 /** {@inheritDoc BottomSheet} */
 export interface BottomSheetProps extends React.PropsWithChildren
 {
-    readonly IsPresented: boolean;
-    readonly OnDismiss: () => void;
-    /** Heights the sheet can rest at. Omit to auto-size to content. */
-    readonly SnapPoints?: ReadonlyArray<BottomSheetSnapPoint>;
+    readonly OnChange?: Gorhom.BottomSheetModalProps["onChange"];
+    readonly OnDismiss?: (() => void) | undefined;
     readonly ShowDragIndicator?: boolean;
-    readonly TestID?: string;
+    readonly Ref: React.RefObject<Gorhom.BottomSheetModal | null>;
+    readonly TestId?: string;
 }
 
 export/**
        * A modal sheet that slides up from the bottom of the screen, built on
        * `@expo/ui`'s native `BottomSheet`. Compose with `BottomSheetHeader`,
        * `BottomSheetTitle`, `BottomSheetDescription`, and `BottomSheetFooter`.
+       *
        * @category Component
        * @since 1.0.0
        */
 const BottomSheet = ({
-    IsPresented,
+    OnChange,
     OnDismiss,
-    SnapPoints,
     ShowDragIndicator = true,
-    TestID,
+    Ref,
+    TestId,
     children
 }: BottomSheetProps): React.JSX.Element =>
 {
-    const { Mode } = UseTheme();
-    const BackgroundColor = UseColor(Semantic.BackgroundModal);
+    const MaxWidth = 480 as const;
+
+    const ColorScheme = useTheme().Mode;
+
+    const { width: WindowWidth } = useWindowDimensions();
+
+    const marginHorizontal = Math.max(0, (WindowWidth - MaxWidth) / 2);
+
+    const snapPoints = React.useMemo(() => [ "83.333%" ], [ ]);
 
     return (
-        <Host
-            matchContents
-            style={ Styles.Host }>
-            <ExpoBottomSheet
-                isPresented={ IsPresented }
-                onDismiss={ OnDismiss }
-                showDragIndicator={ ShowDragIndicator }
-                { ...(SnapPoints === undefined ? {} : { snapPoints: SnapPoints.map(ToExpoSnapPoint) }) }
-                { ...(TestID === undefined ? {} : { testID: TestID }) }>
-                <ThemeProvider ColorScheme={ Mode }>
-                    <View style={ [ Styles.Content, { backgroundColor: BackgroundColor } ] }>
-                        { children }
-                    </View>
-                </ThemeProvider>
-            </ExpoBottomSheet>
-        </Host>
+        <Gorhom.BottomSheetModal
+            backdropComponent={ (Props: Gorhom.BottomSheetBackdropProps) =>
+                <Gorhom.BottomSheetBackdrop
+                    { ...Props }
+                    appearsOnIndex={ 0 }
+                    disappearsOnIndex={ -1 }
+                    opacity={ 0.667 }
+                /> }
+            containerStyle={ { marginHorizontal } }
+            enableDynamicSizing={ false }
+            enablePanDownToClose
+            index={ 0 }
+            ref={ Ref }
+            snapPoints={ snapPoints }
+            { ...(OnChange !== undefined ? { onChange: OnChange } : { }) }
+            { ...(OnDismiss !== undefined ? { onClose: OnDismiss } : { }) }
+            { ...(ShowDragIndicator ? { } : { handleComponent: null }) }
+            { ...(TestId === undefined ? { } : { testID: TestId }) }>
+            <ThemeProvider { ...{ ColorScheme } }>
+                { children }
+            </ThemeProvider>
+        </Gorhom.BottomSheetModal>
     );
 };
 
@@ -133,16 +111,21 @@ export/**
        */
 const BottomSheetHeader = ({ Style, children }: BottomSheetHeaderProps): React.JSX.Element =>
 {
-    const Gap = useSpacing(Spacing.ExtraSmall);
-    const Padding = useSpacing(Spacing.SheetHorizontal);
+    // const Gap = useSpacing(Spacing.ExtraSmall);
+    // const Padding = useSpacing(Spacing.SheetHorizontal);
 
-    return <View style={ [ { gap: Gap, padding: Padding }, Style ] }>{ children }</View>;
+    return (
+        // <Gorhom.BottomSheetView style={ [ { gap: Gap, padding: Padding }, Style ] }>
+        <Gorhom.BottomSheetView style={ Style }>
+            { children }
+        </Gorhom.BottomSheetView>
+    );
 };
 
 /** {@inheritDoc BottomSheetTitle} */
 export interface BottomSheetTitleProps extends React.PropsWithChildren
 {
-    readonly Style?: StyleProp<ViewStyle>;
+    readonly Style?: StyleProp<TextStyle>;
 }
 
 export/**
@@ -152,9 +135,11 @@ export/**
        * @since 1.0.0
        */
 const BottomSheetTitle = ({ Style, children }: BottomSheetTitleProps): React.JSX.Element =>
-    <Heading3 { ...{ Style } }>
-        { children }
-    </Heading3>;
+    <BottomSheetView>
+        <Heading3 { ...{ Style } }>
+            { children }
+        </Heading3>
+    </BottomSheetView>;
 
 /** {@inheritDoc BottomSheetDescription} */
 export interface BottomSheetDescriptionProps extends React.PropsWithChildren { }
@@ -173,7 +158,7 @@ const BottomSheetDescription = ({ children }: BottomSheetDescriptionProps): Reac
 /** {@inheritDoc BottomSheetFooter} */
 export interface BottomSheetFooterProps extends React.PropsWithChildren
 {
-    readonly Style?: StyleProp<ViewStyle>;
+    readonly Style?: React.ComponentProps<typeof Gorhom.BottomSheetFooter>["style"];
 }
 
 export/**
@@ -184,36 +169,77 @@ export/**
        */
 const BottomSheetFooter = ({ Style, children }: BottomSheetFooterProps): React.JSX.Element =>
 {
-    const Gap = useSpacing(Spacing.Small);
-    const Padding = useSpacing(Spacing.SheetHorizontal);
+    const gap = useSpacing(Spacing.Small);
+    const padding = useSpacing(Spacing.SheetHorizontal);
+
+    const Footer = Gorhom.BottomSheetFooter as any;
 
     return (
-        <View style={ [ Styles.Footer, { gap: Gap, padding: Padding }, Style ] }>
+        <Footer style={ { ...Styles.Footer, gap, padding, ...Style } }>
             { children }
-        </View>
+        </Footer>
+    );
+};
+
+/** {@inheritDoc BottomSheetView} */
+export interface BottomSheetViewProps extends
+    Omit<React.ComponentProps<typeof Gorhom.BottomSheetView>, "children">,
+    React.PropsWithChildren { }
+
+/** {@inheritDoc BottomSheetScrollView} */
+export interface BottomSheetScrollViewProps extends
+    React.ComponentProps<typeof Gorhom.BottomSheetScrollView> { }
+
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const BottomSheetView = ({
+    children,
+    style,
+    ...Tail
+}: BottomSheetViewProps): React.JSX.Element =>
+{
+    const backgroundColor = UseColor(Semantic.BackgroundModal);
+
+    return (
+        <Gorhom.BottomSheetView
+            style={ [ { backgroundColor }, style ] }
+            { ...Tail }>
+            { children }
+        </Gorhom.BottomSheetView>
+    );
+};
+
+export/**
+       * TODO Write description.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const BottomSheetScrollView = ({
+    children,
+    style,
+    ...Tail
+}: BottomSheetScrollViewProps): React.JSX.Element =>
+{
+    const backgroundColor = UseColor(Semantic.BackgroundModal);
+
+    return (
+        <Gorhom.BottomSheetScrollView
+            style={ [ { backgroundColor }, style ] }
+            { ...Tail }>
+            { children }
+        </Gorhom.BottomSheetScrollView>
     );
 };
 
 const Styles = StyleSheet.create({
-    Content:
-    {
-        minHeight: 1
-    },
     Footer:
     {
         flexDirection: "column",
         marginTop: "auto"
-    },
-    /*
-     * `ExpoBottomSheet`'s native presentation (a SwiftUI `.sheet()`
-     * modifier / Jetpack Compose `ModalBottomSheet` / a fixed-position
-     * `View` on web) is anchored to the screen, not to this container's
-     * layout box — `position: "absolute"` just keeps the (empty, when
-     * dismissed) `Host` mount point out of the surrounding document flow;
-     * `matchContents` on `<Host>` governs its actual size.
-     */
-    Host:
-    {
-        position: "absolute"
     }
 });

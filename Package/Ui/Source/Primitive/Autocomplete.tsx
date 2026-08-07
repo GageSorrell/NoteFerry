@@ -115,7 +115,7 @@ const Autocomplete = ({
     const IsOpen = Open ?? UncontrolledOpen;
     const AnchorRef = React.useRef<React.Component>(null);
     const MatchRegistry = React.useRef(new Map<string, boolean>());
-    const [ , SetVersion ] = React.useState(0);
+    const [ Version, SetVersion ] = React.useState(0);
     const BumpVersion = React.useCallback(() => SetVersion((V: number) => V + 1), [ ]);
 
     const SetQuery = React.useCallback((NextQuery: string) =>
@@ -139,7 +139,11 @@ const Autocomplete = ({
         Query: CurrentQuery,
         SetIsOpen,
         SetQuery
-    }), [ CurrentQuery, SetQuery, IsOpen, SetIsOpen, Filter, BumpVersion ]);
+    /* `Version` is intentionally unused in the value shape below; it's a dependency-only   *
+     * trigger so `MatchRegistry` mutations (bumped from `AutocompleteItem`'s effect) force *
+     * this memo to hand consumers — namely `AutocompleteEmpty` — a fresh context value.    */
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    }), [ CurrentQuery, SetQuery, IsOpen, SetIsOpen, Filter, BumpVersion, Version ]);
 
     return <AutocompleteContext.Provider value={ ContextValue }>{ children }</AutocompleteContext.Provider>;
 };

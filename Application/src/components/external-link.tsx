@@ -1,25 +1,42 @@
-import { Href, Link } from 'expo-router';
-import { openBrowserAsync, WebBrowserPresentationStyle } from 'expo-web-browser';
-import { type ComponentProps } from 'react';
+/**
+ *
+ *
+ * @module notivex/components/external-link
+ *
+ * @file      external-link.tsx
+ * @author    Gage Sorrell <gage@sorrell.sh>
+ * @copyright (c) 2026 Gage Sorrell
+ * @license   MIT
+ */
 
-type Props = Omit<ComponentProps<typeof Link>, 'href'> & { href: Href & string };
+import type { ComponentProps, MouseEvent } from "react";
+import { type Href, Link } from "expo-router";
+import { WebBrowserPresentationStyle, openBrowserAsync } from "expo-web-browser";
+import type { GestureResponderEvent } from "react-native";
 
-export function ExternalLink({ href, ...rest }: Props) {
-  return (
-    <Link
-      target="_blank"
-      {...rest}
-      href={href}
-      onPress={async (event) => {
-        if (process.env.EXPO_OS !== 'web') {
-          // Prevent the default behavior of linking to the default browser on native.
-          event.preventDefault();
-          // Open the link in an in-app browser.
-          await openBrowserAsync(href, {
-            presentationStyle: WebBrowserPresentationStyle.AUTOMATIC,
-          });
-        }
-      }}
-    />
-  );
+/* eslint-disable jsdoc/require-jsdoc */
+
+type Props = Omit<ComponentProps<typeof Link>, "href"> & { href: Href & string };
+
+export function ExternalLink({ href, ...rest }: Props)
+{
+    return (
+        <Link
+            { ...{ ...rest, href } }
+            onPress={ async (event: MouseEvent<HTMLAnchorElement> | GestureResponderEvent) =>
+            {
+                if (process.env.EXPO_OS !== "web")
+                {
+                    event.preventDefault();
+                    await openBrowserAsync(
+                        href,
+                        {
+                            presentationStyle: WebBrowserPresentationStyle.AUTOMATIC
+                        }
+                    );
+                }
+            } }
+            target="_blank"
+        />
+    );
 }

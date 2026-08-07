@@ -175,7 +175,7 @@ const AllExample = (): React.JSX.Element =>
     const [ TextareaValue, SetTextareaValue ] = React.useState("");
     const [ WrapChecked, SetWrapChecked ] = React.useState(true);
     const [ SelectValueState, SetSelectValueState ] = React.useState("board");
-    const [ SheetPresented, SetSheetPresented ] = React.useState(false);
+    const BottomSheetRef = React.useRef<BottomSheet>(null);
     const [ ComboboxValueState, SetComboboxValueState ] = React.useState("UTC");
     const [ CommandOpen, SetCommandOpen ] = React.useState(false);
     const [ CalendarValue, SetCalendarValue ] = React.useState<Date | undefined>(new Date());
@@ -183,6 +183,15 @@ const AllExample = (): React.JSX.Element =>
     const [ SortableOrder, SetSortableOrder ] =
         React.useState<ReadonlyArray<string>>([ "Introduction", "Getting Started", "FAQ" ]);
     const FormMethods = useForm<AllExampleFormValues>({ defaultValues: { Name: "" } });
+
+    const OnPressBottomSheet = () =>
+    {
+        if (BottomSheetRef.current !== null && BottomSheetRef.current)
+        {
+            BottomSheetRef.current.present();
+            setTimeout(BottomSheetRef.current.expand, 500);
+        }
+    };
 
     return (
         <View style={ { flex: 1 } }>
@@ -514,11 +523,8 @@ const AllExample = (): React.JSX.Element =>
                 </Section>
 
                 <Section Title="BottomSheet">
-                    <Button OnPress={ () => SetSheetPresented(true) }>Open bottom sheet</Button>
-                    <BottomSheet
-                        IsPresented={ SheetPresented }
-                        OnDismiss={ () => SetSheetPresented(false) }
-                        SnapPoints={ [ "Half" ] }>
+                    <Button OnPress={ OnPressBottomSheet }>Open bottom sheet</Button>
+                    <BottomSheet Ref={ BottomSheetRef }>
                         <BottomSheetHeader>
                             <BottomSheetTitle>
                                 Share this page
@@ -529,7 +535,7 @@ const AllExample = (): React.JSX.Element =>
                         </BottomSheetHeader>
                         <BottomSheetFooter>
                             <Button
-                                OnPress={ () => SetSheetPresented(false) }
+                                OnPress={ () => BottomSheetRef.current?.dismiss() }
                                 Variant="Blue">
                                 Copy link
                             </Button>
@@ -760,4 +766,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Playground: Story = { };
+export const Playground: Story =
+    {
+        name: "All"
+    } as const;

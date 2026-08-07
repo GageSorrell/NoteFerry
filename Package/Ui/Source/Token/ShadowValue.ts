@@ -16,6 +16,12 @@
 
 import * as Shadow from "./Shadow.js";
 
+/**
+ * The style values applied to items that have a shadow.
+ *
+ * @category Token
+ * @since 1.0.0
+ */
 export interface ShadowValue
 {
     readonly BorderWidth?: number;
@@ -35,24 +41,30 @@ const Value: ReadonlyMap<Shadow.Shadow, ShadowValue> = new Map<Shadow.Shadow, Sh
     [
         Shadow.FocusRing,
         {
-            BorderWidth: 2,
             BorderColor: "rgba(35, 131, 226, 0.35)",
+            BorderWidth: 2
         }
     ],
     [
         Shadow.Card,
         {
-            ShadowColor: "#191919",
+            Elevation: 5,
+            ShadowColor: "#333333",
             ShadowOffset:
             {
-                Height: 2,
+                Height: 8,
                 Width: 0
             },
             ShadowOpacity: 0.07,
-            ShadowRadius: 6,
-            Elevation: 2,
+            ShadowRadius: 8
         }
     ]
 ]);
 
-export const Resolve = (Token: Shadow.Shadow): ShadowValue | undefined => Value.get(Token);
+export/**
+       * Resolve a `Shadow` token to its corresponding styles.
+       *
+       * @category Token
+       * @since 1.0.0
+       */
+const Resolve = (Token: Shadow.Shadow): ShadowValue | undefined => Value.get(Token);

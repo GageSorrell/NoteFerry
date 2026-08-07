@@ -65,12 +65,29 @@ const Badge = ({ Variant = "Default", Size = "Medium", Style, children }: BadgeP
     {
         switch (Variant)
         {
-            case "Gray": return { Background: "rgba(206, 205, 202, 0.5)", TextColor: SecondaryColor };
-            case "Blue": return { Background: WithAlpha(BlueColor, 0.1), TextColor: BlueColor };
-            case "Orange": return { Background: "rgba(246, 192, 80, 0.26)", TextColor: "#D9730D" };
-            case "Tag": return { Background: "rgba(206, 205, 202, 0.5)", TextColor: PrimaryColor };
+            case "Gray":
+                return {
+                    Background: "rgba(206, 205, 202, 0.5)",
+                    TextColor: SecondaryColor
+                } as const;
+            case "Blue":
+                return {
+                    Background: WithAlpha(BlueColor, 0.1),
+                    TextColor: BlueColor
+                } as const;
+            case "Orange":
+                return {
+                    Background: "rgba(246, 192, 80, 0.26)",
+                    TextColor: "#D9730D"
+                } as const;
+            case "Tag":
+                return {
+                    Background: "rgba(206, 205, 202, 0.5)",
+                    TextColor: PrimaryColor
+                } as const;
             case "Default":
-            default: return { Background: PrimaryColor, TextColor: "#FFFFFF" };
+            default:
+                return { Background: PrimaryColor, TextColor: "#FFFFFF" } as const;
         }
     })();
 

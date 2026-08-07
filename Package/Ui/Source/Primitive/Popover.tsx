@@ -77,7 +77,11 @@ const Popover = ({ Open, DefaultOpen = false, OnOpenChange, children }: PopoverP
         [ IsOpen, SetIsOpen ]
     );
 
-    return <PopoverContext.Provider value={ ContextValue }>{ children }</PopoverContext.Provider>;
+    return (
+        <PopoverContext.Provider value={ ContextValue }>
+            { children }
+        </PopoverContext.Provider>
+    );
 };
 
 /** {@inheritDoc PopoverTrigger} */

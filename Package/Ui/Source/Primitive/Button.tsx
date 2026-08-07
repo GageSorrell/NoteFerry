@@ -17,7 +17,7 @@ import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import {
     type GestureResponderEvent,
-    Pressable,
+    // Pressable,
     type StyleProp,
     StyleSheet,
     type View,
@@ -26,6 +26,7 @@ import {
 import { UseColor, useRadii } from "../ThemeProvider.js";
 import { Body } from "./Text.js";
 import { Spinner } from "./Spinner.js";
+import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import { WithAlpha } from "../Utility/index.js";
 
 /**
@@ -91,7 +92,7 @@ export/**
        * @category Component
        * @since 1.0.0
        */
-const Button = React.forwardRef<React.ComponentRef<typeof Pressable>, ButtonProps>(({
+const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, ButtonProps>(({
     Variant = "Primary",
     Size = "Medium",
     Disabled = false,
@@ -240,16 +241,23 @@ const Button = React.forwardRef<React.ComponentRef<typeof Pressable>, ButtonProp
         FullRadius
     ]);
 
+    const [ pressed, SetIsPressed ] = React.useState(false);
+
+    const onPressIn = () => SetIsPressed(true);
+
+    const onPressOut = () => SetIsPressed(false);
+
     return (
-        <Pressable
+        <TouchableOpacity
             accessibilityLabel={ AccessibilityLabel }
             accessibilityRole="button"
             accessibilityState={ { disabled: Disabled || Loading } }
             disabled={ Disabled || Loading }
             hitSlop={ IsIconOnly ? 8 : undefined }
             onPress={ OnPress }
+            { ...{ onPressIn, onPressOut } }
             ref={ ForwardedRef }
-            style={ ({ pressed }: { readonly pressed: boolean; }) => [
+            style={ [
                 Styles.Base,
                 Size !== "Circle" ? SizeStyle[ Size ] : undefined,
                 { borderRadius: Size === "Large" ? MediumRadius : SmallRadius },
@@ -272,7 +280,7 @@ const Button = React.forwardRef<React.ComponentRef<typeof Pressable>, ButtonProp
                         </Body>
                     )
                     : children }
-        </Pressable>
+        </TouchableOpacity>
     );
 });
 
@@ -310,7 +318,7 @@ const Styles = StyleSheet.create({
     CloseGlyph:
     {
         fontSize: 12,
-        lineHeight: 18
+        lineHeight: 16
     },
     Disabled:
     {

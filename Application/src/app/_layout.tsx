@@ -9,9 +9,10 @@
 
 // import * as SplashScreen from "expo-splash-screen";
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider as NotivexThemeProvider } from "@notivex/ui";
 import { useColorScheme } from "react-native";
-
 // SplashScreen.preventAutoHideAsync();
 
 // import { AnimatedSplashOverlay } from '@/components/animated-icon';
@@ -34,16 +35,21 @@ import { useColorScheme } from "react-native";
 export default function RootLayout()
 {
     const ColorScheme = useColorScheme();
+
     return (
         <NotivexThemeProvider>
-            <ThemeProvider value={ ColorScheme === "dark" ? DarkTheme : DefaultTheme }>
-                <Stack screenOptions={ { headerShown: false } }>
-                    <Stack.Screen name="index" />
-                    <Stack.Protected guard={ __DEV__ }>
-                        <Stack.Screen name="storybook" />
-                    </Stack.Protected>
-                </Stack>
-            </ThemeProvider>
+            <GestureHandlerRootView>
+                <ThemeProvider value={ ColorScheme === "dark" ? DarkTheme : DefaultTheme }>
+                    <BottomSheetModalProvider>
+                        <Stack screenOptions={ { headerShown: false } }>
+                            <Stack.Screen name="index" />
+                            <Stack.Protected guard={ __DEV__ }>
+                                <Stack.Screen name="storybook" />
+                            </Stack.Protected>
+                        </Stack>
+                    </BottomSheetModalProvider>
+                </ThemeProvider>
+            </GestureHandlerRootView>
         </NotivexThemeProvider>
     );
 }

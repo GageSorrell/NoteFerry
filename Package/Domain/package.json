@@ -1,0 +1,44 @@
+{
+  "name": "@notivex/domain",
+  "description": "Schemas and data utilities shared across the monorepo.",
+  "private": true,
+  "homepage": "https://notivex.sorrell.sh",
+  "version": "1.0.0",
+  "author": {
+    "name": "Gage Sorrell",
+    "email": "gage@sorrell.sh",
+    "url": "https://sorrell.sh"
+  },
+  "bugs": {
+    "url": "https://github.com/GageSorrell/Notivex/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "directory": "Package/Domain",
+    "type": "git",
+    "url": "git+https://github.com/GageSorrell/Notivex.git"
+  },
+  "engines": {
+    "node": "24.19.0",
+    "npm": ">=12.0.2"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./Distribution/index.js",
+      "types": "./Distribution/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc -p ./tsconfig.json"
+  },
+  "dependencies": {
+    "effect": "4.0.0-beta.104"
+  },
+  "devDependencies": {
+    "@sorrell/tsconfig": "1.0.0",
+    "@testing-library/react-native": "14.0.1",
+    "typescript": "6.0.3"
+  }
+}

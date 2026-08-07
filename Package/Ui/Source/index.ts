@@ -20,6 +20,7 @@
  * @license   MIT
  */
 
+export * as Primitive from "./Primitive/index.js";
 export * as Token from "./Token/index.js";
 
 export {
@@ -31,5 +32,5 @@ export {
     useSpacing,
     useRadii,
     useTypography,
-    useShadow,
+    useShadow
 } from "./ThemeProvider.js";

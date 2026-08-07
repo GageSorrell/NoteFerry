@@ -5,6 +5,8 @@
   "homepage": "https://notivex.sorrell.sh",
   "workspaces": [
     "./Application",
+    "./Package/Api",
+    "./Package/Domain",
     "./Package/Ui"
   ],
   "version": "1.0.0",

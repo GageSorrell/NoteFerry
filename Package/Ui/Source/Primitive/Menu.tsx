@@ -26,6 +26,7 @@ import {
     type ViewStyle
 } from "react-native";
 import { UseColor, useRadii } from "../ThemeProvider.js";
+import { Predicate } from "effect";
 import { WithAlpha } from "../Utility/index.js";
 
 /** {@inheritDoc MenuGroup} */
@@ -93,12 +94,16 @@ export interface MenuItemProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * Forwards its ref to the underlying `Pressable` — needed so a `MenuItem`
+       * can be used as an anchor for its own `Popup` (e.g. `DateSheet`'s
+       * "Date format"/"Time format"/"Timezone" rows, each of which opens a
+       * popup anchored directly to the row that triggered it), the same way
+       * `Button` already forwards its ref for `*Trigger` `AsChild` usage.
        *
        * @category Component
        * @since 1.0.0
        */
-const MenuItem = ({
+const MenuItem = React.forwardRef<React.ComponentRef<typeof Pressable>, MenuItemProps>(({
     Variant = "Default",
     Icon,
     Label,
@@ -107,7 +112,7 @@ const MenuItem = ({
     OnPress,
     Style,
     children
-}: MenuItemProps): React.JSX.Element =>
+}: MenuItemProps, ForwardedRef: React.ForwardedRef<View>): React.JSX.Element =>
 {
     const PrimaryColor = UseColor(Semantic.Primary);
     const SecondaryColor = UseColor(Semantic.Secondary);
@@ -128,6 +133,7 @@ const MenuItem = ({
             accessibilityState={ { disabled: Disabled } }
             disabled={ Disabled }
             onPress={ OnPress }
+            ref={ ForwardedRef }
             style={ ({ pressed }: { readonly pressed: boolean; }) => [
                 {
                     alignItems: "center",
@@ -147,7 +153,7 @@ const MenuItem = ({
                     justifyContent: "center",
                     marginRight: 8
                 } }>
-                    { Icon }
+                    { Predicate.isString(Icon) ? <Body>{ Icon }</Body> : Icon }
                 </View>
             ) }
             <View style={ { flex: 1, minWidth: 0 } }>
@@ -178,7 +184,9 @@ const MenuItem = ({
             { children }
         </Pressable>
     );
-};
+});
+
+MenuItem.displayName = "MenuItem";
 
 /** {@inheritDoc MenuItemAction} */
 export interface MenuItemActionProps extends React.PropsWithChildren
@@ -221,7 +229,11 @@ const MenuItemCheck = (): React.JSX.Element =>
 export interface MenuItemSelectProps extends React.PropsWithChildren { }
 
 export/**
-       * TODO Write description.
+       * The trailing "current value + chevron" cluster on a `MenuItem` row
+       * that opens a picker (e.g. `DateSheet`'s "Date format"/"Time format"/
+       * "Timezone" rows). String/number `children` are wrapped in `Body` —
+       * bare text can't be a direct child of the underlying `View` (RN
+       * throws "Text strings must be rendered within a <Text> component").
        *
        * @category Component
        * @since 1.0.0
@@ -235,7 +247,13 @@ const MenuItemSelect = ({ children }: MenuItemSelectProps): React.JSX.Element =>
             alignItems: "center",
             flexDirection: "row"
         } }>
-            { children }
+            { typeof children === "string" || typeof children === "number"
+                ? <Body
+                    Color={ Semantic.Muted }
+                    NumberOfLines={ 1 }>
+                    { children }
+                </Body>
+                : children }
             <ChevronRight
                 color={ MutedColor }
                 size={ 12 }

@@ -35,12 +35,18 @@ import * as TypographyValue from "./Token/TypographyValue.js";
 import { Context, Effect } from "effect";
 import { useColorScheme } from "react-native";
 
+// export namespace ThemeMode
+// {
+
+// }
+
 type ThemeMode =
     | "Light"
     | "Dark";
 
-/** The live theme mode, threaded through the resolution program via `Context.Tag`. */
-class ThemeModeTag extends Context.Tag("@notivex/ui/ThemeProvider/ThemeMode")<ThemeModeTag, ThemeMode>() {}
+/** The live theme mode, threaded through the resolution program via `Context.Service`. */
+class ThemeModeTag extends
+    Context.Service<ThemeModeTag, ThemeMode>()("@notivex/ui/ThemeProvider/ThemeMode") { }
 
 interface TokenResolver
 {

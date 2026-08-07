@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NotionCommandPaletteExtension")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+59fef6841d7adcf7db59612c56c7a32911742c38")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+814b9b05b42797fa44aafa4203f1912184f6d1e4")]
 [assembly: System.Reflection.AssemblyProductAttribute("NotionCommandPaletteExtension")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NotionCommandPaletteExtension")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

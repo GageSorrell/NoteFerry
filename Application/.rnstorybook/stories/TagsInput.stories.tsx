@@ -22,7 +22,7 @@ const TagsInputExample = (): React.JSX.Element =>
         <View style={ { width: 280 } }>
             <TagsInput
                 OnValueChange={ SetValue }
-                Placeholder="Add a tag..."
+                Placeholder="Add a tag…"
                 Value={ Value }
             />
         </View>
@@ -39,4 +39,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Playground: Story = { };
+export const Playground: Story =
+    {
+        name: "TagsInput"
+    } as const;
