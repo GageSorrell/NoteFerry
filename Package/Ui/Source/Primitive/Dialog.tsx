@@ -32,6 +32,7 @@ import {
 } from "react-native";
 import { UseColor, useRadii, useSpacing } from "../ThemeProvider.js";
 import { CloneTrigger } from "./Popup.js";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { WithAlpha } from "../Utility/index.js";
 
 interface DialogContextValue
@@ -168,32 +169,38 @@ const DialogContent = ({ HideClose = false, Style, children }: DialogContentProp
             onRequestClose={ () => SetIsOpen(false) }
             transparent
             visible={ IsOpen }>
-            <Pressable
-                accessibilityRole="none"
-                onPress={ () => SetIsOpen(false) }
-                style={ [ Styles.Overlay, { backgroundColor: WithAlpha(DefaultColor, 0.5) } ] }>
-                {/* Nested `Pressable`s claim the touch responder exclusively in RN
-                    (unlike DOM event bubbling), so a press here does not also fire
-                    the overlay's `onPress` above — no `stopPropagation` needed. */}
+            {/* RN's `Modal` mounts its children in a separate native view tree
+                that sits outside the app-root `GestureHandlerRootView`, so the
+                gesture-handler-based touchables inside (e.g. `Button`) receive no
+                touches. Give the modal its own root so those buttons work. */}
+            <GestureHandlerRootView style={ Styles.Root }>
                 <Pressable
-                    style={ [
-                        Styles.Card,
-                        {
-                            backgroundColor: ModalBackground,
-                            borderRadius: LargeRadius,
-                            gap: Gap,
-                            padding: Padding
-                        },
-                        Style
-                    ] }>
-                    { children }
-                    { !HideClose && (
-                        <View style={ Styles.CloseButton }>
-                            <CloseButton OnPress={ () => SetIsOpen(false) } />
-                        </View>
-                    ) }
+                    accessibilityRole="none"
+                    onPress={ () => SetIsOpen(false) }
+                    style={ [ Styles.Overlay, { backgroundColor: WithAlpha(DefaultColor, 0.5) } ] }>
+                    {/* Nested `Pressable`s claim the touch responder exclusively in RN
+                        (unlike DOM event bubbling), so a press here does not also fire
+                        the overlay's `onPress` above — no `stopPropagation` needed. */}
+                    <Pressable
+                        style={ [
+                            Styles.Card,
+                            {
+                                backgroundColor: ModalBackground,
+                                borderRadius: LargeRadius,
+                                gap: Gap,
+                                padding: Padding
+                            },
+                            Style
+                        ] }>
+                        { children }
+                        { !HideClose && (
+                            <View style={ Styles.CloseButton }>
+                                <CloseButton OnPress={ () => SetIsOpen(false) } />
+                            </View>
+                        ) }
+                    </Pressable>
                 </Pressable>
-            </Pressable>
+            </GestureHandlerRootView>
         </Modal>
     );
 };
@@ -214,27 +221,33 @@ export/**
        * @category Component
        * @since 1.0.0
        */
-const DialogClose = ({ Variant, Size, Style, OnPress, children }: DialogCloseProps): React.JSX.Element =>
+const DialogClose = ({
+    Variant = "Primary",
+    Size = "Medium",
+    Style,
+    OnPress: InOnPress,
+    children
+}: DialogCloseProps): React.JSX.Element =>
 {
     const { SetIsOpen } = useDialogContext();
 
-    const Handle = React.useCallback((Event: GestureResponderEvent) =>
+    const OnPress = React.useCallback((Event: GestureResponderEvent) =>
     {
-        OnPress?.(Event);
+        InOnPress?.(Event);
         SetIsOpen(false);
-    }, [ OnPress, SetIsOpen ]);
+    }, [ InOnPress, SetIsOpen ]);
 
     if (children === undefined)
     {
-        return <CloseButton OnPress={ Handle } />;
+        return <CloseButton OnPress={ OnPress } />;
     }
 
     return (
         <Button
-            OnPress={ Handle }
-            Size={ Size ?? "Medium" }
-            Style={ Style }
-            Appearance={ Variant ?? "Primary" }>
+            Appearance={ Variant }
+            OnPress={ OnPress }
+            Size={ Size }
+            Style={ Style }>
             { children }
         </Button>
     );
@@ -352,5 +365,9 @@ const Styles = StyleSheet.create({
         alignItems: "center",
         flex: 1,
         justifyContent: "center"
+    },
+    Root:
+    {
+        flex: 1
     }
 });

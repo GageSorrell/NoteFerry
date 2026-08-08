@@ -324,3 +324,36 @@ export async function RetrieveDataSource(
 
     return await Response.json() as NotionDataSourceObject;
 }
+
+/** The Notion Create Page request body Notivex sends (§20-21). */
+export interface NotionCreatePageBody
+{
+    readonly parent: { readonly type: "data_source_id"; readonly data_source_id: string };
+    readonly properties: Readonly<Record<string, unknown>>;
+}
+
+/**
+ * Creates a page under a data source, returning the new page's id. Throws
+ * {@link NotionApiError} on failure (400 for a property value Notion rejects).
+ *
+ * @category Notion
+ * @since 1.0.0
+ */
+export async function CreatePage(
+    AccessToken: string,
+    Body: NotionCreatePageBody
+): Promise<{ readonly id: string }>
+{
+    const Response = await fetch(`${ApiBase}/pages`, {
+        body: JSON.stringify(Body),
+        headers: DataApiHeaders(AccessToken),
+        method: "POST"
+    });
+
+    if (!Response.ok)
+    {
+        return await ThrowNotionApiError(Response);
+    }
+
+    return await Response.json() as { readonly id: string };
+}

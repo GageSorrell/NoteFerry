@@ -1,32 +1,39 @@
-# Notivex Auth Setup (Google now, Apple deferred)
+# Notivex Auth Setup (Notion identity)
 
-Manual / external configuration for the OAuth sign-in slice. The app code is
-already wired; these steps live in dashboards and portals only you can complete.
+Manual / external configuration for sign-in. The app code is wired; these steps
+live in dashboards and portals only you can complete.
 
-**Current path:** Google sign-in is the active method. The **Apple** button is
-present but a **no-op** until Apple is configured (see §3) — tapping it does
-nothing rather than erroring.
+**Notivex signs in with the user's Notion account** — Notion is enabled as a
+Supabase Auth provider. Granting the Notivex **content** integration access to
+pages is a **separate** step (the existing `notion-oauth-callback` flow). These
+are two distinct Notion OAuth authorizations (see §2 vs §3).
 
 **Project:** `Notivex` — ref `mbstkyukxldzhwmnsall`
-**Supabase OAuth callback (providers redirect here):**
+**Supabase auth callback (identity provider redirects here):**
 `https://mbstkyukxldzhwmnsall.supabase.co/auth/v1/callback`
+**Content integration callback (page grant redirects here):**
+`https://mbstkyukxldzhwmnsall.supabase.co/functions/v1/notion-oauth-callback`
 **App deep-link scheme:** `notivex://` (set in `app.json`)
 
 ---
 
 ## 0. How the flow works (context)
 
-`signInWithOAuth` → in-app browser (`expo-web-browser`) → provider login →
-provider redirects to the **Supabase callback** above → Supabase redirects back
-to the app at `notivex://…` → the app calls `setSession`. The provider secrets
-never touch the app (ArchitectureInitialDraft.md §6, §7).
+**Sign in (identity):** `signInWithOAuth({ provider: "notion" })` → in-app browser
+(`expo-web-browser`) → Notion login → Notion redirects to the **Supabase auth
+callback** → Supabase redirects back to the app at `notivex://…` → the app calls
+`setSession`. Code: `src/Domain/Auth/OAuth.ts`.
+
+**Grant access (content):** a *separate* Notion OAuth via the content integration
+(`ConnectNotion()` → `notion-oauth-callback`), whose access/refresh tokens are
+stored server-side in `private.notion_connection_credentials` and used for the
+Notion API. The client secret never touches the app (§7).
+
+No provider secret lives in the app either way.
 
 ---
 
 ## 1. Supabase → Authentication → URL Configuration  ✅ done
-
-`config.toml` only configures the **local** stack; the **remote** project must
-be set in the dashboard.
 
 - **Site URL:** `notivex://`
 - **Redirect URLs (allow-list):**
@@ -36,49 +43,35 @@ be set in the dashboard.
 
 ---
 
-## 2. Google  ✅ done
+## 2. Notion as a sign-in provider (identity)
 
-**Google Cloud Console** (console.cloud.google.com):
-1. Project → **OAuth consent screen** → External; add your Google account under
-   **Test users** (only test users can sign in until the app is published).
-2. **Credentials → Create credentials → OAuth client ID → Web application.**
-3. **Authorized redirect URIs** →
-   `https://mbstkyukxldzhwmnsall.supabase.co/auth/v1/callback`
-4. Copy the **Client ID** and **Client secret**.
+**Notion → My integrations** (notion.so/my-integrations) → **New integration** →
+type **Public**. Under **OAuth Domain & URIs**:
+- **Redirect URI:** `https://mbstkyukxldzhwmnsall.supabase.co/auth/v1/callback`
+- Copy the **OAuth client ID** and **client secret**.
 
-**Supabase dashboard → Authentication → Providers → Google:**
-- Enable, paste **Client ID** + **Client secret**, save. Leave "Authorized
-  Client IDs" empty (that field is for the native-SDK flow, which we are not
-  using).
+**Supabase dashboard → Authentication → Providers → Notion:**
+- Enable, paste the **Client ID** + **Client secret**, save.
 
-> The sign-in **button** is the native `GoogleSigninButton` component (so it
-> needs a dev build, not Expo Go), but the **flow** is the standard web OAuth —
-> `signInWithOAuth` + `WebBrowser` in `src/features/auth/oauth.ts`. No
-> `webClientId` or Android OAuth client is required.
+> This authorization establishes *who the user is*. Notion always shows a page
+> picker during OAuth; the pages chosen here are **not** what Notivex uses for
+> content — that is the separate grant in §3. Keeping the two apart is why sign-in
+> and "Grant access" are two screens.
 
 ---
 
-## 3. Apple  ⏳ deferred (button is a no-op today)
+## 3. Content integration (page grant)  ✅ already configured
 
-Not required to develop. Do this later, before App Store release. Requires an
-**Apple Developer Program** membership.
+The existing **content** integration is unchanged. Confirm:
+- Its **Redirect URI** is the content callback:
+  `https://mbstkyukxldzhwmnsall.supabase.co/functions/v1/notion-oauth-callback`
+- Its client id/secret are set as **Edge Function secrets**
+  `NOTION_OAUTH_CLIENT_ID` / `NOTION_OAUTH_CLIENT_SECRET`.
 
-**Apple Developer portal** (developer.apple.com → Certificates, IDs & Profiles):
-1. **App ID** for the app's bundle id with **Sign in with Apple** enabled.
-2. **Services ID** (becomes the OAuth *client id*) with Sign in with Apple:
-   - **Return URL:** `https://mbstkyukxldzhwmnsall.supabase.co/auth/v1/callback`
-   - Domain: `mbstkyukxldzhwmnsall.supabase.co`
-3. Create a **Sign in with Apple key** (`.p8`); note **Key ID** and **Team ID**.
-
-**Supabase dashboard → Authentication → Providers → Apple:**
-- Enable. Set the **Services ID** as client id; provide Team ID, Key ID, and
-  `.p8` so Supabase can mint the client secret. Save.
-
-**To re-activate the Apple button** once the above is done, restore its handler
-in `src/app/sign-in.tsx` (call `HandleSignIn("apple")` instead of the no-op).
-For App Store release, prefer **native** "Sign in with Apple"
-(`expo-apple-authentication` → `signInWithIdToken({ provider: "apple" })`),
-which Apple requires on iOS when other social logins are offered.
+> You *may* reuse one Notion integration for both §2 and §3 by adding both
+> redirect URIs to it — but then the two authorizations share one app. Two
+> separate integrations keep identity and content cleanly independent
+> (recommended).
 
 ---
 
@@ -89,7 +82,7 @@ Native modules (`expo-secure-store`) + the custom `notivex://` scheme mean
 
 ```
 cd Application
-npx expo run:android     # emulator/device — no Apple account needed
+npx expo run:android     # emulator/device
 # or
 npx expo run:ios         # iOS Simulator — a free Apple ID is enough
 ```
@@ -100,20 +93,18 @@ npx expo run:ios         # iOS Simulator — a free Apple ID is enough
 
 ## 5. Test
 
-1. Launch the dev build → you should land on the **sign-in** screen (route
-   protection redirects signed-out users there).
-2. Tap **Continue with Google** → complete login in the browser sheet → it
-   returns to the app and a session is created. (The **Apple** button does
-   nothing for now.)
-3. You should be routed to the app's `index` screen. Kill and relaunch — the
-   session is restored from encrypted secure storage (no re-login).
+1. Launch the dev build → land on the **sign-in** screen.
+2. Tap **Continue with Notion** → complete Notion login in the browser sheet → it
+   returns to the app and a session is created.
+3. You should be routed onward (onboarding → Grant access → …). Kill and relaunch
+   — the session is restored from encrypted secure storage (no re-login).
 4. Verify server-side: the new user appears in **Supabase → Authentication →
    Users**, and a matching `app.profiles` row exists (auto-created by the
    `on_auth_user_created` trigger).
 
-If step 2 bounces back with "redirect not allowed", the value the app sent
-doesn't match the allow-list — check Metro's logs for the exact `redirectTo`
-and add it under §1.
+If step 2 bounces with "redirect not allowed", the value the app sent doesn't
+match the allow-list — check Metro's logs for the exact `redirectTo` and add it
+under §1.
 
 ---
 
@@ -122,7 +113,6 @@ and add it under §1.
 - Encrypted session persistence (`SecureSessionStore`: AES key in SecureStore,
   ciphertext in AsyncStorage).
 - Token auto-refresh tied to app foreground/background (`AppState`).
-- `AuthProvider` (React session context) + `useAuth`.
+- `NotivexAuthProvider` (React session context) + `UseAuth`.
 - `CurrentUser` Effect seam for application/business code.
-- Route protection in `src/app/_layout.tsx`.
-- Apple button rendered but wired to a no-op (§3).
+- Route protection / onboarding gating in `src/app/_layout.tsx`.

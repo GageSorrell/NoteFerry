@@ -57,6 +57,7 @@ import {
     ContextMenuContent,
     ContextMenuItem,
     ContextMenuTrigger,
+    Description,
     Dialog,
     DialogClose,
     DialogContent,
@@ -222,9 +223,9 @@ const AllExample = (): React.JSX.Element =>
                 <Section Title="Button">
                     <View style={ { flexDirection: "row", flexWrap: "wrap", gap: 8 } }>
                         <Button>Primary</Button>
-                        <Button Variant="Blue">Blue</Button>
-                        <Button Variant="Red">Red</Button>
-                        <Button Variant="RedFill">Red Fill</Button>
+                        <Button Appearance="Blue">Blue</Button>
+                        <Button Appearance="Red">Red</Button>
+                        <Button Appearance="RedFill">Red Fill</Button>
                     </View>
                 </Section>
 
@@ -397,7 +398,7 @@ const AllExample = (): React.JSX.Element =>
                 <Section Title="AlertModal">
                     <Dialog>
                         <DialogTrigger AsChild>
-                            <Button Variant="Red">Delete workspace…</Button>
+                            <Button Appearance="Red">Delete workspace…</Button>
                         </DialogTrigger>
                         <AlertModal
                             OnTrigger={ () => new Promise<void>(
@@ -417,8 +418,8 @@ const AllExample = (): React.JSX.Element =>
                         </PopoverTrigger>
                         <PopoverContent>
                             <View style={ { alignItems: "flex-start", gap: 8 } }>
-                                <Text Variant="Heading3">Popover title</Text>
-                                <Text Variant="Description">Anchored to the trigger.</Text>
+                                <Heading3>Popover title</Heading3>
+                                <Description>Anchored to the trigger.</Description>
                                 <PopoverClose />
                             </View>
                         </PopoverContent>
@@ -535,8 +536,8 @@ const AllExample = (): React.JSX.Element =>
                         </BottomSheetHeader>
                         <BottomSheetFooter>
                             <Button
-                                OnPress={ () => BottomSheetRef.current?.dismiss() }
-                                Variant="Blue">
+                                Appearance="Blue"
+                                OnPress={ () => BottomSheetRef.current?.dismiss() }>
                                 Copy link
                             </Button>
                         </BottomSheetFooter>

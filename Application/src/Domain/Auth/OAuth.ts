@@ -1,10 +1,10 @@
 /**
- * The native OAuth sign-in flow. Following Supabase's Expo guidance, the app
- * asks Supabase for a provider authorization URL, opens it in an in-app browser
- * session, and turns the redirected-back URL into a session — the Notion client
- * secret and provider secrets never live in the app (ArchitectureInitialDraft.md
- * §6, §7). This is the portable web-OAuth flow; native "Sign in with Apple"
- * (`expo-apple-authentication`) is a later iOS UX upgrade.
+ * The OAuth sign-in flow. Notivex authenticates with the user's **Notion**
+ * account (Notion is enabled as a Supabase Auth provider): the app asks Supabase
+ * for the Notion authorization URL, opens it in an in-app browser session, and
+ * turns the redirected-back URL into a session — no provider secret ever lives
+ * in the app (ArchitectureInitialDraft.md §6, §7). Granting the Notivex
+ * integration access to content is a *separate* step (the content integration).
  *
  * @module notivex/Domain/Auth/OAuth
  *
@@ -17,16 +17,15 @@
 import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as WebBrowser from "expo-web-browser";
 import type { Session } from "@supabase/supabase-js";
-import { Supabase } from "@/runtime/supabase";
-import { makeRedirectUri } from "expo-auth-session";
+import { Supabase } from "@/Domain/Runtime/Supabase";
 
 /* Required so a dangling web auth session can complete (web/dev only). */
 WebBrowser.maybeCompleteAuthSession();
 
 /* eslint-disable @typescript-eslint/naming-convention */
 
-/** The providers Notivex offers today. */
-export type OAuthProvider = "apple" | "google";
+/** The identity providers Notivex offers today. */
+export type OAuthProvider = "notion";
 
 /* eslint-enable @typescript-eslint/naming-convention */
 
@@ -34,10 +33,7 @@ export type OAuthProvider = "apple" | "google";
  * to the project's Auth "Redirect URLs" allow-list (see AUTH_SETUP.md). In a
  * dev/standalone build this is `notivex://`; in Expo Go it is an `exp://…` URL.
  * The log makes the exact value visible in the Metro terminal. */
-const RedirectTo = makeRedirectUri();
-
-/* eslint-disable-next-line no-console */
-console.log("[Notivex] OAuth redirectTo:", RedirectTo);
+const redirectTo = "notivex://";
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 async function CreateSessionFromUrl(Url: string): Promise<Session | null>
@@ -75,15 +71,15 @@ export/**
        * @category Auth
        * @since 1.0.0
        */
-const SignInWithOAuth = async (Provider: OAuthProvider): Promise<Session | null> =>
+const SignInWithOAuth = async (provider: OAuthProvider): Promise<Session | null> =>
 {
     const { data, error } = await Supabase.auth.signInWithOAuth({
         options:
         {
-            redirectTo: RedirectTo,
+            redirectTo,
             skipBrowserRedirect: true
         },
-        provider: Provider
+        provider
     });
 
     if (error)
@@ -91,7 +87,7 @@ const SignInWithOAuth = async (Provider: OAuthProvider): Promise<Session | null>
         throw error;
     }
 
-    const Result = await WebBrowser.openAuthSessionAsync(data?.url ?? "", RedirectTo);
+    const Result = await WebBrowser.openAuthSessionAsync(data?.url ?? "", redirectTo);
 
     if (Result.type === "success")
     {

@@ -60,6 +60,7 @@ export default defineConfig(
     {
         rules:
         {
+            "@typescript-eslint/no-require-imports": "off",
             "jsdoc/no-blank-block-descriptions": "off",
             "jsdoc/sort-tags":
             [

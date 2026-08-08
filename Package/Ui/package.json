@@ -45,12 +45,12 @@
   "scripts": {
     "build": "tsc -p ./tsconfig.json"
   },
-  "peerDependencies":
-  {
+  "peerDependencies": {
     "@expo/ui": "57.0.9",
     "expo": "57.0.11",
     "expo-image": ">=57.0.2",
     "expo-image-picker": "~57.0.8",
+    "expo-router": "~57.0.11",
     "react": ">=19.2.0",
     "react-native": ">=0.86.0",
     "react-native-gesture-handler": ">=2.32.0",
@@ -65,8 +65,9 @@
     "@gorhom/bottom-sheet": "5.2.14",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@shopify/flash-list": "2.0.2",
+    "@sorrell/react": "1.1.1",
     "date-fns": "4.4.0",
-    "effect": "4.0.0-beta.104",
+    "effect": "4.0.0-beta.105",
     "jotai": "2.20.2",
     "lucide-react-native": "1.28.0",
     "react-hook-form": "7.84.0",

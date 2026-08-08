@@ -7,40 +7,66 @@
  * @license   MIT
  */
 
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
 import { NotivexAuthProvider, UseAuth } from "@/Domain/Auth/NotivexAuthProvider";
+import { OnboardingProvider, useOnboarding } from "@/features/onboarding/onboarding-context";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider as NotivexThemeProvider } from "@notivex/ui";
-import { useColorScheme } from "react-native";
+import { Stack } from "expo-router";
 
 /**
- * The navigator, split out so it can read the auth context provided above it.
- * `Stack.Protected` swaps the reachable routes based on whether a Supabase
- * session exists — signed-out users can only see `sign-in`, signed-in users
- * only see the app (ArchitectureInitialDraft.md §5, §6).
+ * The navigator, split out so it can read the auth and onboarding contexts
+ * provided above it. The reachable routes are chosen from a stage derived purely
+ * from `session + has-connection` (plus an in-memory "onboarding active" flag) —
+ * nothing is persisted, so a returning user with a connection lands straight in
+ * the app while a first-run user is walked through onboarding
+ * (ArchitectureInitialDraft.md §5, §6).
  */
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 function RootNavigator()
 {
-    const { Session, IsLoading } = UseAuth();
+    /* The React Compiler otherwise memoizes this consumer so aggressively that
+     * auth/onboarding context changes do not re-render it, stranding the app on
+     * a blank gate. Opt out so stage transitions take effect. */
+    "use no memo";
 
-    if (IsLoading)
-    {
-        /* Session is still being restored from secure storage; render nothing
-         * to avoid flashing the sign-in screen at a signed-in user. */
-        return null;
-    }
+    const { IsLoading: IsLoadingSession, Session } = UseAuth();
+    const { HasConnection, IsActive, IsLoadingConnection } = useOnboarding();
 
     const IsAuthenticated = Session !== null;
 
+    if (IsLoadingSession || (IsAuthenticated && IsLoadingConnection))
+    {
+        /* Session and/or connection state is still resolving; render nothing to
+         * avoid flashing the wrong stage. */
+        return null;
+    }
+
+    /* Three mutually exclusive stages: signed out → welcome + sign-in; signed in
+     * without a usable connection (or mid-flow) → grant/sync/done; signed in with
+     * a connection → the app. */
+    const IsSignedOut = !IsAuthenticated;
+    const IsInOnboarding = IsAuthenticated && (!HasConnection || IsActive);
+    const IsInApp = IsAuthenticated && HasConnection && !IsActive;
+
     return (
         <Stack screenOptions={ { headerShown: false } }>
-            <Stack.Protected guard={ IsAuthenticated }>
-                <Stack.Screen name="index" />
-            </Stack.Protected>
-            <Stack.Protected guard={ !IsAuthenticated }>
+            <Stack.Protected guard={ IsSignedOut }>
                 <Stack.Screen name="sign-in" />
+                <Stack.Screen
+                    name="sign-in-modal"
+                    options={ { presentation: "modal" } }
+                />
+            </Stack.Protected>
+            <Stack.Protected guard={ IsInOnboarding }>
+                <Stack.Screen name="grant" />
+                <Stack.Screen name="sync" />
+                <Stack.Screen name="done" />
+            </Stack.Protected>
+            <Stack.Protected guard={ IsInApp }>
+                <Stack.Screen name="index" />
+                <Stack.Screen name="data-sources" />
+                <Stack.Screen name="destination-config" />
             </Stack.Protected>
             <Stack.Protected guard={ __DEV__ }>
                 <Stack.Screen name="storybook" />
@@ -52,18 +78,19 @@ function RootNavigator()
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 export default function RootLayout()
 {
-    const ColorScheme = useColorScheme();
-
+    /* `NotivexThemeProvider` embeds React Navigation's `ThemeProvider` internally
+     * (with the app-wide background bound to `Semantic.BackgroundMain`), so there
+     * is deliberately no `expo-router` `ThemeProvider` mounted here. */
     return (
         <NotivexThemeProvider>
-            <GestureHandlerRootView>
-                <ThemeProvider value={ ColorScheme === "dark" ? DarkTheme : DefaultTheme }>
-                    <BottomSheetModalProvider>
-                        <NotivexAuthProvider>
+            <GestureHandlerRootView style={ { flex: 1 } }>
+                <BottomSheetModalProvider>
+                    <NotivexAuthProvider>
+                        <OnboardingProvider>
                             <RootNavigator />
-                        </NotivexAuthProvider>
-                    </BottomSheetModalProvider>
-                </ThemeProvider>
+                        </OnboardingProvider>
+                    </NotivexAuthProvider>
+                </BottomSheetModalProvider>
             </GestureHandlerRootView>
         </NotivexThemeProvider>
     );

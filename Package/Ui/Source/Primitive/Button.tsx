@@ -17,7 +17,6 @@ import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import {
     type GestureResponderEvent,
-    // Pressable,
     type StyleProp,
     StyleSheet,
     type View,
@@ -35,8 +34,9 @@ import { WithAlpha } from "../Utility/index.js";
  * @category Input
  * @since 1.0.0
  */
-export type ButtonVariant =
+export type ButtonAppearance =
     | "Primary"
+    | "SignIn"
     | "Icon"
     | "NavIcon"
     | "Link"
@@ -77,10 +77,10 @@ export interface ButtonProps extends React.PropsWithChildren
     readonly AccessibilityLabel?: string | undefined;
     readonly Disabled?: boolean;
     readonly Loading?: boolean;
-    readonly OnPress?: ((Event: GestureResponderEvent) => void) | undefined;
+    readonly OnPress?: ((Event: GestureResponderEvent) => unknown) | undefined;
     readonly Size?: ButtonSize;
     readonly Style?: StyleProp<ViewStyle>;
-    readonly Appearance?: ButtonVariant;
+    readonly Appearance?: ButtonAppearance;
 }
 
 export/**
@@ -111,16 +111,42 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
     const RedColor = UseColor(Semantic.Red);
     const MutedColor = UseColor(Semantic.Muted);
     const DefaultColor = UseColor(Semantic.Default);
+    const BackgroundMainColor = UseColor(Semantic.BackgroundMain);
     const MediumRadius = useRadii(Radii.Medium);
     const SmallRadius = useRadii(Radii.Small);
     const FullRadius = useRadii(Radii.Full);
 
     const IsIconOnly = Appearance === "Icon" || Appearance === "NavIcon" || Appearance === "Close";
 
-    const VariantStyle = React.useMemo<{ Container: ViewStyle; TextColor: string }>(() =>
+    const VariantStyle = React.useMemo<{
+        Container: ViewStyle;
+        PressedContainer?: ViewStyle;
+        TextColor: string;
+    }>(() =>
     {
         switch (Appearance)
         {
+            case "SignIn":
+                /* An inverted, high-contrast CTA: filled with the primary
+                 * text color and labeled in the page background color. Both
+                 * tokens flip with the theme, so the button is dark-on-white in
+                 * Light mode and light-on-dark in Dark mode. Pressing dims the
+                 * fill toward the page background in either mode. */
+                return {
+                    Container:
+                    {
+                        backgroundColor: PrimaryColor,
+                        minHeight: 40,
+                        paddingHorizontal: 16
+                    },
+                    PressedContainer:
+                    {
+                        backgroundColor: WithAlpha(PrimaryColor, 0.85),
+                        minHeight: 40,
+                        paddingHorizontal: 16
+                    },
+                    TextColor: BackgroundMainColor
+                } as const;
             case "Icon":
                 return {
                     Container:
@@ -237,6 +263,7 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
         RedColor,
         MutedColor,
         DefaultColor,
+        BackgroundMainColor,
         MediumRadius,
         FullRadius
     ]);
@@ -262,7 +289,9 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
                 Size !== "Circle" ? SizeStyle[ Size ] : undefined,
                 { borderRadius: Size === "Large" ? MediumRadius : SmallRadius },
                 VariantStyle.Container,
-                pressed && !Disabled ? { backgroundColor: WithAlpha(DefaultColor, 0.05) } : undefined,
+                pressed && !Disabled
+                    ? VariantStyle.PressedContainer ?? { backgroundColor: WithAlpha(DefaultColor, 0.05) }
+                    : undefined,
                 (Disabled || Loading) && Styles.Disabled,
                 Style
             ] }>
@@ -275,6 +304,10 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
                     ? (
                         <Body
                             Color={ VariantStyle.TextColor }
+                            Style={ [
+                                Styles.Label,
+                                { textAlign: Appearance === "Cell" ? "left" : "center" }
+                            ] }
                             Weight={ Appearance === "Blue" || Appearance === "RedFill" ? "500" : "400" }>
                             { children }
                         </Body>
@@ -298,14 +331,16 @@ const CloseButton = ({
 }: Pick<ButtonProps, "OnPress" | "AccessibilityLabel">): React.JSX.Element =>
     <Button
         { ...{ AccessibilityLabel, OnPress } }
-        Size="Circle"
-        Appearance="Close">
+        Appearance="Close"
+        Size="Circle">
         <Body
             Color={ Semantic.Muted }
             Style={ Styles.CloseGlyph }>
             ✕
         </Body>
     </Button>;
+
+CloseButton.displayName = "CloseButton";
 
 const Styles = StyleSheet.create({
     Base:
@@ -317,11 +352,21 @@ const Styles = StyleSheet.create({
     },
     CloseGlyph:
     {
-        fontSize: 12,
-        lineHeight: 16
+        fontSize: 10,
+        includeFontPadding: false,
+        lineHeight: 12,
+        textAlign: "center",
+        textAlignVertical: "center"
     },
     Disabled:
     {
         opacity: 0.4
+    },
+    Label:
+    {
+        /* Fill the row so `textAlign` positions the glyph. `justifyContent`
+         * alone does not center a single child through the gesture-handler
+         * touchable's inner wrapper on Android. */
+        flexGrow: 1
     }
 });

@@ -162,6 +162,7 @@ var Create = HttpApiEndpoint3.post("Create", "/", {
 var Update = HttpApiEndpoint3.patch("Update", "/:DestinationId", {
   error: [
     Domain3.Error.AuthenticationRequired,
+    Domain3.Error.DestinationNotFound,
     Domain3.Error.DataSourceNotFound,
     Domain3.Error.DataSourceSchemaChanged,
     Domain3.Error.DatabaseError

@@ -14,7 +14,7 @@
 
 import * as React from "react";
 import type { AuthChangeEvent, AuthError, Session } from "@supabase/supabase-js";
-import { Supabase } from "@/runtime/supabase";
+import { Supabase } from "@/Domain/Runtime/Supabase";
 
 /** The shape provided to consumers of {@link UseAuth}. */
 export interface NotivexAuth
@@ -39,6 +39,11 @@ const AuthContext = React.createContext<NotivexAuth>({
  */
 export function NotivexAuthProvider({ children }: React.PropsWithChildren)
 {
+    /* The React Compiler otherwise memoizes the context value so aggressively
+     * that a change to `IsLoading` does not reach consumers, stranding the app
+     * on a blank gate. Opt this provider out so session state propagates. */
+    "use no memo";
+
     const [ Session, SetSession ] = React.useState<Session | null>(null);
     const [ IsLoading, SetIsLoading ] = React.useState(true);
 
@@ -70,10 +75,35 @@ export function NotivexAuthProvider({ children }: React.PropsWithChildren)
                 readonly error: null;
             };
 
+        let HasSettled = false;
+
+        const Settle = (NextSession: Session | null): void =>
+        {
+            if (HasSettled)
+            {
+                return;
+            }
+
+            HasSettled = true;
+            SetSession(NextSession);
+            SetIsLoading(false);
+        };
+
+        /* The initial session read must never leave the app on a blank gate. The
+         * storage adapter already retries a cold-start read for up to ~12s; this
+         * is a last-resort guard above that window, so a catastrophic hang still
+         * falls back to signed-out rather than stranding the app. A later
+         * `onAuthStateChange` still upgrades to a restored or fresh session. */
+        const FallbackTimer = setTimeout(() => Settle(null), 15000);
+
         Supabase.auth.getSession().then(({ data }: SessionArg) =>
         {
-            SetSession(data.session);
-            SetIsLoading(false);
+            clearTimeout(FallbackTimer);
+            Settle(data.session);
+        }).catch(() =>
+        {
+            clearTimeout(FallbackTimer);
+            Settle(null);
         });
 
         const { data } = Supabase.auth.onAuthStateChange((
@@ -97,7 +127,7 @@ export function NotivexAuthProvider({ children }: React.PropsWithChildren)
     }), [ IsLoading, Session ]);
 
     return (
-        <AuthContext.Provider { ...{ value } }>
+        <AuthContext.Provider value={ value }>
             { children }
         </AuthContext.Provider>
     );

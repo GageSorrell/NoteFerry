@@ -2,14 +2,16 @@
 --
 -- `app`     — client-readable state, exposed through the Data API and protected
 --             by row-level security (ArchitectureInitialDraft.md §9, §18).
--- `private` — server-only state (Notion tokens, OAuth CSRF). Never exposed to
---             the Data API and never granted to client roles (§8, §9).
+-- `private` — server-only state (Notion tokens, OAuth CSRF). Exposed to the Data
+--             API only so the service_role edge functions can reach it through
+--             PostgREST; client roles are never granted access (§8, §9).
 
 create schema if not exists app;
 create schema if not exists private;
 
--- Defense in depth: the `private` schema is not listed in `[api] schemas`, but
--- explicitly deny the client roles any access regardless.
+-- `private` is listed in `[api] schemas` so the edge functions can reach it as
+-- service_role, but client roles get nothing: revoke all access here, and the
+-- tables additionally run under RLS with no client policies (defense in depth).
 revoke all on schema private from anon, authenticated;
 
 -- Shared trigger that stamps `updated_at` on every row update. Lives in

@@ -381,6 +381,7 @@ __export(Error_exports, {
   DataSourceNotFound: () => DataSourceNotFound,
   DataSourceSchemaChanged: () => DataSourceSchemaChanged,
   DatabaseError: () => DatabaseError,
+  DestinationNotFound: () => DestinationNotFound,
   DomainError: () => DomainError,
   InvalidPageDraft: () => InvalidPageDraft,
   NetworkError: () => NetworkError,
@@ -413,6 +414,8 @@ var DataSourceNotFound = class extends Schema10.TaggedError()("DataSourceNotFoun
 };
 var DataSourceSchemaChanged = class extends Schema10.TaggedError()("DataSourceSchemaChanged", { DataSourceId: NotionDataSourceId }, { httpApiStatus: 409 }) {
 };
+var DestinationNotFound = class extends Schema10.TaggedError()("DestinationNotFound", { DestinationId }, { httpApiStatus: 404 }) {
+};
 var InvalidPageDraft = class extends Schema10.TaggedError()("InvalidPageDraft", { Message: Schema10.String }, { httpApiStatus: 422 }) {
 };
 var DatabaseError = class extends Schema10.TaggedError()("DatabaseError", { Message: Schema10.String }, { httpApiStatus: 500 }) {
@@ -430,6 +433,7 @@ var DomainError = Schema10.Union([
   NotionUnavailable,
   DataSourceNotFound,
   DataSourceSchemaChanged,
+  DestinationNotFound,
   InvalidPageDraft,
   DatabaseError,
   NetworkError

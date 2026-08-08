@@ -9,5 +9,5 @@
  * @license   MIT
  */
 
-export * from "./NotivexAuthProvider.js";
-export * from "./OAuth.js";
+export * from "./NotivexAuthProvider";
+export * from "./OAuth";

@@ -18,3 +18,19 @@ grant select, update on app.profiles to authenticated;
 
 -- Destinations: full owner-scoped CRUD directly through the Data API (§29).
 grant select, insert, update, delete on app.destinations to authenticated;
+
+-- Backend role for the edge functions. `service_role` is NOT a client role — its
+-- key lives only in the edge-function environment and never reaches the app — so
+-- granting it access to `private` does not contradict the "no client-role grants
+-- on private" rule above. The `api` and `notion-oauth-callback` functions run as
+-- this role and need full DML on both schemas (ArchitectureInitialDraft.md §30).
+grant usage on schema app to service_role;
+grant usage on schema private to service_role;
+
+grant select, insert, update, delete on all tables in schema app to service_role;
+grant select, insert, update, delete on all tables in schema private to service_role;
+
+alter default privileges in schema app
+    grant select, insert, update, delete on tables to service_role;
+alter default privileges in schema private
+    grant select, insert, update, delete on tables to service_role;

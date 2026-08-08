@@ -10,11 +10,11 @@
 import type * as Domain from "@notivex/domain";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Body, Heading1 } from "@notivex/ui/Primitive";
-import { ConnectNotion } from "@/features/connections/connect";
-import { DisconnectNotion } from "@/runtime/notivex-api";
+import { ConnectNotion, useConnections } from "@/Domain/Connection";
+import { DisconnectNotion } from "@/Domain/Runtime/NotivexApi";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { UseAuth } from "@/Domain/Auth";
-import { useConnections } from "@/features/connections/use-connections";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 
 const HomeScreen = () =>
@@ -22,6 +22,7 @@ const HomeScreen = () =>
     const { SignOut } = UseAuth();
     const { Connections, IsLoading, Refetch } = useConnections();
     const [ Busy, SetBusy ] = useState(false);
+    const Router = useRouter();
 
     /* eslint-disable-next-line jsdoc/require-jsdoc */
     async function HandleConnect()
@@ -98,13 +99,29 @@ const HomeScreen = () =>
                                     <Body>
                                         { Connection.WorkspaceName }
                                     </Body>
-                                    <Pressable
-                                        disabled={ Busy }
-                                        onPress={ () => HandleDisconnect(Connection.Id) }>
-                                        <Body>
-                                            Disconnect
-                                        </Body>
-                                    </Pressable>
+                                    <View style={ styles.rowActions }>
+                                        <Pressable
+                                            disabled={ Busy }
+                                            onPress={ () => Router.push({
+                                                params:
+                                                {
+                                                    connectionId: Connection.Id,
+                                                    workspaceName: Connection.WorkspaceName
+                                                },
+                                                pathname: "/data-sources"
+                                            }) }>
+                                            <Body>
+                                                Data sources
+                                            </Body>
+                                        </Pressable>
+                                        <Pressable
+                                            disabled={ Busy }
+                                            onPress={ () => HandleDisconnect(Connection.Id) }>
+                                            <Body>
+                                                Disconnect
+                                            </Body>
+                                        </Pressable>
+                                    </View>
                                 </View>
                             ))}
                 </ScrollView>
@@ -154,6 +171,12 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         padding: 32
+    },
+    rowActions:
+    {
+        alignItems: "center",
+        flexDirection: "row",
+        gap: 16
     },
     safeArea:
     {

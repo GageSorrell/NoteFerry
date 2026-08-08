@@ -9,6 +9,12 @@
  * `Layer`, `Context.Tag`, or any other `effect` type; every hook below
  * returns a plain string, number, or object.
  *
+ * `ThemeProvider` also embeds React Navigation's own `ThemeProvider` (from
+ * `expo-router`) and feeds it a background color resolved from the
+ * `Semantic.BackgroundMain` token, so the app-wide navigation background tracks
+ * light/dark mode automatically. Apps wrap with this provider alone and must
+ * not additionally mount `expo-router`'s `ThemeProvider`.
+ *
  * @module @notivex/ui/ThemeProvider
  *
  * @file      ThemeProvider.tsx
@@ -22,7 +28,7 @@ import * as ColorValue from "./Token/ColorValue.js";
 import type * as Radii from "./Token/Radii.js";
 import * as RadiiValue from "./Token/RadiiValue.js";
 import * as React from "react";
-import type * as Semantic from "./Token/Semantic.js";
+import * as Semantic from "./Token/Semantic.js";
 import * as SemanticValue from "./Token/SemanticValue.js";
 import type * as Shadow from "./Token/Shadow.js";
 import * as ShadowValue from "./Token/ShadowValue.js";
@@ -33,12 +39,12 @@ import * as SpacingValue from "./Token/SpacingValue.js";
 import type * as Typography from "./Token/Typography.js";
 import * as TypographyValue from "./Token/TypographyValue.js";
 import { Context, Effect } from "effect";
+import {
+    DarkTheme as NavigationDarkTheme,
+    DefaultTheme as NavigationDefaultTheme,
+    ThemeProvider as NavigationThemeProvider
+} from "expo-router";
 import { useColorScheme } from "react-native";
-
-// export namespace ThemeMode
-// {
-
-// }
 
 type ThemeMode =
     | "Light"
@@ -100,20 +106,15 @@ export interface ThemeProviderProps extends React.PropsWithChildren
 }
 
 export/**
-       * Root provider for `@notivex/ui`. Wrap your app once, near the root:
+       * Root provider for `@notivex/ui`. Wrap your app once, near the root.
        *
-       * ```tsx
-       * <ThemeProvider>
-       *   <App />
-       * </ThemeProvider>
-       * ```
+       * This also mounts React Navigation's `ThemeProvider` internally, with its
+       * `colors.background` bound to the `Semantic.BackgroundMain` token, so the
+       * app-wide screen background is theme-aware out of the box. Consumers must
+       * therefore NOT also render their own `<ThemeProvider>` from `expo-router`.
        *
-       * Deliberately does NOT wrap `children` in `@expo/ui`'s `<Host>` — on web,
-       * `Host` renders its subtree through a separate native-bridging root that
-       * does not forward React context, which would silently detach every
-       * descendant from this provider's `Token`/theme context. Components that
-       * need `Host` (e.g. `BottomSheet`, in a later phase) wrap only their own
-       * local subtree in it instead.
+       * @category Provider
+       * @since 1.0.0
        */
 const ThemeProvider = ({ ColorScheme = "System", children }: ThemeProviderProps): React.JSX.Element =>
 {
@@ -134,6 +135,24 @@ const ThemeProvider = ({ ColorScheme = "System", children }: ThemeProviderProps)
 
     const Resolver = React.useMemo(() => ResolveTokensForMode(Mode), [ Mode ]);
 
+    /* The embedded React Navigation theme (see the wrapper below). We derive its
+     * `colors.background` from our own `Semantic.BackgroundMain` token so the
+     * app-wide screen background stays in lock-step with the design system and
+     * flips with light/dark mode, instead of React Navigation's stock white/black. */
+    const NavigationTheme = React.useMemo(() =>
+    {
+        const Base = Mode === "Dark" ? NavigationDarkTheme : NavigationDefaultTheme;
+        const Background = Resolver.ResolveColor(Semantic.BackgroundMain);
+
+        return {
+            ...Base,
+            colors: {
+                ...Base.colors,
+                background: Background ?? Base.colors.background
+            }
+        };
+    }, [ Mode, Resolver ]);
+
     const SetMode = React.useCallback((NextMode: ThemeMode | "System") =>
     {
         SetOverride(NextMode === "System" ? undefined : NextMode);
@@ -141,10 +160,17 @@ const ThemeProvider = ({ ColorScheme = "System", children }: ThemeProviderProps)
 
     const ThemeState = React.useMemo<ThemeState>(() => ({ Mode, SetMode }), [ Mode, SetMode ]);
 
+    /* This provider embeds React Navigation's `ThemeProvider` so that the
+     * app-wide navigation background is driven by our `Semantic.BackgroundMain`
+     * token (via `NavigationTheme` above). Because of this, apps should NOT mount
+     * their own `<ThemeProvider>` from `expo-router` — wrapping in this single
+     * `@notivex/ui` provider is sufficient. */
     return (
         <TokenResolverContext.Provider value={ Resolver }>
             <ThemeContext.Provider value={ ThemeState }>
-                { children }
+                <NavigationThemeProvider value={ NavigationTheme }>
+                    { children }
+                </NavigationThemeProvider>
             </ThemeContext.Provider>
         </TokenResolverContext.Provider>
     );

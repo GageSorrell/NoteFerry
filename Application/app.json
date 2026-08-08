@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "notivex",
+    "name": "Notivex",
     "slug": "notivex",
     "owner": "gagesorrell",
     "version": "1.0.0",
@@ -38,15 +38,14 @@
           "imageWidth": 76
         }
       ],
-      "expo-secure-store",
-      "@react-native-google-signin/google-signin"
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
     },
     "extra": {
-      "router": {},
+      "router": { },
       "eas": {
         "projectId": "1962a247-404a-4a87-ad8a-db4c4e7a7094"
       }

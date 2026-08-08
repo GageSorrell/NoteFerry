@@ -156,6 +156,19 @@ export class DataSourceSchemaChanged extends Schema.TaggedError<DataSourceSchema
 ) { }
 
 /**
+ * The referenced destination does not exist, or does not belong to the
+ * current user.
+ *
+ * @category Error
+ * @since 1.0.0
+ */
+export class DestinationNotFound extends Schema.TaggedError<DestinationNotFound>()(
+    "DestinationNotFound",
+    { DestinationId: Id.DestinationId },
+    { httpApiStatus: 404 }
+) { }
+
+/**
  * A {@link PageDraft.PageDraft} failed Notivex-side validation before it was
  * ever sent to Notion.
  *
@@ -211,6 +224,7 @@ const DomainError = Schema.Union([
     NotionUnavailable,
     DataSourceNotFound,
     DataSourceSchemaChanged,
+    DestinationNotFound,
     InvalidPageDraft,
     DatabaseError,
     NetworkError

@@ -60,11 +60,11 @@ const AlertModal = ({ Title, Primary, Secondary, OnTrigger }: AlertModalProps): 
             </DialogHeader>
             <DialogFooter Style={ Styles.Footer }>
                 <Button
+                    Appearance="Red"
                     Loading={ Loading }
                     OnPress={ Trigger }
                     Size="Small"
-                    Style={ Styles.FullWidth }
-                    Appearance="Red">
+                    Style={ Styles.FullWidth }>
                     { Primary }
                 </Button>
                 <DialogClose

@@ -1,0 +1,52 @@
+{
+  "name": "@notivex/icons",
+  "version": "1.0.0",
+  "description": "Notion-style icon library for Expo apps, ported from Mary Amato's free icons on Gumroad.",
+  "scripts": {
+    "build": "tsc -p ./tsconfig.json"
+  },
+  "keywords": [
+    "notion",
+    "icons",
+    "scribble",
+    "expo",
+    "react-native",
+    "svg"
+  ],
+  "exports": {
+    ".": {
+      "import": "./Distribution/index.js",
+      "types": "./Distribution/index.d.ts"
+    },
+    "./Scribble": {
+      "import": "./Distribution/Scribble/index.js",
+      "types": "./Distribution/Scribble/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "react": "^19.2.3",
+    "react-native": "^0.86.2",
+    "react-native-svg": "^15.15.4"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+        "optional": false
+    },
+    "react-native": {
+        "optional": false
+    },
+    "react-native-svg": {
+        "optional": false
+    }
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "react": "^19.2.3",
+    "react-native": "^0.86.2",
+    "react-native-svg": "^15.15.4",
+    "@sorrell/tsconfig": "^2.1.0",
+    "typescript": "^6.0.3"
+  }
+}

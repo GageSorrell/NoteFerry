@@ -107,6 +107,7 @@ const Update = HttpApiEndpoint.patch(
         error:
         [
             Domain.Error.AuthenticationRequired,
+            Domain.Error.DestinationNotFound,
             Domain.Error.DataSourceNotFound,
             Domain.Error.DataSourceSchemaChanged,
             Domain.Error.DatabaseError

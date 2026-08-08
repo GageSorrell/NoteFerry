@@ -9,9 +9,13 @@
     {
 		"cSpell.words":
         [
+			"Amato's",
+			"ciphertext",
 			"cmdk",
 			"datetimepicker",
+			"gagesorrell",
 			"gorhom",
+			"Gumroad",
 			"httpapi",
 			"Jetpack",
 			"notivex",
@@ -21,10 +25,11 @@
 			"rnstorybook",
 			"RRGGBB",
 			"Supabase",
+			"touchables",
 			"uistorybook",
 			"vaul",
 			"worklets"
 		],
-        "sorrellWmCodeExtension.headers.insertOnAnyFileCreation": false
+		"sorrellWmCodeExtension.headers.insertOnAnyFileCreation": false
 	}
 }

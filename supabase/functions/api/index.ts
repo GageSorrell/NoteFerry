@@ -3,9 +3,8 @@
  * `@notivex/api` HttpApi contract via Effect so the app can use a derived,
  * fully typed client (ArchitectureInitialDraft.md §16).
  *
- * The `Connections` and `DataSources` groups are implemented; `Destinations`
- * and `Pages` are stubbed with 501 so the contract stays whole and the client
- * covers every endpoint. Those groups land in later slices.
+ * Every group — `Connections`, `DataSources`, `Destinations` and `Pages` — is
+ * implemented against the shared `@notivex/api` contract.
  *
  * @module notivex/functions/api
  *
@@ -16,21 +15,18 @@
  */
 
 import * as DataSources from "../_shared/DataSources.ts";
+import * as Destinations from "../_shared/Destinations.ts";
 import * as Domain from "@notivex/domain";
 import * as FileSystem from "effect/FileSystem";
+import * as Pages from "../_shared/Pages.ts";
 import * as Path from "effect/Path";
 import { AdminClient, PrivateSchema } from "../_shared/Database.ts";
 import { Effect, Layer } from "effect";
-import { Etag, HttpPlatform, HttpRouter, HttpServerResponse } from "effect/unstable/http";
+import { Etag, HttpPlatform, HttpRouter } from "effect/unstable/http";
 import { BuildAuthorizationUrl } from "../_shared/Notion.ts";
 import { HttpApiBuilder } from "effect/unstable/httpapi";
 import { NotivexApi } from "@notivex/api";
 import { RequireUser } from "../_shared/Authentication.ts";
-
-/* Every not-yet-implemented endpoint returns a raw 501 response, which the
- * handler signature permits alongside the endpoint's declared success type. */
-const NotImplemented = () =>
-    Effect.succeed(HttpServerResponse.text("Not implemented", { status: 501 }));
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 function ToNotionConnection(Row: Record<string, unknown>): Domain.NotionConnection.NotionConnection
@@ -168,13 +164,43 @@ const DataSourcesLive = HttpApiBuilder.group(NotivexApi, "DataSources", (Handler
 
 const DestinationsLive = HttpApiBuilder.group(NotivexApi, "Destinations", (Handlers) =>
     Handlers
-        .handle("List", NotImplemented)
-        .handle("Create", NotImplemented)
-        .handle("Update", NotImplemented)
-        .handle("Delete", NotImplemented));
+        .handle("List", () =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                return yield* Destinations.ListForUser(UserId);
+            }))
+        .handle("Create", (Input) =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                return yield* Destinations.CreateForUser(UserId, Input.payload);
+            }))
+        .handle("Update", (Input) =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                return yield* Destinations.UpdateForUser(UserId, Input.params.DestinationId, Input.payload);
+            }))
+        .handle("Delete", (Input) =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                yield* Destinations.DeleteForUser(UserId, Input.params.DestinationId);
+            })));
 
 const PagesLive = HttpApiBuilder.group(NotivexApi, "Pages", (Handlers) =>
-    Handlers.handle("Create", NotImplemented));
+    Handlers.handle("Create", (Input) =>
+        Effect.gen(function* ()
+        {
+            const UserId = yield* RequireUser;
+
+            return yield* Pages.CreateForUser(UserId, Input.payload);
+        })));
 
 /* The web platform services the served HttpApi needs. Edge functions never
  * serve files, so a no-op FileSystem is sufficient. */
