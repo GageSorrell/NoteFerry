@@ -15,7 +15,7 @@ import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { Animated, Easing, type StyleProp, type ViewStyle } from "react-native";
 import Svg, { Circle } from "react-native-svg";
-import { UseColor } from "../ThemeProvider.js";
+import { UseToken } from "../ThemeProvider.js";
 
 /**
  * The visual style of a `Spinner` component.
@@ -46,8 +46,13 @@ export/**
        */
 const Spinner = ({ Variant = "Solid", Size = 16, Color, Style }: SpinnerProps): React.JSX.Element =>
 {
-    const BorderColor = UseColor(Semantic.Border);
-    const IconColor = UseColor(Semantic.Icon);
+    const {
+        [Semantic.Border]: BorderColor,
+        [Semantic.Icon]: IconColor
+    } = UseToken(
+        Semantic.Border,
+        Semantic.Icon
+    );
     const ActiveColor = Color ?? IconColor;
     const Rotation = React.useRef(new Animated.Value(0)).current;
 

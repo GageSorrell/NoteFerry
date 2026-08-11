@@ -32,7 +32,7 @@ import { Input, type InputProps } from "./Input.js";
 import { MenuGroup, MenuItem, type MenuItemVariant, MenuLabel } from "./Menu.js";
 import { ScrollView, type StyleProp, View, type ViewStyle } from "react-native";
 import { Description } from "./Text.js";
-import { UseColor } from "../ThemeProvider.js";
+import { UseToken } from "../ThemeProvider.js";
 
 export { Separator as AutocompleteSeparator } from "./Separator.js";
 
@@ -93,7 +93,8 @@ export interface AutocompleteProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A state provider that coordinates query text, filtering, popup
+       * visibility, and item matches for compound autocomplete controls.
        *
        * @category Component
        * @since 1.0.0
@@ -156,7 +157,7 @@ export interface AutocompleteInputProps extends Omit<InputProps, "Value" | "OnCh
 }
 
 export/**
-       * TODO Write description.
+       * A search input bound to the nearest `Autocomplete` query and popup state.
        *
        * @category Component
        * @since 1.0.0
@@ -195,7 +196,7 @@ export interface AutocompleteTriggerProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * The control that opens and anchors an `Autocomplete` results popup.
        *
        * @category Component
        * @since 1.0.0
@@ -232,7 +233,7 @@ export interface AutocompleteContentProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * The floating or inline container for an `Autocomplete`'s filtered results.
        *
        * @category Component
        * @since 1.0.0
@@ -270,7 +271,7 @@ export interface AutocompleteListProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A scrollable container for `Autocomplete` groups and items.
        *
        * @category Component
        * @since 1.0.0
@@ -291,7 +292,7 @@ export interface AutocompleteGroupProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * Groups related `Autocomplete` items within a result list.
        *
        * @category Component
        * @since 1.0.0
@@ -306,7 +307,7 @@ export interface AutocompleteLabelProps
 }
 
 export/**
-       * TODO Write description.
+       * A heading for an `Autocomplete` group.
        *
        * @category Component
        * @since 1.0.0
@@ -334,7 +335,7 @@ export interface AutocompleteItemProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A selectable `Autocomplete` option that is hidden when it does not match the current query.
        *
        * @category Component
        * @since 1.0.0
@@ -386,7 +387,7 @@ const AutocompleteItem = ({
 export interface AutocompleteEmptyProps extends React.PropsWithChildren { }
 
 export/**
-       * TODO Write description.
+       * Renders fallback content when no registered `Autocomplete` item matches the current query.
        *
        * @category Component
        * @since 1.0.0
@@ -394,7 +395,7 @@ export/**
 const AutocompleteEmpty = ({ children }: AutocompleteEmptyProps): React.JSX.Element | null =>
 {
     const { MatchRegistry } = useAutocompleteContext();
-    const MutedColor = UseColor(Semantic.Secondary);
+    const { [Semantic.Secondary]: MutedColor } = UseToken(Semantic.Secondary);
     const HasAnyMatch = [ ...MatchRegistry.current.values() ].some(Boolean);
 
     if (HasAnyMatch)

@@ -29,9 +29,9 @@ import {
     View,
     type ViewStyle
 } from "react-native";
-import { UseColor, useRadii } from "../ThemeProvider.js";
 import { Description } from "./Text.js";
 import { String } from "effect";
+import { UseToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 import { X } from "lucide-react-native";
 
@@ -60,13 +60,23 @@ const TagsInput = ({
 }: TagsInputProps): React.JSX.Element =>
 {
     const [ InputText, SetInputText ] = React.useState("");
-    const RingColor = UseColor(Semantic.Ring);
-    const InputBackground = UseColor(Semantic.BackgroundInput);
-    const PrimaryColor = UseColor(Semantic.Primary);
-    const MutedColor = UseColor(Semantic.Muted);
-    const DefaultColor = UseColor(Semantic.Default);
-    const MediumRadius = useRadii(Radii.Medium);
-    const SmallRadius = useRadii(Radii.Small);
+    const {
+        [Semantic.Ring]: RingColor,
+        [Semantic.BackgroundInput]: InputBackground,
+        [Semantic.Primary]: PrimaryColor,
+        [Semantic.Muted]: MutedColor,
+        [Semantic.Default]: DefaultColor,
+        [Radii.Medium]: MediumRadius,
+        [Radii.Small]: SmallRadius
+    } = UseToken(
+        Semantic.Ring,
+        Semantic.BackgroundInput,
+        Semantic.Primary,
+        Semantic.Muted,
+        Semantic.Default,
+        Radii.Medium,
+        Radii.Small
+    );
 
     const AddTags = React.useCallback((Chunks: ReadonlyArray<string>) =>
     {

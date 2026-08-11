@@ -1,7 +1,7 @@
 /**
  * Ported from `@notion-kit/ui`'s `primitives/button.tsx` +
  * `primitives/variants.ts`'s `buttonVariants` cva. Source's `variant`/`size`
- * axes become `Variant`/`Size`; colors are resolved live via `useColor`
+ * axes become `Variant`/`Size`; colors are resolved live via `UseTheme`
  * (rather than baked into a static stylesheet) since they're theme-aware.
  *
  * @module @notivex/ui/Primitive/Button
@@ -15,17 +15,19 @@
 import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
+import { Body, ButtonLabel } from "./Text.js";
 import {
     type GestureResponderEvent,
+    View as RNView,
     type StyleProp,
     StyleSheet,
     type View,
     type ViewStyle
 } from "react-native";
-import { UseColor, useRadii } from "../ThemeProvider.js";
-import { Body } from "./Text.js";
+import type { ReadonlyRecord } from "effect/Record";
 import { Spinner } from "./Spinner.js";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
+import { UseToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /**
@@ -62,7 +64,7 @@ export type ButtonSize =
     | "Large"
     | "Circle";
 
-const SizeStyle: Record<ButtonSize, ViewStyle> =
+const SizeStyle: ReadonlyRecord<ButtonSize, ViewStyle> =
     Object.freeze({
         Circle: { },
         ExtraSmall: { height: 24, paddingHorizontal: 6 },
@@ -103,18 +105,33 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
     children
 }: ButtonProps, ForwardedRef: React.ForwardedRef<View>): React.JSX.Element =>
 {
-    const PrimaryColor = UseColor(Semantic.Primary);
-    const IconColor = UseColor(Semantic.Icon);
-    const BorderButtonColor = UseColor(Semantic.BorderButton);
-    const BorderColor = UseColor(Semantic.Border);
-    const BlueColor = UseColor(Semantic.Blue);
-    const RedColor = UseColor(Semantic.Red);
-    const MutedColor = UseColor(Semantic.Muted);
-    const DefaultColor = UseColor(Semantic.Default);
-    const BackgroundMainColor = UseColor(Semantic.BackgroundMain);
-    const MediumRadius = useRadii(Radii.Medium);
-    const SmallRadius = useRadii(Radii.Small);
-    const FullRadius = useRadii(Radii.Full);
+    const {
+        [Semantic.Primary]: PrimaryColor,
+        [Semantic.Icon]: IconColor,
+        [Semantic.BorderButton]: BorderButtonColor,
+        [Semantic.Border]: BorderColor,
+        [Semantic.Blue]: BlueColor,
+        [Semantic.Red]: RedColor,
+        [Semantic.Muted]: MutedColor,
+        [Semantic.Default]: DefaultColor,
+        [Semantic.BackgroundMain]: BackgroundMainColor,
+        [Radii.Medium]: MediumRadius,
+        [Radii.Small]: SmallRadius,
+        [Radii.Full]: FullRadius
+    } = UseToken(
+        Semantic.Primary,
+        Semantic.Icon,
+        Semantic.BorderButton,
+        Semantic.Border,
+        Semantic.Blue,
+        Semantic.Red,
+        Semantic.Muted,
+        Semantic.Default,
+        Semantic.BackgroundMain,
+        Radii.Medium,
+        Radii.Small,
+        Radii.Full
+    );
 
     const IsIconOnly = Appearance === "Icon" || Appearance === "NavIcon" || Appearance === "Close";
 
@@ -302,15 +319,14 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
                 />
                 : typeof children === "string"
                     ? (
-                        <Body
+                        <ButtonLabel
                             Color={ VariantStyle.TextColor }
                             Style={ [
                                 Styles.Label,
                                 { textAlign: Appearance === "Cell" ? "left" : "center" }
-                            ] }
-                            Weight={ Appearance === "Blue" || Appearance === "RedFill" ? "500" : "400" }>
+                            ] }>
                             { children }
-                        </Body>
+                        </ButtonLabel>
                     )
                     : children }
         </TouchableOpacity>
@@ -318,6 +334,58 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
 });
 
 Button.displayName = "Button";
+
+/** {@inheritDoc AuthButton} */
+export interface AuthButtonProps extends ButtonProps
+{
+    /** The provider or authentication-method icon shown at the leading edge. */
+    readonly Icon: React.JSX.Element;
+}
+
+export/**
+       * Notion-style authentication button with an outlined, full-width row.
+       * Equal leading and trailing slots keep the label visually centered even
+       * though only the leading slot contains an icon.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const AuthButton = ({
+    Icon,
+    Style,
+    children,
+    ...Props
+}: AuthButtonProps): React.JSX.Element =>
+    <Button
+        { ...Props }
+        Appearance="Primary"
+        Size="Large"
+        Style={ [ Styles.AuthButton, Style ] }>
+        <RNView
+            accessible={ false }
+            style={ Styles.AuthButtonSide }>
+            { Icon }
+        </RNView>
+        { typeof children === "string"
+            ? (
+                <ButtonLabel
+                    Color={ Semantic.Primary }
+                    Style={ Styles.AuthButtonLabel }>
+                    { children }
+                </ButtonLabel>
+            )
+            : (
+                <RNView style={ Styles.AuthButtonContent }>
+                    { children }
+                </RNView>
+            ) }
+        <RNView
+            accessible={ false }
+            style={ Styles.AuthButtonSide }
+        />
+    </Button>;
+
+AuthButton.displayName = "AuthButton";
 
 export/**
        * `@notion-kit/ui`'s `CloseButton` — a `Button` preconfigured as `Variant="Close"`.
@@ -343,6 +411,30 @@ const CloseButton = ({
 CloseButton.displayName = "CloseButton";
 
 const Styles = StyleSheet.create({
+    AuthButton:
+    {
+        alignSelf: "stretch",
+        borderRadius: 12,
+        height: 52,
+        paddingHorizontal: 12
+    },
+    AuthButtonContent:
+    {
+        alignItems: "center",
+        flex: 1
+    },
+    AuthButtonLabel:
+    {
+        flex: 1,
+        textAlign: "center"
+    },
+    AuthButtonSide:
+    {
+        alignItems: "center",
+        height: 24,
+        justifyContent: "center",
+        width: 24
+    },
     Base:
     {
         alignItems: "center",

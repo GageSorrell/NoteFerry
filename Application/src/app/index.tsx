@@ -14,7 +14,7 @@ import { ConnectNotion, useConnections } from "@/Domain/Connection";
 import { DisconnectNotion } from "@/Domain/Runtime/NotivexApi";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { UseAuth } from "@/Domain/Auth";
-import { useRouter } from "expo-router";
+import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useState } from "react";
 
 const HomeScreen = () =>
@@ -22,7 +22,7 @@ const HomeScreen = () =>
     const { SignOut } = UseAuth();
     const { Connections, IsLoading, Refetch } = useConnections();
     const [ Busy, SetBusy ] = useState(false);
-    const Router = useRouter();
+    const Router = UseLazyRouter();
 
     /* eslint-disable-next-line jsdoc/require-jsdoc */
     async function HandleConnect()
@@ -102,7 +102,7 @@ const HomeScreen = () =>
                                     <View style={ styles.rowActions }>
                                         <Pressable
                                             disabled={ Busy }
-                                            onPress={ () => Router.push({
+                                            onPress={ Router.push({
                                                 params:
                                                 {
                                                     connectionId: Connection.Id,

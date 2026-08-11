@@ -11,154 +11,139 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { useEffect, useState } from "react";
 import { Button } from "@notivex/ui/Primitive";
 import type { ImageAsset } from "@/Domain/Utility";
-import { ListConnections } from "@/Domain/Runtime/NotivexApi";
-import { OnboardingCopy } from "@/features/onboarding/copy";
 import { OnboardingScreen } from "@/features/onboarding/onboarding-screen";
-import { useNotionSync } from "@/features/onboarding/use-notion-sync";
-import { useRouter } from "expo-router";
+import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { useOnboarding } from "@/features/onboarding/onboarding-context";
 
-const Copy = OnboardingCopy.Sync;
-
-/** Props for {@link SyncInner}. */
-interface SyncInnerProps
+/** Props for sync states that advance to the final onboarding step. */
+interface CompletableSyncStateProps
 {
-    readonly ConnectionId: Domain.Id.NotionConnectionId;
+    readonly OnContinue: () => void;
 }
 
-const SyncInner = ({ ConnectionId }: SyncInnerProps) =>
+/** Props for sync states that can restart discovery. */
+interface RetryableSyncStateProps
 {
-    const Router = useRouter();
-    const { Status, Retry } = useNotionSync(ConnectionId);
+    readonly OnRetry: () => void;
+}
 
-    const GoToDone = () => Router.replace("/done");
-
-    if (Status === "Ready")
-    {
-        return (
-            <OnboardingScreen
-                Hero={ "" as ImageAsset }
-                Subtitle={ Copy.Ready.Body }
-                Title={ Copy.Ready.Title }>
-                <View style={ styles.spacer } />
-                <Button
-                    Appearance="Primary"
-                    OnPress={ GoToDone }
-                    Style={ styles.cta }>
-                    { Copy.Ready.Cta }
-                </Button>
-            </OnboardingScreen>
-        );
-    }
-
-    if (Status === "Empty")
-    {
-        return (
-            <OnboardingScreen
-                Hero={ "" as ImageAsset }
-                Subtitle={ Copy.Empty.Body }
-                Title={ Copy.Empty.Title }>
-                <View style={ styles.spacer } />
-                <Button
-                    Appearance="Primary"
-                    OnPress={ Retry }
-                    Style={ styles.cta }>
-                    { Copy.Empty.Cta }
-                </Button>
-                <Button
-                    Appearance="Link"
-                    OnPress={ GoToDone }
-                    Style={ styles.cta }>
-                    { Copy.Empty.Secondary }
-                </Button>
-            </OnboardingScreen>
-        );
-    }
-
-    if (Status === "Error")
-    {
-        return (
-            <OnboardingScreen
-                Hero={ "" as ImageAsset }
-                Subtitle={ Copy.Error.Body }
-                Title={ Copy.Error.Title }>
-                <View style={ styles.spacer } />
-                <Button
-                    Appearance="Primary"
-                    OnPress={ Retry }
-                    Style={ styles.cta }>
-                    { Copy.Error.Cta }
-                </Button>
-            </OnboardingScreen>
-        );
-    }
-
+/** Shows that Notion is still applying the user's integration access change. */
+const SyncingState = () =>
+{
     return (
         <OnboardingScreen
             Hero={ "" as ImageAsset }
-            Subtitle={ Copy.Syncing.Body }
-            Title={ Copy.Syncing.Title }>
+            Subtitle={
+                "Notion is updating the Notivex integration with access to "
+                + "the pages and databases you selected. This can take up to 30 seconds."
+            }
+            Title="Waiting for Notion">
             <View style={ styles.center }>
-                <ActivityIndicator />
+                <ActivityIndicator
+                    accessibilityLabel={
+                        "Waiting for Notion to share the selected pages and "
+                        + "databases with Notivex"
+                    }
+                />
             </View>
+        </OnboardingScreen>
+    );
+};
+
+/** Confirms that Notivex can access at least one selected data source. */
+const ReadyState = ({ OnContinue }: CompletableSyncStateProps) =>
+{
+    return (
+        <OnboardingScreen
+            Hero={ "" as ImageAsset }
+            Subtitle="Your workspace is ready to go."
+            Title="All connected">
+            <View style={ styles.spacer } />
+            <Button
+                Appearance="Primary"
+                OnPress={ OnContinue }
+                Style={ styles.cta }>
+                Continue
+            </Button>
+        </OnboardingScreen>
+    );
+};
+
+/** Explains that Notion has not shared any pages or databases yet. */
+const EmptyState = ({ OnContinue, OnRetry }: CompletableSyncStateProps & RetryableSyncStateProps) =>
+{
+    return (
+        <OnboardingScreen
+            Hero={ "" as ImageAsset }
+            Subtitle="Nothing's shared with Notivex yet. Share a page or database in Notion, then try again."
+            Title="Nothing shared yet">
+            <View style={ styles.spacer } />
+            <Button
+                Appearance="Primary"
+                OnPress={ OnRetry }
+                Style={ styles.cta }>
+                Try again
+            </Button>
+            <Button
+                Appearance="Link"
+                OnPress={ OnContinue }
+                Style={ styles.cta }>
+                I&apos;ll do this later
+            </Button>
+        </OnboardingScreen>
+    );
+};
+
+/** Offers another discovery attempt after repeated requests to Notion fail. */
+const ErrorState = ({ OnRetry }: RetryableSyncStateProps) =>
+{
+    return (
+        <OnboardingScreen
+            Hero={ "" as ImageAsset }
+            Subtitle="We couldn't reach Notion. Check your connection and try again."
+            Title="We hit a snag">
+            <View style={ styles.spacer } />
+            <Button
+                Appearance="Primary"
+                OnPress={ OnRetry }
+                Style={ styles.cta }>
+                Try again
+            </Button>
         </OnboardingScreen>
     );
 };
 
 const SyncScreen = () =>
 {
-    const [ ConnectionId, SetConnectionId ] =
-        useState<Domain.Id.NotionConnectionId | null>(null);
+    const Router = UseLazyRouter();
+    const { NotionSync: { Retry, Status } } = useOnboarding();
 
-    useEffect(() =>
+    const GoToDone = Router.replace("/done");
+
+    if (Status === "Ready")
     {
-        let Cancelled = false;
+        return <ReadyState OnContinue={ GoToDone } />;
+    }
 
-        const Resolve = async () =>
-        {
-            try
-            {
-                const List = await ListConnections();
-
-                if (!Cancelled)
-                {
-                    SetConnectionId(List.at(0)?.Id ?? null);
-                }
-            }
-            catch (Error)
-            {
-                /* eslint-disable-next-line no-console */
-                console.error("Failed to resolve the Notion connection", Error);
-            }
-        };
-
-        void Resolve();
-
-        return () =>
-        {
-            Cancelled = true;
-        };
-    }, [ ]);
-
-    if (ConnectionId === null)
+    if (Status === "Empty")
     {
         return (
-            <OnboardingScreen
-                Hero={ "" as ImageAsset }
-                Subtitle={ Copy.Syncing.Body }
-                Title={ Copy.Syncing.Title }>
-                <View style={ styles.center }>
-                    <ActivityIndicator />
-                </View>
-            </OnboardingScreen>
+            <EmptyState
+                OnContinue={ GoToDone }
+                OnRetry={ Retry }
+            />
         );
     }
 
-    return <SyncInner ConnectionId={ ConnectionId } />;
+    if (Status === "Error")
+    {
+        return <ErrorState OnRetry={ Retry } />;
+    }
+
+    return <SyncingState />;
 };
 
 const styles = StyleSheet.create({

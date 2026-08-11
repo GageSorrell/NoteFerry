@@ -14,12 +14,9 @@
 import { StyleSheet, View } from "react-native";
 import { Button } from "@notivex/ui/Primitive";
 import type { ImageAsset } from "@/Domain/Utility";
-import { OnboardingCopy } from "@/features/onboarding/copy";
 import { OnboardingScreen } from "@/features/onboarding/onboarding-screen";
 import { useOnboarding } from "@/features/onboarding/onboarding-context";
 import { useState } from "react";
-
-const Copy = OnboardingCopy.Done;
 
 const DoneScreen = () =>
 {
@@ -37,15 +34,15 @@ const DoneScreen = () =>
     return (
         <OnboardingScreen
             Hero={ "" as ImageAsset }
-            Subtitle={ Copy.Body }
-            Title={ Copy.Title }>
+            Subtitle="Capture a thought and it lands in Notion in seconds."
+            Title="You're all set">
             <View style={ styles.spacer } />
             <Button
                 Appearance="Primary"
                 Disabled={ Pending }
                 OnPress={ HandleStart }
                 Style={ styles.cta }>
-                { Copy.Cta }
+                Start using Notivex
             </Button>
         </OnboardingScreen>
     );

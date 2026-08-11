@@ -9,12 +9,11 @@
  * @license   MIT
  */
 
-import * as React from "react";
-import { StyleSheet, TextInput, type StyleProp, type ViewStyle } from "react-native";
-
-import { UseColor, useRadii } from "../ThemeProvider.js";
 import * as Radii from "../Token/Radii.js";
+import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
+import { type StyleProp, StyleSheet, TextInput, type ViewStyle } from "react-native";
+import { UseToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 export interface TextareaProps {
@@ -35,10 +34,17 @@ export const Textarea = ({
     NumberOfLines = 4,
 }: TextareaProps): React.JSX.Element =>
 {
-    const RingColor = UseColor(Semantic.Ring);
-    const InputBackground = UseColor(Semantic.BackgroundInput);
-    const PrimaryColor = UseColor(Semantic.Primary);
-    const MediumRadius = useRadii(Radii.Medium);
+    const {
+        [Semantic.Ring]: RingColor,
+        [Semantic.BackgroundInput]: InputBackground,
+        [Semantic.Primary]: PrimaryColor,
+        [Radii.Medium]: MediumRadius
+    } = UseToken(
+        Semantic.Ring,
+        Semantic.BackgroundInput,
+        Semantic.Primary,
+        Radii.Medium
+    );
 
     return (
         <TextInput

@@ -48,7 +48,7 @@ export interface CommandProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A searchable command-list container built on the `Autocomplete` filtering engine.
        *
        * @category Component
        * @since 1.0.0
@@ -77,7 +77,7 @@ export interface CommandInputProps
 }
 
 export/**
-       * TODO Write description.
+       * The search field used to filter commands in a `Command` list.
        *
        * @category Component
        * @since 1.0.0
@@ -99,7 +99,7 @@ export interface CommandListProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A scrollable container for `Command` groups and items.
        *
        * @category Component
        * @since 1.0.0
@@ -115,7 +115,7 @@ export interface CommandGroupProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * Groups related `Command` items under an optional heading.
        *
        * @category Component
        * @since 1.0.0
@@ -133,7 +133,7 @@ export interface CommandItemProps extends AutocompleteItemProps
 }
 
 export/**
-       * TODO Write description.
+       * A searchable command option with optional shortcut content.
        *
        * @category Component
        * @since 1.0.0

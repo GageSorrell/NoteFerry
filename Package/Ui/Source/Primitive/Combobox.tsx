@@ -26,10 +26,10 @@ import {
     useAutocompleteContext
 } from "./Autocomplete.js";
 import { Pressable, type StyleProp, type ViewStyle } from "react-native";
-import { UseColor, useRadii } from "../ThemeProvider.js";
 import { Body } from "./Text.js";
 import { ChevronDown } from "lucide-react-native";
 import { MenuItemCheck } from "./Menu.js";
+import { UseToken } from "../ThemeProvider.js";
 
 export {
     AutocompleteContent as ComboboxContent,
@@ -73,7 +73,7 @@ export interface ComboboxProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A searchable single-select control that coordinates an `Autocomplete` with a persisted value.
        *
        * @category Component
        * @since 1.0.0
@@ -122,7 +122,7 @@ export interface ComboboxTriggerProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * The button that displays and toggles a `Combobox`'s options.
        *
        * @category Component
        * @since 1.0.0
@@ -130,9 +130,15 @@ export/**
 const ComboboxTrigger = ({ Disabled = false, Style, children }: ComboboxTriggerProps): React.JSX.Element =>
 {
     const { IsOpen, SetIsOpen, AnchorRef } = useAutocompleteContext();
-    const RingColor = UseColor(Semantic.Ring);
-    const MutedColor = UseColor(Semantic.Muted);
-    const MediumRadius = useRadii(Radii.Medium);
+    const {
+        [Semantic.Ring]: RingColor,
+        [Semantic.Muted]: MutedColor,
+        [Radii.Medium]: MediumRadius
+    } = UseToken(
+        Semantic.Ring,
+        Semantic.Muted,
+        Radii.Medium
+    );
 
     return (
         <Pressable
@@ -172,7 +178,7 @@ export interface ComboboxValueProps
 }
 
 export/**
-       * TODO Write description.
+       * Displays the label for the selected `Combobox` value, or placeholder text when no value is selected.
        *
        * @category Component
        * @since 1.0.0
@@ -180,7 +186,7 @@ export/**
 const ComboboxValue = ({ Placeholder }: ComboboxValueProps): React.JSX.Element =>
 {
     const { Value, Labels } = useComboboxValueContext();
-    const MutedColor = UseColor(Semantic.Muted);
+    const { [Semantic.Muted]: MutedColor } = UseToken(Semantic.Muted);
     const Label = Value === undefined ? undefined : Labels.current.get(Value);
 
     return (
@@ -200,7 +206,7 @@ export interface ComboboxItemProps extends Omit<AutocompleteItemProps, "OnSelect
 }
 
 export/**
-       * TODO Write description.
+       * A searchable `Combobox` option that selects its value and optionally displays a check mark.
        *
        * @category Component
        * @since 1.0.0
@@ -219,12 +225,14 @@ const ComboboxItem = ({
 
     React.useEffect(() =>
     {
-        Labels.current.set(Value, Label ?? Value);
+        const CurrentLabels = Labels.current;
+
+        CurrentLabels.set(Value, Label ?? Value);
         BumpVersion();
 
         return () =>
         {
-            Labels.current.delete(Value);
+            CurrentLabels.delete(Value);
             BumpVersion();
         };
     }, [ Value, Label, Labels, BumpVersion ]);

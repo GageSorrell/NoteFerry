@@ -217,10 +217,10 @@ import {
 } from "lucide-react-native";
 import { Avatar, AvatarFallback, AvatarImage } from "../Primitive/Avatar.js";
 import { type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
-import { UseColor, useRadii } from "../ThemeProvider.js";
 import { Body } from "../Primitive/Text.js";
 import type { ReadonlyRecord } from "effect/Record";
 import { Spinner } from "../Primitive/Spinner.js";
+import { UseToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /**
@@ -494,9 +494,15 @@ export/**
 const IconBlock = ({ Icon, Size = "Small", Fallback = " ", Style }: IconBlockProps): React.JSX.Element =>
 {
     const Config = SizeConfigs[ Size ];
-    const SecondaryColor = UseColor(Semantic.Secondary);
-    const DefaultColor = UseColor(Semantic.Default);
-    const MediumRadius = useRadii(Config.Radii);
+    const {
+        [Semantic.Secondary]: SecondaryColor,
+        [Semantic.Default]: DefaultColor,
+        [Config.Radii]: MediumRadius
+    } = UseToken(
+        Semantic.Secondary,
+        Semantic.Default,
+        Config.Radii
+    );
 
     const ContainerStyle: ViewStyle =
         {

@@ -19,17 +19,7 @@ const meta =
 
         argTypes:
         {
-            Disabled: { control: "boolean" },
-            Loading: { control: "boolean" },
-            Size:
-            {
-                control: "select",
-                options:
-                [
-                    "ExtraSmall", "Small", "Medium", "Large", "Circle"
-                ]
-            },
-            Variant:
+            Appearance:
             {
                 control: "select",
                 options:
@@ -47,6 +37,20 @@ const meta =
                     "Cell",
                     "Close"
                 ]
+            },
+            Disabled: { control: "boolean" },
+            Loading: { control: "boolean" },
+            Size:
+            {
+                control: "select",
+                options:
+                [
+                    "ExtraSmall",
+                    "Small",
+                    "Medium",
+                    "Large",
+                    "Circle"
+                ]
             }
         }
     } satisfies Meta<typeof Button>;
@@ -59,10 +63,10 @@ export const Playground: Story =
     {
         args:
         {
+            Appearance: "Primary",
             Disabled: false,
             Loading: false,
             Size: "Medium",
-            Variant: "Primary",
             children: "Button"
         }
     };
@@ -70,16 +74,21 @@ export const Playground: Story =
 export const AllVariants: Story =
     {
         render: () => (
-            <View style={ { flexDirection: "row", flexWrap: "wrap", gap: 8, justifyContent: "center" } }>
-                <Button Variant="Primary">Primary</Button>
-                <Button Variant="Blue">Blue</Button>
-                <Button Variant="SoftBlue">Soft Blue</Button>
-                <Button Variant="Red">Red</Button>
-                <Button Variant="RedFill">Red Fill</Button>
-                <Button Variant="White">White</Button>
-                <Button Variant="Hint">Hint</Button>
-                <Button Variant="Link">Link</Button>
-                <Button Variant="Cell">Cell</Button>
+            <View style={ {
+                flexDirection: "row",
+                flexWrap: "wrap",
+                gap: 8,
+                justifyContent: "center"
+            } }>
+                <Button Appearance="Primary">Primary</Button>
+                <Button Appearance="Blue">Blue</Button>
+                <Button Appearance="SoftBlue">Soft Blue</Button>
+                <Button Appearance="Red">Red</Button>
+                <Button Appearance="RedFill">Red Fill</Button>
+                <Button Appearance="White">White</Button>
+                <Button Appearance="Hint">Hint</Button>
+                <Button Appearance="Link">Link</Button>
+                <Button Appearance="Cell">Cell</Button>
             </View>
         )
     };
@@ -88,8 +97,8 @@ export const Loading: Story =
     {
         args:
         {
+            Appearance: "Primary",
             Loading: true,
-            Variant: "Primary",
             children: "Loading"
         }
     };
@@ -98,8 +107,8 @@ export const Disabled: Story =
     {
         args:
         {
+            Appearance: "Primary",
             Disabled: true,
-            Variant: "Primary",
             children: "Disabled"
         }
     };

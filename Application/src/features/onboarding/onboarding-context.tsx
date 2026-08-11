@@ -2,10 +2,11 @@
  * In-memory onboarding state that the root navigator uses to decide between the
  * onboarding flow and the app. Two things live here: whether the signed-in user
  * already has a Notion connection, and whether an onboarding run is currently
- * active. The latter keeps the flow on screen through the sync and
- * confirmation steps even after a connection is created, without persisting
- * anything — a returning user who already has a connection skips straight to the
- * app, since nothing marks the run active on a cold start.
+ * active. The latter keeps the flow on screen through the sync and confirmation
+ * steps even after a connection is created, and lets the shared Notion sync
+ * operation begin on the grant screen and survive route changes. Nothing is
+ * persisted — a returning user who already has a connection skips straight to
+ * the app, since nothing marks the run active on a cold start.
  *
  * @module notivex/features/onboarding/onboarding-context
  *
@@ -16,6 +17,7 @@
  */
 
 import * as React from "react";
+import { type UseNotionSync, useNotionSync } from "@/features/onboarding/use-notion-sync";
 import { ListConnections } from "@/Domain/Runtime/NotivexApi";
 import { UseAuth } from "@/Domain/Auth";
 
@@ -25,6 +27,7 @@ export interface OnboardingState
     readonly HasConnection: boolean;
     readonly IsActive: boolean;
     readonly IsLoadingConnection: boolean;
+    readonly NotionSync: UseNotionSync;
     readonly Begin: () => void;
     readonly Complete: () => void;
     readonly RefetchConnection: () => Promise<void>;
@@ -36,6 +39,12 @@ const OnboardingContext = React.createContext<OnboardingState>({
     HasConnection: false,
     IsActive: false,
     IsLoadingConnection: true,
+    NotionSync:
+    {
+        Count: 0,
+        Retry: () => { },
+        Status: "Syncing"
+    },
     RefetchConnection: async () => { }
 });
 
@@ -52,6 +61,7 @@ export function OnboardingProvider({ children }: React.PropsWithChildren)
     const [ HasConnection, SetHasConnection ] = React.useState(false);
     const [ IsLoadingConnection, SetIsLoadingConnection ] = React.useState(true);
     const [ IsActive, SetIsActive ] = React.useState(false);
+    const NotionSync = useNotionSync(IsActive);
 
     const RefetchConnection = React.useCallback(async () =>
     {
@@ -93,6 +103,7 @@ export function OnboardingProvider({ children }: React.PropsWithChildren)
         HasConnection,
         IsActive,
         IsLoadingConnection,
+        NotionSync,
         RefetchConnection
     }), [
         Begin,
@@ -100,6 +111,7 @@ export function OnboardingProvider({ children }: React.PropsWithChildren)
         HasConnection,
         IsActive,
         IsLoadingConnection,
+        NotionSync,
         RefetchConnection
     ]);
 

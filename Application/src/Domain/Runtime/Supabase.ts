@@ -7,7 +7,7 @@
  *
  * @module notivex/Domain/Runtime/Supabase
  *
- * @file      supabase.ts
+ * @file      Supabase.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
  * @copyright (c) 2026 Gage Sorrell
  * @license   MIT
@@ -29,6 +29,18 @@ if (!SupabaseUrl || !SupabaseKey)
 }
 
 export/**
+       * Namespace used by Supabase Auth for the persisted session and PKCE
+       * entries. Exported so development tooling can remove both halves of the
+       * encrypted session store without guessing which AsyncStorage keys belong
+       * to authentication.
+       *
+       * @category Runtime
+       * @since 1.0.0
+       */
+const SupabaseStorageKey =
+    `sb-${ new URL(SupabaseUrl).hostname.split(".")[0] }-auth-token`;
+
+export/**
        * The app-wide Supabase client. Import this rather than constructing clients
        * ad hoc so there is exactly one session/refresh lifecycle.
        *
@@ -43,7 +55,8 @@ const Supabase = createClient(SupabaseUrl, SupabaseKey, {
          * parsing the initial URL. */
         detectSessionInUrl: false,
         persistSession: true,
-        storage: new SecureSessionStore()
+        storage: new SecureSessionStore(),
+        storageKey: SupabaseStorageKey
     }
 });
 

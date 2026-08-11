@@ -1,8 +1,6 @@
 /**
- * Typography primitive.  `@notion-kit/ui` applies its `typography()` cva
- * ad hoc to whichever element needed it; here it's promoted to a first-class
- * `Text` component (per `PlanInitialDraft.md`'s recommendation) wrapping RN
- * `Text` and `ThemeProvider`'s `useTypography`/`useColor` hooks.
+ * Notion-aligned typography primitives for screen chrome, editor content,
+ * menus, settings, empty states, controls, and supporting copy.
  *
  * @module @notivex/ui/Primitive/Text
  *
@@ -29,38 +27,82 @@ import {
     type StyleProp,
     type TextStyle
 } from "react-native";
-import { UseColor, useTypography } from "../ThemeProvider.js";
 import type { ReadonlyRecord } from "effect/Record";
+import { UseToken } from "../ThemeProvider.js";
 
 /**
- * The different variants of text used across the UI.
+ * Semantic text roles observed throughout Notion's mobile UI and editor.
  *
  * @category Typography
  * @since 1.0.0
  */
 export type TextVariant =
+    | "PageTitle"
+    | "ScreenTitle"
+    | "HeroTitle"
     | "Heading1"
     | "Heading2"
     | "Heading3"
+    | "SectionTitle"
+    | "EmptyStateTitle"
+    | "ModalTitle"
+    | "NavigationTitle"
+    | "ItemTitle"
     | "Body"
+    | "BodyCompact"
+    | "MenuItem"
+    | "ButtonLabel"
     | "Label"
-    | "Description";
+    | "Description"
+    | "Overline"
+    | "Caption";
+
+/**
+ * Notion's page typeface choices. `Default` uses Inter while `Serif` and
+ * `Mono` use the platform serif and monospace families.
+ *
+ * @category Typography
+ * @since 1.0.0
+ */
+export type TextFamily =
+    | "Default"
+    | "Serif"
+    | "Mono";
 
 const VariantToken: ReadonlyRecord<TextVariant, Typography.Typography> =
     {
         Body: Typography.Body,
+        BodyCompact: Typography.BodyCompact,
+        ButtonLabel: Typography.ButtonLabel,
+        Caption: Typography.Caption,
         Description: Typography.Description,
+        EmptyStateTitle: Typography.EmptyStateTitle,
         Heading1: Typography.Heading1,
         Heading2: Typography.Heading2,
         Heading3: Typography.Heading3,
-        Label: Typography.Label
+        HeroTitle: Typography.HeroTitle,
+        ItemTitle: Typography.ItemTitle,
+        Label: Typography.Label,
+        MenuItem: Typography.MenuItem,
+        ModalTitle: Typography.ModalTitle,
+        NavigationTitle: Typography.NavigationTitle,
+        Overline: Typography.Overline,
+        PageTitle: Typography.PageTitle,
+        ScreenTitle: Typography.ScreenTitle,
+        SectionTitle: Typography.SectionTitle
     };
 
 /** {@inheritDoc Text} */
 export interface TextProps extends Omit<RNTextProps, "style" | "numberOfLines">
 {
+    /** The semantic typography role to render. */
     readonly Variant: TextVariant;
-    readonly Weight?: TextStyle[ "fontWeight" ];
+
+    /** The Notion page typeface family. Defaults to `Default`. */
+    readonly Family?: TextFamily;
+
+    /** Overrides the role's default font weight. */
+    readonly Weight?: TextStyle["fontWeight"];
 
     /**
      * A `Token.Color.*` / `Token.Semantic.*` symbol, or a raw color string.
@@ -71,25 +113,73 @@ export interface TextProps extends Omit<RNTextProps, "style" | "numberOfLines">
         | Semantic.Semantic
         | string
         | undefined;
+
     readonly NumberOfLines?: number;
     readonly Style?: StyleProp<TextStyle>;
 }
 
-const FontFamilies = Object.freeze({
+type LoadedFontWeight =
+    | "400"
+    | "500"
+    | "600"
+    | "700";
+
+const DefaultFontFamilies: Readonly<Record<LoadedFontWeight, string>> = Object.freeze({
     400: "Inter_400Regular",
     500: "Inter_500Medium",
     600: "Inter_600SemiBold",
     700: "Inter_700Bold"
 } as const);
 
+const ResolveLoadedFontWeight = (Weight: TextStyle["fontWeight"]): LoadedFontWeight =>
+{
+    const NumericWeight = Weight === "normal"
+        ? 400
+        : Weight === "bold"
+            ? 700
+            : Number(Weight);
+
+    if (NumericWeight >= 700)
+    {
+        return "700";
+    }
+
+    if (NumericWeight >= 600)
+    {
+        return "600";
+    }
+
+    if (NumericWeight >= 500)
+    {
+        return "500";
+    }
+
+    return "400";
+};
+
+const ResolveFontFamily = (Family: TextFamily, Weight: TextStyle["fontWeight"]): string =>
+{
+    switch (Family)
+    {
+        case "Serif":
+            return "serif";
+        case "Mono":
+            return "monospace";
+        case "Default":
+        default:
+            return DefaultFontFamilies[ResolveLoadedFontWeight(Weight)];
+    }
+};
+
 export/**
-       * A base component for text, such that the variant is exposed as a prop.
+       * Base typography component with a semantic Notion text role.
        *
        * @category Component
        * @since 1.0.0
        */
 const Text = ({
     Variant,
+    Family = "Default",
     Weight,
     Color: ColorProp,
     NumberOfLines,
@@ -98,10 +188,11 @@ const Text = ({
     ...RestProps
 }: TextProps): React.ReactNode =>
 {
-    const ResolvedTypography = useTypography(VariantToken[ Variant ]);
+    const { [VariantToken[Variant]]: ResolvedTypography } = UseToken(VariantToken[Variant]);
     const TokenColorArgument = typeof ColorProp === "symbol" ? ColorProp : Semantic.Primary;
-    const ResolvedTokenColor = UseColor(TokenColorArgument);
+    const { [TokenColorArgument]: ResolvedTokenColor } = UseToken(TokenColorArgument);
     const FinalColor = typeof ColorProp === "string" ? ColorProp : ResolvedTokenColor;
+    const EffectiveWeight = Weight ?? ResolvedTypography.FontWeight;
 
     const [ AreFontsLoaded ] = useFonts({
         Inter_400Regular,
@@ -121,9 +212,9 @@ const Text = ({
             style={ [
                 {
                     color: FinalColor,
-                    fontFamily: FontFamilies[ResolvedTypography.FontWeight],
+                    fontFamily: ResolveFontFamily(Family, EffectiveWeight),
                     fontSize: ResolvedTypography.FontSize,
-                    fontWeight: Weight ?? ResolvedTypography.FontWeight,
+                    fontWeight: EffectiveWeight,
                     lineHeight: ResolvedTypography.LineHeight
                 },
                 Style
@@ -136,11 +227,14 @@ const Text = ({
 
 interface InvariantTextProps extends Omit<TextProps, "Variant"> { }
 
-/** {@inheritDoc Body} */
-export interface BodyProps extends InvariantTextProps { }
+/** {@inheritDoc PageTitle} */
+export interface PageTitleProps extends InvariantTextProps { }
 
-/** {@inheritDoc Description} */
-export interface DescriptionProps extends InvariantTextProps { }
+/** {@inheritDoc ScreenTitle} */
+export interface ScreenTitleProps extends InvariantTextProps { }
+
+/** {@inheritDoc HeroTitle} */
+export interface HeroTitleProps extends InvariantTextProps { }
 
 /** {@inheritDoc Heading1} */
 export interface Heading1Props extends InvariantTextProps { }
@@ -151,29 +245,91 @@ export interface Heading2Props extends InvariantTextProps { }
 /** {@inheritDoc Heading3} */
 export interface Heading3Props extends InvariantTextProps { }
 
+/** {@inheritDoc SectionTitle} */
+export interface SectionTitleProps extends InvariantTextProps { }
+
+/** {@inheritDoc EmptyStateTitle} */
+export interface EmptyStateTitleProps extends InvariantTextProps { }
+
+/** {@inheritDoc ModalTitle} */
+export interface ModalTitleProps extends InvariantTextProps { }
+
+/** {@inheritDoc NavigationTitle} */
+export interface NavigationTitleProps extends InvariantTextProps { }
+
+/** {@inheritDoc ItemTitle} */
+export interface ItemTitleProps extends InvariantTextProps { }
+
+/** {@inheritDoc Body} */
+export interface BodyProps extends InvariantTextProps { }
+
+/** {@inheritDoc BodyCompact} */
+export interface BodyCompactProps extends InvariantTextProps { }
+
+/** {@inheritDoc MenuItemText} */
+export interface MenuItemTextProps extends InvariantTextProps { }
+
+/** {@inheritDoc ButtonLabel} */
+export interface ButtonLabelProps extends InvariantTextProps { }
+
 /** {@inheritDoc LabelText} */
 export interface LabelTextProps extends InvariantTextProps { }
 
+/** {@inheritDoc Description} */
+export interface DescriptionProps extends InvariantTextProps { }
+
+/** {@inheritDoc Overline} */
+export interface OverlineProps extends InvariantTextProps { }
+
+/** {@inheritDoc Caption} */
+export interface CaptionProps extends InvariantTextProps { }
+
 export/**
-       * Body text.
+       * Notion editor page title text.
        *
        * @category Component
        * @since 1.0.0
        */
-const Body = ({ children, ...Props }: BodyProps): React.ReactNode =>
+const PageTitle = ({ children, ...Props }: PageTitleProps): React.ReactNode =>
     <Text
-        Variant="Body"
+        Variant="PageTitle"
         { ...Props }>
         { children }
     </Text>;
 
 export/**
-       * Body text.
+       * Large screen-level title text, such as Notion's search heading.
        *
        * @category Component
        * @since 1.0.0
        */
-const Heading1 = ({ children, ...Props }: BodyProps): React.ReactNode =>
+const ScreenTitle = ({ children, ...Props }: ScreenTitleProps): React.ReactNode =>
+    <Text
+        Variant="ScreenTitle"
+        { ...Props }>
+        { children }
+    </Text>;
+
+export/**
+       * Compact hero title text used on authentication and onboarding screens.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const HeroTitle = ({ children, ...Props }: HeroTitleProps): React.ReactNode =>
+    <Text
+        Variant="HeroTitle"
+        { ...Props }>
+        { children }
+    </Text>;
+
+export/**
+       * Level-one editor heading text.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Heading1 = ({ children, ...Props }: Heading1Props): React.ReactNode =>
     <Text
         Variant="Heading1"
         { ...Props }>
@@ -181,7 +337,7 @@ const Heading1 = ({ children, ...Props }: BodyProps): React.ReactNode =>
     </Text>;
 
 export/**
-       * Heading2 text.
+       * Level-two editor heading text.
        *
        * @category Component
        * @since 1.0.0
@@ -194,7 +350,7 @@ const Heading2 = ({ children, ...Props }: Heading2Props): React.ReactNode =>
     </Text>;
 
 export/**
-       * Heading3 text.
+       * Level-three editor heading text.
        *
        * @category Component
        * @since 1.0.0
@@ -206,10 +362,125 @@ const Heading3 = ({ children, ...Props }: Heading3Props): React.ReactNode =>
         { children }
     </Text>;
 
-/* eslint-disable jsdoc/informative-docs */
+export/**
+       * Major settings or grouped-content section title.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const SectionTitle = ({ children, ...Props }: SectionTitleProps): React.ReactNode =>
+    <Text
+        Variant="SectionTitle"
+        { ...Props }>
+        { children }
+    </Text>;
 
 export/**
-       * Label text.
+       * Title for a centered empty state.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const EmptyStateTitle = ({ children, ...Props }: EmptyStateTitleProps): React.ReactNode =>
+    <Text
+        Variant="EmptyStateTitle"
+        { ...Props }>
+        { children }
+    </Text>;
+
+export/**
+       * Bottom-sheet, dialog, and modal title text.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const ModalTitle = ({ children, ...Props }: ModalTitleProps): React.ReactNode =>
+    <Text
+        Variant="ModalTitle"
+        { ...Props }>
+        { children }
+    </Text>;
+
+export/**
+       * Compact title centered in a mobile navigation bar.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const NavigationTitle = ({ children, ...Props }: NavigationTitleProps): React.ReactNode =>
+    <Text
+        Variant="NavigationTitle"
+        { ...Props }>
+        { children }
+    </Text>;
+
+export/**
+       * Card, search-result, and list-row title text.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const ItemTitle = ({ children, ...Props }: ItemTitleProps): React.ReactNode =>
+    <Text
+        Variant="ItemTitle"
+        { ...Props }>
+        { children }
+    </Text>;
+
+export/**
+       * Notion editor body text.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Body = ({ children, ...Props }: BodyProps): React.ReactNode =>
+    <Text
+        Variant="Body"
+        { ...Props }>
+        { children }
+    </Text>;
+
+export/**
+       * Compact body text for properties and dense controls.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const BodyCompact = ({ children, ...Props }: BodyCompactProps): React.ReactNode =>
+    <Text
+        Variant="BodyCompact"
+        { ...Props }>
+        { children }
+    </Text>;
+
+export/**
+       * Action text for menu and action-sheet rows.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const MenuItemText = ({ children, ...Props }: MenuItemTextProps): React.ReactNode =>
+    <Text
+        Variant="MenuItem"
+        { ...Props }>
+        { children }
+    </Text>;
+
+export/**
+       * Semibold text used in buttons and call-to-action controls.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const ButtonLabel = ({ children, ...Props }: ButtonLabelProps): React.ReactNode =>
+    <Text
+        Variant="ButtonLabel"
+        { ...Props }>
+        { children }
+    </Text>;
+
+export/**
+       * Label text for settings rows, fields, and compact controls.
        *
        * @category Component
        * @since 1.0.0
@@ -221,17 +492,48 @@ const LabelText = ({ children, ...Props }: LabelTextProps): React.ReactNode =>
         { children }
     </Text>;
 
-/* eslint-enable jsdoc/informative-docs */
-
 export/**
-       * Description text.
+       * Supporting copy, muted by default like Notion's settings descriptions.
        *
        * @category Component
        * @since 1.0.0
        */
-const Description = ({ children, ...Props }: DescriptionProps): React.ReactNode =>
+const Description = ({
+    Color = Semantic.Secondary,
+    children,
+    ...Props
+}: DescriptionProps): React.ReactNode =>
     <Text
+        Color={ Color }
         Variant="Description"
+        { ...Props }>
+        { children }
+    </Text>;
+
+export/**
+       * Muted grouping label, such as `Today`, `Recents`, or `Private`.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Overline = ({ Color = Semantic.Secondary, children, ...Props }: OverlineProps): React.ReactNode =>
+    <Text
+        Color={ Color }
+        Variant="Overline"
+        { ...Props }>
+        { children }
+    </Text>;
+
+export/**
+       * Small muted legal, metadata, and footer text.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Caption = ({ Color = Semantic.Secondary, children, ...Props }: CaptionProps): React.ReactNode =>
+    <Text
+        Color={ Color }
+        Variant="Caption"
         { ...Props }>
         { children }
     </Text>;

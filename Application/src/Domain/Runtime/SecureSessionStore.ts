@@ -11,7 +11,7 @@
  *
  * @module notivex/Domain/Runtime/SecureSessionStore
  *
- * @file      secure-session-store.ts
+ * @file      SecureSessionStore.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
  * @copyright (c) 2026 Gage Sorrell
  * @license   MIT

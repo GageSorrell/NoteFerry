@@ -14,7 +14,7 @@
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { Pressable, type StyleProp, View, type ViewStyle } from "react-native";
-import { UseColor } from "../ThemeProvider.js";
+import { UseToken } from "../ThemeProvider.js";
 
 interface RadioGroupContextValue
 {
@@ -91,8 +91,13 @@ const RadioGroupItem = ({
         throw new Error("[@notivex/ui] `RadioGroupItem` must be used inside `<RadioGroup>`.");
     }
 
-    const BorderColor = UseColor(Semantic.Border);
-    const BlueColor = UseColor(Semantic.Blue);
+    const {
+        [Semantic.Border]: BorderColor,
+        [Semantic.Blue]: BlueColor
+    } = UseToken(
+        Semantic.Border,
+        Semantic.Blue
+    );
 
     const IsChecked = Context.Value === ItemValue;
     const IsDisabled = ItemDisabled ?? Context.Disabled ?? false;

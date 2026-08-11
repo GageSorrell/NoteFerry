@@ -20,7 +20,7 @@ import * as Gorhom from "@gorhom/bottom-sheet";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import * as Spacing from "../Token/Spacing.js";
-import { Description, Heading3 } from "./Text.js";
+import { Description, ModalTitle } from "./Text.js";
 import {
     type StyleProp,
     StyleSheet,
@@ -28,8 +28,7 @@ import {
     type ViewStyle,
     useWindowDimensions
 } from "react-native";
-import { ThemeProvider, UseColor, useSpacing } from "../ThemeProvider.js";
-import { useTheme } from "../index.js";
+import { ThemeProvider, UseTheme, UseToken } from "../ThemeProvider.js";
 
 /** {@inheritDoc BottomSheet} */
 export interface BottomSheet extends Gorhom.BottomSheetModal { }
@@ -63,7 +62,7 @@ const BottomSheet = ({
 {
     const MaxWidth = 480 as const;
 
-    const ColorScheme = useTheme().Mode;
+    const ColorScheme = UseTheme().Mode;
 
     const { width: WindowWidth } = useWindowDimensions();
 
@@ -104,18 +103,14 @@ export interface BottomSheetHeaderProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A layout container for heading content at the top of a `BottomSheet`.
        *
        * @category Component
        * @since 1.0.0
        */
 const BottomSheetHeader = ({ Style, children }: BottomSheetHeaderProps): React.JSX.Element =>
 {
-    // const Gap = useSpacing(Spacing.ExtraSmall);
-    // const Padding = useSpacing(Spacing.SheetHorizontal);
-
     return (
-        // <Gorhom.BottomSheetView style={ [ { gap: Gap, padding: Padding }, Style ] }>
         <Gorhom.BottomSheetView style={ Style }>
             { children }
         </Gorhom.BottomSheetView>
@@ -129,23 +124,23 @@ export interface BottomSheetTitleProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * The primary heading for a `BottomSheet`.
        *
        * @category Component
        * @since 1.0.0
        */
 const BottomSheetTitle = ({ Style, children }: BottomSheetTitleProps): React.JSX.Element =>
     <BottomSheetView>
-        <Heading3 { ...{ Style } }>
+        <ModalTitle { ...{ Style } }>
             { children }
-        </Heading3>
+        </ModalTitle>
     </BottomSheetView>;
 
 /** {@inheritDoc BottomSheetDescription} */
 export interface BottomSheetDescriptionProps extends React.PropsWithChildren { }
 
 export/**
-       * TODO Write description.
+       * Supporting text that describes a `BottomSheet`'s purpose or contents.
        *
        * @category Component
        * @since 1.0.0
@@ -162,15 +157,20 @@ export interface BottomSheetFooterProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A bottom-sheet footer for actions or other trailing content.
        *
        * @category Component
        * @since 1.0.0
        */
 const BottomSheetFooter = ({ Style, children }: BottomSheetFooterProps): React.JSX.Element =>
 {
-    const gap = useSpacing(Spacing.Small);
-    const padding = useSpacing(Spacing.SheetHorizontal);
+    const {
+        [Spacing.S]: gap,
+        [Spacing.SheetHorizontal]: padding
+    } = UseToken(
+        Spacing.S,
+        Spacing.SheetHorizontal
+    );
 
     const Footer = Gorhom.BottomSheetFooter as any;
 
@@ -191,7 +191,7 @@ export interface BottomSheetScrollViewProps extends
     React.ComponentProps<typeof Gorhom.BottomSheetScrollView> { }
 
 export/**
-       * TODO Write description.
+       * A non-scrolling, theme-aware content container for a `BottomSheet`.
        *
        * @category Component
        * @since 1.0.0
@@ -202,7 +202,7 @@ const BottomSheetView = ({
     ...Tail
 }: BottomSheetViewProps): React.JSX.Element =>
 {
-    const backgroundColor = UseColor(Semantic.BackgroundModal);
+    const { [Semantic.BackgroundModal]: backgroundColor } = UseToken(Semantic.BackgroundModal);
 
     return (
         <Gorhom.BottomSheetView
@@ -214,7 +214,7 @@ const BottomSheetView = ({
 };
 
 export/**
-       * TODO Write description.
+       * A scrollable, theme-aware content container for a `BottomSheet`.
        *
        * @category Component
        * @since 1.0.0
@@ -225,7 +225,7 @@ const BottomSheetScrollView = ({
     ...Tail
 }: BottomSheetScrollViewProps): React.JSX.Element =>
 {
-    const backgroundColor = UseColor(Semantic.BackgroundModal);
+    const { [Semantic.BackgroundModal]: backgroundColor } = UseToken(Semantic.BackgroundModal);
 
     return (
         <Gorhom.BottomSheetScrollView

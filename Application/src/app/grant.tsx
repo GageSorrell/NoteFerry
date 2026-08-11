@@ -16,21 +16,20 @@ import { Body, Button } from "@notivex/ui/Primitive";
 import { StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
 import { ConnectNotion } from "@/Domain/Connection";
-import { OnboardingCopy } from "@/features/onboarding/copy";
 import { OnboardingScreen } from "@/features/onboarding/onboarding-screen";
 import { Token } from "@notivex/ui";
+import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useOnboarding } from "@/features/onboarding/onboarding-context";
-import { useRouter } from "expo-router";
-
-const Copy = OnboardingCopy.Grant;
 
 const GrantScreen = () =>
 {
-    const Router = useRouter();
+    const Router = UseLazyRouter();
     const { Begin } = useOnboarding();
 
     const [ Pending, SetPending ] = useState(false);
 
+    /* Beginning onboarding also starts connection/data-source discovery in the
+     * shared provider, so it keeps running across the transition to `/sync`. */
     useEffect(Begin, [ Begin ]);
 
     /* eslint-disable-next-line jsdoc/require-jsdoc */
@@ -40,7 +39,7 @@ const GrantScreen = () =>
         {
             SetPending(true);
             await ConnectNotion();
-            Router.replace("/sync");
+            Router.replace("/sync")();
         }
         catch (Error)
         {
@@ -56,20 +55,20 @@ const GrantScreen = () =>
     return (
         <OnboardingScreen
             Hero={ require("../../assets/Onboarding/Grant.png") }
-            Subtitle={ Copy.Body }
-            Title={ Copy.Title }>
+            Subtitle="Pick the databases and pages Notivex can write to — nothing else is ever touched."
+            Title="Give Notivex a place to write">
             <View style={ styles.spacer } />
             <Body
                 Color={ Token.Semantic.Muted }
                 Style={ styles.note }>
-                { Copy.Note }
+                You can change what&apos;s shared anytime, right from Notion.
             </Body>
             <Button
                 Appearance="Primary"
                 Disabled={ Pending }
                 OnPress={ () => void HandleGrant() }
                 Style={ styles.cta }>
-                { Copy.Cta }
+                Choose pages in Notion
             </Button>
         </OnboardingScreen>
     );

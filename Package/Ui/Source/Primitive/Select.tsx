@@ -27,9 +27,9 @@ import { MenuItem, MenuItemCheck, type MenuItemProps } from "./Menu.js";
 import { Popup, type PopupAnchor, type PopupPlacement } from "./Popup.js";
 import { Pressable, ScrollView, type StyleProp, type ViewStyle } from "react-native";
 export { MenuGroup as SelectGroup, MenuLabel as SelectLabel } from "./Menu.js";
-import { UseColor, useRadii } from "../ThemeProvider.js";
 import { Body } from "./Text.js";
 import { ChevronDown } from "lucide-react-native";
+import { UseToken } from "../ThemeProvider.js";
 export { Separator as SelectSeparator } from "./Separator.js";
 
 interface SelectContextValue
@@ -134,9 +134,15 @@ export/**
 const SelectTrigger = ({ Disabled = false, Style, children }: SelectTriggerProps): React.JSX.Element =>
 {
     const { IsOpen, SetIsOpen, AnchorRef } = useSelectContext();
-    const RingColor = UseColor(Semantic.Ring);
-    const MutedColor = UseColor(Semantic.Muted);
-    const MediumRadius = useRadii(Radii.Medium);
+    const {
+        [Semantic.Ring]: RingColor,
+        [Semantic.Muted]: MutedColor,
+        [Radii.Medium]: MediumRadius
+    } = UseToken(
+        Semantic.Ring,
+        Semantic.Muted,
+        Radii.Medium
+    );
 
     return (
         <Pressable
@@ -185,7 +191,7 @@ export/**
 const SelectValue = ({ Placeholder }: SelectValueProps): React.JSX.Element =>
 {
     const { Value, Labels } = useSelectContext();
-    const MutedColor = UseColor(Semantic.Muted);
+    const { [Semantic.Muted]: MutedColor } = UseToken(Semantic.Muted);
     const Label = Value === undefined ? undefined : Labels.current.get(Value);
 
     return (
@@ -240,8 +246,8 @@ export interface SelectItemProps extends Omit<MenuItemProps, "OnPress" | "Label"
 }
 
 export/**
-       * The representation of an item that may be selected by the user.
-       * // TODO Improve the descriptions of this component and others in this module.
+       * A selectable option that registers its label, updates the `Select`
+       * value, and optionally displays a check mark.
        *
        * @category Component
        * @since 1.0.0

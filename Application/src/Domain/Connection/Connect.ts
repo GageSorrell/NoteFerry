@@ -16,7 +16,7 @@
 import * as WebBrowser from "expo-web-browser";
 import { StartNotionAuthorization } from "@/Domain/Runtime/NotivexApi";
 
-const ConnectedReturnUrl = "notivex://notion/connected";
+const ConnectedReturnUrl = "notivex://notion/connected" as const;
 
 /**
  * Runs the Notion connect flow to completion (or until the user dismisses the

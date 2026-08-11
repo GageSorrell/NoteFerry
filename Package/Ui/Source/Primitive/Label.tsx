@@ -25,7 +25,7 @@ export interface LabelProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A secondary-colored text label for form controls and related content.
        *
        * @category Component
        * @since 1.0.0

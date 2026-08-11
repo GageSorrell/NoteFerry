@@ -42,7 +42,7 @@
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import * as Spacing from "../Token/Spacing.js";
-import { Body, Heading3 } from "../Primitive/Text.js";
+import { Body, ModalTitle } from "../Primitive/Text.js";
 import {
     BottomSheet,
     BottomSheetHeader,
@@ -53,9 +53,9 @@ import { ChevronDown, ChevronRight } from "lucide-react-native";
 import { IconBlock, type IconData } from "./IconBlock.js";
 import { MenuItem, MenuItemCheck } from "../Primitive/Menu.js";
 import { StyleSheet, View } from "react-native";
-import { UseColor, useSpacing } from "../ThemeProvider.js";
 import { Input } from "../Primitive/Input.js";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
+import { UseToken } from "../ThemeProvider.js";
 
 const IndentWidth = 16 as const;
 const MaxSearchResults = 100 as const;
@@ -213,7 +213,7 @@ const TreeSheetRow = <A extends TreeItemData,>({
     OnSelect
 }: TreeSheetRowProps<A>): React.JSX.Element =>
 {
-    const MutedColor = UseColor(Semantic.Muted);
+    const { [Semantic.Muted]: MutedColor } = UseToken(Semantic.Muted);
 
     return (
         <MenuItem
@@ -336,14 +336,14 @@ const TreeSheet = <A extends TreeItemData,>({
         return Matches;
     }, [ IsSearching, Query, Entity, ExpandedIds ]);
 
-    const HorizontalPadding = useSpacing(Spacing.SheetHorizontal);
+    const { [Spacing.SheetHorizontal]: HorizontalPadding } = UseToken(Spacing.SheetHorizontal);
 
     return (
         <BottomSheet
             { ...{ OnDismiss, Ref } }
             { ...(TestID === undefined ? { } : { TestId: TestID }) }>
             <BottomSheetHeader Style={ [ Styles.Header, { paddingHorizontal: HorizontalPadding } ] }>
-                <Heading3 Style={ Styles.HeaderTitle }>{ Title }</Heading3>
+                <ModalTitle Style={ Styles.HeaderTitle }>{ Title }</ModalTitle>
                 <Input
                     Clear
                     OnCancel={ () => SetQuery("") }

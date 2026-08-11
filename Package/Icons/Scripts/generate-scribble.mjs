@@ -181,8 +181,7 @@ const toJsx = (svg, styleMap) =>
  * rest alphabetically — deterministic output regardless of tag order.
  */
 const orderImports = (used) =>
-    [ ...used ].sort((a, b) =>
-        (a === "Svg" ? -1 : b === "Svg" ? 1 : a.localeCompare(b)));
+    [ ...used ].sort();
 
 /** Builds the full TSX module text for one icon. */
 const renderModule = (componentName, jsx, used) => `/**
@@ -197,13 +196,15 @@ const renderModule = (componentName, jsx, used) => `/**
  * @license   MIT
  */
 
+/* eslint-disable */
+
+import { ${orderImports(used).join(", ")} } from "react-native-svg";
 import type { JSX } from "react";
 import type { NotivexIconProps } from "../Icon.Types";
-import { ${orderImports(used).join(", ")} } from "react-native-svg";
 
-export const ${componentName} = ({ color = "#231F20", ...props }: NotivexIconProps): JSX.Element =>
+export const ${componentName} = ({ color = "#231F20", ...Tail }: NotivexIconProps): JSX.Element =>
 (
-${jsx.replace(/^(\s*)<Svg([^>]*)>/, "$1<Svg$2 {...props}>")}
+${jsx.replace(/^(\s*)<Svg([^>]*)>/, "$1<Svg$2 { ...Tail }>")}
 );
 `;
 

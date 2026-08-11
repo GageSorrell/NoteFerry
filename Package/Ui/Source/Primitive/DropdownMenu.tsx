@@ -69,7 +69,7 @@ export interface DropdownMenuProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A state provider that coordinates a `DropdownMenu`'s trigger, popup anchor, and open state.
        *
        * @category Component
        * @since 1.0.0
@@ -116,7 +116,7 @@ export interface DropdownMenuTriggerProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A pressable control that toggles and anchors its surrounding `DropdownMenu`.
        *
        * @category Component
        * @since 1.0.0
@@ -173,7 +173,7 @@ export interface DropdownMenuContentProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A scrollable popup that displays a `DropdownMenu`'s items.
        *
        * @category Component
        * @since 1.0.0
@@ -213,7 +213,7 @@ export interface DropdownMenuItemProps extends Omit<MenuItemProps, "OnPress">
 }
 
 export/**
-       * TODO Write description.
+       * A `DropdownMenu` action that optionally closes the menu after selection.
        *
        * @category Component
        * @since 1.0.0
@@ -251,7 +251,7 @@ export interface DropdownMenuCheckboxItemProps extends Omit<MenuItemProps, "OnPr
 }
 
 export/**
-       * TODO Write description.
+       * A boolean `DropdownMenu` option that displays a check mark when selected.
        *
        * @category Component
        * @since 1.0.0
@@ -301,7 +301,7 @@ export interface DropdownMenuRadioGroupProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * Coordinates the selected value and change handler for a set of `DropdownMenuRadioItem` components.
        *
        * @category Component
        * @since 1.0.0
@@ -332,7 +332,7 @@ export interface DropdownMenuRadioItemProps extends Omit<MenuItemProps, "OnPress
 }
 
 export/**
-       * TODO Write description.
+       * A mutually exclusive `DropdownMenu` option that displays a check mark when selected.
        *
        * @category Component
        * @since 1.0.0

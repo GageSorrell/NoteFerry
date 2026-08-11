@@ -24,8 +24,8 @@ import * as Shadow from "../Token/Shadow.js";
 import { type GestureResponderEvent, type StyleProp, type ViewStyle } from "react-native";
 import RNPopover, { PopoverPlacement } from "react-native-popover-view";
 
-import { UseColor, useRadii, useShadow } from "../ThemeProvider.js";
 import type { ReadonlyRecord } from "effect/Record";
+import { UseToken } from "../ThemeProvider.js";
 
 /**
  * The relative location where a given `Popup` component may be placed.
@@ -126,12 +126,21 @@ const Popup = ({
     children
 }: PopupProps): React.JSX.Element =>
 {
-    const PopoverBackground = UseColor(Semantic.BackgroundPopover);
-    const TooltipBackground = UseColor(Semantic.BackgroundTooltip);
-    const BorderColor = UseColor(Semantic.Border);
-    const LargeRadius = useRadii(Radii.Large);
-    const SmallRadius = useRadii(Radii.Small);
-    const CardShadow = useShadow(Shadow.Card);
+    const {
+        [Semantic.BackgroundPopover]: PopoverBackground,
+        [Semantic.BackgroundTooltip]: TooltipBackground,
+        [Semantic.Border]: BorderColor,
+        [Radii.Large]: LargeRadius,
+        [Radii.Small]: SmallRadius,
+        [Shadow.Card]: CardShadow
+    } = UseToken(
+        Semantic.BackgroundPopover,
+        Semantic.BackgroundTooltip,
+        Semantic.Border,
+        Radii.Large,
+        Radii.Small,
+        Shadow.Card
+    );
 
     const VariantStyle: ViewStyle = Variant === "Tooltip"
         ? {

@@ -18,8 +18,8 @@ import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import * as Spacing from "../Token/Spacing.js";
-import { Body, Heading3 } from "./Text.js";
 import { Button, type ButtonProps, CloseButton } from "./Button.js";
+import { Description, ModalTitle } from "./Text.js";
 import {
     type GestureResponderEvent,
     Modal,
@@ -30,9 +30,9 @@ import {
     View,
     type ViewStyle
 } from "react-native";
-import { UseColor, useRadii, useSpacing } from "../ThemeProvider.js";
 import { CloneTrigger } from "./Popup.js";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { UseToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 interface DialogContextValue
@@ -73,7 +73,7 @@ export interface DialogProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A state provider that coordinates the open state of a compound modal dialog.
        *
        * @category Component
        * @since 1.0.0
@@ -114,7 +114,7 @@ export interface DialogTriggerProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A pressable control that opens its surrounding `Dialog`.
        *
        * @category Component
        * @since 1.0.0
@@ -149,7 +149,7 @@ export interface DialogContentProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * The modal overlay and card that display a `Dialog`'s contents.
        *
        * @category Component
        * @since 1.0.0
@@ -157,11 +157,19 @@ export/**
 const DialogContent = ({ HideClose = false, Style, children }: DialogContentProps): React.JSX.Element =>
 {
     const { IsOpen, SetIsOpen } = useDialogContext();
-    const ModalBackground = UseColor(Semantic.BackgroundModal);
-    const DefaultColor = UseColor(Semantic.Default);
-    const LargeRadius = useRadii(Radii.Large);
-    const Gap = useSpacing(Spacing.Small);
-    const Padding = useSpacing(Spacing.Large);
+    const {
+        [Semantic.BackgroundModal]: ModalBackground,
+        [Semantic.Default]: DefaultColor,
+        [Radii.Large]: LargeRadius,
+        [Spacing.S]: Gap,
+        [Spacing.L]: Padding
+    } = UseToken(
+        Semantic.BackgroundModal,
+        Semantic.Default,
+        Radii.Large,
+        Spacing.S,
+        Spacing.L
+    );
 
     return (
         <Modal
@@ -260,14 +268,14 @@ export interface DialogHeaderProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A centered layout container for a `Dialog`'s heading content.
        *
        * @category Component
        * @since 1.0.0
        */
 const DialogHeader = ({ Style, children }: DialogHeaderProps): React.JSX.Element =>
 {
-    const Gap = useSpacing(Spacing.ExtraSmall);
+    const { [Spacing.Xs]: Gap } = UseToken(Spacing.Xs);
 
     return <View style={ [ { alignItems: "center", gap: Gap }, Style ] }>{ children }</View>;
 };
@@ -279,14 +287,14 @@ export interface DialogFooterProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A centered layout container for a `Dialog`'s actions or trailing content.
        *
        * @category Component
        * @since 1.0.0
        */
 const DialogFooter = ({ Style, children }: DialogFooterProps): React.JSX.Element =>
 {
-    const Gap = useSpacing(Spacing.ExtraSmall);
+    const { [Spacing.Xs]: Gap } = UseToken(Spacing.Xs);
 
     return <View style={ [ { alignItems: "center", gap: Gap }, Style ] }>{ children }</View>;
 };
@@ -298,7 +306,7 @@ export interface DialogIconProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A centered container for the illustrative icon in a `Dialog`.
        *
        * @category Component
        * @since 1.0.0
@@ -313,31 +321,29 @@ export interface DialogTitleProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * The primary, centered heading for a `Dialog`.
        *
        * @category Component
        * @since 1.0.0
        */
 const DialogTitle = ({ Style, children }: DialogTitleProps): React.JSX.Element =>
-    <Heading3 Style={ [ Styles.Centered, Style ] }>
+    <ModalTitle Style={ [ Styles.Centered, Style ] }>
         { children }
-    </Heading3>;
+    </ModalTitle>;
 
 /** {@inheritDoc DialogDescription} */
 export interface DialogDescriptionProps extends React.PropsWithChildren { }
 
 export/**
-       * TODO Write description.
+       * Supporting text that describes a `Dialog`'s purpose or requested action.
        *
        * @category Component
        * @since 1.0.0
        */
 const DialogDescription = ({ children }: DialogDescriptionProps): React.JSX.Element =>
-    <Body
-        Color={ Semantic.Secondary }
-        Style={ Styles.Centered }>
+    <Description Style={ Styles.Centered }>
         { children }
-    </Body>;
+    </Description>;
 
 const Styles = StyleSheet.create({
     Card:

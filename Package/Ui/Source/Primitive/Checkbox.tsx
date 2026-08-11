@@ -14,7 +14,7 @@ import * as Semantic from "../Token/Semantic.js";
 import { Check, Minus } from "lucide-react-native";
 import { Pressable, type StyleProp, type ViewStyle } from "react-native";
 import type { ReadonlyRecord } from "effect/Record";
-import { UseColor } from "../ThemeProvider.js";
+import { UseToken } from "../ThemeProvider.js";
 
 /**
  * The size of a given `Checkbox` component.
@@ -56,7 +56,7 @@ export interface CheckboxProps
 }
 
 export/**
-       * TODO Write description.
+       * An accessible checkbox control that supports checked, unchecked, and indeterminate states.
        *
        * @category Component
        * @since 1.0.0
@@ -70,8 +70,13 @@ const Checkbox = ({
     AccessibilityLabel
 }: CheckboxProps): React.JSX.Element =>
 {
-    const BorderButtonColor = UseColor(Semantic.BorderButton);
-    const BlueColor = UseColor(Semantic.Blue);
+    const {
+        [Semantic.BorderButton]: BorderButtonColor,
+        [Semantic.Blue]: BlueColor
+    } = UseToken(
+        Semantic.BorderButton,
+        Semantic.Blue
+    );
 
     const IsChecked = Checked === true;
     const IsIndeterminate = Checked === "Indeterminate";

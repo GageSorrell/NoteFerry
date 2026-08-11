@@ -16,7 +16,7 @@
 import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
-import { Body, Description, LabelText } from "./Text.js";
+import { Body, BodyCompact, Description, LabelText, MenuItemText } from "./Text.js";
 import { Check, ChevronRight } from "lucide-react-native";
 import {
     type GestureResponderEvent,
@@ -25,8 +25,8 @@ import {
     View,
     type ViewStyle
 } from "react-native";
-import { UseColor, useRadii } from "../ThemeProvider.js";
 import { Predicate } from "effect";
+import { UseToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /** {@inheritDoc MenuGroup} */
@@ -36,7 +36,7 @@ export interface MenuGroupProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A vertically padded container for related menu content.
        *
        * @category Component
        * @since 1.0.0
@@ -51,7 +51,7 @@ export interface MenuLabelProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A secondary-text heading for a group of menu items.
        *
        * @category Component
        * @since 1.0.0
@@ -114,11 +114,19 @@ const MenuItem = React.forwardRef<React.ComponentRef<typeof Pressable>, MenuItem
     children
 }: MenuItemProps, ForwardedRef: React.ForwardedRef<View>): React.JSX.Element =>
 {
-    const PrimaryColor = UseColor(Semantic.Primary);
-    const SecondaryColor = UseColor(Semantic.Secondary);
-    const RedColor = UseColor(Semantic.Red);
-    const DefaultColor = UseColor(Semantic.Default);
-    const MediumRadius = useRadii(Radii.Medium);
+    const {
+        [Semantic.Primary]: PrimaryColor,
+        [Semantic.Secondary]: SecondaryColor,
+        [Semantic.Red]: RedColor,
+        [Semantic.Default]: DefaultColor,
+        [Radii.Medium]: MediumRadius
+    } = UseToken(
+        Semantic.Primary,
+        Semantic.Secondary,
+        Semantic.Red,
+        Semantic.Default,
+        Radii.Medium
+    );
 
     const TextColor = Variant === "Secondary"
         ? SecondaryColor
@@ -160,11 +168,11 @@ const MenuItem = React.forwardRef<React.ComponentRef<typeof Pressable>, MenuItem
                 { DescriptionText !== undefined
                     ? (
                         <View style={ { gap: 2, marginVertical: 4 } }>
-                            <Body
+                            <MenuItemText
                                 Color={ TextColor }
                                 NumberOfLines={ 1 }>
                                 { Label }
-                            </Body>
+                            </MenuItemText>
                             <Description
                                 Color={ Semantic.Secondary }
                                 NumberOfLines={ 2 }>
@@ -173,11 +181,11 @@ const MenuItem = React.forwardRef<React.ComponentRef<typeof Pressable>, MenuItem
                         </View>
                     )
                     : typeof Label === "string"
-                        ? <Body
+                        ? <MenuItemText
                             Color={ TextColor }
                             NumberOfLines={ 1 }>
                             { Label }
-                        </Body>
+                        </MenuItemText>
                         : Label
                 }
             </View>
@@ -195,7 +203,7 @@ export interface MenuItemActionProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A trailing container for an action, status, or accessory within a `MenuItem`.
        *
        * @category Component
        * @since 1.0.0
@@ -206,14 +214,14 @@ const MenuItemAction = ({ Style, children }: MenuItemActionProps): React.JSX.Ele
     </View>;
 
 export/**
-       * TODO Write description.
+       * A trailing check-mark indicator for a selected `MenuItem`.
        *
        * @category Component
        * @since 1.0.0
        */
 const MenuItemCheck = (): React.JSX.Element =>
 {
-    const PrimaryColor = UseColor(Semantic.Primary);
+    const { [Semantic.Primary]: PrimaryColor } = UseToken(Semantic.Primary);
 
     return (
         <MenuItemAction Style={ { width: 14 } }>
@@ -240,7 +248,7 @@ export/**
        */
 const MenuItemSelect = ({ children }: MenuItemSelectProps): React.JSX.Element =>
 {
-    const MutedColor = UseColor(Semantic.Muted);
+    const { [Semantic.Muted]: MutedColor } = UseToken(Semantic.Muted);
 
     return (
         <MenuItemAction Style={ {
@@ -248,11 +256,11 @@ const MenuItemSelect = ({ children }: MenuItemSelectProps): React.JSX.Element =>
             flexDirection: "row"
         } }>
             { typeof children === "string" || typeof children === "number"
-                ? <Body
+                ? <BodyCompact
                     Color={ Semantic.Muted }
                     NumberOfLines={ 1 }>
                     { children }
-                </Body>
+                </BodyCompact>
                 : children }
             <ChevronRight
                 color={ MutedColor }
@@ -267,7 +275,7 @@ const MenuItemSelect = ({ children }: MenuItemSelectProps): React.JSX.Element =>
 export interface MenuItemShortcutProps extends React.PropsWithChildren { }
 
 export/**
-       * TODO Write description.
+       * Displays a muted shortcut hint at the trailing edge of a `MenuItem`.
        *
        * @category Component
        * @since 1.0.0
@@ -286,7 +294,7 @@ export interface MenuFooterProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A centered footer container for supplementary menu content.
        *
        * @category Component
        * @since 1.0.0

@@ -97,7 +97,6 @@ const Styles = StyleSheet.create({
     },
     Title:
     {
-        fontWeight: "400",
         textAlign: "left"
     }
 });

@@ -27,8 +27,8 @@
  *   to build a skin-tone picker over, so source's `SkinPicker` wasn't
  *   ported either.
  * - The Lucide tab's color swatches are `Token.Color`'s ten Notion colors
- *   (already resolved via the public `UseColor` hook — this file never
- *   reaches into `Token/ColorValue` directly), not source's arbitrary
+ *   (already resolved via the public `UseTheme` hook — this file never
+ *   reaches into `Token/Color`'s internal values directly), not source's arbitrary
  *   `COLOR` hex map.
  * - "Recent" tracking is a plain most-recently-used id list in
  *   `AsyncStorage` (`usehooks-ts`'s `useLocalStorage`, source's own
@@ -64,7 +64,6 @@ import EmojiMartDataRaw, { type Emoji, type EmojiMartData } from "@emoji-mart/da
 import { IconBlock, type IconData, LucideIconMap, type LucideIconName } from "./IconBlock.js";
 import { StyleSheet, View } from "react-native";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Primitive/Tabs.js";
-import { UseColor, useRadii } from "../ThemeProvider.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button } from "../Primitive/Button.js";
 import { Input } from "../Primitive/Input.js";
@@ -72,15 +71,16 @@ import type { ReadonlyRecord } from "effect/Record";
 import { String } from "effect";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import { Upload } from "lucide-react-native";
+import { UseToken } from "../ThemeProvider.js";
 
 const MaxEmojiSearchResults = 60 as const;
 const MaxIconSearchResults = 100 as const;
 const RecentLimit = 24 as const;
 
 /**
- * A most-recently-used id list, persisted in `AsyncStorage` — this file's
+ * A most-recently-used id list, persisted in `AsyncStorage`; this file's
  * (non-pluggable) stand-in for source's `useRecentIcons` "recency"
- * strategy; see the file header comment for why "frequency" wasn't ported.
+ * strategy.
  */
 const useRecentIconIds = (
     StorageKey: string
@@ -144,9 +144,15 @@ interface CategoryChipProps
 
 const CategoryChip = ({ Label, IsActive, OnPress }: CategoryChipProps): React.JSX.Element =>
 {
-    const PrimaryColor = UseColor(Semantic.Primary);
-    const BorderColor = UseColor(Semantic.Border);
-    const SmallRadius = useRadii(Radii.Small);
+    const {
+        [Semantic.Primary]: PrimaryColor,
+        [Semantic.Border]: BorderColor,
+        [Radii.Small]: SmallRadius
+    } = UseToken(
+        Semantic.Primary,
+        Semantic.Border,
+        Radii.Small
+    );
 
     return (
         <TouchableOpacity
@@ -344,20 +350,33 @@ const IconsTab = ({ OnSelect }: IconsTabProps): React.JSX.Element =>
     const [ SelectedColor, SetSelectedColor ] = React.useState<Color.Color>(Color.Default);
 
     /**
-     * One `UseColor` call per palette entry — a fixed, unconditional set of hook calls, same as `Button.tsx`.
+     * One fixed, unconditional token lookup per palette entry, matching `Button.tsx`.
      *
      * @since 1.0.0
      */
-    const DefaultHex = UseColor(Color.Default);
-    const GrayHex = UseColor(Color.Gray);
-    const BrownHex = UseColor(Color.Brown);
-    const OrangeHex = UseColor(Color.Orange);
-    const YellowHex = UseColor(Color.Yellow);
-    const GreenHex = UseColor(Color.Green);
-    const BlueHex = UseColor(Color.Blue);
-    const PurpleHex = UseColor(Color.Purple);
-    const PinkHex = UseColor(Color.Pink);
-    const RedHex = UseColor(Color.Red);
+    const {
+        [Color.Default]: DefaultHex,
+        [Color.Gray]: GrayHex,
+        [Color.Brown]: BrownHex,
+        [Color.Orange]: OrangeHex,
+        [Color.Yellow]: YellowHex,
+        [Color.Green]: GreenHex,
+        [Color.Blue]: BlueHex,
+        [Color.Purple]: PurpleHex,
+        [Color.Pink]: PinkHex,
+        [Color.Red]: RedHex
+    } = UseToken(
+        Color.Default,
+        Color.Gray,
+        Color.Brown,
+        Color.Orange,
+        Color.Yellow,
+        Color.Green,
+        Color.Blue,
+        Color.Purple,
+        Color.Pink,
+        Color.Red
+    );
 
     const HexByColor = React.useMemo(() => new Map<Color.Color, string>([
         [ Color.Default, DefaultHex ],

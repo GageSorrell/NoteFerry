@@ -27,10 +27,11 @@ import {
     LabelText
 } from "@notivex/ui/Primitive";
 import { useCallback, useEffect, useState } from "react";
-import { useLocalSearchParams, useRouter } from "expo-router";
 import { GetDataSource } from "@/Domain/Runtime/NotivexApi";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useDestinations } from "@/features/destinations/use-destinations";
+import { useLocalSearchParams } from "expo-router";
 
 /** Per-field UI toggles held while the form is open. */
 interface FieldSetting
@@ -41,7 +42,7 @@ interface FieldSetting
 
 const DestinationConfigScreen = () =>
 {
-    const Router = useRouter();
+    const Router = UseLazyRouter();
     const Params = useLocalSearchParams<{
         connectionId: string;
         dataSourceId: string;
@@ -160,7 +161,7 @@ const DestinationConfigScreen = () =>
             <SafeAreaView style={ styles.safeArea }>
                 <Button
                     Appearance="Link"
-                    OnPress={ () => Router.back() }
+                    OnPress={ Router.back }
                     Style={ styles.back }>
                     ‹ Back
                 </Button>

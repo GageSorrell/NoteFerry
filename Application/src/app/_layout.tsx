@@ -12,7 +12,10 @@ import { OnboardingProvider, useOnboarding } from "@/features/onboarding/onboard
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider as NotivexThemeProvider } from "@notivex/ui";
+import { RegisterDevelopmentMenu } from "@/Domain/Runtime/DevelopmentMenu";
 import { Stack } from "expo-router";
+import { StatusBar } from "@/Domain/Miscellaneous/StatusBar";
+import { useEffect } from "react";
 
 /**
  * The navigator, split out so it can read the auth and onboarding contexts
@@ -54,7 +57,11 @@ function RootNavigator()
             <Stack.Protected guard={ IsSignedOut }>
                 <Stack.Screen name="sign-in" />
                 <Stack.Screen
-                    name="sign-in-modal"
+                    name="sign-in-modal-step-one"
+                    options={ { presentation: "modal" } }
+                />
+                <Stack.Screen
+                    name="sign-in-modal-step-two"
                     options={ { presentation: "modal" } }
                 />
             </Stack.Protected>
@@ -78,11 +85,17 @@ function RootNavigator()
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 export default function RootLayout()
 {
+    useEffect(() =>
+    {
+        void RegisterDevelopmentMenu();
+    }, [ ]);
+
     /* `NotivexThemeProvider` embeds React Navigation's `ThemeProvider` internally
      * (with the app-wide background bound to `Semantic.BackgroundMain`), so there
      * is deliberately no `expo-router` `ThemeProvider` mounted here. */
     return (
         <NotivexThemeProvider>
+            <StatusBar />
             <GestureHandlerRootView style={ { flex: 1 } }>
                 <BottomSheetModalProvider>
                     <NotivexAuthProvider>

@@ -15,9 +15,10 @@
 import type * as Domain from "@notivex/domain";
 import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 import { Body, Button, Description, Heading1, LabelText } from "@notivex/ui/Primitive";
-import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useDataSources } from "@/features/data-sources/use-data-sources";
+import { useLocalSearchParams } from "expo-router";
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 function IsEmoji(Icon: string | undefined): Icon is string
@@ -27,7 +28,7 @@ function IsEmoji(Icon: string | undefined): Icon is string
 
 const DataSourcesScreen = () =>
 {
-    const Router = useRouter();
+    const Router = UseLazyRouter();
     const Params = useLocalSearchParams<{ connectionId: string; workspaceName?: string }>();
     const ConnectionId = Params.connectionId as Domain.Id.NotionConnectionId;
 
@@ -43,7 +44,7 @@ const DataSourcesScreen = () =>
             <SafeAreaView style={ styles.safeArea }>
                 <Button
                     Appearance="Link"
-                    OnPress={ () => Router.back() }
+                    OnPress={ Router.back }
                     Style={ styles.back }>
                     ‹ Back
                 </Button>
@@ -58,7 +59,7 @@ const DataSourcesScreen = () =>
                 <Button
                     Appearance="SoftBlue"
                     Disabled={ IsSearching }
-                    OnPress={ () => void Search() }
+                    OnPress={ Search }
                     Style={ styles.searchButton }>
                     { IsSearching ? "Searching…" : "Search again" }
                 </Button>
@@ -107,7 +108,7 @@ const DataSourcesScreen = () =>
                                                 ? (
                                                     <Button
                                                         Appearance="Link"
-                                                        OnPress={ () => Router.push({
+                                                        OnPress={ Router.push({
                                                             params:
                                                             {
                                                                 connectionId: Source.ConnectionId,

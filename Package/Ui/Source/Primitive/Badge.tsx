@@ -13,8 +13,8 @@ import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { type StyleProp, View, type ViewStyle } from "react-native";
-import { UseColor, useRadii } from "../ThemeProvider.js";
 import { Description } from "./Text.js";
+import { UseToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /**
@@ -49,17 +49,24 @@ export interface BadgeProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A compact label for displaying status, metadata, or a tag.
        *
        * @category Component
        * @since 1.0.0
        */
 const Badge = ({ Variant = "Default", Size = "Medium", Style, children }: BadgeProps): React.JSX.Element =>
 {
-    const PrimaryColor = UseColor(Semantic.Primary);
-    const SecondaryColor = UseColor(Semantic.Secondary);
-    const BlueColor = UseColor(Semantic.Blue);
-    const SmallRadius = useRadii(Radii.Small);
+    const {
+        [Semantic.Primary]: PrimaryColor,
+        [Semantic.Secondary]: SecondaryColor,
+        [Semantic.Blue]: BlueColor,
+        [Radii.Small]: SmallRadius
+    } = UseToken(
+        Semantic.Primary,
+        Semantic.Secondary,
+        Semantic.Blue,
+        Radii.Small
+    );
 
     const { Background, TextColor } = (() =>
     {

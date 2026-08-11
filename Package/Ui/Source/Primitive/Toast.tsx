@@ -27,8 +27,8 @@ import { AlertTriangle, CheckCircle2, Info as InfoIcon, XCircle } from "lucide-r
 import Animated, { FadeInDown, FadeOutDown, LinearTransition } from "react-native-reanimated";
 import { Body, Description } from "./Text.js";
 import { Pressable, StyleSheet, View } from "react-native";
-import { UseColor, useRadii, useShadow } from "../ThemeProvider.js";
 import { Spinner } from "./Spinner.js";
+import { UseToken } from "../ThemeProvider.js";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 /**
@@ -201,11 +201,19 @@ const VariantIconColorToken =
 
 const ToastItemIcon = ({ Variant }: { readonly Variant: ToastVariant }): React.JSX.Element | null =>
 {
-    const GreenColor = UseColor(VariantIconColorToken.Success);
-    const RedColor = UseColor(VariantIconColorToken.Error);
-    const OrangeColor = UseColor(VariantIconColorToken.Warning);
-    const BlueColor = UseColor(VariantIconColorToken.Info);
-    const MutedColor = UseColor(Semantic.Muted);
+    const {
+        [VariantIconColorToken.Success]: GreenColor,
+        [VariantIconColorToken.Error]: RedColor,
+        [VariantIconColorToken.Warning]: OrangeColor,
+        [VariantIconColorToken.Info]: BlueColor,
+        [Semantic.Muted]: MutedColor
+    } = UseToken(
+        VariantIconColorToken.Success,
+        VariantIconColorToken.Error,
+        VariantIconColorToken.Warning,
+        VariantIconColorToken.Info,
+        Semantic.Muted
+    );
 
     switch (Variant)
     {
@@ -251,10 +259,17 @@ const ToastItemIcon = ({ Variant }: { readonly Variant: ToastVariant }): React.J
 
 const ToastItem = ({ Record }: { readonly Record: ToastRecord }): React.JSX.Element =>
 {
-    const ModalBackground = UseColor(Semantic.BackgroundModal);
-    const BorderColor = UseColor(Semantic.Border);
-    const LargeRadius = useRadii(Radii.Large);
-    const CardShadow = useShadow(Shadow.Card);
+    const {
+        [Semantic.BackgroundModal]: ModalBackground,
+        [Semantic.Border]: BorderColor,
+        [Radii.Large]: LargeRadius,
+        [Shadow.Card]: CardShadow
+    } = UseToken(
+        Semantic.BackgroundModal,
+        Semantic.Border,
+        Radii.Large,
+        Shadow.Card
+    );
 
     return (
         <Animated.View

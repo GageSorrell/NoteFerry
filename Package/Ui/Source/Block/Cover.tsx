@@ -26,7 +26,7 @@ import { Body } from "../Primitive/Text.js";
 import { Image as ExpoImage } from "expo-image";
 import { Skeleton } from "../Primitive/Skeleton.js";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
-import { UseColor } from "../ThemeProvider.js";
+import { UseToken } from "../ThemeProvider.js";
 
 const MaxHeight = 280 as const;
 
@@ -62,8 +62,13 @@ const Cover = ({
 }: CoverProps): React.JSX.Element =>
 {
     const { height: WindowHeight } = useWindowDimensions();
-    const PopoverBackground = UseColor(Semantic.BackgroundPopover);
-    const IconColor = UseColor(Semantic.Icon);
+    const {
+        [Semantic.BackgroundPopover]: PopoverBackground,
+        [Semantic.Icon]: IconColor
+    } = UseToken(
+        Semantic.BackgroundPopover,
+        Semantic.Icon
+    );
 
     const CoverHeight = Url === undefined
         ? WindowHeight * 0.12

@@ -37,7 +37,7 @@ import { Body } from "../Primitive/Text.js";
 import { Button } from "../Primitive/Button.js";
 import { Image } from "lucide-react-native";
 import { Input } from "../Primitive/Input.js";
-import { UseColor } from "../ThemeProvider.js";
+import { UseToken } from "../ThemeProvider.js";
 
 const IsLikelyUrl = (Value: string): boolean =>
 {
@@ -60,7 +60,7 @@ interface UploadTabProps
 const UploadTab = ({ OnSelect }: UploadTabProps): React.JSX.Element =>
 {
     const [ IsPicking, SetIsPicking ] = React.useState(false);
-    const IconColor = UseColor(Semantic.Icon);
+    const { [Semantic.Icon]: IconColor } = UseToken(Semantic.Icon);
 
     const HandlePress = async (): Promise<void> =>
     {

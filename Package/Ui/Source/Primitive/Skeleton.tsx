@@ -14,7 +14,7 @@ import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { Animated, Easing, type StyleProp, type ViewStyle } from "react-native";
-import { UseColor, useRadii } from "../ThemeProvider.js";
+import { UseToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /** {@inheritDoc Skeleton} */
@@ -31,8 +31,13 @@ export/**
        */
 const Skeleton = ({ Style }: SkeletonProps): React.JSX.Element =>
 {
-    const DefaultColor = UseColor(Semantic.Default);
-    const SmallRadius = useRadii(Radii.Small);
+    const {
+        [Semantic.Default]: DefaultColor,
+        [Radii.Small]: SmallRadius
+    } = UseToken(
+        Semantic.Default,
+        Radii.Small
+    );
     const Opacity = React.useRef(new Animated.Value(1)).current;
 
     React.useEffect(() =>

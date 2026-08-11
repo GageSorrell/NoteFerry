@@ -59,7 +59,7 @@ export interface TooltipProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * Coordinates the visibility and anchor of a tooltip shown on hover or long press.
        *
        * @category Component
        * @since 1.0.0
@@ -98,7 +98,7 @@ export interface TooltipTriggerProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A pressable anchor that shows its `Tooltip` on hover or long press.
        *
        * @category Component
        * @since 1.0.0
@@ -121,7 +121,7 @@ const TooltipTrigger = ({ Style, children }: TooltipTriggerProps): React.JSX.Ele
     );
 };
 
-/** {@inheritDoc  TooltipContent} */
+/** {@inheritDoc TooltipContent} */
 export interface TooltipContentProps extends React.PropsWithChildren
 {
     readonly Placement?: PopupPlacement;
@@ -129,7 +129,7 @@ export interface TooltipContentProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A positioned `Tooltip` popup that renders string children with `TooltipDescription`.
        *
        * @category Component
        * @since 1.0.0
@@ -173,7 +173,7 @@ export interface TooltipDescriptionProps
 }
 
 export/**
-       * TODO Write description.
+       * Renders a tooltip description as primary text, secondary text, or a remote image.
        *
        * @category Component
        * @since 1.0.0

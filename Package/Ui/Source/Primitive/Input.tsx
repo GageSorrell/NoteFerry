@@ -25,7 +25,7 @@ import {
     type ViewStyle
 } from "react-native";
 import { Search, X } from "lucide-react-native";
-import { UseColor, useRadii } from "../ThemeProvider.js";
+import { UseToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /**
@@ -75,7 +75,7 @@ const HeightBySize: Record<InputSize, number> = { Default: 28, Large: 34 };
 const FontSizeBySize: Record<InputSize, number> = { Default: 14, Large: 15 };
 
 export/**
-       * TODO Write description.
+       * A themed text input with optional search, clear, trailing-icon, validation, and size treatments.
        *
        * @category Component
        * @since 1.0.0
@@ -100,12 +100,21 @@ const Input = ({
     OnBlur
 }: InputProps): React.JSX.Element =>
 {
-    const RingColor = UseColor(Semantic.Ring);
-    const InputBackground = UseColor(Semantic.BackgroundInput);
-    const PrimaryColor = UseColor(Semantic.Primary);
-    const MutedColor = UseColor(Semantic.Muted);
-    const RedColor = UseColor(Semantic.Red);
-    const MediumRadius = useRadii(Radii.Medium);
+    const {
+        [Semantic.Ring]: RingColor,
+        [Semantic.BackgroundInput]: InputBackground,
+        [Semantic.Primary]: PrimaryColor,
+        [Semantic.Muted]: MutedColor,
+        [Semantic.Red]: RedColor,
+        [Radii.Medium]: MediumRadius
+    } = UseToken(
+        Semantic.Ring,
+        Semantic.BackgroundInput,
+        Semantic.Primary,
+        Semantic.Muted,
+        Semantic.Red,
+        Radii.Medium
+    );
 
     const ShowClear = Clear && !Disabled && typeof Value === "string" && Value.length > 0;
 

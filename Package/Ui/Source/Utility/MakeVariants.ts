@@ -18,7 +18,7 @@
 import type { ImageStyle, TextStyle, ViewStyle } from "react-native";
 
 /**
- *
+ * A React Native style object that can be selected by a variant.
  */
 export type VariantStyle =
     | ViewStyle
@@ -26,12 +26,13 @@ export type VariantStyle =
     | ImageStyle;
 
 /**
- *
+ * A named collection of style choices for one variant axis.
  */
 export type VariantAxis<StyleType extends VariantStyle> = Record<string, StyleType>;
 
 /**
- *
+ * Configuration for a variant resolver, including its base style, axes,
+ * and default choices.
  */
 export interface MakeVariantsConfig<
     StyleType extends VariantStyle,
@@ -46,7 +47,8 @@ export interface MakeVariantsConfig<
 }
 
 /**
- *
+ * The optional variant selections accepted by a resolver created with
+ * `MakeVariants`.
  */
 export type VariantProps<Axes extends Record<string, VariantAxis<VariantStyle>>> =
     {
@@ -73,7 +75,8 @@ const MakeVariants = <
 
         for (const AxisName of Object.keys(Config.Variants) as Array<keyof Axes>)
         {
-            const SelectedOption = (Props?.[AxisName] ?? Config.DefaultVariants?.[AxisName]) as string | undefined;
+            const SelectedOption = (Props?.[AxisName] ?? Config.DefaultVariants?.[AxisName]) as
+                string | undefined;
 
             if (SelectedOption === undefined)
             {

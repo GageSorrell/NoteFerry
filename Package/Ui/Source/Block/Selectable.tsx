@@ -35,8 +35,8 @@ import {
     GestureHandlerRootView
 } from "react-native-gesture-handler";
 import { type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
-import { UseColor, useRadii } from "../ThemeProvider.js";
 import { Check } from "lucide-react-native";
+import { UseToken } from "../ThemeProvider.js";
 
 interface SelectableContextValue
 {
@@ -301,9 +301,15 @@ export/**
        */
 const SelectableCheckmark = ({ IsSelected, Style }: SelectableCheckmarkProps): React.JSX.Element =>
 {
-    const BorderColor = UseColor(Semantic.Border);
-    const BlueColor = UseColor(Semantic.Blue);
-    const FullRadius = useRadii(Radii.Full);
+    const {
+        [Semantic.Border]: BorderColor,
+        [Semantic.Blue]: BlueColor,
+        [Radii.Full]: FullRadius
+    } = UseToken(
+        Semantic.Border,
+        Semantic.Blue,
+        Radii.Full
+    );
 
     return (
         <View style={ [

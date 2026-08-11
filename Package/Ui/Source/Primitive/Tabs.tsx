@@ -23,7 +23,7 @@ import {
     type ViewStyle
 } from "react-native";
 import { LabelText } from "./Text.js";
-import { UseColor } from "../ThemeProvider.js";
+import { UseToken } from "../ThemeProvider.js";
 
 interface TabsContextValue
 {
@@ -105,7 +105,7 @@ export/**
        */
 const TabsList = ({ Style, children }: TabsListProps): React.JSX.Element =>
 {
-    const BorderColor = UseColor(Semantic.Border);
+    const { [Semantic.Border]: BorderColor } = UseToken(Semantic.Border);
 
     return (
         <View
@@ -143,8 +143,13 @@ const TabsTrigger = ({ Value, Disabled = false, Style, children }: TabsTriggerPr
 {
     const { Value: ActiveValue, OnValueChange } = useTabsContext();
     const IsActive = ActiveValue === Value;
-    const PrimaryColor = UseColor(Semantic.Primary);
-    const MutedColor = UseColor(Semantic.Muted);
+    const {
+        [Semantic.Primary]: PrimaryColor,
+        [Semantic.Muted]: MutedColor
+    } = UseToken(
+        Semantic.Primary,
+        Semantic.Muted
+    );
 
     return (
         <Pressable

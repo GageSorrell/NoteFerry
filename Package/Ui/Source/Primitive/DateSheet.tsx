@@ -41,7 +41,7 @@ import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import * as Spacing from "../Token/Spacing.js";
-import { Body, Heading3 } from "./Text.js";
+import { Body, ModalTitle } from "./Text.js";
 import {
     BottomSheet,
     BottomSheetHeader,
@@ -60,11 +60,11 @@ import {
     View,
     type ViewStyle
 } from "react-native";
-import { UseColor, useRadii, useSpacing } from "../ThemeProvider.js";
 import { Button } from "./Button.js";
 import { Separator } from "./Separator.js";
 import { Switch } from "./Switch.js";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
+import { UseToken } from "../ThemeProvider.js";
 import { format } from "date-fns";
 
 /**
@@ -237,7 +237,7 @@ const DateSheetChipSegment = React.forwardRef<
     DateSheetChipSegmentProps
 >(({ Label, OnPress }: DateSheetChipSegmentProps, ForwardedRef: React.ForwardedRef<View>) =>
 {
-    const MutedColor = UseColor(Semantic.Muted);
+    const { [Semantic.Muted]: MutedColor } = UseToken(Semantic.Muted);
 
     return (
         <TouchableOpacity
@@ -284,9 +284,15 @@ interface DateSheetChipProps extends React.PropsWithChildren
 
 const DateSheetChip = ({ Highlighted, Style, children }: DateSheetChipProps): React.JSX.Element =>
 {
-    const RingColor = UseColor(Semantic.Ring);
-    const BlueColor = UseColor(Semantic.Blue);
-    const MediumRadius = useRadii(Radii.Medium);
+    const {
+        [Semantic.Ring]: RingColor,
+        [Semantic.Blue]: BlueColor,
+        [Radii.Medium]: MediumRadius
+    } = UseToken(
+        Semantic.Ring,
+        Semantic.Blue,
+        Radii.Medium
+    );
 
     return (
         <View style={ [
@@ -667,13 +673,23 @@ const DateSheet = ({
     const TimezoneAnchorRef: PopupAnchor = React.useRef(null);
     const [ IsTimezoneOpen, SetIsTimezoneOpen ] = React.useState(false);
 
-    const IconColor = UseColor(Semantic.Icon);
-    const CardBackground = UseColor(Semantic.BackgroundModal);
-    const BorderColor = UseColor(Semantic.Border);
-    const LargeRadius = useRadii(Radii.Large);
-    const BodyGap = useSpacing(Spacing.ExtraLarge);
-    const HorizontalPadding = useSpacing(Spacing.SheetHorizontal);
-    const VerticalPadding = useSpacing(Spacing.SheetVertical);
+    const {
+        [Semantic.Icon]: IconColor,
+        [Semantic.BackgroundModal]: CardBackground,
+        [Semantic.Border]: BorderColor,
+        [Radii.Large]: LargeRadius,
+        [Spacing.Xl]: BodyGap,
+        [Spacing.SheetHorizontal]: HorizontalPadding,
+        [Spacing.SheetVertical]: VerticalPadding
+    } = UseToken(
+        Semantic.Icon,
+        Semantic.BackgroundModal,
+        Semantic.Border,
+        Radii.Large,
+        Spacing.Xl,
+        Spacing.SheetHorizontal,
+        Spacing.SheetVertical
+    );
 
     const CardStyle: StyleProp<ViewStyle> =
         [
@@ -704,17 +720,17 @@ const DateSheet = ({
             { ...{ OnDismiss, Ref } }
             { ...(TestID === undefined ? { } : { TestId: TestID }) }>
             <BottomSheetScrollView style={ { flex: 1 } }>
-                <Heading3 Style={ { textAlign: "center" } }>
+                <ModalTitle Style={ { textAlign: "center" } }>
                     Date
-                </Heading3>
+                </ModalTitle>
                 <BottomSheetHeader Style={ Styles.Header }>
                     { OnHelpPress
                         ? <Button
                             AccessibilityLabel="Help"
+                            Appearance="NavIcon"
                             OnPress={ OnHelpPress }
                             Size="Circle"
-                            Style={ { paddingBottom: 10 } }
-                            Appearance="NavIcon">
+                            Style={ { paddingBottom: 10 } }>
                             <HelpCircle
                                 color={ IconColor }
                                 size={ 18 }

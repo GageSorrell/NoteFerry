@@ -24,6 +24,7 @@ export interface OnboardingScreenProps
 {
     readonly Title: string;
     readonly Subtitle?: string | undefined;
+    readonly Header?: ReactNode;
 
     readonly Hero: ImageAsset;
 
@@ -37,6 +38,7 @@ export/**
        * @since 1.0.0
        */
 const OnboardingScreen = ({
+    Header,
     Hero,
     Title,
     Subtitle,
@@ -47,16 +49,20 @@ const OnboardingScreen = ({
         <View style={ styles.container }>
             <SafeAreaView style={ styles.safeArea }>
                 <View style={ styles.header }>
-                    <Heading1>
-                        { Title }
-                    </Heading1>
-                    { Subtitle === undefined
-                        ? null
-                        : (
-                            <Description>
-                                { Subtitle }
-                            </Description>
-                        ) }
+                    { Header ?? (
+                        <>
+                            <Heading1>
+                                { Title }
+                            </Heading1>
+                            { Subtitle === undefined
+                                ? null
+                                : (
+                                    <Description>
+                                        { Subtitle }
+                                    </Description>
+                                ) }
+                        </>
+                    ) }
                 </View>
 
                 <HeroImage Source={ Hero } />

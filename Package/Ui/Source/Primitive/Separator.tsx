@@ -12,7 +12,7 @@
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { type StyleProp, View, type ViewStyle } from "react-native";
-import { UseColor } from "../ThemeProvider.js";
+import { UseToken } from "../ThemeProvider.js";
 
 /**
  * The orientation of a given `Separator` component.
@@ -39,7 +39,7 @@ export/**
        */
 const Separator = ({ Orientation = "Horizontal", Style }: SeparatorProps): React.JSX.Element =>
 {
-    const BorderColor = UseColor(Semantic.Border);
+    const { [Semantic.Border]: BorderColor } = UseToken(Semantic.Border);
 
     return (
         <View

@@ -18,7 +18,7 @@ import * as Semantic from "../Token/Semantic.js";
 import { Image, type ImageSource } from "expo-image";
 import { type ImageStyle, type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
 
-import { UseColor } from "../ThemeProvider.js";
+import { UseToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 type AvatarStatus =
@@ -54,7 +54,7 @@ export interface AvatarProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A circular container that coordinates an avatar image and its fallback content.
        *
        * @category Component
        * @since 1.0.0
@@ -62,7 +62,7 @@ export/**
 const Avatar = ({ Size = 40, Style, children }: AvatarProps): React.JSX.Element =>
 {
     const [ Status, SetStatus ] = React.useState<AvatarStatus>("Idle");
-    const BorderColor = UseColor(Semantic.Border);
+    const { [Semantic.Border]: BorderColor } = UseToken(Semantic.Border);
 
     const ContextValue = React.useMemo<AvatarContextValue>(() => ({ SetStatus, Status }), [ Status ]);
 
@@ -93,7 +93,7 @@ export interface AvatarImageProps
 }
 
 export/**
-       * TODO Write description.
+       * The image displayed inside an `Avatar` and used to track its loading state.
        *
        * @category Component
        * @since 1.0.0
@@ -116,7 +116,7 @@ const AvatarImage = ({ Source, Style }: AvatarImageProps): React.JSX.Element =>
 export interface AvatarFallbackProps extends React.PropsWithChildren { }
 
 export/**
-       * TODO Write description.
+       * Fallback content shown until the `Avatar` image loads or when loading fails.
        *
        * @category Component
        * @since 1.0.0
@@ -124,7 +124,7 @@ export/**
 const AvatarFallback = ({ children }: AvatarFallbackProps): React.JSX.Element | null =>
 {
     const { Status } = useAvatarContext();
-    const DefaultColor = UseColor(Semantic.Default);
+    const { [Semantic.Default]: DefaultColor } = UseToken(Semantic.Default);
 
     if (Status === "Loaded")
     {

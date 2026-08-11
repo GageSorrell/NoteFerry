@@ -15,7 +15,7 @@ import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { Animated, Pressable, type StyleProp, type ViewStyle } from "react-native";
 import type { ReadonlyRecord } from "effect/Record";
-import { UseColor } from "../ThemeProvider.js";
+import { UseToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /**
@@ -80,8 +80,13 @@ const Switch = ({
     Value = false
 }: SwitchProps): React.JSX.Element =>
 {
-    const BlueColor = UseColor(Semantic.Blue);
-    const DefaultColor = UseColor(Semantic.Default);
+    const {
+        [Semantic.Blue]: BlueColor,
+        [Semantic.Default]: DefaultColor
+    } = UseToken(
+        Semantic.Blue,
+        Semantic.Default
+    );
     const Dimensions = DimensionsBySize[ Size ];
     const Progress = React.useRef(new Animated.Value(Value ? 1 : 0)).current;
 

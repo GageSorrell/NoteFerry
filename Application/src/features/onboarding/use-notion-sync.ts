@@ -13,8 +13,8 @@
  */
 
 import type * as Domain from "@notivex/domain";
+import { ListConnections, SearchDataSources } from "@/Domain/Runtime/NotivexApi";
 import { useCallback, useEffect, useState } from "react";
-import { SearchDataSources } from "@/Domain/Runtime/NotivexApi";
 
 /* How often to re-check, and how long to keep waiting before giving up. */
 const PollIntervalMs = 3000 as const;
@@ -41,14 +41,17 @@ export interface UseNotionSync
 }
 
 /**
- * Polls Notion discovery for `ConnectionId` until at least one data source
- * appears (`Ready`), the ~30s window elapses with none found (`Empty`), or the
- * window elapses after a request error (`Error`). `Retry` starts the wait over.
+ * Waits for the newly-authorized connection, then polls Notion discovery until
+ * at least one data source appears (`Ready`), the ~30s discovery window elapses
+ * with none found (`Empty`), or the window elapses after a request error
+ * (`Error`). Connection resolution has no deadline because this hook starts
+ * while the user is still reading and completing the grant step. `Retry` starts
+ * the wait over.
  *
  * @category Onboarding
  * @since 1.0.0
  */
-export function useNotionSync(ConnectionId: Domain.Id.NotionConnectionId): UseNotionSync
+export function useNotionSync(Enabled: boolean): UseNotionSync
 {
     const [ Status, SetStatus ] = useState<NotionSyncStatus>("Syncing");
     const [ Count, SetCount ] = useState(0);
@@ -56,15 +59,22 @@ export function useNotionSync(ConnectionId: Domain.Id.NotionConnectionId): UseNo
 
     useEffect(() =>
     {
+        if (!Enabled)
+        {
+            return undefined;
+        }
+
         let Cancelled = false;
         let Timer: ReturnType<typeof setTimeout> | undefined;
         let SawError = false;
-        const StartedAt = Date.now();
 
         SetStatus("Syncing");
         SetCount(0);
 
-        const Poll = async (): Promise<void> =>
+        const Poll = async (
+            ConnectionId: Domain.Id.NotionConnectionId,
+            StartedAt: number
+        ): Promise<void> =>
         {
             try
             {
@@ -105,10 +115,47 @@ export function useNotionSync(ConnectionId: Domain.Id.NotionConnectionId): UseNo
                 return;
             }
 
-            Timer = setTimeout(() => void Poll(), PollIntervalMs);
+            Timer = setTimeout(
+                () => void Poll(ConnectionId, StartedAt),
+                PollIntervalMs
+            );
         };
 
-        void Poll();
+        const ResolveConnection = async (): Promise<void> =>
+        {
+            try
+            {
+                const Connections = await ListConnections();
+
+                if (Cancelled)
+                {
+                    return;
+                }
+
+                const ConnectionId = Connections.at(0)?.Id;
+
+                if (ConnectionId !== undefined)
+                {
+                    await Poll(ConnectionId, Date.now());
+
+                    return;
+                }
+            }
+            catch (Error)
+            {
+                if (Cancelled)
+                {
+                    return;
+                }
+
+                /* eslint-disable-next-line no-console */
+                console.error("Failed to resolve the Notion connection", Error);
+            }
+
+            Timer = setTimeout(() => void ResolveConnection(), PollIntervalMs);
+        };
+
+        void ResolveConnection();
 
         return () =>
         {
@@ -119,7 +166,7 @@ export function useNotionSync(ConnectionId: Domain.Id.NotionConnectionId): UseNo
                 clearTimeout(Timer);
             }
         };
-    }, [ ConnectionId, Attempt ]);
+    }, [ Attempt, Enabled ]);
 
     const Retry = useCallback(() => SetAttempt((Value: number) => Value + 1), [ ]);
 

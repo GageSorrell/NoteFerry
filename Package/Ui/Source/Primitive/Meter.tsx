@@ -17,7 +17,7 @@ import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { type StyleProp, View, type ViewStyle } from "react-native";
 import Svg, { Circle, G } from "react-native-svg";
-import { UseColor } from "../ThemeProvider.js";
+import { UseToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /** {@inheritDoc MeterBar} */
@@ -30,15 +30,20 @@ export interface MeterBarProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A horizontal progress indicator that clamps its fill between zero and the configured maximum.
        *
        * @category Component
        * @since 1.0.0
        */
 const MeterBar = ({ Value, Max = 100, TrackColor, Style, children }: MeterBarProps): React.JSX.Element =>
 {
-    const DefaultColor = UseColor(Semantic.Default);
-    const BlueColor = UseColor(Semantic.Blue);
+    const {
+        [Semantic.Default]: DefaultColor,
+        [Semantic.Blue]: BlueColor
+    } = UseToken(
+        Semantic.Default,
+        Semantic.Blue
+    );
     const Progress = Max > 0 ? Math.min(Math.max(Value, 0), Max) / Max : 0;
 
     return (
@@ -81,7 +86,7 @@ export interface MeterRingProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A circular progress indicator that clamps its stroke between zero and the configured maximum.
        *
        * @category Component
        * @since 1.0.0
@@ -95,8 +100,13 @@ const MeterRing = ({
     children
 }: MeterRingProps): React.JSX.Element =>
 {
-    const DefaultColor = UseColor(Semantic.Default);
-    const BlueColor = UseColor(Semantic.Blue);
+    const {
+        [Semantic.Default]: DefaultColor,
+        [Semantic.Blue]: BlueColor
+    } = UseToken(
+        Semantic.Default,
+        Semantic.Blue
+    );
 
     const Radius = 6;
     const Circumference = 2 * Math.PI * Radius;

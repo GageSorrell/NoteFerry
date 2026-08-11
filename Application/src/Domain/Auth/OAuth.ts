@@ -22,13 +22,6 @@ import { Supabase } from "@/Domain/Runtime/Supabase";
 /* Required so a dangling web auth session can complete (web/dev only). */
 WebBrowser.maybeCompleteAuthSession();
 
-/* eslint-disable @typescript-eslint/naming-convention */
-
-/** The identity providers Notivex offers today. */
-export type OAuthProvider = "notion";
-
-/* eslint-enable @typescript-eslint/naming-convention */
-
 /* The deep link Supabase redirects back to after authorization. Must be added
  * to the project's Auth "Redirect URLs" allow-list (see AUTH_SETUP.md). In a
  * dev/standalone build this is `notivex://`; in Expo Go it is an `exp://…` URL.
@@ -71,7 +64,7 @@ export/**
        * @category Auth
        * @since 1.0.0
        */
-const SignInWithOAuth = async (provider: OAuthProvider): Promise<Session | null> =>
+const SignInWithOAuth = async (): Promise<Session | null> =>
 {
     const { data, error } = await Supabase.auth.signInWithOAuth({
         options:
@@ -79,7 +72,7 @@ const SignInWithOAuth = async (provider: OAuthProvider): Promise<Session | null>
             redirectTo,
             skipBrowserRedirect: true
         },
-        provider
+        provider: "notion"
     });
 
     if (error)

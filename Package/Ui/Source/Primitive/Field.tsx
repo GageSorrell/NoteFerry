@@ -14,10 +14,10 @@
 
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
-import { Description, Heading3 } from "./Text.js";
+import { Description, SectionTitle } from "./Text.js";
 import { type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
 import { Label } from "./Label.js";
-import { UseColor } from "../ThemeProvider.js";
+import { UseToken } from "../ThemeProvider.js";
 
 /**
  * The orientation of a given `Field` component.
@@ -36,7 +36,7 @@ export interface FieldSetProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A layout container for a related group of fields.
        *
        * @category Component
        * @since 1.0.0
@@ -53,15 +53,15 @@ export interface FieldLegendProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A section heading that labels a `FieldSet`.
        *
        * @category Component
        * @since 1.0.0
        */
 const FieldLegend = ({ children }: FieldLegendProps): React.JSX.Element =>
-    <Heading3>
+    <SectionTitle>
         { children }
-    </Heading3>;
+    </SectionTitle>;
 
 /** {@inheritDoc FieldGroup} */
 export interface FieldGroupProps extends React.PropsWithChildren
@@ -70,7 +70,7 @@ export interface FieldGroupProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A vertically spaced container for multiple `Field` components.
        *
        * @category Component
        * @since 1.0.0
@@ -89,7 +89,7 @@ export interface FieldProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * Arranges a field's label, control, description, and error vertically or horizontally.
        *
        * @category Component
        * @since 1.0.0
@@ -106,7 +106,7 @@ export interface FieldContentProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A flexible vertical container for a `Field`'s label, description, and error content.
        *
        * @category Component
        * @since 1.0.0
@@ -122,14 +122,14 @@ const FieldLabel = Label;
 export interface FieldDescriptionProps extends React.PropsWithChildren { }
 
 export/**
-       * TODO Write description.
+       * Supporting text that explains a `Field`'s expected value.
        *
        * @category Component
        * @since 1.0.0
        */
 const FieldDescription = ({ children }: FieldDescriptionProps): React.JSX.Element =>
 {
-    const MutedColor = UseColor(Semantic.Muted);
+    const { [Semantic.Muted]: MutedColor } = UseToken(Semantic.Muted);
     return (
         <Description Color={ MutedColor }>
             { children }
@@ -144,14 +144,14 @@ export interface FieldErrorProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * Displays explicit child content or the unique validation messages for a `Field`.
        *
        * @category Component
        * @since 1.0.0
        */
 const FieldError = ({ Errors, children }: FieldErrorProps): React.JSX.Element | null =>
 {
-    const RedColor = UseColor(Semantic.Red);
+    const { [Semantic.Red]: RedColor } = UseToken(Semantic.Red);
 
     const Content = React.useMemo(() =>
     {

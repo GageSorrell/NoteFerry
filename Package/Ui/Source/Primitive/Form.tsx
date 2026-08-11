@@ -31,7 +31,7 @@ import {
 } from "react-hook-form";
 import { Field, FieldDescription, FieldError, FieldLabel } from "./Field.js";
 import type { StyleProp, ViewStyle } from "react-native";
-import { UseColor } from "../ThemeProvider.js";
+import { UseToken } from "../ThemeProvider.js";
 
 export/** {@inheritDoc FormProvider} */
 const Form = FormProvider;
@@ -44,7 +44,7 @@ interface FormFieldContextValue
 const FormFieldContext = React.createContext<FormFieldContextValue | undefined>(undefined);
 
 export/**
-       * TODO Write description.
+       * Connects a `react-hook-form` controller to the context consumed by the compound form components.
        *
        * @category Component
        * @since 1.0.0
@@ -70,7 +70,7 @@ interface FormItemContextValue {
 const FormItemContext = React.createContext<FormItemContextValue | undefined>(undefined);
 
 export/**
-       * TODO Write description.
+       * Returns the current form field's identity, validation state, and generated accessibility identifiers.
        *
        * @category Hook
        * @since 1.0.0
@@ -111,7 +111,7 @@ export interface FormItemProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * Provides a stable identifier and `Field` layout for one controlled form value.
        *
        * @category Component
        * @since 1.0.0
@@ -129,7 +129,7 @@ const FormItem = ({ Style, children }: FormItemProps): React.JSX.Element =>
 };
 
 export/**
-       * TODO Write description.
+       * A field label that uses the error color when the current form field is invalid.
        *
        * @category Component
        * @since 1.0.0
@@ -137,7 +137,7 @@ export/**
 const FormLabel = (Props: React.ComponentProps<typeof FieldLabel>): React.JSX.Element =>
 {
     const { error } = useFormField();
-    const RedColor = UseColor(Semantic.Red);
+    const { [Semantic.Red]: RedColor } = UseToken(Semantic.Red);
 
     return (
         <FieldLabel
@@ -148,7 +148,7 @@ const FormLabel = (Props: React.ComponentProps<typeof FieldLabel>): React.JSX.El
 };
 
 export/**
-       * TODO Write description.
+       * Supporting text for the current form field.
        *
        * @category Component
        * @since 1.0.0
@@ -157,7 +157,7 @@ const FormDescription = (Props: React.ComponentProps<typeof FieldDescription>): 
     <FieldDescription { ...Props } />;
 
 export/**
-       * TODO Write description.
+       * Displays the current form field's validation message, falling back to its children.
        *
        * @category Component
        * @since 1.0.0

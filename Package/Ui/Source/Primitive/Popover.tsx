@@ -23,7 +23,7 @@ import {
     View,
     type ViewStyle
 } from "react-native";
-import { useSpacing } from "../ThemeProvider.js";
+import { UseToken } from "../ThemeProvider.js";
 
 interface PopoverContextValue
 {
@@ -55,7 +55,7 @@ export interface PopoverProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A state provider that coordinates a compound `Popover`'s trigger, anchor, and open state.
        *
        * @category Component
        * @since 1.0.0
@@ -97,7 +97,7 @@ export interface PopoverTriggerProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A pressable control that toggles and anchors its surrounding `Popover`.
        *
        * @category Component
        * @since 1.0.0
@@ -134,7 +134,7 @@ export interface PopoverContentProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A positioned popup container for a `Popover`'s content.
        *
        * @category Component
        * @since 1.0.0
@@ -142,7 +142,7 @@ export/**
 const PopoverContent = ({ Placement = "Bottom", Style, children }: PopoverContentProps): React.JSX.Element =>
 {
     const { IsOpen, SetIsOpen, AnchorRef } = usePopoverContext();
-    const Padding = useSpacing(Spacing.Small);
+    const { [Spacing.S]: Padding } = UseToken(Spacing.S);
 
     return (
         <Popup
@@ -165,7 +165,7 @@ export interface PopoverCloseProps
 }
 
 export/**
-       * TODO Write description.
+       * A close button that dismisses its surrounding `Popover` after invoking the supplied press handler.
        *
        * @category Component
        * @since 1.0.0

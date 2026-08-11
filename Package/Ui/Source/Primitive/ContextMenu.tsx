@@ -44,7 +44,7 @@ export interface ContextMenuTriggerProps extends React.PropsWithChildren
 }
 
 export/**
-       * TODO Write description.
+       * A long-press target that opens and anchors its surrounding `ContextMenu`.
        *
        * @category Component
        * @since 1.0.0

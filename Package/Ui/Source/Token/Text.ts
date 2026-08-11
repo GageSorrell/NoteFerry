@@ -1,5 +1,5 @@
 /**
- *
+ * Namespaced semantic and common text styles.
  *
  * @module @notivex/ui/Token/Text
  *
@@ -17,26 +17,67 @@ type TypeId = typeof TypeId;
 
 const GetSymbolKey = MakeGetSymbolKey(TypeId);
 
-export const Bold: unique symbol = Symbol.for(GetSymbolKey("Bold"));
+export/**
+       * The token for bold text.
+       *
+       * @category Token
+       * @since 1.0.0
+       */
+const Bold: unique symbol = Symbol.for(GetSymbolKey("Bold"));
 
+/** {@inheritDoc Bold} */
 export type Bold = typeof Bold;
 
-export const Italic: unique symbol = Symbol.for(GetSymbolKey("Italic"));
+export/**
+       * The token for italic text.
+       *
+       * @category Token
+       * @since 1.0.0
+       */
+const Italic: unique symbol = Symbol.for(GetSymbolKey("Italic"));
 
+/** {@inheritDoc Italic} */
 export type Italic = typeof Italic;
 
-export const Strikethrough: unique symbol = Symbol.for(GetSymbolKey("Strikethrough"));
+export/**
+       * The token for text with a line through it.
+       *
+       * @category Token
+       * @since 1.0.0
+       */
+const Strikethrough: unique symbol = Symbol.for(GetSymbolKey("Strikethrough"));
 
+/** {@inheritDoc Strikethrough} */
 export type Strikethrough = typeof Strikethrough;
 
-export const Underline: unique symbol = Symbol.for(GetSymbolKey("Underline"));
+export/**
+       * The token for underlined text.
+       *
+       * @category Token
+       * @since 1.0.0
+       */
+const Underline: unique symbol = Symbol.for(GetSymbolKey("Underline"));
 
+/** {@inheritDoc Underline} */
 export type Underline = typeof Underline;
 
-export const Code: unique symbol = Symbol.for(GetSymbolKey("Code"));
+export/**
+       * The token for inline code text.
+       *
+       * @category Token
+       * @since 1.0.0
+       */
+const Code: unique symbol = Symbol.for(GetSymbolKey("Code"));
 
+/** {@inheritDoc Code} */
 export type Code = typeof Code;
 
+/**
+ * Any inline text-formatting token.
+ *
+ * @category Token
+ * @since 1.0.0
+ */
 export type TextStyle =
     | Bold
     | Italic

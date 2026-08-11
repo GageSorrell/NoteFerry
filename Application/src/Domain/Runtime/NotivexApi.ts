@@ -23,13 +23,12 @@ import { Supabase } from "./Supabase";
 
 const baseUrl = `${ process.env.EXPO_PUBLIC_SUPABASE_URL }/functions/v1/api`;
 
-/* eslint-disable-next-line jsdoc/require-jsdoc */
-async function AccessToken(): Promise<string>
+const GetAccessToken = async (): Promise<string> =>
 {
     const { data } = await Supabase.auth.getSession();
 
     return data.session?.access_token ?? "";
-}
+};
 
 const MakeClient = (Token: string) =>
 {
@@ -52,7 +51,7 @@ export/**
        */
 const ListConnections = async (): Promise<ReadonlyArray<Domain.NotionConnection.NotionConnection>> =>
 {
-    const Token = await AccessToken();
+    const Token = await GetAccessToken();
 
     return Effect.runPromise(
         Effect.gen(function* ()
@@ -72,7 +71,7 @@ export/**
        */
 const StartNotionAuthorization = async (): Promise<string> =>
 {
-    const Token = await AccessToken();
+    const Token = await GetAccessToken();
 
     return Effect.runPromise(
         Effect.gen(function* ()
@@ -93,7 +92,7 @@ export/**
        */
 const DisconnectNotion = async (ConnectionId: Domain.Id.NotionConnectionId): Promise<void> =>
 {
-    const Token = await AccessToken();
+    const Token = await GetAccessToken();
 
     await Effect.runPromise(
         Effect.gen(function* ()
@@ -116,7 +115,7 @@ const SearchDataSources = async (
     ConnectionId: Domain.Id.NotionConnectionId
 ): Promise<ReadonlyArray<Domain.DataSource.DiscoveredDataSource>> =>
 {
-    const Token = await AccessToken();
+    const Token = await GetAccessToken();
 
     return Effect.runPromise(
         Effect.gen(function* ()
@@ -136,7 +135,7 @@ export/**
        */
 const ListDataSources = async (): Promise<ReadonlyArray<Domain.DataSource.CachedDataSourceSchema>> =>
 {
-    const Token = await AccessToken();
+    const Token = await GetAccessToken();
 
     return Effect.runPromise(
         Effect.gen(function* ()
@@ -160,7 +159,7 @@ const RefreshDataSource = async (
     DataSourceId: Domain.Id.NotionDataSourceId
 ): Promise<Domain.DataSource.CachedDataSourceSchema> =>
 {
-    const Token = await AccessToken();
+    const Token = await GetAccessToken();
 
     return Effect.runPromise(
         Effect.gen(function* ()
@@ -182,7 +181,7 @@ const GetDataSource = async (
     DataSourceId: Domain.Id.NotionDataSourceId
 ): Promise<Domain.DataSource.CachedDataSourceSchema> =>
 {
-    const Token = await AccessToken();
+    const Token = await GetAccessToken();
 
     return Effect.runPromise(
         Effect.gen(function* ()
@@ -202,7 +201,7 @@ export/**
        */
 const ListDestinations = async (): Promise<ReadonlyArray<Domain.Destination.Destination>> =>
 {
-    const Token = await AccessToken();
+    const Token = await GetAccessToken();
 
     return Effect.runPromise(
         Effect.gen(function* ()
@@ -236,7 +235,7 @@ const CreateDestination = async (
     Input: CreateDestinationInput
 ): Promise<Domain.Destination.Destination> =>
 {
-    const Token = await AccessToken();
+    const Token = await GetAccessToken();
 
     return Effect.runPromise(
         Effect.gen(function* ()
@@ -256,7 +255,7 @@ export/**
        */
 const DeleteDestination = async (DestinationId: Domain.Id.DestinationId): Promise<void> =>
 {
-    const Token = await AccessToken();
+    const Token = await GetAccessToken();
 
     await Effect.runPromise(
         Effect.gen(function* ()

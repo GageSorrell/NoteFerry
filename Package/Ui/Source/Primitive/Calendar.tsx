@@ -31,7 +31,8 @@ import * as Semantic from "../Token/Semantic.js";
 import { type DateData, Calendar as RNCalendar } from "react-native-calendars";
 import { type StyleProp, type ViewStyle } from "react-native";
 import { eachDayOfInterval, format, isBefore } from "date-fns";
-import { UseColor } from "../ThemeProvider.js";
+import type { ReadonlyRecord } from "effect/Record";
+import { UseToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /**
@@ -51,14 +52,30 @@ interface CalendarThemeColors
 }
 
 /**
+ * An endpoint when specifying a tuple of dates or times.
+ *
+ * @category Calendar
+ * @since 1.0.0
+ */
+export type Endpoint =
+    | "Start"
+    | "End";
+
+/**
  * Shared theme-color resolution for `SingleCalendar`/`RangeCalendar`, so the two
  * don't duplicate the `Semantic` → `RnCalendarTheme` mapping.
  */
 const useCalendarTheme = (): CalendarThemeColors =>
 {
-    const PrimaryColor = UseColor(Semantic.Primary);
-    const MutedColor = UseColor(Semantic.Muted);
-    const BlueColor = UseColor(Semantic.Blue);
+    const {
+        [ Semantic.Primary ]: PrimaryColor,
+        [ Semantic.Muted ]: MutedColor,
+        [ Semantic.Blue ]: BlueColor
+    } = UseToken(
+        Semantic.Primary,
+        Semantic.Muted,
+        Semantic.Blue
+    );
 
     const Theme = React.useMemo<RnCalendarTheme>(() => ({
         arrowColor: PrimaryColor,
@@ -89,11 +106,7 @@ const useCalendarTheme = (): CalendarThemeColors =>
  * @category Input
  * @since 1.0.0
  */
-export interface CalendarRange
-{
-    readonly Start?: Date | undefined;
-    readonly End?: Date | undefined;
-}
+export interface CalendarRange extends Partial<ReadonlyRecord<Endpoint, Date | undefined>> { }
 
 interface CalendarCommonProps
 {
@@ -124,9 +137,11 @@ interface CalendarRangeProps extends CalendarCommonProps
      * tap on/after `Start` completes `End`; tap once both are set resets
      * to a new `Start`).
      */
-    readonly ActiveEndpoint?: "Start" | "End" | undefined;
-    readonly DefaultActiveEndpoint?: "Start" | "End" | undefined;
-    readonly OnActiveEndpointChange?: ((Endpoint: "Start" | "End") => void) | undefined;
+    readonly ActiveEndpoint?: Endpoint | undefined;
+
+    readonly DefaultActiveEndpoint?: Endpoint | undefined;
+
+    readonly OnActiveEndpointChange?: ((Endpoint: Endpoint) => void) | undefined;
 }
 
 /** {@inheritDoc Calendar} */
@@ -254,7 +269,7 @@ interface TargetedRangeResult
     readonly Range: CalendarRange;
 
     /** Set only on the courtesy Start→End auto-advance described on `CalendarRangeProps.ActiveEndpoint`. */
-    readonly NextActiveEndpoint?: "Start" | "End";
+    readonly NextActiveEndpoint?: Endpoint;
 }
 
 /**
@@ -264,7 +279,7 @@ interface TargetedRangeResult
 const ResolveTargetedRange = (
     Current: CalendarRange,
     Tapped: Date,
-    ActiveEndpoint: "Start" | "End"
+    ActiveEndpoint: Endpoint
 ): TargetedRangeResult =>
 {
     const Range: CalendarRange = { ...Current, [ ActiveEndpoint ]: Tapped };
@@ -293,7 +308,7 @@ const RangeCalendar = ({
     const CurrentValue = Value ?? UncontrolledValue;
 
     const [ UncontrolledActiveEndpoint, SetUncontrolledActiveEndpoint ] =
-        React.useState<"Start" | "End" | undefined>(DefaultActiveEndpoint);
+        React.useState<Endpoint | undefined>(DefaultActiveEndpoint);
     const IsEndpointTargeted = ActiveEndpoint !== undefined
         || DefaultActiveEndpoint !== undefined
         || OnActiveEndpointChange !== undefined;
