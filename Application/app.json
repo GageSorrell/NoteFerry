@@ -18,7 +18,7 @@
       }
     },
     "android": {
-      "package": "sh.sorrell.notivex",
+      "package": "com.sorrell.notivex",
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF",
         "foregroundImage": "./assets/NotivexLogoLight.png",
