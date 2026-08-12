@@ -48,21 +48,29 @@ const HomeScreen = () =>
                                             No databases found yet.
                                         </Body>
                                     )
-                                    : DataSources.map((Source: Domain.DataSource.CachedDataSourceSchema) => (
-                                        <DatabaseCard
-                                            OnPress={ Router.push({
-                                                params:
-                                                {
-                                                    connectionId: Source.ConnectionId,
-                                                    dataSourceId: Source.DataSourceId,
-                                                    title: Source.Title
-                                                },
-                                                pathname: "/destination-config"
-                                            }) }
-                                            Source={ Source }
-                                            key={ `${ Source.ConnectionId }:${ Source.DataSourceId }` }
-                                        />
-                                    ))}
+                                    : (
+                                        <View style={ styles.databaseCards }>
+                                            {DataSources.map((
+                                                Source: Domain.DataSource.CachedDataSourceSchema
+                                            ) => (
+                                                <DatabaseCard
+                                                    OnPress={ Router.push({
+                                                        params:
+                                                        {
+                                                            connectionId: Source.ConnectionId,
+                                                            dataSourceId: Source.DataSourceId,
+                                                            title: Source.Title
+                                                        },
+                                                        pathname: "/destination-config"
+                                                    }) }
+                                                    Source={ Source }
+                                                    key={
+                                                        `${ Source.ConnectionId }:${ Source.DataSourceId }`
+                                                    }
+                                                />
+                                            ))}
+                                        </View>
+                                    )}
 
                                 <Body Style={ styles.sectionTitle }>
                                     Notion workspaces
@@ -119,6 +127,12 @@ const styles = StyleSheet.create({
     container:
     {
         flex: 1
+    },
+    databaseCards:
+    {
+        gap: 16,
+        overflow: "visible",
+        paddingHorizontal: 8
     },
     list:
     {

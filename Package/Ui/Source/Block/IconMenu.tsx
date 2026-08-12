@@ -139,7 +139,7 @@ interface CategoryChipProps
 {
     readonly Label: string;
     readonly IsActive: boolean;
-    readonly OnPress: () => void;
+    readonly OnPress: Thunk;
 }
 
 const CategoryChip = ({ Label, IsActive, OnPress }: CategoryChipProps): React.JSX.Element =>

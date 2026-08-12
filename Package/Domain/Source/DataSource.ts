@@ -54,6 +54,63 @@ const DiscoveredDataSource = Schema.Struct({
 export type DiscoveredDataSource = Schema.Schema.Type<typeof DiscoveredDataSource>;
 
 export/**
+       * A regular Notion page visible to the content connection during
+       * onboarding. Database rows are deliberately excluded: the page list is
+       * meant to explain which page trees were shared, not repeat the entries
+       * counted beside each database.
+       *
+       * @category DataSource
+       * @since 1.0.0
+       */
+const OnboardingPage = Schema.Struct({
+    Id: Id.NotionPageId,
+    Title: Schema.String
+});
+
+/** {@inheritDoc OnboardingPage} */
+export type OnboardingPage = Schema.Schema.Type<typeof OnboardingPage>;
+
+export/**
+       * A Notion database shown in the onboarding picker, including the
+       * connection/data-source identity needed to cache it after confirmation
+       * and a page count capped at the first 100 entries.
+       *
+       * @category DataSource
+       * @since 1.0.0
+       */
+const OnboardingDatabase = Schema.Struct({
+    ConnectionId: Id.NotionConnectionId,
+    DataSourceId: Id.NotionDataSourceId,
+    DatabaseId: Id.NotionDatabaseId,
+    HasMoreThan100Pages: Schema.Boolean,
+    Icon: Schema.optional(Schema.String),
+    IconType: Schema.optional(Schema.Literals([ "Emoji", "Image", "Native" ])),
+    PageCount: Schema.Number,
+    Title: Schema.String
+});
+
+/** {@inheritDoc OnboardingDatabase} */
+export type OnboardingDatabase = Schema.Schema.Type<typeof OnboardingDatabase>;
+
+export/**
+       * The live Notion resources used to classify the post-authorization
+       * onboarding result. Lists are presentation-capped while their total
+       * counts preserve the number visible to the connection.
+       *
+       * @category DataSource
+       * @since 1.0.0
+       */
+const OnboardingDiscovery = Schema.Struct({
+    DatabaseCount: Schema.Number,
+    Databases: Schema.Array(OnboardingDatabase),
+    PageCount: Schema.Number,
+    Pages: Schema.Array(OnboardingPage)
+});
+
+/** {@inheritDoc OnboardingDiscovery} */
+export type OnboardingDiscovery = Schema.Schema.Type<typeof OnboardingDiscovery>;
+
+export/**
        * The versioned, normalized cache of a Notion data source's schema.
        *
        * @category DataSource

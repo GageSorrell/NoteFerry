@@ -44,7 +44,7 @@ interface SelectableContextValue
     readonly IsActive: boolean;
     readonly Disabled: boolean;
     readonly Activate: (Id: string) => void;
-    readonly Deactivate: () => void;
+    readonly Deactivate: Thunk;
     readonly Toggle: (Id: string) => void;
 }
 
@@ -223,7 +223,7 @@ const SelectableRoot = ({
 export interface SelectableItemProps
 {
     readonly Id: string;
-    readonly OnPress?: () => void;
+    readonly OnPress?: Thunk;
     readonly Style?: StyleProp<ViewStyle>;
     readonly children?: React.ReactNode | ((State: SelectableItemState) => React.ReactNode);
 }

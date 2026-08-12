@@ -48,7 +48,7 @@ const DoneScreen = () =>
     return (
         <DoneView
             OnStart={ () => void HandleStart() }
-            Pending={ IsPending }
+            IsPending={ IsPending }
         />
     );
 };

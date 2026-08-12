@@ -49,6 +49,7 @@ var ConnectionsApi = HttpApiGroup.make("Connections").add(List, StartAuthorizati
 var DataSourcesApi_exports = {};
 __export(DataSourcesApi_exports, {
   DataSourcesApi: () => DataSourcesApi,
+  DiscoverOnboarding: () => DiscoverOnboarding,
   Get: () => Get,
   List: () => List2,
   Refresh: () => Refresh,
@@ -76,6 +77,21 @@ var Search = HttpApiEndpoint2.get("Search", "/Search/:ConnectionId", {
     ConnectionId: Domain2.Id.NotionConnectionId
   },
   success: Schema2.Array(Domain2.DataSource.DiscoveredDataSource)
+});
+var DiscoverOnboarding = HttpApiEndpoint2.get("DiscoverOnboarding", "/Onboarding/:ConnectionId", {
+  error: [
+    Domain2.Error.AuthenticationRequired,
+    Domain2.Error.NotionConnectionNotFound,
+    Domain2.Error.NotionConnectionRevoked,
+    Domain2.Error.NotionUnauthorized,
+    Domain2.Error.NotionRateLimited,
+    Domain2.Error.NotionUnavailable,
+    Domain2.Error.DatabaseError
+  ],
+  params: {
+    ConnectionId: Domain2.Id.NotionConnectionId
+  },
+  success: Domain2.DataSource.OnboardingDiscovery
 });
 var List2 = HttpApiEndpoint2.get("List", "/", {
   error: [
@@ -110,7 +126,7 @@ var Get = HttpApiEndpoint2.get("Get", "/:DataSourceId", {
   },
   success: Domain2.DataSource.CachedDataSourceSchema
 });
-var DataSourcesApi = HttpApiGroup2.make("DataSources").add(Search, List2, Refresh, Get);
+var DataSourcesApi = HttpApiGroup2.make("DataSources").add(Search, DiscoverOnboarding, List2, Refresh, Get);
 
 // Package/Api/Distribution/DestinationsApi.js
 var DestinationsApi_exports = {};

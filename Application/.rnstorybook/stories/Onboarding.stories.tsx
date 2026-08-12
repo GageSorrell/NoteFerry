@@ -32,18 +32,23 @@ interface OnboardingScenarioStoryProps
     readonly Scenario: OnboardingMockScenario;
 }
 
+const Authorize = action("Open Notion authorization");
 const Continue = action("Continue");
 const GoBack = action("Go back");
 const Grant = action("Grant access");
 const Retry = action("Retry");
 const SignIn = action("Sign in");
 const Start = action("Start using Notivex");
+const StartOver = action("Start over");
 
 /** Renders a selected scenario using pure onboarding views only. */
 const OnboardingScenarioStory = ({
     Scenario
 }: OnboardingScenarioStoryProps): React.JSX.Element =>
 {
+    const Definition = OnboardingMockRegistry[Scenario];
+    const IsPending = "IsPending" in Definition && Definition.IsPending === true;
+
     switch (Scenario)
     {
         case "SignIn":
@@ -51,58 +56,52 @@ const OnboardingScenarioStory = ({
         case "SignInModalStepOne":
             return <SignInModalStepOneView OnContinue={ Continue } />;
         case "SignInModalStepTwo":
-            return (
-                <SignInModalStepTwoView
-                    OnBack={ GoBack }
-                    OnSignIn={ SignIn }
-                    Pending={ false }
-                />
-            );
         case "SignInPending":
             return (
                 <SignInModalStepTwoView
+                    IsPending={ IsPending }
                     OnBack={ GoBack }
                     OnSignIn={ SignIn }
-                    Pending
                 />
             );
         case "Grant":
-            return (
-                <GrantView
-                    OnGrant={ Grant }
-                    Pending={ false }
-                />
-            );
         case "GrantPending":
             return (
                 <GrantView
+                    IsPending={ IsPending }
                     OnGrant={ Grant }
-                    Pending
                 />
             );
         case "Syncing":
-        case "SyncReady":
-        case "SyncEmpty":
+        case "NoIntegration":
+        case "NoIntegrationPending":
+        case "NoAccess":
+        case "NoAccessPending":
+        case "PagesOnly":
+        case "PagesOnlyPending":
+        case "Ready":
+        case "ReadyPending":
         case "SyncError":
             return (
                 <SyncView
+                    Data={ "SyncData" in Definition ? Definition.SyncData ?? null : null }
+                    IsPending={ IsPending }
+                    OnAuthorize={ Authorize }
                     OnContinue={ Continue }
                     OnRetry={ Retry }
-                    Status={ OnboardingMockRegistry[Scenario].SyncStatus ?? "Syncing" }
+                    OnStartOver={ StartOver }
+                    ShowLoading
+                    Status={ "SyncStatus" in Definition
+                        ? Definition.SyncStatus ?? "Syncing"
+                        : "Syncing" }
                 />
             );
         case "Done":
-            return (
-                <DoneView
-                    OnStart={ Start }
-                    Pending={ false }
-                />
-            );
         case "DonePending":
             return (
                 <DoneView
+                    IsPending={ IsPending }
                     OnStart={ Start }
-                    Pending
                 />
             );
     }
@@ -133,9 +132,15 @@ export const SignInIntroStepTwo: Story = { args: { Scenario: "SignInModalStepTwo
 export const SignInPending: Story = { args: { Scenario: "SignInPending" } };
 export const GrantAccess: Story = { args: { Scenario: "Grant" } };
 export const GrantAccessPending: Story = { args: { Scenario: "GrantPending" } };
-export const Syncing: Story = { args: { Scenario: "Syncing" } };
-export const SyncReady: Story = { args: { Scenario: "SyncReady" } };
-export const SyncEmpty: Story = { args: { Scenario: "SyncEmpty" } };
-export const SyncError: Story = { args: { Scenario: "SyncError" } };
+export const CheckingNotionAccess: Story = { args: { Scenario: "Syncing" } };
+export const IntegrationNotAdded: Story = { args: { Scenario: "NoIntegration" } };
+export const IntegrationNotAddedPending: Story = { args: { Scenario: "NoIntegrationPending" } };
+export const NothingShared: Story = { args: { Scenario: "NoAccess" } };
+export const NothingSharedPending: Story = { args: { Scenario: "NoAccessPending" } };
+export const PagesOnly: Story = { args: { Scenario: "PagesOnly" } };
+export const PagesOnlyPending: Story = { args: { Scenario: "PagesOnlyPending" } };
+export const DatabasesFound: Story = { args: { Scenario: "Ready" } };
+export const DatabasesFoundPending: Story = { args: { Scenario: "ReadyPending" } };
+export const DiscoveryError: Story = { args: { Scenario: "SyncError" } };
 export const Done: Story = { args: { Scenario: "Done" } };
 export const DonePending: Story = { args: { Scenario: "DonePending" } };

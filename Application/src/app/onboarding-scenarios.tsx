@@ -27,7 +27,7 @@ const OnboardingScenariosScreen = (): React.JSX.Element | null =>
     const Development = useDevelopmentOnboarding();
     const { Pause } = Development;
 
-    useEffect(() => Pause(), [ Pause ]);
+    useEffect(Pause, [ Pause ]);
 
     if (!__DEV__)
     {

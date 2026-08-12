@@ -38,8 +38,8 @@ export interface CoverProps
 
     /** Renders the image with no "Change cover"/"Remove" overlay. */
     readonly Preview?: boolean;
-    readonly OnChangeCoverPress?: () => void;
-    readonly OnRemovePress?: () => void;
+    readonly OnChangeCoverPress?: Thunk;
+    readonly OnRemovePress?: Thunk;
     readonly Style?: StyleProp<ViewStyle>;
 }
 

@@ -199,8 +199,8 @@ interface TreeSheetRowProps<A extends TreeItemData>
     readonly HasChildren: boolean;
     readonly IsExpanded: boolean;
     readonly IsSelected: boolean;
-    readonly OnToggleExpand: () => void;
-    readonly OnSelect: () => void;
+    readonly OnToggleExpand: Thunk;
+    readonly OnSelect: Thunk;
 }
 
 const TreeSheetRow = <A extends TreeItemData,>({

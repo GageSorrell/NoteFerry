@@ -46,7 +46,7 @@ interface ComboboxValueContextValue
     readonly Value?: string | undefined;
     readonly OnValueChange?: ((Value: string) => void) | undefined;
     readonly Labels: React.RefObject<Map<string, string>>;
-    readonly BumpVersion: () => void;
+    readonly BumpVersion: Thunk;
 }
 
 const ComboboxValueContext = React.createContext<ComboboxValueContextValue | undefined>(undefined);

@@ -1,6 +1,4 @@
 /**
- *
- *
  * @module notivex/Component
  *
  * @file      index.ts

@@ -1,5 +1,5 @@
 /**
- *
+ * A root View for screens.
  *
  * @module notivex/Component/Screen
  *

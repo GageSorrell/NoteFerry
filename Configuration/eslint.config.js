@@ -1,16 +1,13 @@
 /**
  * Monorepo-wide ESLint configuration.
  *
- * `@sorrell/eslint-config` still ships a legacy (eslintrc-shaped) config
- * object — `extends`/`parser`/`plugins`(as string names)/`ignorePatterns` —
- * not a flat config. Passed directly to `defineConfig()`, none of those
- * keys mean anything to ESLint 9's flat config engine, so the whole thing
- * silently contributes zero rules and zero file matching (every file comes
- * back "ignored because no matching configuration was supplied", which is
- * why the VS Code ESLint extension found nothing to report). `FlatCompat`
- * is ESLint's own bridge for exactly this: it resolves the `extends`/
- * `parser`/`plugins` strings against real packages and produces proper
- * flat-config objects.
+ * `@sorrell/eslint-config` is a flat config (ESLint 9): it already carries
+ * its `plugins` (as objects), `files` globs, `extends`, and rules, so it is
+ * spread straight into `defineConfig`.  It must *not* be passed through
+ * `FlatCompat` — that bridge is only for legacy, eslintrc-shaped configs, and
+ * handing it flat plugin objects (whose `@typescript-eslint` entry is a
+ * circular graph) crashes ESLint while it tries to JSON-serialize them for
+ * schema validation ("Converting circular structure to JSON").
  *
  * @file      eslint.config.js
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -18,25 +15,11 @@
  * @license   MIT
  */
 
-import Js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
 import SorrellConfig from "@sorrell/eslint-config";
 import { defineConfig } from "eslint/config";
-import * as path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const CompatBaseDirectory = path.dirname(fileURLToPath(import.meta.url));
-
-const Compat = new FlatCompat({
-    baseDirectory: CompatBaseDirectory,
-    resolvePluginsRelativeTo: CompatBaseDirectory,
-    /* `SorrellConfig.extends` includes "eslint:recommended"; FlatCompat needs
-       its flat-config equivalent supplied explicitly to resolve that. */
-    recommendedConfig: Js.configs.recommended
-});
 
 export default defineConfig(
-    Compat.config(SorrellConfig),
+    SorrellConfig,
     {
         /* ESLint ignores dot-directories by default (`.rnstorybook`,
            `.expo`, ...). `.rnstorybook/stories/*` and its `main.ts`/
@@ -60,6 +43,7 @@ export default defineConfig(
     {
         rules:
         {
+            "@sorrell/jsdoc-file-name": "error",
             "@typescript-eslint/no-require-imports": "off",
             "jsdoc/no-blank-block-descriptions": "off",
             "jsdoc/sort-tags":

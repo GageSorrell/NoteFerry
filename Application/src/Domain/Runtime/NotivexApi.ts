@@ -132,6 +132,33 @@ const SearchDataSources = async (
 };
 
 export/**
+       * Discovers the pages and databases used to classify the
+       * post-authorization onboarding result, including capped database row
+       * counts.
+       *
+       * @category Api
+       * @since 1.0.0
+       */
+const DiscoverOnboarding = async (
+    ConnectionId: Domain.Id.NotionConnectionId
+): Promise<Domain.DataSource.OnboardingDiscovery> =>
+{
+    const Token = await GetAccessToken();
+
+    return Effect.runPromise(pipe(
+        Effect.gen(function* ()
+        {
+            const Client = yield* MakeClient(Token);
+
+            return yield* Client.DataSources.DiscoverOnboarding({
+                params: { ConnectionId }
+            });
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
+};
+
+export/**
        * Every data source cached for the current user's connections.
        *
        * @category Api

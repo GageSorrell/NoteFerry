@@ -57,7 +57,7 @@ interface AutocompleteContextValue
     readonly AnchorRef: PopupAnchor;
     readonly Filter: AutocompleteFilter;
     readonly MatchRegistry: React.RefObject<Map<string, boolean>>;
-    readonly BumpVersion: () => void;
+    readonly BumpVersion: Thunk;
 }
 
 const AutocompleteContext = React.createContext<AutocompleteContextValue | undefined>(undefined);

@@ -18,11 +18,11 @@ const SignInModalStepOne = () =>
     const Router = UseLazyRouter();
     const Development = useDevelopmentOnboarding();
 
-    const HandleContinue = Development.Active
+    const OnContinue = Development.Active
         ? () => Development.Transition("SignInModalStepTwo")
         : Router.push("/sign-in-modal-step-two");
 
-    return <SignInModalStepOneView OnContinue={ HandleContinue } />;
+    return <SignInModalStepOneView { ...{ OnContinue } } />;
 };
 
 export default SignInModalStepOne;

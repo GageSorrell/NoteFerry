@@ -62,6 +62,36 @@ const Search = HttpApiEndpoint.get(
 );
 
 export/**
+       * Discovers the regular pages and databases visible to a connection for
+       * the post-authorization onboarding result. The server also retrieves
+       * each displayed database's page count, capped at 100.
+       *
+       * @category DataSources
+       * @since 1.0.0
+       */
+const DiscoverOnboarding = HttpApiEndpoint.get(
+    "DiscoverOnboarding",
+    "/Onboarding/:ConnectionId",
+    {
+        error:
+        [
+            Domain.Error.AuthenticationRequired,
+            Domain.Error.NotionConnectionNotFound,
+            Domain.Error.NotionConnectionRevoked,
+            Domain.Error.NotionUnauthorized,
+            Domain.Error.NotionRateLimited,
+            Domain.Error.NotionUnavailable,
+            Domain.Error.DatabaseError
+        ],
+        params:
+        {
+            ConnectionId: Domain.Id.NotionConnectionId
+        },
+        success: Domain.DataSource.OnboardingDiscovery
+    }
+);
+
+export/**
        * Every data source cached for the current user's connections.
        *
        * @category DataSources
@@ -139,4 +169,10 @@ export/**
        * @category DataSources
        * @since 1.0.0
        */
-const DataSourcesApi = HttpApiGroup.make("DataSources").add(Search, List, Refresh, Get);
+const DataSourcesApi = HttpApiGroup.make("DataSources").add(
+    Search,
+    DiscoverOnboarding,
+    List,
+    Refresh,
+    Get
+);

@@ -61,7 +61,7 @@ export interface InputProps
     readonly Invalid?: boolean;
     readonly Search?: boolean;
     readonly Clear?: boolean;
-    readonly OnCancel?: () => void;
+    readonly OnCancel?: Thunk;
     readonly EndIcon?: React.ReactNode;
     readonly SecureTextEntry?: boolean;
     readonly Style?: StyleProp<ViewStyle>;

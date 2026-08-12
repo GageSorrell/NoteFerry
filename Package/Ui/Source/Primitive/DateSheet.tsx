@@ -229,7 +229,7 @@ const useControllable = <A,>(
 interface DateSheetChipSegmentProps
 {
     readonly Label: string;
-    readonly OnPress: () => void;
+    readonly OnPress: Thunk;
 }
 
 const DateSheetChipSegment = React.forwardRef<
@@ -454,7 +454,7 @@ interface DateSheetOptionPopupProps<A extends string>
 {
     readonly Anchor: PopupAnchor;
     readonly IsVisible: boolean;
-    readonly OnRequestClose: () => void;
+    readonly OnRequestClose: Thunk;
     readonly Options: ReadonlyArray<OptionEntry<A>>;
     readonly Value: A;
     readonly OnValueChange: (Value: A) => void;

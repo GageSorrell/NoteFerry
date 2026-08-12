@@ -40,7 +40,7 @@ interface SelectContextValue
     readonly SetIsOpen: (Open: boolean) => void;
     readonly AnchorRef: PopupAnchor;
     readonly Labels: React.RefObject<Map<string, string>>;
-    readonly BumpVersion: () => void;
+    readonly BumpVersion: Thunk;
 }
 
 const SelectContext = React.createContext<SelectContextValue | undefined>(undefined);

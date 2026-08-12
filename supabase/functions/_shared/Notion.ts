@@ -241,6 +241,17 @@ export type NotionPageObject =
     readonly cover?: NotionFile;
     readonly icon?: NotionIcon;
     readonly parent?: NotionParent;
+    readonly properties?: Readonly<Record<string, {
+        readonly type?: string;
+        readonly title?: readonly NotionRichTextItem[];
+    }>>;
+};
+
+/** The first page of a data-source query, sufficient for a capped row count. */
+export type NotionDataSourcePageCount =
+{
+    readonly HasMoreThan100Pages: boolean;
+    readonly PageCount: number;
 };
 
 /**
@@ -335,6 +346,106 @@ export async function SearchDataSources(AccessToken: string): Promise<readonly N
     while (Cursor);
 
     return Results;
+}
+
+/**
+ * Lists every regular page the connection can currently see. Search results
+ * that are database entries are retained here and filtered by the onboarding
+ * mapper, which has the parent information needed to distinguish them.
+ *
+ * @category Notion
+ * @since 1.0.0
+ */
+export async function SearchPages(AccessToken: string): Promise<readonly NotionPageObject[]>
+{
+    const Results: NotionPageObject[] = [];
+    let Cursor: string | undefined;
+
+    do
+    {
+        const Body: Record<string, unknown> =
+        {
+            filter: { property: "object", value: "page" },
+            page_size: 100
+        };
+
+        if (Cursor)
+        {
+            Body.start_cursor = Cursor;
+        }
+
+        const Response = await fetch(`${ApiBase}/search`, {
+            body: JSON.stringify(Body),
+            headers: DataApiHeaders(AccessToken),
+            method: "POST"
+        });
+
+        if (!Response.ok)
+        {
+            return await ThrowNotionApiError(Response);
+        }
+
+        const Page = await Response.json() as {
+            readonly results?: readonly NotionPageObject[];
+            readonly next_cursor?: string | null;
+            readonly has_more?: boolean;
+        };
+
+        Results.push(...(Page.results ?? []));
+        Cursor = Page.has_more && Page.next_cursor ? Page.next_cursor : undefined;
+    }
+    while (Cursor);
+
+    return Results;
+}
+
+/**
+ * Counts the first 100 pages in one data source. `has_more` distinguishes a
+ * true count of 100 from a database whose display should read `>100 pages`.
+ *
+ * @category Notion
+ * @since 1.0.0
+ */
+export async function QueryDataSourcePageCount(
+    AccessToken: string,
+    DataSourceId: string
+): Promise<NotionDataSourcePageCount>
+{
+    for (let Attempt = 0; Attempt < 3; Attempt += 1)
+    {
+        const Response = await fetch(`${ApiBase}/data_sources/${DataSourceId}/query`, {
+            body: JSON.stringify({ page_size: 100 }),
+            headers: DataApiHeaders(AccessToken),
+            method: "POST"
+        });
+
+        if (Response.ok)
+        {
+            const Page = await Response.json() as {
+                readonly has_more?: boolean;
+                readonly results?: readonly unknown[];
+            };
+
+            return {
+                HasMoreThan100Pages: Page.has_more === true,
+                PageCount: Math.min(Page.results?.length ?? 0, 100)
+            };
+        }
+
+        if (Response.status !== 429 || Attempt === 2)
+        {
+            return await ThrowNotionApiError(Response);
+        }
+
+        const RetryAfterSeconds = Number(Response.headers.get("retry-after") ?? "1");
+
+        await new Promise((Resolve) => setTimeout(
+            Resolve,
+            Math.max(1, RetryAfterSeconds) * 1_000
+        ));
+    }
+
+    return { HasMoreThan100Pages: false, PageCount: 0 };
 }
 
 /**

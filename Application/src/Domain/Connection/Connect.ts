@@ -25,9 +25,20 @@ const ConnectedReturnUrl = "notivex://notion/connected" as const;
  * @category Connections
  * @since 1.0.0
  */
-export async function ConnectNotion(): Promise<void>
+export async function ConnectNotion(): Promise<boolean>
 {
     const AuthorizationUrl = await StartNotionAuthorization();
+    const Result = await WebBrowser.openAuthSessionAsync(
+        AuthorizationUrl,
+        ConnectedReturnUrl
+    );
 
-    await WebBrowser.openAuthSessionAsync(AuthorizationUrl, ConnectedReturnUrl);
+    if (Result.type !== "success")
+    {
+        return false;
+    }
+
+    const ReturnUrl = new URL(Result.url);
+
+    return ReturnUrl.searchParams.get("status") === "connected";
 }

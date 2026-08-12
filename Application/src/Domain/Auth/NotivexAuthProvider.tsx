@@ -30,14 +30,14 @@ const AuthContext = React.createContext<NotivexAuth>({
     SignOut: async () => { }
 });
 
-/**
- * Subscribes to Supabase auth-state changes and makes the session available
- * to the tree. Mount once, near the root.
- *
- * @category Providers
- * @since 1.0.0
- */
-export function NotivexAuthProvider({ children }: React.PropsWithChildren)
+export/**
+       * Subscribes to Supabase auth-state changes and makes the session available
+       * to the tree. Mount once, near the root.
+       *
+       * @category Providers
+       * @since 1.0.0
+       */
+const NotivexAuthProvider = ({ children }: React.PropsWithChildren) =>
 {
     /* The React Compiler otherwise memoizes the context value so aggressively
      * that a change to `IsLoading` does not reach consumers, stranding the app
@@ -152,7 +152,7 @@ export function NotivexAuthProvider({ children }: React.PropsWithChildren)
             { children }
         </AuthContext.Provider>
     );
-}
+};
 
 export/**
        * Reads the current auth context.

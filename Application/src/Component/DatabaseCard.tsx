@@ -10,11 +10,12 @@
  */
 
 import type * as Domain from "@notivex/domain";
+import * as React from "react";
+import { Defs, LinearGradient, Rect, Stop, Svg, SvgXml } from "react-native-svg";
 import { IconBlock, type LucideIconName } from "@notivex/ui/Block";
 import { Pressable, type PressableStateCallbackType, StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
 import { ItemTitle } from "@notivex/ui/Primitive";
-import { SvgUri } from "react-native-svg";
 import type { Thunk } from "@sorrell/utility/Function";
 import { UseTheme } from "@notivex/ui";
 
@@ -32,18 +33,184 @@ const IsImageUrl = (Value: string): boolean =>
 /** Returns whether a remote image URL points to an SVG document. */
 const IsSvgUrl = (Value: string): boolean => /\.svg(?:$|[?#])/iu.test(Value);
 
+type SvgGradient =
+    {
+        readonly EndColor: string;
+        readonly StartColor: string;
+    };
+
+const SvgCache = new Map<string, Promise<string>>();
+
+/** Loads an SVG once for the lifetime of its current Notion file URL. */
+function LoadSvg(Uri: string): Promise<string>
+{
+    const Cached = SvgCache.get(Uri);
+
+    if (Cached)
+    {
+        return Cached;
+    }
+
+    const Request = fetch(Uri)
+        .then((Response: Response) =>
+        {
+            if (!Response.ok)
+            {
+                throw new Error(`Unable to load SVG cover (${ Response.status }).`);
+            }
+
+            return Response.text();
+        })
+        .catch((ErrorValue: unknown) =>
+        {
+            SvgCache.delete(Uri);
+            throw ErrorValue;
+        });
+
+    SvgCache.set(Uri, Request);
+
+    return Request;
+}
+
+/**
+ * Detects soft, blurred-color SVGs whose Gaussian filter is not faithfully
+ * supported by Android image decoders and returns their two endpoint colors.
+ */
+function GetBlurredSvgGradient(Xml: string): SvgGradient | null
+{
+    const BlurredCircleCount = Array.from(Xml.matchAll(/<circle\b/giu)).length;
+
+    if (!/<feGaussianBlur\b/iu.test(Xml) || BlurredCircleCount < 2)
+    {
+        return null;
+    }
+
+    const Colors: Array<string> = [ ];
+    const FillPattern = /\bfill=["'](#[\da-f]{3,8}|rgba?\([^"']+\)|[a-z]+)["']/giu;
+
+    for (const Match of Xml.matchAll(FillPattern))
+    {
+        const Color = Match[1]?.toLowerCase();
+
+        if (Color && Color !== "none" && Color !== "transparent" && !Colors.includes(Color))
+        {
+            Colors.push(Color);
+        }
+    }
+
+    return Colors.length >= 2
+        ? { EndColor: Colors[1] as string, StartColor: Colors[0] as string }
+        : null;
+}
+
+/** Renders remote SVG covers without losing their large blurred gradients. */
+const DatabaseSvgCover = ({ Uri }: { readonly Uri: string; }): React.JSX.Element =>
+{
+    const [ Xml, SetXml ] = React.useState<string | null | undefined>();
+
+    React.useEffect(() =>
+    {
+        let IsMounted = true;
+
+        void LoadSvg(Uri)
+            .then((Value: string) =>
+            {
+                if (IsMounted)
+                {
+                    SetXml(Value);
+                }
+            })
+            .catch(() =>
+            {
+                if (IsMounted)
+                {
+                    SetXml(null);
+                }
+            });
+
+        return () =>
+        {
+            IsMounted = false;
+        };
+    }, [ Uri ]);
+
+    const Gradient = Xml ? GetBlurredSvgGradient(Xml) : null;
+
+    if (Gradient)
+    {
+        return (
+            <Svg
+                accessible={ false }
+                height={ styles.cover.height }
+                preserveAspectRatio="none"
+                viewBox="0 0 1 1"
+                width="100%">
+                <Defs>
+                    <LinearGradient
+                        id="database-cover-gradient"
+                        x1="0%"
+                        x2="100%"
+                        y1="0%"
+                        y2="100%">
+                        <Stop
+                            offset="0%"
+                            stopColor={ Gradient.StartColor }
+                        />
+                        <Stop
+                            offset="100%"
+                            stopColor={ Gradient.EndColor }
+                        />
+                    </LinearGradient>
+                </Defs>
+                <Rect
+                    fill="url(#database-cover-gradient)"
+                    height="1"
+                    width="1"
+                />
+            </Svg>
+        );
+    }
+
+    if (Xml)
+    {
+        return (
+            <SvgXml
+                accessible={ false }
+                height={ styles.cover.height }
+                preserveAspectRatio="xMidYMid slice"
+                width="100%"
+                xml={ Xml }
+            />
+        );
+    }
+
+    return Xml === null
+        ? (
+            <Image
+                accessibilityIgnoresInvertColors
+                cachePolicy="memory-disk"
+                contentFit="cover"
+                source={ { uri: Uri } }
+                style={ styles.cover }
+            />
+        )
+        : <View style={ styles.cover } />;
+};
+
+DatabaseSvgCover.displayName = "DatabaseSvgCover";
+
 /** Converts Notion's native icon name format to the local Lucide key format. */
 const ToLucideIconName = (Value: string): LucideIconName =>
     Value.trim().toLowerCase().replaceAll("_", "-").replaceAll(" ", "-") as LucideIconName;
 
-/**
- * Shows the database cover and icon only when Notion supplied them. The whole
- * surface is the navigation target, replacing the former Configure button.
- *
- * @category Component
- * @since 1.0.0
- */
-export function DatabaseCard({ OnPress, Source }: DatabaseCardProps): React.JSX.Element
+export/**
+       * Shows the database cover and icon only when Notion supplied them. The whole
+       * surface is the navigation target, replacing the former Configure button.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const DatabaseCard = ({ OnPress, Source }: DatabaseCardProps): React.JSX.Element =>
 {
     const Theme = UseTheme();
     const CardShadow = Theme.Shadow.Card;
@@ -83,12 +250,7 @@ export function DatabaseCard({ OnPress, Source }: DatabaseCardProps): React.JSX.
                 {Source.CoverUrl
                     ? CoverIsSvg
                         ? (
-                            <SvgUri
-                                height={ styles.cover.height }
-                                preserveAspectRatio="xMidYMid slice"
-                                uri={ Source.CoverUrl }
-                                width="100%"
-                            />
+                            <DatabaseSvgCover Uri={ Source.CoverUrl } />
                         )
                         : (
                             <Image
@@ -141,7 +303,7 @@ export function DatabaseCard({ OnPress, Source }: DatabaseCardProps): React.JSX.
             </View>
         </Pressable>
     );
-}
+};
 
 DatabaseCard.displayName = "DatabaseCard";
 

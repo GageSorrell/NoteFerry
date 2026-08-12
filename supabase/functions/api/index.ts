@@ -140,6 +140,16 @@ const DataSourcesLive = HttpApiBuilder.group(NotivexApi, "DataSources", (Handler
 
                 return yield* DataSources.SearchForUser(UserId, Input.params.ConnectionId);
             }))
+        .handle("DiscoverOnboarding", (Input) =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                return yield* DataSources.DiscoverOnboardingForUser(
+                    UserId,
+                    Input.params.ConnectionId
+                );
+            }))
         .handle("List", () =>
             Effect.gen(function* ()
             {

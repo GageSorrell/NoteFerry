@@ -22,13 +22,13 @@ const SignInModalStepTwo = () =>
     const Router = UseLazyRouter();
     const Development = useDevelopmentOnboarding();
 
-    const Pending = Development.Active
+    const IsPending = Development.Active
         ? Development.Scenario === "SignInPending"
         : Busy;
 
-    const HandleSignIn = async (): Promise<void> =>
+    const OnSignIn = async (): Promise<void> =>
     {
-        if (Pending)
+        if (IsPending)
         {
             return;
         }
@@ -57,17 +57,11 @@ const SignInModalStepTwo = () =>
         }
     };
 
-    const HandleBack = Development.Active
+    const OnBack = Development.Active
         ? () => Development.Transition("SignIn")
         : Router.navigate("/sign-in");
 
-    return (
-        <SignInModalStepTwoView
-            OnBack={ HandleBack }
-            OnSignIn={ () => void HandleSignIn() }
-            Pending={ Pending }
-        />
-    );
+    return <SignInModalStepTwoView { ...{ IsPending, OnBack, OnSignIn } } />;
 };
 
 export default SignInModalStepTwo;

@@ -16,6 +16,7 @@
  * @license   MIT
  */
 
+import type * as Domain from "@notivex/domain";
 import * as React from "react";
 import type { AsyncThunk, Thunk } from "@sorrell/utility/Function";
 import { type UseNotionSync, useNotionSync } from "@/features/onboarding/use-notion-sync";
@@ -25,16 +26,19 @@ import { UseAuth } from "@/Domain/Auth";
 /** The onboarding state shared through {@link useOnboarding}. */
 export interface OnboardingState
 {
+    readonly AuthorizationSucceeded: boolean | null;
     readonly HasConnection: boolean;
     readonly IsActive: boolean;
     readonly IsLoadingConnection: boolean;
     readonly NotionSync: UseNotionSync;
     readonly Begin: Thunk;
     readonly Complete: Thunk;
+    readonly RecordAuthorizationResult: (Succeeded: boolean) => void;
     readonly RefetchConnection: AsyncThunk;
 }
 
 const OnboardingContext = React.createContext<OnboardingState>({
+    AuthorizationSucceeded: null,
     Begin: () => { },
     Complete: () => { },
     HasConnection: false,
@@ -43,9 +47,11 @@ const OnboardingContext = React.createContext<OnboardingState>({
     NotionSync:
     {
         Count: 0,
+        Data: null,
         Retry: () => { },
         Status: "Syncing"
     },
+    RecordAuthorizationResult: () => { },
     RefetchConnection: async () => { }
 });
 
@@ -72,7 +78,12 @@ export function OnboardingProvider({
     const [ HasConnection, SetHasConnection ] = React.useState(false);
     const [ IsLoadingConnection, SetIsLoadingConnection ] = React.useState(true);
     const [ IsActive, SetIsActive ] = React.useState(false);
-    const NotionSync = useNotionSync(Enabled && IsActive);
+    const [ AuthorizationSucceeded, SetAuthorizationSucceeded ] =
+        React.useState<boolean | null>(null);
+    const NotionSync = useNotionSync(
+        Enabled && IsActive,
+        AuthorizationSucceeded
+    );
 
     const RefetchConnection = React.useCallback(async () =>
     {
@@ -98,7 +109,8 @@ export function OnboardingProvider({
         {
             const List = await ListConnections();
 
-            SetHasConnection(List.length > 0);
+            SetHasConnection(List.some((Connection: Domain.NotionConnection.NotionConnection) =>
+                Connection.Status === "Active"));
         }
         catch (Error)
         {
@@ -113,24 +125,40 @@ export function OnboardingProvider({
 
     React.useEffect(() => void RefetchConnection(), [ RefetchConnection ]);
 
-    const Begin = React.useCallback(() => SetIsActive(true), [ ]);
-    const Complete = React.useCallback(() => SetIsActive(false), [ ]);
+    const Begin = React.useCallback(() =>
+    {
+        SetAuthorizationSucceeded(null);
+        SetIsActive(true);
+    }, [ ]);
+    const Complete = React.useCallback(() =>
+    {
+        SetAuthorizationSucceeded(null);
+        SetIsActive(false);
+    }, [ ]);
+    const RecordAuthorizationResult = React.useCallback((Succeeded: boolean) =>
+    {
+        SetAuthorizationSucceeded(Succeeded);
+    }, [ ]);
 
     const Value = React.useMemo<OnboardingState>(() => ({
+        AuthorizationSucceeded,
         Begin,
         Complete,
         HasConnection,
         IsActive,
         IsLoadingConnection,
         NotionSync,
+        RecordAuthorizationResult,
         RefetchConnection
     }), [
+        AuthorizationSucceeded,
         Begin,
         Complete,
         HasConnection,
         IsActive,
         IsLoadingConnection,
         NotionSync,
+        RecordAuthorizationResult,
         RefetchConnection
     ]);
 

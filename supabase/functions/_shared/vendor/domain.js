@@ -248,7 +248,10 @@ var DataSource_exports = {};
 __export(DataSource_exports, {
   CachedDataSourceSchema: () => CachedDataSourceSchema,
   CachedDataSourceSchemaVersion: () => CachedDataSourceSchemaVersion,
-  DiscoveredDataSource: () => DiscoveredDataSource
+  DiscoveredDataSource: () => DiscoveredDataSource,
+  OnboardingDatabase: () => OnboardingDatabase,
+  OnboardingDiscovery: () => OnboardingDiscovery,
+  OnboardingPage: () => OnboardingPage
 });
 import { Schema as Schema5 } from "effect";
 var CachedDataSourceSchemaVersion = Schema5.Literal(1);
@@ -260,6 +263,26 @@ var DiscoveredDataSource = Schema5.Struct({
   Icon: Schema5.optional(Schema5.String),
   IconType: Schema5.optional(Schema5.Literals(["Emoji", "Image", "Native"])),
   Title: Schema5.String
+});
+var OnboardingPage = Schema5.Struct({
+  Id: NotionPageId,
+  Title: Schema5.String
+});
+var OnboardingDatabase = Schema5.Struct({
+  ConnectionId: NotionConnectionId,
+  DataSourceId: NotionDataSourceId,
+  DatabaseId: NotionDatabaseId,
+  HasMoreThan100Pages: Schema5.Boolean,
+  Icon: Schema5.optional(Schema5.String),
+  IconType: Schema5.optional(Schema5.Literals(["Emoji", "Image", "Native"])),
+  PageCount: Schema5.Number,
+  Title: Schema5.String
+});
+var OnboardingDiscovery = Schema5.Struct({
+  DatabaseCount: Schema5.Number,
+  Databases: Schema5.Array(OnboardingDatabase),
+  PageCount: Schema5.Number,
+  Pages: Schema5.Array(OnboardingPage)
 });
 var CachedDataSourceSchema = Schema5.Struct({
   ConnectionId: NotionConnectionId,

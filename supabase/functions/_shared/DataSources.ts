@@ -242,6 +242,16 @@ function TitleToString(Title: readonly Notion.NotionRichTextItem[] | undefined):
 }
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
+function PageTitleToString(Page: Notion.NotionPageObject): string
+{
+    const TitleProperty = Object.values(Page.properties ?? {}).find(
+        (Property) => Property.type === "title"
+    );
+
+    return TitleToString(TitleProperty?.title);
+}
+
+/* eslint-disable-next-line jsdoc/require-jsdoc */
 function ToDiscovered(
     ConnectionId: string,
     Object_: Notion.NotionDataSourceObject
@@ -364,6 +374,131 @@ export function SearchForUser(UserId: string, ConnectionId: string)
         }
 
         return Discovered;
+    });
+}
+
+/**
+ * Discovers the regular pages and first 100 databases visible to a connection,
+ * then queries the first 100 rows of every displayed database. Database-entry
+ * pages are excluded from the page disclosure because they are already
+ * represented by their parent's count.
+ *
+ * @category DataSources
+ * @since 1.0.0
+ */
+export function DiscoverOnboardingForUser(UserId: string, ConnectionId: string)
+{
+    return Effect.gen(function* ()
+    {
+        const Tokens = yield* LoadConnectionTokens(UserId, ConnectionId);
+        const Raw = yield* Effect.tryPromise({
+            catch: MapReadError,
+            try: () => CallNotionData(Tokens, ConnectionId, async (AccessToken) =>
+            {
+                const [ DataSources, Pages ] = await Promise.all([
+                    Notion.SearchDataSources(AccessToken),
+                    Notion.SearchPages(AccessToken)
+                ]);
+
+                return { DataSources, Pages };
+            })
+        });
+
+        const Discovered = Raw.DataSources
+            .map((Object_) => ToDiscovered(ConnectionId, Object_))
+            .filter((Source): Source is Domain.DataSource.DiscoveredDataSource => Source !== null)
+            .sort((Left, Right) => Left.Title.localeCompare(Right.Title, undefined, {
+                sensitivity: "base"
+            }));
+        const DisplayedDataSources = Discovered.slice(0, 100);
+        const Enriched = yield* Effect.tryPromise({
+            catch: MapReadError,
+            try: () => CallNotionData(Tokens, ConnectionId, async (AccessToken) =>
+            {
+                const Result: Array<{
+                    readonly Count: Notion.NotionDataSourcePageCount;
+                    readonly Database?: Notion.NotionDatabaseObject;
+                }> = [];
+
+                /* Notion averages three requests per second per connection.
+                 * Metadata and counts are resolved sequentially so a large
+                 * workspace does not turn this request into a burst of 429s. */
+                for (const Source of DisplayedDataSources)
+                {
+                    let Database: Notion.NotionDatabaseObject | undefined;
+                    let Count: Notion.NotionDataSourcePageCount = {
+                        HasMoreThan100Pages: false,
+                        PageCount: 0
+                    };
+
+                    try
+                    {
+                        Database = await Notion.RetrieveDatabase(
+                            AccessToken,
+                            Source.DatabaseId
+                        );
+                    }
+                    catch (Error_)
+                    {
+                        if (Error_ instanceof Notion.NotionApiError && Error_.Status === 401)
+                        {
+                            throw Error_;
+                        }
+                    }
+
+                    await new Promise((Resolve) => setTimeout(Resolve, 350));
+
+                    try
+                    {
+                        Count = await Notion.QueryDataSourcePageCount(
+                            AccessToken,
+                            Source.DataSourceId
+                        );
+                    }
+                    catch (Error_)
+                    {
+                        if (Error_ instanceof Notion.NotionApiError && Error_.Status === 401)
+                        {
+                            throw Error_;
+                        }
+                    }
+
+                    Result.push({ Count, ...(Database ? { Database } : {}) });
+                    await new Promise((Resolve) => setTimeout(Resolve, 350));
+                }
+
+                return Result;
+            })
+        });
+        const Databases: Domain.DataSource.OnboardingDatabase[] = DisplayedDataSources.map((
+            Source,
+            Index
+        ) => ({
+            ...Source,
+            ...(NormalizeIcon(Enriched[Index]?.Database?.icon) ?? {}),
+            HasMoreThan100Pages: Enriched[Index]?.Count.HasMoreThan100Pages ?? false,
+            PageCount: Enriched[Index]?.Count.PageCount ?? 0,
+            Title: TitleToString(Enriched[Index]?.Database?.title) === "Untitled"
+                ? Source.Title
+                : TitleToString(Enriched[Index]?.Database?.title)
+        }));
+        const Pages = Raw.Pages
+            .filter((Page) => Page.parent?.type !== "data_source_id"
+                && Page.parent?.type !== "database_id")
+            .map((Page): Domain.DataSource.OnboardingPage => ({
+                Id: Page.id as Domain.Id.NotionPageId,
+                Title: PageTitleToString(Page)
+            }))
+            .sort((Left, Right) => Left.Title.localeCompare(Right.Title, undefined, {
+                sensitivity: "base"
+            }));
+
+        return {
+            DatabaseCount: Discovered.length,
+            Databases,
+            PageCount: Pages.length,
+            Pages: Pages.slice(0, 25)
+        } satisfies Domain.DataSource.OnboardingDiscovery;
     });
 }
 

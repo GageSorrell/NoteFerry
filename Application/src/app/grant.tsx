@@ -21,7 +21,7 @@ const GrantScreen = () =>
 {
     const Router = UseLazyRouter();
     const Development = useDevelopmentOnboarding();
-    const { Begin } = useOnboarding();
+    const { Begin, RecordAuthorizationResult } = useOnboarding();
     const [ Pending, SetPending ] = useState(false);
 
     useEffect(() =>
@@ -36,7 +36,7 @@ const GrantScreen = () =>
         ? Development.Scenario === "GrantPending"
         : Pending;
 
-    const HandleGrant = async (): Promise<void> =>
+    const OnGrant = async (): Promise<void> =>
     {
         if (IsPending)
         {
@@ -50,7 +50,7 @@ const GrantScreen = () =>
 
             if (Development.Automatic)
             {
-                Development.Schedule("SyncReady", OnboardingMockTiming.SyncMs);
+                Development.Schedule("Ready", OnboardingMockTiming.SyncMs);
             }
 
             return;
@@ -59,7 +59,9 @@ const GrantScreen = () =>
         try
         {
             SetPending(true);
-            await ConnectNotion();
+            const Succeeded = await ConnectNotion();
+
+            RecordAuthorizationResult(Succeeded);
             Router.replace("/sync")();
         }
         catch (Error)
@@ -73,12 +75,7 @@ const GrantScreen = () =>
         }
     };
 
-    return (
-        <GrantView
-            OnGrant={ () => void HandleGrant() }
-            Pending={ IsPending }
-        />
-    );
+    return <GrantView { ...{ IsPending, OnGrant } } />;
 };
 
 export default GrantScreen;

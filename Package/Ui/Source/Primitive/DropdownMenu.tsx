@@ -208,7 +208,7 @@ const DropdownMenuContent = ({
 /** {@inheritDoc DropdownMenuItem} */
 export interface DropdownMenuItemProps extends Omit<MenuItemProps, "OnPress">
 {
-    readonly OnSelect?: () => void;
+    readonly OnSelect?: Thunk;
     readonly CloseOnSelect?: boolean;
 }
 

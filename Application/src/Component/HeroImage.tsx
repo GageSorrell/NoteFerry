@@ -1,5 +1,6 @@
 /**
- *
+ * A full-width image, which is inverted when the theme is dark.
+ * Images used with this component should be grayscale and "Notion-themed."
  *
  * @module notivex/Component/HeroImage
  *
@@ -30,7 +31,7 @@ const HeroImage = ({ Source }: HeroImageProps) =>
 {
     const { Mode } = UseTheme();
 
-    const Base = () =>
+    const Base =
         <Image
             source={ Source }
             style={ {
@@ -42,10 +43,10 @@ const HeroImage = ({ Source }: HeroImageProps) =>
         />;
 
     return Mode === "Light"
-        ? <Base />
+        ? Base
         : (
             <View style={ { filter: [ { invert: 1 } ] } }>
-                <Base />
+                { Base }
             </View>
         );
 };

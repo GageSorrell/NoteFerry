@@ -22,10 +22,10 @@ import { Supabase } from "@/Domain/Runtime/Supabase";
 /* Required so a dangling web auth session can complete (web/dev only). */
 WebBrowser.maybeCompleteAuthSession();
 
-/* The deep link Supabase redirects back to after authorization. Must be added
- * to the project's Auth "Redirect URLs" allow-list (see AUTH_SETUP.md). In a
- * dev/standalone build this is `notivex://`; in Expo Go it is an `exp://…` URL.
- * The log makes the exact value visible in the Metro terminal. */
+/* The deep link Supabase redirects back to after authorization. Must be added     *
+ * to the project's Auth "Redirect URLs" allow-list (see AUTH_SETUP.md). In a      *
+ * dev/standalone build this is `notivex://`; in Expo Go it is an `exp://...` URL. *
+ * The log makes the exact value visible in the Metro terminal.                    */
 const redirectTo = "notivex://";
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */

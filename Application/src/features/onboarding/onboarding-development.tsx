@@ -19,6 +19,7 @@ import {
 import type { Href } from "expo-router";
 import type { OnboardingMockScenario } from
     "@/features/onboarding/onboarding-mock-scenarios";
+import type { Thunk } from "@sorrell/utility/Function";
 import { router } from "expo-router";
 
 export {
@@ -34,13 +35,13 @@ export interface DevelopmentOnboardingState
     readonly Active: boolean;
     readonly Automatic: boolean;
     readonly Scenario: OnboardingMockScenario | null;
-    readonly Pause: () => void;
-    readonly ReturnToLive: () => void;
-    readonly ReturnToPicker: () => void;
+    readonly Pause: Thunk;
+    readonly ReturnToLive: Thunk;
+    readonly ReturnToPicker: Thunk;
     readonly Schedule: (Scenario: OnboardingMockScenario, DelayMs: number) => void;
     readonly ScheduleReturnToPicker: (DelayMs: number) => void;
     readonly SelectScenario: (Scenario: OnboardingMockScenario) => void;
-    readonly StartHappyPath: () => void;
+    readonly StartHappyPath: Thunk;
     readonly Transition: (Scenario: OnboardingMockScenario) => void;
 }
 

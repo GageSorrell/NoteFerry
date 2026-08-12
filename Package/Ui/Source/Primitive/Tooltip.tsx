@@ -33,8 +33,8 @@ import { LabelText } from "./Text.js";
 interface TooltipContextValue
 {
     readonly IsOpen: boolean;
-    readonly Show: () => void;
-    readonly Hide: () => void;
+    readonly Show: Thunk;
+    readonly Hide: Thunk;
     readonly AnchorRef: PopupAnchor;
 }
 

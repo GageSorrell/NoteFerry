@@ -11,6 +11,7 @@
  * @license   MIT
  */
 
+import type * as Domain from "@notivex/domain";
 import type { Href } from "expo-router";
 import type { NotionSyncStatus } from "@/features/onboarding/use-notion-sync";
 
@@ -26,8 +27,14 @@ export type OnboardingMockScenario =
     | "Grant"
     | "GrantPending"
     | "Syncing"
-    | "SyncReady"
-    | "SyncEmpty"
+    | "NoIntegration"
+    | "NoIntegrationPending"
+    | "NoAccess"
+    | "NoAccessPending"
+    | "PagesOnly"
+    | "PagesOnlyPending"
+    | "Ready"
+    | "ReadyPending"
     | "SyncError"
     | "Done"
     | "DonePending";
@@ -35,14 +42,75 @@ export type OnboardingMockScenario =
 /** Metadata used by navigation, the picker, and Storybook. */
 export interface OnboardingMockDefinition
 {
+    readonly IsPending?: boolean | undefined;
     readonly Label: string;
     readonly Route: Href;
     readonly Stage: OnboardingMockStage;
+    readonly SyncData?: Domain.DataSource.OnboardingDiscovery | undefined;
     readonly SyncStatus?: NotionSyncStatus | undefined;
 }
 
+const MockPages = Array.from({ length: 25 }, (_: unknown, Index: number) => ({
+    Id: `mock-page-${ Index + 1 }`,
+    Title: [
+        "Product planning",
+        "Weekly notes",
+        "Team handbook",
+        "Research",
+        "Meeting notes"
+    ][Index] ?? `Shared page ${ Index + 1 }`
+})) as unknown as ReadonlyArray<Domain.DataSource.OnboardingPage>;
+
+const MockDatabases = ([
+    [ "Tasks", 101, "✅" ],
+    [ "Clients", 83, "👥" ],
+    [ "Ideas", 46, "💡" ],
+    [ "Meetings", 31, "🗓️" ],
+    [ "Projects", 24, "🚀" ],
+    [ "Projects", 9, "📁" ],
+    [ "Reading list", 18, "📚" ],
+    [ "Recipes", 12, "🍲" ],
+    [ "Goals", 8, "🎯" ],
+    [ "Travel", 5, "✈️" ],
+    [ "Archive", 2, "🗄️" ],
+    [ "Inbox", 0, "📥" ]
+] as const).map((
+    [ Title, Count, Icon ]: readonly [string, number, string],
+    Index: number
+) => ({
+    ConnectionId: "mock-connection",
+    DataSourceId: `mock-data-source-${ Index + 1 }`,
+    DatabaseId: `mock-database-${ Index + 1 }`,
+    HasMoreThan100Pages: Count === 101,
+    Icon,
+    IconType: "Emoji",
+    PageCount: Count === 101 ? 100 : Count,
+    Title
+})) as unknown as ReadonlyArray<Domain.DataSource.OnboardingDatabase>;
+
+const EmptyData = {
+    DatabaseCount: 0,
+    Databases: [],
+    PageCount: 0,
+    Pages: []
+} as unknown as Domain.DataSource.OnboardingDiscovery;
+
+const PagesOnlyData = {
+    DatabaseCount: 0,
+    Databases: [],
+    PageCount: 30,
+    Pages: MockPages
+} as unknown as Domain.DataSource.OnboardingDiscovery;
+
+const ReadyData = {
+    DatabaseCount: MockDatabases.length,
+    Databases: MockDatabases,
+    PageCount: 28,
+    Pages: MockPages
+} as unknown as Domain.DataSource.OnboardingDiscovery;
+
 export/**
-       * Exhaustive definitions for the development-only onboarding scenarios.
+       * Exhaustive definitions for development and Storybook.
        *
        * @category Development
        * @since 1.0.0
@@ -56,6 +124,7 @@ const OnboardingMockRegistry = Object.freeze({
     },
     DonePending:
     {
+        IsPending: true,
         Label: "Done · pending",
         Route: "/done",
         Stage: "Onboarding"
@@ -68,9 +137,78 @@ const OnboardingMockRegistry = Object.freeze({
     },
     GrantPending:
     {
+        IsPending: true,
         Label: "Grant access · pending",
         Route: "/grant",
         Stage: "Onboarding"
+    },
+    NoAccess:
+    {
+        Label: "Installed · nothing shared",
+        Route: "/sync",
+        Stage: "Onboarding",
+        SyncData: EmptyData,
+        SyncStatus: "NoAccess"
+    },
+    NoAccessPending:
+    {
+        IsPending: true,
+        Label: "Installed · reopening Notion",
+        Route: "/sync",
+        Stage: "Onboarding",
+        SyncData: EmptyData,
+        SyncStatus: "NoAccess"
+    },
+    NoIntegration:
+    {
+        Label: "Integration not added",
+        Route: "/sync",
+        Stage: "Onboarding",
+        SyncData: EmptyData,
+        SyncStatus: "NoIntegration"
+    },
+    NoIntegrationPending:
+    {
+        IsPending: true,
+        Label: "Integration not added · restarting",
+        Route: "/sync",
+        Stage: "Onboarding",
+        SyncData: EmptyData,
+        SyncStatus: "NoIntegration"
+    },
+    PagesOnly:
+    {
+        Label: "Pages only",
+        Route: "/sync",
+        Stage: "Onboarding",
+        SyncData: PagesOnlyData,
+        SyncStatus: "PagesOnly"
+    },
+    PagesOnlyPending:
+    {
+        IsPending: true,
+        Label: "Pages only · reopening Notion",
+        Route: "/sync",
+        Stage: "Onboarding",
+        SyncData: PagesOnlyData,
+        SyncStatus: "PagesOnly"
+    },
+    Ready:
+    {
+        Label: "Databases found",
+        Route: "/sync",
+        Stage: "Onboarding",
+        SyncData: ReadyData,
+        SyncStatus: "Ready"
+    },
+    ReadyPending:
+    {
+        IsPending: true,
+        Label: "Databases found · continuing",
+        Route: "/sync",
+        Stage: "Onboarding",
+        SyncData: ReadyData,
+        SyncStatus: "Ready"
     },
     SignIn:
     {
@@ -92,34 +230,21 @@ const OnboardingMockRegistry = Object.freeze({
     },
     SignInPending:
     {
+        IsPending: true,
         Label: "Sign in · pending",
         Route: "/sign-in-modal-step-two",
         Stage: "SignedOut"
     },
-    SyncEmpty:
-    {
-        Label: "Sync · empty",
-        Route: "/sync",
-        Stage: "Onboarding",
-        SyncStatus: "Empty"
-    },
     SyncError:
     {
-        Label: "Sync · error",
+        Label: "Discovery error",
         Route: "/sync",
         Stage: "Onboarding",
         SyncStatus: "Error"
     },
-    SyncReady:
-    {
-        Label: "Sync · ready",
-        Route: "/sync",
-        Stage: "Onboarding",
-        SyncStatus: "Ready"
-    },
     Syncing:
     {
-        Label: "Sync · waiting",
+        Label: "Checking Notion access",
         Route: "/sync",
         Stage: "Onboarding",
         SyncStatus: "Syncing"
@@ -140,8 +265,14 @@ const OnboardingMockScenarios = Object.freeze([
     "Grant",
     "GrantPending",
     "Syncing",
-    "SyncReady",
-    "SyncEmpty",
+    "NoIntegration",
+    "NoIntegrationPending",
+    "NoAccess",
+    "NoAccessPending",
+    "PagesOnly",
+    "PagesOnlyPending",
+    "Ready",
+    "ReadyPending",
     "SyncError",
     "Done",
     "DonePending"
@@ -154,6 +285,7 @@ export/**
        * @since 1.0.0
        */
 const OnboardingMockTiming = Object.freeze({
+    LoadingDelayMs: 1_000,
     PendingMs: 600,
-    SyncMs: 1800
+    SyncMs: 1_800
 } as const);

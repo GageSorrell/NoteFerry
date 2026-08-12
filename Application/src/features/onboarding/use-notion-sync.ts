@@ -1,8 +1,8 @@
 /**
- * Polls Notion discovery while onboarding waits for freshly shared pages to
- * appear. After the grant step Notion can lag ~30s before `/search` reflects
- * what the user shared, so this hook checks calmly within that window rather
- * than failing fast (ArchitectureInitialDraft.md §16).
+ * Resolves the post-authorization Notion resources used by onboarding. Notion
+ * search is eventually consistent immediately after OAuth, so negative results
+ * are polled for up to 30 seconds while a positive database result can render
+ * immediately.
  *
  * @module notivex/features/onboarding/use-notion-sync
  *
@@ -13,127 +13,106 @@
  */
 
 import type * as Domain from "@notivex/domain";
-import {
-    ListConnections,
-    RefreshDataSource,
-    SearchDataSources
-} from "@/Domain/Runtime/NotivexApi";
+import { DiscoverOnboarding, ListConnections } from "@/Domain/Runtime/NotivexApi";
 import { useCallback, useEffect, useState } from "react";
 import type { Thunk } from "@sorrell/utility/Function";
 
-/* How often to re-check, and how long to keep waiting before giving up. */
 const PollIntervalMs = 3_000 as const;
 const CeilingMs = 30_000 as const;
 
-/**
- * The state of the post-grant wait for Notion to share the user's pages.
- *
- * @category Onboarding
- * @since 1.0.0
- */
+/** Every user-visible outcome after the content-authorization browser closes. */
 export type NotionSyncStatus =
     | "Syncing"
+    | "NoIntegration"
+    | "NoAccess"
+    | "PagesOnly"
     | "Ready"
-    | "Empty"
     | "Error";
 
-/** {@inheritDoc useNotionSync} */
+/** The state and controls exposed to the post-authorization route. */
 export interface UseNotionSync
 {
-    readonly Status: NotionSyncStatus;
     readonly Count: number;
+    readonly Data: Domain.DataSource.OnboardingDiscovery | null;
     readonly Retry: Thunk;
+    readonly Status: NotionSyncStatus;
 }
 
+const EmptyDiscovery: Domain.DataSource.OnboardingDiscovery =
+    {
+        DatabaseCount: 0,
+        Databases: [ ],
+        PageCount: 0,
+        Pages: [ ]
+    };
+
 /**
- * Waits for the newly-authorized connection, then polls Notion discovery until
- * at least one data source appears and its schema is cached (`Ready`), the ~30s
- * discovery window elapses with none found (`Empty`), or the window elapses
- * after a request or caching error (`Error`). Connection resolution has no
- * deadline because this hook starts while the user is still reading and
- * completing the grant step. `Retry` starts the wait over.
- *
- * @category Onboarding
- * @since 1.0.0
+ * Waits for the OAuth callback's connection row, then polls live Notion search
+ * until a database is found or the eventual-consistency window expires.
+ * `AuthorizationSucceeded === false` classifies a cancelled/denied install
+ * immediately; `null` keeps discovery dormant while the browser is still open.
  */
-export function useNotionSync(Enabled: boolean): UseNotionSync
+export function useNotionSync(
+    Enabled: boolean,
+    AuthorizationSucceeded: boolean | null
+): UseNotionSync
 {
     const [ Status, SetStatus ] = useState<NotionSyncStatus>("Syncing");
-    const [ Count, SetCount ] = useState(0);
+    const [ Data, SetData ] = useState<Domain.DataSource.OnboardingDiscovery | null>(null);
     const [ Attempt, SetAttempt ] = useState(0);
 
     useEffect(() =>
     {
-        if (!Enabled)
+        if (!Enabled || AuthorizationSucceeded !== true)
         {
             return undefined;
         }
 
         let Cancelled = false;
         let Timer: ReturnType<typeof setTimeout> | undefined;
+        let Latest: Domain.DataSource.OnboardingDiscovery = EmptyDiscovery;
         let SawError = false;
+        const StartedAt = Date.now();
 
-        SetStatus("Syncing");
-        SetCount(0);
+        queueMicrotask(() =>
+        {
+            if (!Cancelled)
+            {
+                SetStatus("Syncing");
+                SetData(null);
+            }
+        });
 
-        const Poll = async (
-            ConnectionId: Domain.Id.NotionConnectionId,
-            StartedAt: number
+        const FinishNegativeResult = (): void =>
+        {
+            SetData(Latest);
+            SetStatus(SawError && Latest.PageCount === 0
+                ? "Error"
+                : Latest.PageCount > 0
+                    ? "PagesOnly"
+                    : "NoAccess");
+        };
+
+        const PollDiscovery = async (
+            ConnectionId: Domain.Id.NotionConnectionId
         ): Promise<void> =>
         {
             try
             {
-                const Result = await SearchDataSources(ConnectionId);
+                Latest = await DiscoverOnboarding(ConnectionId);
+                SawError = false;
 
                 if (Cancelled)
                 {
                     return;
                 }
 
-                if (Result.length > 0)
+                if (Latest.DatabaseCount > 0)
                 {
-                    const Cached = await Promise.all(Result.map(async (
-                        Source: Domain.DataSource.DiscoveredDataSource
-                    ) =>
-                    {
-                        try
-                        {
-                            await RefreshDataSource(ConnectionId, Source.DataSourceId);
+                    SetData(Latest);
+                    SetStatus("Ready");
 
-                            return true;
-                        }
-                        catch (Error)
-                        {
-                            /* One inaccessible database should not hide other
-                             * databases that were shared successfully. */
-                            /* eslint-disable-next-line no-console */
-                            console.error("Failed to cache an onboarding data source", Error);
-
-                            return false;
-                        }
-                    }));
-
-                    if (Cancelled)
-                    {
-                        return;
-                    }
-
-                    const CachedCount = Cached.filter(Boolean).length;
-
-                    if (CachedCount > 0)
-                    {
-                        SetCount(CachedCount);
-                        SetStatus("Ready");
-
-                        return;
-                    }
-
-                    SawError = true;
-
-                }
-                else
-                {
-                    SawError = false;
+                    return;
                 }
             }
             catch (Error)
@@ -144,20 +123,19 @@ export function useNotionSync(Enabled: boolean): UseNotionSync
                 }
 
                 SawError = true;
-
                 /* eslint-disable-next-line no-console */
-                console.error("Notion sync poll failed", Error);
+                console.error("Notion onboarding discovery failed", Error);
             }
 
             if (Date.now() - StartedAt >= CeilingMs)
             {
-                SetStatus(SawError ? "Error" : "Empty");
+                FinishNegativeResult();
 
                 return;
             }
 
             Timer = setTimeout(
-                () => void Poll(ConnectionId, StartedAt),
+                () => void PollDiscovery(ConnectionId),
                 PollIntervalMs
             );
         };
@@ -173,11 +151,13 @@ export function useNotionSync(Enabled: boolean): UseNotionSync
                     return;
                 }
 
-                const ConnectionId = Connections.at(0)?.Id;
+                const Connection: Domain.NotionConnection.NotionConnection | undefined =
+                    Connections.find((Item: Domain.NotionConnection.NotionConnection) =>
+                        Item.Status === "Active");
 
-                if (ConnectionId !== undefined)
+                if (Connection)
                 {
-                    await Poll(ConnectionId, Date.now());
+                    await PollDiscovery(Connection.Id);
 
                     return;
                 }
@@ -191,6 +171,14 @@ export function useNotionSync(Enabled: boolean): UseNotionSync
 
                 /* eslint-disable-next-line no-console */
                 console.error("Failed to resolve the Notion connection", Error);
+            }
+
+            if (Date.now() - StartedAt >= CeilingMs)
+            {
+                SetData(EmptyDiscovery);
+                SetStatus("NoIntegration");
+
+                return;
             }
 
             Timer = setTimeout(() => void ResolveConnection(), PollIntervalMs);
@@ -207,9 +195,30 @@ export function useNotionSync(Enabled: boolean): UseNotionSync
                 clearTimeout(Timer);
             }
         };
-    }, [ Attempt, Enabled ]);
+    }, [ Attempt, AuthorizationSucceeded, Enabled ]);
 
-    const Retry = useCallback(() => SetAttempt((Value: number) => Value + 1), [ ]);
+    const Retry = useCallback(() =>
+    {
+        SetStatus("Syncing");
+        SetData(null);
+        SetAttempt((Value: number) => Value + 1);
+    }, [ ]);
 
-    return { Count, Retry, Status };
+    const EffectiveStatus = !Enabled || AuthorizationSucceeded === null
+        ? "Syncing"
+        : AuthorizationSucceeded
+            ? Status
+            : "NoIntegration";
+    const EffectiveData = !Enabled || AuthorizationSucceeded === null
+        ? null
+        : AuthorizationSucceeded
+            ? Data
+            : EmptyDiscovery;
+
+    return {
+        Count: EffectiveData?.DatabaseCount ?? 0,
+        Data: EffectiveData,
+        Retry,
+        Status: EffectiveStatus
+    };
 }

@@ -98,7 +98,7 @@ const CloneTrigger = (
 export interface PopupProps extends React.PropsWithChildren
 {
     readonly IsVisible: boolean;
-    readonly OnRequestClose: () => void;
+    readonly OnRequestClose: Thunk;
     readonly Anchor: PopupAnchor;
     readonly Placement?: PopupPlacement;
 
