@@ -145,7 +145,7 @@ interface ToastFunction
     readonly Info: (Message: string, Options?: ToastOptions) => string;
     readonly Loading: (Message: string, Options?: ToastOptions) => string;
     readonly Dismiss: (Id?: string) => void;
-    readonly Promise: <Value>(Work: Promise<Value>, Messages: ToastPromiseMessages<Value>) => Promise<Value>;
+    readonly Promise: <A>(Work: Promise<A>, Messages: ToastPromiseMessages<A>) => Promise<A>;
 }
 
 const ToastCall =

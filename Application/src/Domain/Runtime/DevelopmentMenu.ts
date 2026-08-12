@@ -12,7 +12,9 @@
 
 import { ClearPersistedState } from "./PersistedState";
 import { DevSettings } from "react-native";
+import type { Href } from "expo-router";
 import { registerDevMenuItems } from "expo-dev-client";
+import { router } from "expo-router";
 
 /** Clears persisted state and reloads so in-memory auth/context state is reset. */
 async function ClearAndReload(): Promise<void>
@@ -46,6 +48,11 @@ const RegisterDevelopmentMenu = async (): Promise<void> =>
     }
 
     await registerDevMenuItems([
+        {
+            callback: () => router.navigate("/onboarding-scenarios" as Href),
+            name: "Onboarding scenarios",
+            shouldCollapse: true
+        },
         {
             callback: ClearAndReload,
             name: "Clear persisted state",

@@ -17,6 +17,7 @@
  */
 
 import * as React from "react";
+import type { AsyncThunk, Thunk } from "@sorrell/utility/Function";
 import { type UseNotionSync, useNotionSync } from "@/features/onboarding/use-notion-sync";
 import { ListConnections } from "@/Domain/Runtime/NotivexApi";
 import { UseAuth } from "@/Domain/Auth";
@@ -28,9 +29,9 @@ export interface OnboardingState
     readonly IsActive: boolean;
     readonly IsLoadingConnection: boolean;
     readonly NotionSync: UseNotionSync;
-    readonly Begin: () => void;
-    readonly Complete: () => void;
-    readonly RefetchConnection: () => Promise<void>;
+    readonly Begin: Thunk;
+    readonly Complete: Thunk;
+    readonly RefetchConnection: AsyncThunk;
 }
 
 const OnboardingContext = React.createContext<OnboardingState>({
@@ -48,6 +49,13 @@ const OnboardingContext = React.createContext<OnboardingState>({
     RefetchConnection: async () => { }
 });
 
+/** Props for {@link OnboardingProvider}. */
+export interface OnboardingProviderProps extends React.PropsWithChildren
+{
+    /** Disables all connection and sync I/O while development mocks are active. */
+    readonly Enabled?: boolean | undefined;
+}
+
 /**
  * Provides onboarding state to the tree. Mount once, below the auth provider so
  * it can react to the session appearing and disappearing.
@@ -55,16 +63,27 @@ const OnboardingContext = React.createContext<OnboardingState>({
  * @category Providers
  * @since 1.0.0
  */
-export function OnboardingProvider({ children }: React.PropsWithChildren)
+export function OnboardingProvider({
+    Enabled = true,
+    children
+}: OnboardingProviderProps)
 {
     const { Session } = UseAuth();
     const [ HasConnection, SetHasConnection ] = React.useState(false);
     const [ IsLoadingConnection, SetIsLoadingConnection ] = React.useState(true);
     const [ IsActive, SetIsActive ] = React.useState(false);
-    const NotionSync = useNotionSync(IsActive);
+    const NotionSync = useNotionSync(Enabled && IsActive);
 
     const RefetchConnection = React.useCallback(async () =>
     {
+        if (!Enabled)
+        {
+            SetHasConnection(false);
+            SetIsLoadingConnection(false);
+
+            return;
+        }
+
         if (Session === null)
         {
             SetHasConnection(false);
@@ -90,7 +109,7 @@ export function OnboardingProvider({ children }: React.PropsWithChildren)
         {
             SetIsLoadingConnection(false);
         }
-    }, [ Session ]);
+    }, [ Enabled, Session ]);
 
     React.useEffect(() => void RefetchConnection(), [ RefetchConnection ]);
 

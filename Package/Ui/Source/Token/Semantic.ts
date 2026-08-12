@@ -485,4 +485,4 @@ export/**
        * @since 1.0.0
        */
 const Resolve = (Token: Semantic, Mode: "Light" | "Dark"): string | undefined =>
-    Value[Token][Mode];
+    Value[Token]?.[Mode];

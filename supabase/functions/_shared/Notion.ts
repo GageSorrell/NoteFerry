@@ -183,6 +183,17 @@ export type NotionProperty =
 /** Notion's icon union, as it appears on a data source. */
 export type NotionIcon =
     | { readonly type: "emoji"; readonly emoji: string }
+    | {
+        readonly type: "custom_emoji";
+        readonly custom_emoji: { readonly id: string; readonly name: string; readonly url: string };
+    }
+    | { readonly type: "external"; readonly external: { readonly url: string } }
+    | { readonly type: "file"; readonly file: { readonly url: string } }
+    | { readonly type: "icon"; readonly icon: { readonly name: string; readonly color?: string } }
+    | null;
+
+/** Notion's file union, as used by database covers. */
+export type NotionFile =
     | { readonly type: "external"; readonly external: { readonly url: string } }
     | { readonly type: "file"; readonly file: { readonly url: string } }
     | null;
@@ -203,6 +214,33 @@ export type NotionDataSourceObject =
     readonly title?: readonly NotionRichTextItem[];
     readonly icon?: NotionIcon;
     readonly last_edited_time?: string;
+};
+
+/** Parent information shared by database and page objects. */
+export type NotionParent =
+{
+    readonly type?: string;
+    readonly database_id?: string;
+    readonly page_id?: string;
+};
+
+/** A Notion database object containing the visual metadata shown on Home. */
+export type NotionDatabaseObject =
+{
+    readonly id: string;
+    readonly cover?: NotionFile;
+    readonly icon?: NotionIcon;
+    readonly parent?: NotionParent;
+    readonly title?: readonly NotionRichTextItem[];
+};
+
+/** A Notion page object containing visual metadata used as a database fallback. */
+export type NotionPageObject =
+{
+    readonly id: string;
+    readonly cover?: NotionFile;
+    readonly icon?: NotionIcon;
+    readonly parent?: NotionParent;
 };
 
 /**
@@ -323,6 +361,57 @@ export async function RetrieveDataSource(
     }
 
     return await Response.json() as NotionDataSourceObject;
+}
+
+/**
+ * Retrieves a database's title, icon, and cover. In Notion's current API,
+ * those visual fields belong to the parent database rather than its data
+ * source, whose object contains the property schema.
+ *
+ * @category Notion
+ * @since 1.0.0
+ */
+export async function RetrieveDatabase(
+    AccessToken: string,
+    DatabaseId: string
+): Promise<NotionDatabaseObject>
+{
+    const Response = await fetch(`${ApiBase}/databases/${DatabaseId}`, {
+        headers: DataApiHeaders(AccessToken),
+        method: "GET"
+    });
+
+    if (!Response.ok)
+    {
+        return await ThrowNotionApiError(Response);
+    }
+
+    return await Response.json() as NotionDatabaseObject;
+}
+
+/**
+ * Retrieves a page's icon and cover. Inline databases may expose their visible
+ * artwork on the containing page even when the database object has none.
+ *
+ * @category Notion
+ * @since 1.0.0
+ */
+export async function RetrievePage(
+    AccessToken: string,
+    PageId: string
+): Promise<NotionPageObject>
+{
+    const Response = await fetch(`${ApiBase}/pages/${PageId}`, {
+        headers: DataApiHeaders(AccessToken),
+        method: "GET"
+    });
+
+    if (!Response.ok)
+    {
+        return await ThrowNotionApiError(Response);
+    }
+
+    return await Response.json() as NotionPageObject;
 }
 
 /** The Notion Create Page request body Notivex sends (§20-21). */

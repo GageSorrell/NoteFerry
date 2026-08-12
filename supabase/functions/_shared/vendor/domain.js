@@ -254,16 +254,20 @@ import { Schema as Schema5 } from "effect";
 var CachedDataSourceSchemaVersion = Schema5.Literal(1);
 var DiscoveredDataSource = Schema5.Struct({
   ConnectionId: NotionConnectionId,
-  DatabaseId: NotionDatabaseId,
+  CoverUrl: Schema5.optional(Schema5.String),
   DataSourceId: NotionDataSourceId,
+  DatabaseId: NotionDatabaseId,
   Icon: Schema5.optional(Schema5.String),
+  IconType: Schema5.optional(Schema5.Literals(["Emoji", "Image", "Native"])),
   Title: Schema5.String
 });
 var CachedDataSourceSchema = Schema5.Struct({
   ConnectionId: NotionConnectionId,
+  CoverUrl: Schema5.optional(Schema5.String),
   DataSourceId: NotionDataSourceId,
   DatabaseId: NotionDatabaseId,
   Icon: Schema5.optional(Schema5.String),
+  IconType: Schema5.optional(Schema5.Literals(["Emoji", "Image", "Native"])),
   NotionLastEditedTime: Schema5.DateFromString,
   Properties: Schema5.Array(PropertyDefinition),
   RefreshedAt: Schema5.DateFromString,

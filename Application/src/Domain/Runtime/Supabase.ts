@@ -14,8 +14,8 @@
  */
 
 import { AppState, type AppStateStatus } from "react-native";
+import { createClient, processLock } from "@supabase/supabase-js";
 import { SecureSessionStore } from "./SecureSessionStore";
-import { createClient } from "@supabase/supabase-js";
 
 const SupabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const SupabaseKey = process.env.EXPO_PUBLIC_SUPABASE_KEY;
@@ -54,6 +54,7 @@ const Supabase = createClient(SupabaseUrl, SupabaseKey, {
         /* Redirects are handled explicitly by the native OAuth flow, not by
          * parsing the initial URL. */
         detectSessionInUrl: false,
+        lock: processLock,
         persistSession: true,
         storage: new SecureSessionStore(),
         storageKey: SupabaseStorageKey

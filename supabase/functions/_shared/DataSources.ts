@@ -182,8 +182,14 @@ export function ComputeSchemaHash(Properties: readonly Domain.Property.PropertyD
     return Hash.toString(16).padStart(8, "0");
 }
 
+type NormalizedIcon =
+{
+    readonly Icon: string;
+    readonly IconType: "Emoji" | "Image" | "Native";
+};
+
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function IconToString(Icon: Notion.NotionIcon | undefined): string | undefined
+function NormalizeIcon(Icon: Notion.NotionIcon | undefined): NormalizedIcon | undefined
 {
     if (!Icon)
     {
@@ -192,20 +198,36 @@ function IconToString(Icon: Notion.NotionIcon | undefined): string | undefined
 
     if (Icon.type === "emoji")
     {
-        return Icon.emoji;
+        return { Icon: Icon.emoji, IconType: "Emoji" };
+    }
+
+    if (Icon.type === "custom_emoji")
+    {
+        return { Icon: Icon.custom_emoji.url, IconType: "Image" };
     }
 
     if (Icon.type === "external")
     {
-        return Icon.external.url;
+        return { Icon: Icon.external.url, IconType: "Image" };
     }
 
     if (Icon.type === "file")
     {
-        return Icon.file.url;
+        return { Icon: Icon.file.url, IconType: "Image" };
     }
 
-    return undefined;
+    return { Icon: Icon.icon.name, IconType: "Native" };
+}
+
+/* eslint-disable-next-line jsdoc/require-jsdoc */
+function FileToUrl(File: Notion.NotionFile | undefined): string | undefined
+{
+    if (!File)
+    {
+        return undefined;
+    }
+
+    return File.type === "external" ? File.external.url : File.file.url;
 }
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
@@ -232,13 +254,13 @@ function ToDiscovered(
         return null;
     }
 
-    const Icon = IconToString(Object_.icon);
+    const Icon = NormalizeIcon(Object_.icon);
 
     return {
         ConnectionId: ConnectionId as Domain.Id.NotionConnectionId,
         DatabaseId: DatabaseId as Domain.Id.NotionDatabaseId,
         DataSourceId: Object_.id as Domain.Id.NotionDataSourceId,
-        ...(Icon ? { Icon } : {}),
+        ...(Icon ?? {}),
         Title: TitleToString(Object_.title)
     };
 }
@@ -246,13 +268,17 @@ function ToDiscovered(
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 function RowToCached(Row: Record<string, unknown>): Domain.DataSource.CachedDataSourceSchema
 {
+    const CoverUrl = Row.cover_url as string | null;
     const Icon = Row.icon as string | null;
+    const IconType = Row.icon_type as NormalizedIcon["IconType"] | null;
 
     return {
         ConnectionId: Row.connection_id as Domain.Id.NotionConnectionId,
+        ...(CoverUrl ? { CoverUrl } : {}),
         DatabaseId: Row.notion_database_id as Domain.Id.NotionDatabaseId,
         DataSourceId: Row.notion_data_source_id as Domain.Id.NotionDataSourceId,
         ...(Icon ? { Icon } : {}),
+        ...(IconType ? { IconType } : {}),
         NotionLastEditedTime: new Date(Row.notion_last_edited_time as string),
         Properties: Row.property_schema as readonly Domain.Property.PropertyDefinition[],
         RefreshedAt: new Date(Row.refreshed_at as string),
@@ -362,8 +388,37 @@ export function RefreshForUser(UserId: string, ConnectionId: string, DataSourceI
         const Properties = MapProperties(Object_.properties ?? {});
         const SchemaHash = ComputeSchemaHash(Properties);
         const DatabaseId = Object_.parent?.database_id ?? DataSourceId;
-        const Title = TitleToString(Object_.title);
-        const Icon = IconToString(Object_.icon);
+        const Database = yield* Effect.tryPromise({
+            catch: MapReadError,
+            try: () => CallNotionData(Tokens, ConnectionId, (AccessToken) => Notion.RetrieveDatabase(AccessToken, DatabaseId))
+        });
+        const ParentPageId = Database.parent?.type === "page_id" ? Database.parent.page_id : undefined;
+        let ParentPage: Notion.NotionPageObject | undefined;
+
+        if ((!Database.cover || !Database.icon) && ParentPageId)
+        {
+            ParentPage = yield* Effect.promise(async () =>
+            {
+                try
+                {
+                    return await CallNotionData(
+                        Tokens,
+                        ConnectionId,
+                        (AccessToken) => Notion.RetrievePage(AccessToken, ParentPageId)
+                    );
+                }
+                catch
+                {
+                    // Parent-page artwork is an optional fallback; its failure
+                    // must not make an otherwise usable data source disappear.
+                    return undefined;
+                }
+            });
+        }
+
+        const CoverUrl = FileToUrl(Database.cover ?? ParentPage?.cover);
+        const Title = TitleToString(Database.title ?? Object_.title);
+        const Icon = NormalizeIcon(Database.icon ?? Object_.icon ?? ParentPage?.icon);
         const NotionLastEditedTime = Object_.last_edited_time ? new Date(Object_.last_edited_time) : new Date();
         const RefreshedAt = new Date();
 
@@ -373,7 +428,9 @@ export function RefreshForUser(UserId: string, ConnectionId: string, DataSourceI
                 .upsert(
                     {
                         connection_id: ConnectionId,
-                        icon: Icon ?? null,
+                        cover_url: CoverUrl ?? null,
+                        icon: Icon?.Icon ?? null,
+                        icon_type: Icon?.IconType ?? null,
                         notion_data_source_id: DataSourceId,
                         notion_database_id: DatabaseId,
                         notion_last_edited_time: NotionLastEditedTime.toISOString(),
@@ -393,9 +450,10 @@ export function RefreshForUser(UserId: string, ConnectionId: string, DataSourceI
 
         return {
             ConnectionId: ConnectionId as Domain.Id.NotionConnectionId,
+            ...(CoverUrl ? { CoverUrl } : {}),
             DatabaseId: DatabaseId as Domain.Id.NotionDatabaseId,
             DataSourceId: DataSourceId as Domain.Id.NotionDataSourceId,
-            ...(Icon ? { Icon } : {}),
+            ...(Icon ?? {}),
             NotionLastEditedTime,
             Properties,
             RefreshedAt,

@@ -96,10 +96,31 @@ export function NotivexAuthProvider({ children }: React.PropsWithChildren)
          * `onAuthStateChange` still upgrades to a restored or fresh session. */
         const FallbackTimer = setTimeout(() => Settle(null), 15000);
 
-        Supabase.auth.getSession().then(({ data }: SessionArg) =>
+        Supabase.auth.getSession().then(async ({ data }: SessionArg) =>
         {
+            let NextSession = data.session;
+
+            /* A restored access token can be structurally valid while an API
+             * gateway rejects its issued-at timestamp (for example after a
+             * device clock correction). Refresh once on cold start so every
+             * downstream API request receives a freshly issued token. */
+            if (NextSession !== null)
+            {
+                try
+                {
+                    const Refreshed = await Supabase.auth.refreshSession(NextSession);
+
+                    NextSession = Refreshed.data.session ?? NextSession;
+                }
+                catch
+                {
+                    /* Keep the restored session. Normal auth expiry handling
+                     * can still refresh it or sign the user out later. */
+                }
+            }
+
             clearTimeout(FallbackTimer);
-            Settle(data.session);
+            Settle(NextSession);
         }).catch(() =>
         {
             clearTimeout(FallbackTimer);

@@ -14,11 +14,13 @@
  * @license   MIT
  */
 
+import { String } from "effect";
+
 const ParseHex = (Hex: string): readonly [ number, number, number ] | undefined =>
 {
     const Normalized = Hex.replace("#", "");
     const Full = Normalized.length === 3
-        ? Normalized.split("").map((Character) => Character + Character).join("")
+        ? Normalized.split("").map((Character: string) => Character + Character).join("")
         : Normalized;
 
     if (Full.length !== 6)
@@ -42,7 +44,7 @@ const ParseRgb = (Value: string): readonly [ number, number, number ] | undefine
         return undefined;
     }
 
-    const [ RPart, GPart, BPart ] = Match[ 1 ]!.split(",").map((Part) => Part.trim());
+    const [ RPart, GPart, BPart ] = Match[ 1 ]!.split(",").map(String.trim);
     const R = Number.parseFloat(RPart ?? "0");
     const G = Number.parseFloat(GPart ?? "0");
     const B = Number.parseFloat(BPart ?? "0");
@@ -50,7 +52,13 @@ const ParseRgb = (Value: string): readonly [ number, number, number ] | undefine
     return [ R, G, B ];
 };
 
-export const WithAlpha = (Value: string, Alpha: number): string =>
+export/**
+       * Apply alpha (on ${0..100}$) to a hex color string.
+       *
+       * @category Theme
+       * @since 1.0.0
+       */
+const WithAlpha = (Value: string, Alpha: number): string =>
 {
     const Trimmed = Value.trim();
     const Components = Trimmed.startsWith("#") ? ParseHex(Trimmed) : ParseRgb(Trimmed);

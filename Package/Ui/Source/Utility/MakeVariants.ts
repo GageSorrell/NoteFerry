@@ -19,6 +19,9 @@ import type { ImageStyle, TextStyle, ViewStyle } from "react-native";
 
 /**
  * A React Native style object that can be selected by a variant.
+ *
+ * @category Theme
+ * @since 1.0.0
  */
 export type VariantStyle =
     | ViewStyle
@@ -27,12 +30,18 @@ export type VariantStyle =
 
 /**
  * A named collection of style choices for one variant axis.
+ *
+ * @category Theme
+ * @since 1.0.0
  */
 export type VariantAxis<StyleType extends VariantStyle> = Record<string, StyleType>;
 
 /**
  * Configuration for a variant resolver, including its base style, axes,
  * and default choices.
+ *
+ * @category Theme
+ * @since 1.0.0
  */
 export interface MakeVariantsConfig<
     StyleType extends VariantStyle,
@@ -49,6 +58,9 @@ export interface MakeVariantsConfig<
 /**
  * The optional variant selections accepted by a resolver created with
  * `MakeVariants`.
+ *
+ * @category Theme
+ * @since 1.0.0
  */
 export type VariantProps<Axes extends Record<string, VariantAxis<VariantStyle>>> =
     {
@@ -59,6 +71,9 @@ export/**
        * `MakeVariants({Base, Variants: {Variant: {...}, Size: {...}}})` returns a
        * function `(Props) => ReadonlyArray<StyleType>` suitable for spreading directly into an
        * RN `style` prop array: `style={ButtonVariants({ Variant: "Primary" })}`.
+       *
+       * @category Theme
+       * @since 1.0.0
        */
 const MakeVariants = <
     StyleType extends VariantStyle,

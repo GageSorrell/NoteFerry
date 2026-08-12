@@ -1,8 +1,5 @@
 /**
- * Grant access — the user hands the Notivex content integration the databases
- * and pages it may write to (a separate Notion authorization from sign-in).
- * Marking onboarding active on mount keeps the flow on screen once a connection
- * is created; on success we move to the sync step.
+ * Controller for granting the Notivex content integration access to Notion.
  *
  * @module notivex/app/grant
  *
@@ -12,29 +9,53 @@
  * @license   MIT
  */
 
-import { Body, Button } from "@notivex/ui/Primitive";
-import { StyleSheet, View } from "react-native";
+import { OnboardingMockTiming, useDevelopmentOnboarding } from
+    "@/features/onboarding/onboarding-development";
 import { useEffect, useState } from "react";
 import { ConnectNotion } from "@/Domain/Connection";
-import { OnboardingScreen } from "@/features/onboarding/onboarding-screen";
-import { Token } from "@notivex/ui";
+import { GrantView } from "@/features/onboarding/onboarding-views";
 import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useOnboarding } from "@/features/onboarding/onboarding-context";
 
 const GrantScreen = () =>
 {
     const Router = UseLazyRouter();
+    const Development = useDevelopmentOnboarding();
     const { Begin } = useOnboarding();
-
     const [ Pending, SetPending ] = useState(false);
 
-    /* Beginning onboarding also starts connection/data-source discovery in the
-     * shared provider, so it keeps running across the transition to `/sync`. */
-    useEffect(Begin, [ Begin ]);
-
-    /* eslint-disable-next-line jsdoc/require-jsdoc */
-    async function HandleGrant()
+    useEffect(() =>
     {
+        if (!Development.Active)
+        {
+            Begin();
+        }
+    }, [ Begin, Development.Active ]);
+
+    const IsPending = Development.Active
+        ? Development.Scenario === "GrantPending"
+        : Pending;
+
+    const HandleGrant = async (): Promise<void> =>
+    {
+        if (IsPending)
+        {
+            return;
+        }
+
+        if (Development.Active)
+        {
+            Development.Transition("GrantPending");
+            Development.Schedule("Syncing", OnboardingMockTiming.PendingMs);
+
+            if (Development.Automatic)
+            {
+                Development.Schedule("SyncReady", OnboardingMockTiming.SyncMs);
+            }
+
+            return;
+        }
+
         try
         {
             SetPending(true);
@@ -50,44 +71,14 @@ const GrantScreen = () =>
         {
             SetPending(false);
         }
-    }
+    };
 
     return (
-        <OnboardingScreen
-            Hero={ require("../../assets/Onboarding/Grant.png") }
-            Subtitle="Pick the databases and pages Notivex can write to — nothing else is ever touched."
-            Title="Give Notivex a place to write">
-            <View style={ styles.spacer } />
-            <Body
-                Color={ Token.Semantic.Muted }
-                Style={ styles.note }>
-                You can change what&apos;s shared anytime, right from Notion.
-            </Body>
-            <Button
-                Appearance="Primary"
-                Disabled={ Pending }
-                OnPress={ () => void HandleGrant() }
-                Style={ styles.cta }>
-                Choose pages in Notion
-            </Button>
-        </OnboardingScreen>
+        <GrantView
+            OnGrant={ () => void HandleGrant() }
+            Pending={ IsPending }
+        />
     );
 };
-
-const styles = StyleSheet.create({
-    cta:
-    {
-        alignSelf: "stretch",
-        minHeight: 48
-    },
-    note:
-    {
-        textAlign: "center"
-    },
-    spacer:
-    {
-        flex: 1
-    }
-});
 
 export default GrantScreen;

@@ -15,11 +15,11 @@
 
 import * as React from "react";
 
-type MaybeRef<Type> =
-    | React.Ref<Type>
+type MaybeRef<A> =
+    | React.Ref<A>
     | undefined;
 
-const SetRef = <Type>(Ref: MaybeRef<Type>, Value: Type): (() => void) | undefined =>
+const SetRef = <A>(Ref: MaybeRef<A>, Value: A): (() => void) | undefined =>
 {
     if (typeof Ref === "function")
     {
@@ -30,11 +30,11 @@ const SetRef = <Type>(Ref: MaybeRef<Type>, Value: Type): (() => void) | undefine
     }
     else if (Ref !== null && Ref !== undefined)
     {
-        (Ref as React.RefObject<Type | null>).current = Value;
+        (Ref as React.RefObject<A | null>).current = Value;
 
         return () =>
         {
-            (Ref as React.RefObject<Type | null>).current = null;
+            (Ref as React.RefObject<A | null>).current = null;
         };
     }
 
@@ -45,11 +45,14 @@ export/**
        * Merges multiple refs into a single ref callback, calling every provided
        * ref (function or object) with the same node and cleaning each of them up
        * on unmount.
+       *
+       * @category Utility
+       * @since 1.0.0
        */
-const ComposeRefs = <Type>(...Refs: Array<MaybeRef<Type>>) =>
-    (Node: Type): (() => void) | undefined =>
+const ComposeRefs = <A>(...Refs: Array<MaybeRef<A>>) =>
+    (Node: A): (() => void) | undefined =>
     {
-        const Cleanups = Refs.map((Ref: MaybeRef<Type>) => SetRef(Ref, Node));
+        const Cleanups = Refs.map((Ref: MaybeRef<A>) => SetRef(Ref, Node));
         const HasCleanup = Cleanups.some((Cleanup?: () => void) => typeof Cleanup === "function");
 
         if (HasCleanup)
@@ -69,7 +72,10 @@ const ComposeRefs = <Type>(...Refs: Array<MaybeRef<Type>>) =>
 export/**
        * `useComposedRefs(...refs)` — the hook form of `ComposeRefs`, memoized
        * across renders.
+       *
+       * @category Utility
+       * @since 1.0.0
        */
-const useComposedRefs = <Type>(...Refs: Array<MaybeRef<Type>>): ((Node: Type) => void) =>
+const useComposedRefs = <A>(...Refs: Array<MaybeRef<A>>): ((Node: A) => void) =>
     // eslint-disable-next-line react-hooks/exhaustive-deps
     React.useCallback(ComposeRefs(...Refs), Refs);

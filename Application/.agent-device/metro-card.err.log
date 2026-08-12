@@ -1,0 +1,2 @@
+npm notice run notivex-monorepo@1.0.0 npx
+npm notice run expo start --dev-client --port 8123 -c

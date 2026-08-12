@@ -1,7 +1,6 @@
 /**
- *
- *
  * @module notivex/.rnstorybook/preview
+ * @internal
  *
  * @file      preview.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

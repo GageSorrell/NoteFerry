@@ -15,8 +15,8 @@
  */
 
 import type * as Domain from "@notivex/domain";
+import { Effect, pipe } from "effect";
 import { FetchHttpClient, HttpClient, HttpClientRequest } from "effect/unstable/http";
-import { Effect } from "effect";
 import { HttpApiClient } from "effect/unstable/httpapi";
 import { NotivexApi } from "@notivex/api";
 import { Supabase } from "./Supabase";
@@ -53,14 +53,15 @@ const ListConnections = async (): Promise<ReadonlyArray<Domain.NotionConnection.
 {
     const Token = await GetAccessToken();
 
-    return Effect.runPromise(
+    return Effect.runPromise(pipe(
         Effect.gen(function* ()
         {
             const Client = yield* MakeClient(Token);
 
             return yield* Client.Connections.List();
-        }).pipe(Effect.provide(FetchHttpClient.layer))
-    );
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
 };
 
 export/**
@@ -73,15 +74,16 @@ const StartNotionAuthorization = async (): Promise<string> =>
 {
     const Token = await GetAccessToken();
 
-    return Effect.runPromise(
+    return Effect.runPromise(pipe(
         Effect.gen(function* ()
         {
             const Client = yield* MakeClient(Token);
             const Result = yield* Client.Connections.StartAuthorization();
 
             return Result.AuthorizationUrl;
-        }).pipe(Effect.provide(FetchHttpClient.layer))
-    );
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
 };
 
 export/**
@@ -94,14 +96,15 @@ const DisconnectNotion = async (ConnectionId: Domain.Id.NotionConnectionId): Pro
 {
     const Token = await GetAccessToken();
 
-    await Effect.runPromise(
+    await Effect.runPromise(pipe(
         Effect.gen(function* ()
         {
             const Client = yield* MakeClient(Token);
 
             yield* Client.Connections.Disconnect({ params: { ConnectionId } });
-        }).pipe(Effect.provide(FetchHttpClient.layer))
-    );
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
 };
 
 export/**
@@ -117,14 +120,15 @@ const SearchDataSources = async (
 {
     const Token = await GetAccessToken();
 
-    return Effect.runPromise(
+    return Effect.runPromise(pipe(
         Effect.gen(function* ()
         {
             const Client = yield* MakeClient(Token);
 
             return yield* Client.DataSources.Search({ params: { ConnectionId } });
-        }).pipe(Effect.provide(FetchHttpClient.layer))
-    );
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
 };
 
 export/**
@@ -137,14 +141,15 @@ const ListDataSources = async (): Promise<ReadonlyArray<Domain.DataSource.Cached
 {
     const Token = await GetAccessToken();
 
-    return Effect.runPromise(
+    return Effect.runPromise(pipe(
         Effect.gen(function* ()
         {
             const Client = yield* MakeClient(Token);
 
             return yield* Client.DataSources.List();
-        }).pipe(Effect.provide(FetchHttpClient.layer))
-    );
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
 };
 
 export/**
@@ -161,14 +166,15 @@ const RefreshDataSource = async (
 {
     const Token = await GetAccessToken();
 
-    return Effect.runPromise(
+    return Effect.runPromise(pipe(
         Effect.gen(function* ()
         {
             const Client = yield* MakeClient(Token);
 
             return yield* Client.DataSources.Refresh({ payload: { ConnectionId, DataSourceId } });
-        }).pipe(Effect.provide(FetchHttpClient.layer))
-    );
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
 };
 
 export/**
@@ -183,14 +189,15 @@ const GetDataSource = async (
 {
     const Token = await GetAccessToken();
 
-    return Effect.runPromise(
+    return Effect.runPromise(pipe(
         Effect.gen(function* ()
         {
             const Client = yield* MakeClient(Token);
 
             return yield* Client.DataSources.Get({ params: { DataSourceId } });
-        }).pipe(Effect.provide(FetchHttpClient.layer))
-    );
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
 };
 
 export/**
@@ -203,14 +210,15 @@ const ListDestinations = async (): Promise<ReadonlyArray<Domain.Destination.Dest
 {
     const Token = await GetAccessToken();
 
-    return Effect.runPromise(
+    return Effect.runPromise(pipe(
         Effect.gen(function* ()
         {
             const Client = yield* MakeClient(Token);
 
             return yield* Client.Destinations.List();
-        }).pipe(Effect.provide(FetchHttpClient.layer))
-    );
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
 };
 
 /** The fields the client supplies to create a destination. */
@@ -237,14 +245,15 @@ const CreateDestination = async (
 {
     const Token = await GetAccessToken();
 
-    return Effect.runPromise(
+    return Effect.runPromise(pipe(
         Effect.gen(function* ()
         {
             const Client = yield* MakeClient(Token);
 
             return yield* Client.Destinations.Create({ payload: Input });
-        }).pipe(Effect.provide(FetchHttpClient.layer))
-    );
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
 };
 
 export/**
@@ -257,12 +266,13 @@ const DeleteDestination = async (DestinationId: Domain.Id.DestinationId): Promis
 {
     const Token = await GetAccessToken();
 
-    await Effect.runPromise(
+    await Effect.runPromise(pipe(
         Effect.gen(function* ()
         {
             const Client = yield* MakeClient(Token);
 
             yield* Client.Destinations.Delete({ params: { DestinationId } });
-        }).pipe(Effect.provide(FetchHttpClient.layer))
-    );
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
 };

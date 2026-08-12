@@ -42,9 +42,11 @@ export/**
        */
 const DiscoveredDataSource = Schema.Struct({
     ConnectionId: Id.NotionConnectionId,
-    DatabaseId: Id.NotionDatabaseId,
+    CoverUrl: Schema.optional(Schema.String),
     DataSourceId: Id.NotionDataSourceId,
+    DatabaseId: Id.NotionDatabaseId,
     Icon: Schema.optional(Schema.String),
+    IconType: Schema.optional(Schema.Literals([ "Emoji", "Image", "Native" ])),
     Title: Schema.String
 });
 
@@ -59,9 +61,11 @@ export/**
        */
 const CachedDataSourceSchema = Schema.Struct({
     ConnectionId: Id.NotionConnectionId,
+    CoverUrl: Schema.optional(Schema.String),
     DataSourceId: Id.NotionDataSourceId,
     DatabaseId: Id.NotionDatabaseId,
     Icon: Schema.optional(Schema.String),
+    IconType: Schema.optional(Schema.Literals([ "Emoji", "Image", "Native" ])),
     NotionLastEditedTime: Schema.DateFromString,
     Properties: Schema.Array(PropertyDefinition),
     RefreshedAt: Schema.DateFromString,

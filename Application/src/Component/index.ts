@@ -9,5 +9,6 @@
  * @license   MIT
  */
 
+export * from "./DatabaseCard";
 export * from "./HeroImage";
 export * from "./Screen";

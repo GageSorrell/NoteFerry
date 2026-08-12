@@ -10,59 +10,19 @@
 import type * as Domain from "@notivex/domain";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Body, Heading1 } from "@notivex/ui/Primitive";
-import { ConnectNotion, useConnections } from "@/Domain/Connection";
-import { DisconnectNotion } from "@/Domain/Runtime/NotivexApi";
+import { DatabaseCard } from "@/Component/DatabaseCard";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { UseAuth } from "@/Domain/Auth";
 import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
-import { useState } from "react";
+import { useConnections } from "@/Domain/Connection";
 
 const HomeScreen = () =>
 {
+    "use no memo";
+
     const { SignOut } = UseAuth();
-    const { Connections, IsLoading, Refetch } = useConnections();
-    const [ Busy, SetBusy ] = useState(false);
+    const { Connections, DataSources, IsLoading } = useConnections();
     const Router = UseLazyRouter();
-
-    /* eslint-disable-next-line jsdoc/require-jsdoc */
-    async function HandleConnect()
-    {
-        try
-        {
-            SetBusy(true);
-            await ConnectNotion();
-            await Refetch();
-        }
-        catch (Error)
-        {
-            /* eslint-disable-next-line no-console */
-            console.error("Connect Notion failed", Error);
-        }
-        finally
-        {
-            SetBusy(false);
-        }
-    }
-
-    /* eslint-disable-next-line jsdoc/require-jsdoc */
-    async function HandleDisconnect(ConnectionId: Domain.Id.NotionConnectionId)
-    {
-        try
-        {
-            SetBusy(true);
-            await DisconnectNotion(ConnectionId);
-            await Refetch();
-        }
-        catch (Error)
-        {
-            /* eslint-disable-next-line no-console */
-            console.error("Disconnect failed", Error);
-        }
-        finally
-        {
-            SetBusy(false);
-        }
-    }
 
     return (
         <View style={ styles.container }>
@@ -72,62 +32,79 @@ const HomeScreen = () =>
                     Notion connections
                 </Body>
 
-                <Pressable
-                    disabled={ Busy }
-                    onPress={ HandleConnect }
-                    style={ styles.primaryButton }>
-                    <Body>
-                        { Busy ? "Working…" : "Connect a Notion workspace" }
-                    </Body>
-                </Pressable>
-
                 <ScrollView
                     contentContainerStyle={ styles.list }
                     style={ styles.listContainer }>
                     {IsLoading
                         ? <ActivityIndicator />
-                        : Connections.length === 0
-                            ? (
-                                <Body>
-                                    No connections yet.
+                        : (
+                            <>
+                                <Body Style={ styles.sectionTitle }>
+                                    Databases
                                 </Body>
-                            )
-                            : Connections.map((Connection: Domain.NotionConnection.NotionConnection) => (
-                                <View
-                                    key={ Connection.Id }
-                                    style={ styles.row }>
-                                    <Body>
-                                        { Connection.WorkspaceName }
-                                    </Body>
-                                    <View style={ styles.rowActions }>
-                                        <Pressable
-                                            disabled={ Busy }
-                                            onPress={ Router.push({
+                                {DataSources.length === 0
+                                    ? (
+                                        <Body>
+                                            No databases found yet.
+                                        </Body>
+                                    )
+                                    : DataSources.map((Source: Domain.DataSource.CachedDataSourceSchema) => (
+                                        <DatabaseCard
+                                            OnPress={ Router.push({
                                                 params:
                                                 {
-                                                    connectionId: Connection.Id,
-                                                    workspaceName: Connection.WorkspaceName
+                                                    connectionId: Source.ConnectionId,
+                                                    dataSourceId: Source.DataSourceId,
+                                                    title: Source.Title
                                                 },
-                                                pathname: "/data-sources"
-                                            }) }>
+                                                pathname: "/destination-config"
+                                            }) }
+                                            Source={ Source }
+                                            key={ `${ Source.ConnectionId }:${ Source.DataSourceId }` }
+                                        />
+                                    ))}
+
+                                <Body Style={ styles.sectionTitle }>
+                                    Notion workspaces
+                                </Body>
+                                {Connections.length === 0
+                                    ? (
+                                        <Body>
+                                            No connections yet.
+                                        </Body>
+                                    )
+                                    : Connections.map((
+                                        Connection: Domain.NotionConnection.NotionConnection
+                                    ) => (
+                                        <View
+                                            key={ Connection.Id }
+                                            style={ styles.workspaceRow }>
                                             <Body>
-                                                Data sources
+                                                { Connection.WorkspaceName }
                                             </Body>
-                                        </Pressable>
-                                        <Pressable
-                                            disabled={ Busy }
-                                            onPress={ () => HandleDisconnect(Connection.Id) }>
-                                            <Body>
-                                                Disconnect
-                                            </Body>
-                                        </Pressable>
-                                    </View>
-                                </View>
-                            ))}
+                                            <View style={ styles.rowActions }>
+                                                <Pressable
+                                                    onPress={ Router.push({
+                                                        params:
+                                                        {
+                                                            connectionId: Connection.Id,
+                                                            workspaceName: Connection.WorkspaceName
+                                                        },
+                                                        pathname: "/data-sources"
+                                                    }) }>
+                                                    <Body>
+                                                        Data sources
+                                                    </Body>
+                                                </Pressable>
+                                            </View>
+                                        </View>
+                                    ))}
+                            </>
+                        )}
                 </ScrollView>
 
                 <Pressable
-                    onPress={ () => void SignOut() }
+                    onPress={ SignOut }
                     style={ styles.signOut }>
                     <Body>
                         Sign out
@@ -145,32 +122,13 @@ const styles = StyleSheet.create({
     },
     list:
     {
-        gap: 32,
+        gap: 16,
         paddingVertical: 48
     },
     listContainer:
     {
         alignSelf: "stretch",
         flex: 1
-    },
-    primaryButton:
-    {
-        alignItems: "center",
-        alignSelf: "stretch",
-        borderColor: "#8883",
-        borderRadius: 32,
-        borderWidth: StyleSheet.hairlineWidth,
-        justifyContent: "center",
-        minHeight: 48,
-        paddingHorizontal: 64
-    },
-    row:
-    {
-        alignItems: "center",
-        borderRadius: 32,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        padding: 32
     },
     rowActions:
     {
@@ -182,8 +140,12 @@ const styles = StyleSheet.create({
     {
         flex: 1,
         gap: 3,
-        paddingHorizontal: 64,
+        paddingHorizontal: 24,
         paddingVertical: 48
+    },
+    sectionTitle:
+    {
+        marginTop: 16
     },
     signOut:
     {
@@ -193,6 +155,14 @@ const styles = StyleSheet.create({
     subtitle:
     {
         marginTop: 8
+    },
+    workspaceRow:
+    {
+        alignItems: "center",
+        borderRadius: 16,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        padding: 16
     }
 });
 

@@ -13,12 +13,17 @@
  */
 
 import type * as Domain from "@notivex/domain";
-import { ListConnections, SearchDataSources } from "@/Domain/Runtime/NotivexApi";
+import {
+    ListConnections,
+    RefreshDataSource,
+    SearchDataSources
+} from "@/Domain/Runtime/NotivexApi";
 import { useCallback, useEffect, useState } from "react";
+import type { Thunk } from "@sorrell/utility/Function";
 
 /* How often to re-check, and how long to keep waiting before giving up. */
-const PollIntervalMs = 3000 as const;
-const CeilingMs = 30000 as const;
+const PollIntervalMs = 3_000 as const;
+const CeilingMs = 30_000 as const;
 
 /**
  * The state of the post-grant wait for Notion to share the user's pages.
@@ -37,16 +42,16 @@ export interface UseNotionSync
 {
     readonly Status: NotionSyncStatus;
     readonly Count: number;
-    readonly Retry: () => void;
+    readonly Retry: Thunk;
 }
 
 /**
  * Waits for the newly-authorized connection, then polls Notion discovery until
- * at least one data source appears (`Ready`), the ~30s discovery window elapses
- * with none found (`Empty`), or the window elapses after a request error
- * (`Error`). Connection resolution has no deadline because this hook starts
- * while the user is still reading and completing the grant step. `Retry` starts
- * the wait over.
+ * at least one data source appears and its schema is cached (`Ready`), the ~30s
+ * discovery window elapses with none found (`Empty`), or the window elapses
+ * after a request or caching error (`Error`). Connection resolution has no
+ * deadline because this hook starts while the user is still reading and
+ * completing the grant step. `Retry` starts the wait over.
  *
  * @category Onboarding
  * @since 1.0.0
@@ -87,13 +92,49 @@ export function useNotionSync(Enabled: boolean): UseNotionSync
 
                 if (Result.length > 0)
                 {
-                    SetCount(Result.length);
-                    SetStatus("Ready");
+                    const Cached = await Promise.all(Result.map(async (
+                        Source: Domain.DataSource.DiscoveredDataSource
+                    ) =>
+                    {
+                        try
+                        {
+                            await RefreshDataSource(ConnectionId, Source.DataSourceId);
 
-                    return;
+                            return true;
+                        }
+                        catch (Error)
+                        {
+                            /* One inaccessible database should not hide other
+                             * databases that were shared successfully. */
+                            /* eslint-disable-next-line no-console */
+                            console.error("Failed to cache an onboarding data source", Error);
+
+                            return false;
+                        }
+                    }));
+
+                    if (Cancelled)
+                    {
+                        return;
+                    }
+
+                    const CachedCount = Cached.filter(Boolean).length;
+
+                    if (CachedCount > 0)
+                    {
+                        SetCount(CachedCount);
+                        SetStatus("Ready");
+
+                        return;
+                    }
+
+                    SawError = true;
+
                 }
-
-                SawError = false;
+                else
+                {
+                    SawError = false;
+                }
             }
             catch (Error)
             {

@@ -7,6 +7,11 @@
  * @license   MIT
  */
 
+import {
+    DevelopmentOnboardingProvider,
+    OnboardingMockRegistry,
+    useDevelopmentOnboarding
+} from "@/features/onboarding/onboarding-development";
 import { NotivexAuthProvider, UseAuth } from "@/Domain/Auth/NotivexAuthProvider";
 import { OnboardingProvider, useOnboarding } from "@/features/onboarding/onboarding-context";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -35,10 +40,12 @@ function RootNavigator()
 
     const { IsLoading: IsLoadingSession, Session } = UseAuth();
     const { HasConnection, IsActive, IsLoadingConnection } = useOnboarding();
+    const Development = useDevelopmentOnboarding();
 
     const IsAuthenticated = Session !== null;
 
-    if (IsLoadingSession || (IsAuthenticated && IsLoadingConnection))
+    if (!Development.Active
+        && (IsLoadingSession || (IsAuthenticated && IsLoadingConnection)))
     {
         /* Session and/or connection state is still resolving; render nothing to
          * avoid flashing the wrong stage. */
@@ -48,9 +55,19 @@ function RootNavigator()
     /* Three mutually exclusive stages: signed out → welcome + sign-in; signed in
      * without a usable connection (or mid-flow) → grant/sync/done; signed in with
      * a connection → the app. */
-    const IsSignedOut = !IsAuthenticated;
-    const IsInOnboarding = IsAuthenticated && (!HasConnection || IsActive);
-    const IsInApp = IsAuthenticated && HasConnection && !IsActive;
+    const MockStage = Development.Scenario === null
+        ? null
+        : OnboardingMockRegistry[Development.Scenario].Stage;
+    const IsSignedOut = Development.Active
+        ? MockStage === "SignedOut"
+        : !IsAuthenticated;
+    const IsInOnboarding = Development.Active
+        ? MockStage === "Onboarding"
+        : IsAuthenticated && (!HasConnection || IsActive);
+    const IsInApp = !Development.Active
+        && IsAuthenticated
+        && HasConnection
+        && !IsActive;
 
     return (
         <Stack screenOptions={ { headerShown: false } }>
@@ -76,9 +93,24 @@ function RootNavigator()
                 <Stack.Screen name="destination-config" />
             </Stack.Protected>
             <Stack.Protected guard={ __DEV__ }>
+                <Stack.Screen name="onboarding-scenarios" />
                 <Stack.Screen name="storybook" />
             </Stack.Protected>
         </Stack>
+    );
+}
+
+/** Mounts live providers while allowing the development mock to disable I/O. */
+function RuntimeProviders()
+{
+    const Development = useDevelopmentOnboarding();
+
+    return (
+        <NotivexAuthProvider>
+            <OnboardingProvider Enabled={ !Development.Active }>
+                <RootNavigator />
+            </OnboardingProvider>
+        </NotivexAuthProvider>
     );
 }
 
@@ -98,11 +130,9 @@ export default function RootLayout()
             <StatusBar />
             <GestureHandlerRootView style={ { flex: 1 } }>
                 <BottomSheetModalProvider>
-                    <NotivexAuthProvider>
-                        <OnboardingProvider>
-                            <RootNavigator />
-                        </OnboardingProvider>
-                    </NotivexAuthProvider>
+                    <DevelopmentOnboardingProvider>
+                        <RuntimeProviders />
+                    </DevelopmentOnboardingProvider>
                 </BottomSheetModalProvider>
             </GestureHandlerRootView>
         </NotivexThemeProvider>

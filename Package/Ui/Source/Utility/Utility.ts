@@ -10,4 +10,12 @@
  * @license   MIT
  */
 
-export const MakeGetSymbolKey = <const TypeIdType extends string = string>(InTypeId: TypeIdType) => (Label: string) => `~${ InTypeId }!${ Label }`;
+export/**
+       * Construct symbol keys for a given module.
+       * @internal
+       *
+       * @category Utility
+       * @since 1.0.0
+       */
+const MakeGetSymbolKey = <const TypeIdType extends string = string>(InTypeId: TypeIdType) =>
+    (Label: string) => `~${ InTypeId }!${ Label }`;
