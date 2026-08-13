@@ -15,14 +15,16 @@ import { Body, Button, Description, Heading1 } from "@notivex/ui/Primitive";
 import { useEffect, useState } from "react";
 import { ListDataSources } from "@/Domain/Runtime/NotivexApi";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useDevelopmentOnboarding } from
     "@/features/onboarding/onboarding-development";
+import { useTheme } from "@notivex/ui";
 
 const DatabaseSettingsScreen = (): React.JSX.Element =>
 {
     const Development = useDevelopmentOnboarding();
-    const Router = UseLazyRouter();
+    const Router = useLazyRouter();
+    const Theme = useTheme();
     const [ DataSources, SetDataSources ] =
         useState<ReadonlyArray<Domain.DataSource.CachedDataSourceSchema>>([ ]);
     const [ IsLoading, SetIsLoading ] = useState(!Development.Active);
@@ -90,7 +92,7 @@ const DatabaseSettingsScreen = (): React.JSX.Element =>
                     contentContainerStyle={ styles.list }
                     style={ styles.scroll }>
                     { IsLoading
-                        ? <ActivityIndicator />
+                        ? <ActivityIndicator color={ Theme.Semantic.Cursor } />
                         : DataSources.length === 0
                             ? (
                                 <Description>

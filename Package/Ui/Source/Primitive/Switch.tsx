@@ -13,9 +13,15 @@
 
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
-import { Animated, Pressable, type StyleProp, type ViewStyle } from "react-native";
+import {
+    Animated,
+    type StyleProp,
+    StyleSheet,
+    type ViewStyle
+} from "react-native";
+import { Pressable } from "./Pressable.js";
 import type { ReadonlyRecord } from "effect/Record";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /**
@@ -40,17 +46,17 @@ const DimensionsBySize: ReadonlyRecord<SwitchSize, SwitchDimensions> =
     Object.freeze({
         Medium:
         {
-            Height: 24,
-            Thumb: 20,
+            Height: 34,
+            Thumb: 30,
             Travel: 20,
-            Width: 44
+            Width: 54
         },
         Small:
         {
-            Height: 16,
-            Thumb: 12,
-            Travel: 12,
-            Width: 28
+            Height: 22,
+            Thumb: 18,
+            Travel: 14,
+            Width: 36
         }
     } as const);
 
@@ -83,7 +89,7 @@ const Switch = ({
     const {
         [Semantic.Blue]: BlueColor,
         [Semantic.Default]: DefaultColor
-    } = UseToken(
+    } = useToken(
         Semantic.Blue,
         Semantic.Default
     );
@@ -101,11 +107,13 @@ const Switch = ({
 
     return (
         <Pressable
-            accessibilityLabel={ AccessibilityLabel }
-            accessibilityRole="switch"
-            accessibilityState={ { checked: Value, disabled: Disabled } }
-            disabled={ Disabled }
-            onPress={ () => OnValueChange?.(!Value) }
+            Accessibility={ {
+                Label: AccessibilityLabel,
+                Role: "switch",
+                State: { checked: Value, disabled: Disabled }
+            } }
+            Disabled={ Disabled }
+            OnPress={ () => OnValueChange?.(!Value) }
             style={ [
                 {
                     backgroundColor: Value ? BlueColor : WithAlpha(DefaultColor, 0.15),
@@ -120,19 +128,35 @@ const Switch = ({
             ] }
         >
             <Animated.View
-                style={ {
-                    backgroundColor: "#FFFFFF",
-                    borderRadius: Dimensions.Thumb / 2,
-                    height: Dimensions.Thumb,
-                    transform: [ {
-                        translateX: Progress.interpolate({
-                            inputRange: [ 0, 1 ],
-                            outputRange: [ 0, Dimensions.Travel ]
-                        })
-                    } ],
-                    width: Dimensions.Thumb
-                } }
+                style={ [
+                    Styles.Thumb,
+                    {
+                        backgroundColor: "#FFFFFF",
+                        borderRadius: Dimensions.Thumb / 2,
+                        height: Dimensions.Thumb,
+                        transform: [ {
+                            translateX: Progress.interpolate({
+                                inputRange: [ 0, 1 ],
+                                outputRange: [ 0, Dimensions.Travel ]
+                            })
+                        } ],
+                        width: Dimensions.Thumb
+                    }
+                ] }
             />
         </Pressable>
     );
 };
+
+const Styles = StyleSheet.create({
+    Thumb:
+    {
+        borderColor: "rgba(15, 15, 15, 0.10)",
+        borderWidth: StyleSheet.hairlineWidth,
+        elevation: 2,
+        shadowColor: "#000000",
+        shadowOffset: { height: 1, width: 0 },
+        shadowOpacity: 0.18,
+        shadowRadius: 1.5
+    }
+});

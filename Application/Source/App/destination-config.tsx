@@ -29,9 +29,10 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { GetDataSource } from "@/Domain/Runtime/NotivexApi";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useDestinations } from "@/features/destinations/use-destinations";
 import { useLocalSearchParams } from "expo-router";
+import { useTheme } from "@notivex/ui";
 
 /** Per-field UI toggles held while the form is open. */
 interface FieldSetting
@@ -42,7 +43,8 @@ interface FieldSetting
 
 const DestinationConfigScreen = () =>
 {
-    const Router = UseLazyRouter();
+    const Router = useLazyRouter();
+    const Theme = useTheme();
     const Params = useLocalSearchParams<{
         connectionId: string;
         dataSourceId: string;
@@ -174,7 +176,7 @@ const DestinationConfigScreen = () =>
                 </Description>
 
                 { DataSource === null
-                    ? <ActivityIndicator />
+                    ? <ActivityIndicator color={ Theme.Semantic.Cursor } />
                     : (
                         <ScrollView
                             contentContainerStyle={ styles.form }

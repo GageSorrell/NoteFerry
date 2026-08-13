@@ -17,13 +17,13 @@
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import {
-    Pressable,
     type StyleProp,
     View,
     type ViewStyle
 } from "react-native";
 import { LabelText } from "./Text.js";
-import { UseToken } from "../ThemeProvider.js";
+import { Pressable } from "./Pressable.js";
+import { useToken } from "../ThemeProvider.js";
 
 interface TabsContextValue
 {
@@ -105,7 +105,7 @@ export/**
        */
 const TabsList = ({ Style, children }: TabsListProps): React.JSX.Element =>
 {
-    const { [Semantic.Border]: BorderColor } = UseToken(Semantic.Border);
+    const { [Semantic.Border]: BorderColor } = useToken(Semantic.Border);
 
     return (
         <View
@@ -146,17 +146,20 @@ const TabsTrigger = ({ Value, Disabled = false, Style, children }: TabsTriggerPr
     const {
         [Semantic.Primary]: PrimaryColor,
         [Semantic.Muted]: MutedColor
-    } = UseToken(
+    } = useToken(
         Semantic.Primary,
         Semantic.Muted
     );
 
     return (
         <Pressable
-            accessibilityRole="tab"
-            accessibilityState={ { disabled: Disabled, selected: IsActive } }
-            disabled={ Disabled }
-            onPress={ () => OnValueChange?.(Value) }
+            Accessibility={ {
+                Label: undefined,
+                Role: "tab",
+                State: { disabled: Disabled, selected: IsActive }
+            } }
+            Disabled={ Disabled }
+            OnPress={ () => OnValueChange?.(Value) }
             style={ [
                 {
                     borderBottomColor: IsActive ? PrimaryColor : "transparent",

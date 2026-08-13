@@ -21,7 +21,6 @@ import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import {
     type NativeSyntheticEvent,
-    Pressable,
     type StyleProp,
     StyleSheet,
     TextInput,
@@ -30,8 +29,9 @@ import {
     type ViewStyle
 } from "react-native";
 import { Description } from "./Text.js";
+import { Pressable } from "./Pressable.js";
 import { String } from "effect";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 import { X } from "lucide-react-native";
 
@@ -66,14 +66,16 @@ const TagsInput = ({
         [Semantic.Primary]: PrimaryColor,
         [Semantic.Muted]: MutedColor,
         [Semantic.Default]: DefaultColor,
+        [Semantic.Cursor]: CursorColor,
         [Radii.Medium]: MediumRadius,
         [Radii.Small]: SmallRadius
-    } = UseToken(
+    } = useToken(
         Semantic.Ring,
         Semantic.BackgroundInput,
         Semantic.Primary,
         Semantic.Muted,
         Semantic.Default,
+        Semantic.Cursor,
         Radii.Medium,
         Radii.Small
     );
@@ -144,10 +146,12 @@ const TagsInput = ({
                     </Description>
                     { !Disabled && (
                         <Pressable
-                            accessibilityLabel={ `Remove ${ Tag }` }
-                            accessibilityRole="button"
+                            Accessibility={ {
+                                Label: `Remove ${ Tag }`,
+                                Role: "button"
+                            } }
+                            OnPress={ () => RemoveTag(Tag) }
                             hitSlop={ 8 }
-                            onPress={ () => RemoveTag(Tag) }
                             style={ Styles.TagRemove }>
                             <X
                                 color={ MutedColor }
@@ -158,12 +162,14 @@ const TagsInput = ({
                 </View>
             )) }
             <TextInput
+                cursorColor={ CursorColor }
                 editable={ !Disabled }
                 onChangeText={ HandleChangeText }
                 onKeyPress={ HandleKeyPress }
                 onSubmitEditing={ () => AddTags([ InputText ]) }
                 placeholder={ Placeholder }
                 placeholderTextColor={ WithAlpha(PrimaryColor, 0.45) }
+                selectionColor={ CursorColor }
                 style={ [ Styles.Input, { color: PrimaryColor } ] }
                 value={ InputText }
             />

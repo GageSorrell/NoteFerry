@@ -28,7 +28,7 @@ import type { Thunk } from "@sorrell/utility/Function";
  */
 export type NavigationOptions = NonNullable<Parameters<ImperativeRouter["dismissTo"]>[1]>;
 
-/** {@inheritDoc UseLazyRouter} */
+/** {@inheritDoc useLazyRouter} */
 export interface LazyImperativeRouter
 {
     readonly back: Thunk;
@@ -51,7 +51,7 @@ export/**
        * @category Router
        * @since 1.0.0
        */
-const UseLazyRouter = (): LazyImperativeRouter =>
+const useLazyRouter = (): LazyImperativeRouter =>
 {
     const Router = useRouter();
 

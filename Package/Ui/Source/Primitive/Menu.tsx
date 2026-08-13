@@ -20,13 +20,13 @@ import { Body, BodyCompact, Description, LabelText, MenuItemText } from "./Text.
 import { Check, ChevronRight } from "lucide-react-native";
 import {
     type GestureResponderEvent,
-    Pressable,
     type StyleProp,
     View,
     type ViewStyle
 } from "react-native";
 import { Predicate } from "effect";
-import { UseToken } from "../ThemeProvider.js";
+import { Pressable } from "./Pressable.js";
+import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /** {@inheritDoc MenuGroup} */
@@ -122,7 +122,7 @@ const MenuItem = React.forwardRef<React.ComponentRef<typeof Pressable>, MenuItem
         [Semantic.Red]: RedColor,
         [Semantic.Default]: DefaultColor,
         [Radii.Medium]: MediumRadius
-    } = UseToken(
+    } = useToken(
         Semantic.Primary,
         Semantic.Secondary,
         Semantic.Red,
@@ -138,12 +138,14 @@ const MenuItem = React.forwardRef<React.ComponentRef<typeof Pressable>, MenuItem
 
     return (
         <Pressable
-            accessibilityLabel={ AccessibilityLabel
-                ?? (typeof Label === "string" ? Label : undefined) }
-            accessibilityRole="menuitem"
-            accessibilityState={ { disabled: Disabled } }
-            disabled={ Disabled }
-            onPress={ OnPress }
+            Accessibility={ {
+                Label: AccessibilityLabel
+                    ?? (typeof Label === "string" ? Label : undefined),
+                Role: "menuitem",
+                State: { disabled: Disabled }
+            } }
+            Disabled={ Disabled }
+            OnPress={ OnPress }
             ref={ ForwardedRef }
             style={ ({ pressed }: { readonly pressed: boolean; }) => [
                 {
@@ -224,7 +226,7 @@ export/**
        */
 const MenuItemCheck = (): React.JSX.Element =>
 {
-    const { [Semantic.Primary]: PrimaryColor } = UseToken(Semantic.Primary);
+    const { [Semantic.Primary]: PrimaryColor } = useToken(Semantic.Primary);
 
     return (
         <MenuItemAction Style={ { width: 14 } }>
@@ -237,7 +239,11 @@ const MenuItemCheck = (): React.JSX.Element =>
 };
 
 /** {@inheritDoc MenuItemSelect} */
-export interface MenuItemSelectProps extends React.PropsWithChildren { }
+export interface MenuItemSelectProps extends React.PropsWithChildren
+{
+    /** Color applied to both the current value and its chevron. */
+    readonly Color?: Semantic.Semantic;
+}
 
 export/**
        * The trailing "current value + chevron" cluster on a `MenuItem` row
@@ -249,9 +255,9 @@ export/**
        * @category Component
        * @since 1.0.0
        */
-const MenuItemSelect = ({ children }: MenuItemSelectProps): React.JSX.Element =>
+const MenuItemSelect = ({ Color = Semantic.Muted, children }: MenuItemSelectProps): React.JSX.Element =>
 {
-    const { [Semantic.Muted]: MutedColor } = UseToken(Semantic.Muted);
+    const { [Color]: ResolvedColor } = useToken(Color);
 
     return (
         <MenuItemAction Style={ {
@@ -260,13 +266,13 @@ const MenuItemSelect = ({ children }: MenuItemSelectProps): React.JSX.Element =>
         } }>
             { typeof children === "string" || typeof children === "number"
                 ? <BodyCompact
-                    Color={ Semantic.Muted }
+                    Color={ Color }
                     NumberOfLines={ 1 }>
                     { children }
                 </BodyCompact>
                 : children }
             <ChevronRight
-                color={ MutedColor }
+                color={ ResolvedColor }
                 size={ 12 }
                 style={ { marginLeft: 6 } }
             />

@@ -12,7 +12,7 @@ import {
     OnboardingMockRegistry,
     useDevelopmentOnboarding
 } from "@/features/onboarding/onboarding-development";
-import { NotivexAuthProvider, UseAuth } from "@/Domain/Auth/NotivexAuthProvider";
+import { NotivexAuthProvider, useAuth } from "@/Domain/Auth/NotivexAuthProvider";
 import { OnboardingProvider, useOnboarding } from "@/features/onboarding/onboarding-context";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -38,7 +38,7 @@ function RootNavigator()
      * a blank gate. Opt out so stage transitions take effect. */
     "use no memo";
 
-    const { IsLoading: IsLoadingSession, Session } = UseAuth();
+    const { IsLoading: IsLoadingSession, Session } = useAuth();
     const {
         HasConnection,
         HasSelectedDatabases,
@@ -103,7 +103,7 @@ function RootNavigator()
                 <Stack.Screen name="index" />
                 <Stack.Screen name="data-sources" />
                 <Stack.Screen
-                    name="page-create"
+                    name="create-page"
                     options={ {
                         headerBackButtonDisplayMode: "minimal",
                         headerBackButtonMenuEnabled: false,

@@ -26,9 +26,10 @@ import * as Shadow from "../Token/Shadow.js";
 import { AlertTriangle, CheckCircle2, Info as InfoIcon, XCircle } from "lucide-react-native";
 import Animated, { FadeInDown, FadeOutDown, LinearTransition } from "react-native-reanimated";
 import { Body, Description } from "./Text.js";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { Pressable } from "./Pressable.js";
 import { Spinner } from "./Spinner.js";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 /**
@@ -207,7 +208,7 @@ const ToastItemIcon = ({ Variant }: { readonly Variant: ToastVariant }): React.J
         [VariantIconColorToken.Warning]: OrangeColor,
         [VariantIconColorToken.Info]: BlueColor,
         [Semantic.Muted]: MutedColor
-    } = UseToken(
+    } = useToken(
         VariantIconColorToken.Success,
         VariantIconColorToken.Error,
         VariantIconColorToken.Warning,
@@ -264,7 +265,7 @@ const ToastItem = ({ Record }: { readonly Record: ToastRecord }): React.JSX.Elem
         [Semantic.Border]: BorderColor,
         [Radii.Large]: LargeRadius,
         [Shadow.Card]: CardShadow
-    } = UseToken(
+    } = useToken(
         Semantic.BackgroundModal,
         Semantic.Border,
         Radii.Large,
@@ -277,8 +278,11 @@ const ToastItem = ({ Record }: { readonly Record: ToastRecord }): React.JSX.Elem
             exiting={ FadeOutDown }
             layout={ LinearTransition }>
             <Pressable
-                accessibilityRole="alert"
-                onPress={ () => Dismiss(Record.Id) }
+                Accessibility={ {
+                    Label: undefined,
+                    Role: "alert"
+                } }
+                OnPress={ () => Dismiss(Record.Id) }
                 style={ [
                     Styles.Item,
                     {

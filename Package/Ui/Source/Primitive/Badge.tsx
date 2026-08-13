@@ -14,7 +14,7 @@ import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { type StyleProp, View, type ViewStyle } from "react-native";
 import { Description } from "./Text.js";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /**
@@ -61,7 +61,7 @@ const Badge = ({ Variant = "Default", Size = "Medium", Style, children }: BadgeP
         [Semantic.Secondary]: SecondaryColor,
         [Semantic.Blue]: BlueColor,
         [Radii.Small]: SmallRadius
-    } = UseToken(
+    } = useToken(
         Semantic.Primary,
         Semantic.Secondary,
         Semantic.Blue,

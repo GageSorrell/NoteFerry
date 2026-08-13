@@ -16,7 +16,6 @@ import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import {
-    Pressable,
     type StyleProp,
     StyleSheet,
     TextInput,
@@ -24,9 +23,10 @@ import {
     View,
     type ViewStyle
 } from "react-native";
+import { Pressable } from "./Pressable.js";
 import { Search, X } from "lucide-react-native";
 import type { Thunk } from "@sorrell/utility/Function";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /**
@@ -57,6 +57,7 @@ export interface InputProps
     readonly Size?: InputSize;
     readonly Value?: string;
     readonly Placeholder?: string;
+    readonly KeyboardType?: TextInputProps[ "keyboardType" ];
     readonly OnChangeText?: (Text: string) => void;
     readonly Disabled?: boolean;
     readonly Invalid?: boolean;
@@ -86,6 +87,7 @@ const Input = ({
     Size = "Default",
     Value,
     Placeholder,
+    KeyboardType,
     OnChangeText,
     Disabled = false,
     Invalid = false,
@@ -107,13 +109,15 @@ const Input = ({
         [Semantic.Primary]: PrimaryColor,
         [Semantic.Muted]: MutedColor,
         [Semantic.Red]: RedColor,
+        [Semantic.Cursor]: CursorColor,
         [Radii.Medium]: MediumRadius
-    } = UseToken(
+    } = useToken(
         Semantic.Ring,
         Semantic.BackgroundInput,
         Semantic.Primary,
         Semantic.Muted,
         Semantic.Red,
+        Semantic.Cursor,
         Radii.Medium
     );
 
@@ -139,7 +143,9 @@ const Input = ({
             }
             <TextInput
                 autoFocus={ AutoFocus }
+                cursorColor={ CursorColor }
                 editable={ !Disabled }
+                keyboardType={ KeyboardType }
                 onBlur={ OnBlur }
                 onChangeText={ OnChangeText }
                 onFocus={ OnFocus }
@@ -147,6 +153,7 @@ const Input = ({
                 placeholder={ Placeholder }
                 placeholderTextColor={ WithAlpha(PrimaryColor, 0.45) }
                 secureTextEntry={ SecureTextEntry }
+                selectionColor={ CursorColor }
                 style={ [
                     Styles.Input,
                     {
@@ -159,10 +166,12 @@ const Input = ({
             />
             { ShowClear
                 ? <Pressable
-                    accessibilityLabel="Clear input"
-                    accessibilityRole="button"
+                    Accessibility={ {
+                        Label: "Clear input",
+                        Role: "button"
+                    } }
+                    OnPress={ OnCancel }
                     hitSlop={ 8 }
-                    onPress={ OnCancel }
                     style={ Styles.TrailingIcon }>
                     <X
                         color={ MutedColor }

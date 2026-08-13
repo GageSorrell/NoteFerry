@@ -15,7 +15,6 @@ import type * as Domain from "@notivex/domain";
 import * as React from "react";
 import {
     ActivityIndicator,
-    Pressable,
     ScrollView,
     StyleSheet,
     View
@@ -34,11 +33,12 @@ import {
     Input,
     ItemTitle,
     Link,
+    Pressable,
     ScreenTitle
 } from "@notivex/ui/Primitive";
 import { ChevronDown, ChevronUp } from "lucide-react-native";
 import { IconBlock, type LucideIconName } from "@notivex/ui/Block";
-import { Token, UseTheme } from "@notivex/ui";
+import { Token, useTheme } from "@notivex/ui";
 import { Boolean } from "effect";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { HeroImage } from "@/Component";
@@ -167,7 +167,7 @@ const SignInModalStepOneView = ({
     OnContinue
 }: SignInModalStepOneViewProps): React.JSX.Element =>
 {
-    const ModalBackground = UseTheme().Semantic.BackgroundModal;
+    const ModalBackground = useTheme().Semantic.BackgroundModal;
 
     return (
         <View style={ [ modalStyles.container, { backgroundColor: ModalBackground } ] }>
@@ -216,7 +216,7 @@ const SignInModalStepTwoView = ({
     IsPending: Pending
 }: SignInModalStepTwoViewProps): React.JSX.Element =>
 {
-    const Theme = UseTheme();
+    const Theme = useTheme();
     const ModalBackground = Theme.Semantic.BackgroundModal;
     const TipColor = Theme.Semantic.Secondary;
 
@@ -366,26 +366,31 @@ const PageAccessDisclosure = ({
 {
     const [ IsExpanded, SetIsExpanded ] = React.useState(false);
     const HelpSheet = React.useRef<BottomSheetModal | null>(null);
-    const Theme = UseTheme();
+    const Theme = useTheme();
     const NumRemaining = Math.max(0, PageCount - Pages.length);
 
     return (
         <View style={ onboardingResultStyles.disclosureSection }>
             <View style={ onboardingResultStyles.disclosureHeader }>
                 <Pressable
-                    accessibilityRole="button"
-                    accessibilityState={ { expanded: IsExpanded } }
-                    onPress={ () => SetIsExpanded(Boolean.not) }
+                    Accessibility={ {
+                        Label: undefined,
+                        Role: "button",
+                        State: { expanded: IsExpanded }
+                    } }
+                    OnPress={ () => SetIsExpanded(Boolean.not) }
                     style={ onboardingResultStyles.disclosureTrigger }>
                     <View style={ { alignItems: "center", flexDirection: "row", gap: 8 } }>
                         <Body Weight="600">
                             { PageCount } { PageCount === 1 ? "page" : "pages" } found
                         </Body>
                         <Pressable
-                            accessibilityLabel="Why pages are shown"
-                            accessibilityRole="button"
+                            Accessibility={ {
+                                Label: "Why pages are shown",
+                                Role: "button"
+                            } }
+                            OnPress={ () => HelpSheet.current?.present() }
                             hitSlop={ 8 }
-                            onPress={ () => HelpSheet.current?.present() }
                             style={ [
                                 onboardingResultStyles.helpButton,
                                 { borderColor: Theme.Semantic.Border }
@@ -514,7 +519,7 @@ const DatabaseSelectionView = ({
 }): React.JSX.Element =>
 {
     const [ Search, SetSearch ] = React.useState("");
-    const Theme = UseTheme();
+    const Theme = useTheme();
     const SortedDatabases: ReadonlyArray<Domain.DataSource.OnboardingDatabase> =
         React.useMemo(
             () => [ ...Data.Databases ]
@@ -704,6 +709,7 @@ const DatabaseSelectionView = ({
 /** Loading state that avoids flashing for sub-second discovery responses. */
 const DelayedSyncLoading = ({ Immediate }: { readonly Immediate: boolean }): React.JSX.Element =>
 {
+    const Theme = useTheme();
     const [ IsVisible, SetIsVisible ] = React.useState(Immediate);
 
     React.useEffect(() =>
@@ -724,7 +730,10 @@ const DelayedSyncLoading = ({ Immediate }: { readonly Immediate: boolean }): Rea
     return IsVisible
         ? (
             <SafeAreaView style={ onboardingResultStyles.loading }>
-                <ActivityIndicator accessibilityLabel="Checking Notion access" />
+                <ActivityIndicator
+                    accessibilityLabel="Checking Notion access"
+                    color={ Theme.Semantic.Cursor }
+                />
                 <Description Color={ Token.Semantic.Muted }>
                     Checking what Notivex can access…
                 </Description>

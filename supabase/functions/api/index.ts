@@ -36,6 +36,9 @@ function ToNotionConnection(Row: Record<string, unknown>): Domain.NotionConnecti
         ConnectedAt: new Date(Row.connected_at as string),
         Id: Row.id as Domain.Id.NotionConnectionId,
         ...(Row.last_used_at ? { LastUsedAt: new Date(Row.last_used_at as string) } : {}),
+        ...(Row.notion_owner_avatar_url
+            ? { NotionOwnerAvatarUrl: Row.notion_owner_avatar_url as string }
+            : {}),
         ...(Row.notion_owner_user_id ? { NotionOwnerUserId: Row.notion_owner_user_id as string } : {}),
         ...(Row.revoked_at ? { RevokedAt: new Date(Row.revoked_at as string) } : {}),
         Status: Row.status as Domain.NotionConnection.NotionConnectionStatus,

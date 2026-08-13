@@ -23,7 +23,7 @@ import { Description, ModalTitle } from "./Text.js";
 import {
     type GestureResponderEvent,
     Modal,
-    Pressable,
+    Pressable as RNPressable,
     type StyleProp,
     StyleSheet,
     type TextStyle,
@@ -31,8 +31,9 @@ import {
     type ViewStyle
 } from "react-native";
 import { CloneTrigger } from "./Popup.js";
+import { Pressable } from "./Pressable.js";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 interface DialogContextValue
@@ -133,11 +134,11 @@ const DialogTrigger = ({ AsChild = false, Style, children }: DialogTriggerProps)
     }
 
     return (
-        <Pressable
+        <RNPressable
             onPress={ Open }
             style={ Style }>
             { children }
-        </Pressable>
+        </RNPressable>
     );
 };
 
@@ -163,7 +164,7 @@ const DialogContent = ({ HideClose = false, Style, children }: DialogContentProp
         [Radii.Large]: LargeRadius,
         [Spacing.S]: Gap,
         [Spacing.L]: Padding
-    } = UseToken(
+    } = useToken(
         Semantic.BackgroundModal,
         Semantic.Default,
         Radii.Large,
@@ -183,13 +184,16 @@ const DialogContent = ({ HideClose = false, Style, children }: DialogContentProp
                 touches. Give the modal its own root so those buttons work. */}
             <GestureHandlerRootView style={ Styles.Root }>
                 <Pressable
-                    accessibilityRole="none"
-                    onPress={ () => SetIsOpen(false) }
+                    Accessibility={ {
+                        Label: undefined,
+                        Role: "none"
+                    } }
+                    OnPress={ () => SetIsOpen(false) }
                     style={ [ Styles.Overlay, { backgroundColor: WithAlpha(DefaultColor, 0.5) } ] }>
                     {/* Nested `Pressable`s claim the touch responder exclusively in RN
                         (unlike DOM event bubbling), so a press here does not also fire
                         the overlay's `onPress` above — no `stopPropagation` needed. */}
-                    <Pressable
+                    <RNPressable
                         style={ [
                             Styles.Card,
                             {
@@ -206,7 +210,7 @@ const DialogContent = ({ HideClose = false, Style, children }: DialogContentProp
                                 <CloseButton OnPress={ () => SetIsOpen(false) } />
                             </View>
                         ) }
-                    </Pressable>
+                    </RNPressable>
                 </Pressable>
             </GestureHandlerRootView>
         </Modal>
@@ -275,7 +279,7 @@ export/**
        */
 const DialogHeader = ({ Style, children }: DialogHeaderProps): React.JSX.Element =>
 {
-    const { [Spacing.Xs]: Gap } = UseToken(Spacing.Xs);
+    const { [Spacing.Xs]: Gap } = useToken(Spacing.Xs);
 
     return <View style={ [ { alignItems: "center", gap: Gap }, Style ] }>{ children }</View>;
 };
@@ -294,7 +298,7 @@ export/**
        */
 const DialogFooter = ({ Style, children }: DialogFooterProps): React.JSX.Element =>
 {
-    const { [Spacing.Xs]: Gap } = UseToken(Spacing.Xs);
+    const { [Spacing.Xs]: Gap } = useToken(Spacing.Xs);
 
     return <View style={ [ { alignItems: "center", gap: Gap }, Style ] }>{ children }</View>;
 };

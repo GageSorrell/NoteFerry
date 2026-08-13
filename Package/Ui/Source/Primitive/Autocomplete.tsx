@@ -33,7 +33,7 @@ import { MenuGroup, MenuItem, type MenuItemVariant, MenuLabel } from "./Menu.js"
 import { ScrollView, type StyleProp, View, type ViewStyle } from "react-native";
 import { Description } from "./Text.js";
 import type { Thunk } from "@sorrell/utility/Function";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 
 export { Separator as AutocompleteSeparator } from "./Separator.js";
 
@@ -396,7 +396,7 @@ export/**
 const AutocompleteEmpty = ({ children }: AutocompleteEmptyProps): React.JSX.Element | null =>
 {
     const { MatchRegistry } = useAutocompleteContext();
-    const { [Semantic.Secondary]: MutedColor } = UseToken(Semantic.Secondary);
+    const { [Semantic.Secondary]: MutedColor } = useToken(Semantic.Secondary);
     const HasAnyMatch = [ ...MatchRegistry.current.values() ].some(Boolean);
 
     if (HasAnyMatch)

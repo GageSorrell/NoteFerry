@@ -13,11 +13,16 @@ import type * as Domain from "@notivex/domain";
 import * as React from "react";
 import { Defs, LinearGradient, Rect, Stop, Svg, SvgXml } from "react-native-svg";
 import { IconBlock, type LucideIconName } from "@notivex/ui/Block";
-import { Pressable, type PressableStateCallbackType, StyleSheet, View } from "react-native";
+import {
+    Platform,
+    type PressableStateCallbackType,
+    StyleSheet,
+    View
+} from "react-native";
 import { Image } from "expo-image";
-import { ItemTitle } from "@notivex/ui/Primitive";
+import { ItemTitle, Pressable } from "@notivex/ui/Primitive";
 import type { Thunk } from "@sorrell/utility/Function";
-import { UseTheme } from "@notivex/ui";
+import { useTheme } from "@notivex/ui";
 
 /** {@inheritDoc DatabaseCard} */
 export interface DatabaseCardProps
@@ -209,8 +214,8 @@ DatabaseSvgCover.displayName = "DatabaseSvgCover";
 const ToLucideIconName = (Value: string): LucideIconName =>
     Value.trim().toLowerCase().replaceAll("_", "-").replaceAll(" ", "-") as LucideIconName;
 
-/** Renders the emoji, image, or native icon supplied by Notion. */
-export const DatabaseIcon = React.memo(({ Source }: DatabaseIconProps): React.JSX.Element | null =>
+export/** Renders the emoji, image, or native icon supplied by Notion. */
+const DatabaseIcon = React.memo(({ Source }: DatabaseIconProps): React.JSX.Element | null =>
 {
     if (!Source.Icon)
     {
@@ -258,20 +263,28 @@ export/**
        */
 const DatabaseCard = ({ OnPress, Source }: DatabaseCardProps): React.JSX.Element =>
 {
-    const Theme = UseTheme();
+    const Theme = useTheme();
     const CardShadow = Theme.Shadow.Card;
     const CoverIsSvg = Source.CoverUrl ? IsSvgUrl(Source.CoverUrl) : false;
+    const RippleColor = Theme.Mode === "Dark"
+        ? "rgba(255, 255, 255, 0.16)"
+        : "rgba(0, 0, 0, 0.16)";
 
     return (
         <Pressable
-            accessibilityLabel={ `Configure ${ Source.Title }` }
-            accessibilityRole="button"
-            onPress={ OnPress }
+            Accessibility={ {
+                Label: `Create a page in ${ Source.Title }`,
+                Role: "button"
+            } }
+            OnPress={ OnPress }
+            android_ripple={ {
+                color: RippleColor,
+                foreground: true
+            } }
             style={ ({ pressed }: PressableStateCallbackType) => [
                 styles.card,
                 {
                     backgroundColor: Theme.Semantic.BackgroundModal,
-                    borderColor: Theme.Semantic.Border,
                     borderRadius: Theme.Radii.ExtraLarge,
                     elevation: CardShadow.Elevation,
                     shadowColor: CardShadow.ShadowColor,
@@ -284,7 +297,7 @@ const DatabaseCard = ({ OnPress, Source }: DatabaseCardProps): React.JSX.Element
                     shadowOpacity: CardShadow.ShadowOpacity,
                     shadowRadius: CardShadow.ShadowRadius
                 },
-                pressed && styles.pressed
+                Platform.OS !== "android" && pressed && styles.pressed
             ] }>
             <View
                 style={ [
@@ -327,8 +340,7 @@ DatabaseCard.displayName = "DatabaseCard";
 const styles = StyleSheet.create({
     card:
     {
-        alignSelf: "stretch",
-        borderWidth: 1
+        alignSelf: "stretch"
     },
     clippedContent:
     {

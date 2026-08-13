@@ -19,12 +19,12 @@ import * as React from "react";
 import { CloneTrigger, Popup, type PopupAnchor, type PopupPlacement } from "./Popup.js";
 import {
     type GestureResponderEvent,
-    Pressable,
     ScrollView,
     type StyleProp,
     type ViewStyle
 } from "react-native";
 import { MenuItem, MenuItemCheck, type MenuItemProps } from "./Menu.js";
+import { Pressable } from "./Pressable.js";
 import type { Thunk } from "@sorrell/utility/Function";
 
 export {
@@ -146,11 +146,13 @@ const DropdownMenuTrigger = ({
 
     return (
         <Pressable
-            accessibilityLabel={ AccessibilityLabel }
-            accessibilityRole="button"
-            accessibilityState={ { disabled: Disabled, expanded: IsOpen } }
-            disabled={ Disabled }
-            onPress={ Toggle }
+            Accessibility={ {
+                Label: AccessibilityLabel,
+                Role: "button",
+                State: { disabled: Disabled, expanded: IsOpen }
+            } }
+            Disabled={ Disabled }
+            OnPress={ Toggle }
             ref={ AnchorRef }
             style={ [ Disabled ? { opacity: 0.3 } : undefined, Style ] }>
             { children }
@@ -177,6 +179,7 @@ const useDropdownMenuClose = (): (() => void) =>
 /** {@inheritDoc DropdownMenuContent} */
 export interface DropdownMenuContentProps extends React.PropsWithChildren
 {
+    readonly MatchTriggerWidth?: boolean;
     readonly Placement?: PopupPlacement;
     readonly Style?: StyleProp<ViewStyle>;
 }
@@ -188,6 +191,7 @@ export/**
        * @since 1.0.0
        */
 const DropdownMenuContent = ({
+    MatchTriggerWidth = true,
     Placement = "Bottom",
     Style,
     children
@@ -200,6 +204,7 @@ const DropdownMenuContent = ({
         <Popup
             Anchor={ AnchorRef }
             IsVisible={ IsOpen }
+            MatchAnchorWidth={ MatchTriggerWidth }
             OnRequestClose={ Close }
             Placement={ Placement }
             Style={ [ { minWidth: 128 }, Style ] }>

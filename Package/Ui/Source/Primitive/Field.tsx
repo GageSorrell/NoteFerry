@@ -17,7 +17,7 @@ import * as Semantic from "../Token/Semantic.js";
 import { Description, SectionTitle } from "./Text.js";
 import { type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
 import { Label } from "./Label.js";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 
 /**
  * The orientation of a given `Field` component.
@@ -129,7 +129,7 @@ export/**
        */
 const FieldDescription = ({ children }: FieldDescriptionProps): React.JSX.Element =>
 {
-    const { [Semantic.Muted]: MutedColor } = UseToken(Semantic.Muted);
+    const { [Semantic.Muted]: MutedColor } = useToken(Semantic.Muted);
     return (
         <Description Color={ MutedColor }>
             { children }
@@ -151,7 +151,7 @@ export/**
        */
 const FieldError = ({ Errors, children }: FieldErrorProps): React.JSX.Element | null =>
 {
-    const { [Semantic.Red]: RedColor } = UseToken(Semantic.Red);
+    const { [Semantic.Red]: RedColor } = useToken(Semantic.Red);
 
     const Content = React.useMemo(() =>
     {

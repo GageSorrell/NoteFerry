@@ -10,37 +10,23 @@
  */
 
 import type * as Domain from "@notivex/domain";
-import {
-    Body,
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from "@notivex/ui/Primitive";
+import { Body, type BottomSheet } from "@notivex/ui/Primitive";
 import { StyleSheet, View } from "react-native";
 import { PropertyLabel } from "@/features/page-creation/property-label";
-
-export const PropertyOptionBackground:
-Readonly<Record<Domain.Property.PropertyOptionColor, string>> =
-    Object.freeze({
-        Blue: "#D3E5EF",
-        Brown: "#EEE0DA",
-        Default: "#E3E2E0",
-        Gray: "#E3E2E0",
-        Green: "#DBEDDB",
-        Orange: "#FADEC9",
-        Pink: "#F5E0E9",
-        Purple: "#E8DEEE",
-        Red: "#FFE2DD",
-        Yellow: "#FDECC8"
-    });
+import {
+    PropertyOptionPill,
+    PropertyOptionSheet,
+    PropertyOptionSheetTrigger
+} from "@/features/page-creation/property-option-sheet";
+import { Token } from "@notivex/ui";
+import { useRef } from "react";
 
 /** Props for a single-choice Notion property field. */
 export interface SelectPropertyFieldProps
 {
     readonly Disabled?: boolean | undefined;
-    readonly OnValueChange: (OptionId: string) => void;
+    readonly Inline?: boolean | undefined;
+    readonly OnValueChange: (OptionId: string | undefined) => void;
     readonly Property: Domain.Property.SelectPropertyDefinition;
     readonly Value?: string | undefined;
 }
@@ -48,53 +34,46 @@ export interface SelectPropertyFieldProps
 /** Renders a labeled dropdown from a Notion property's normalized options. */
 export function SelectPropertyField({
     Disabled = false,
+    Inline = false,
     OnValueChange,
     Property,
     Value
 }: SelectPropertyFieldProps): React.JSX.Element
 {
+    const SheetRef = useRef<BottomSheet | null>(null);
     const SelectedOption = Property.Options.find(
         (Option: Domain.Property.PropertyOption) => Option.Id === Value
     );
 
     return (
-        <View style={ styles.field }>
-            <PropertyLabel Property={ Property } />
-            <Select
-                OnValueChange={ OnValueChange }
-                Value={ Value === "" ? undefined : Value }>
-                <SelectTrigger
-                    AccessibilityLabel={ Property.Name }
-                    Disabled={ Disabled }
-                    Style={ styles.trigger }>
-                    { SelectedOption === undefined
-                        ? <SelectValue Placeholder="Choose an option" />
-                        : (
-                            <View style={ [
-                                styles.selectedValue,
-                                {
-                                    backgroundColor:
-                                        PropertyOptionBackground[ SelectedOption.Color ]
-                                }
-                            ] }>
-                                <Body NumberOfLines={ 1 }>{ SelectedOption.Name }</Body>
-                            </View>
-                        ) }
-                </SelectTrigger>
-                <SelectContent>
-                    { Property.Options.map((Option: Domain.Property.PropertyOption) => (
-                        <SelectItem
-                            Label={ Option.Name }
-                            Style={ [
-                                styles.option,
-                                { backgroundColor: PropertyOptionBackground[ Option.Color ] }
-                            ] }
-                            Value={ Option.Id }
-                            key={ Option.Id }
-                        />
-                    )) }
-                </SelectContent>
-            </Select>
+        <View style={ [ styles.field, Inline && styles.inlineField ] }>
+            { Inline ? null : <PropertyLabel Property={ Property } /> }
+            <PropertyOptionSheetTrigger
+                AccessibilityLabel={ Property.Name }
+                Disabled={ Disabled }
+                Inline={ Inline }
+                OnPress={ () => SheetRef.current?.present() }>
+                { SelectedOption === undefined
+                    ? <Body Color={ Token.Semantic.Muted }>Empty</Body>
+                    : <PropertyOptionPill Option={ SelectedOption } /> }
+            </PropertyOptionSheetTrigger>
+            <PropertyOptionSheet
+                OnOptionPress={ (Option: Domain.Property.PropertyOption) =>
+                {
+                    OnValueChange(Option.Id);
+                    SheetRef.current?.dismiss();
+                } }
+                OnRemoveOption={ () => OnValueChange(undefined) }
+                PropertyName={ Property.Name }
+                Ref={ SheetRef }
+                Sections={ [ {
+                    Id: "options",
+                    Options: Property.Options
+                } ] }
+                SelectedOptionIds={ SelectedOption === undefined
+                    ? [ ]
+                    : [ SelectedOption.Id ] }
+            />
         </View>
     );
 }
@@ -104,21 +83,9 @@ const styles = StyleSheet.create({
     {
         gap: 6
     },
-    option:
+    inlineField:
     {
-        borderRadius: 6,
-        marginVertical: 2
-    },
-    selectedValue:
-    {
-        alignSelf: "center",
-        borderRadius: 6,
-        flexShrink: 1,
-        paddingHorizontal: 6,
-        paddingVertical: 2
-    },
-    trigger:
-    {
-        minHeight: 36
+        flex: 1,
+        minWidth: 0
     }
 });

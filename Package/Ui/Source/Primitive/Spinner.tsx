@@ -15,7 +15,7 @@ import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { Animated, Easing, type StyleProp, type ViewStyle } from "react-native";
 import Svg, { Circle } from "react-native-svg";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 
 /**
  * The visual style of a `Spinner` component.
@@ -49,7 +49,7 @@ const Spinner = ({ Variant = "Solid", Size = 16, Color, Style }: SpinnerProps): 
     const {
         [Semantic.Border]: BorderColor,
         [Semantic.Icon]: IconColor
-    } = UseToken(
+    } = useToken(
         Semantic.Border,
         Semantic.Icon
     );

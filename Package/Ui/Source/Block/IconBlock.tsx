@@ -220,7 +220,7 @@ import { type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
 import { Body } from "../Primitive/Text.js";
 import type { ReadonlyRecord } from "effect/Record";
 import { Spinner } from "../Primitive/Spinner.js";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /**
@@ -498,7 +498,7 @@ const IconBlock = ({ Icon, Size = "Small", Fallback = " ", Style }: IconBlockPro
         [Semantic.Secondary]: SecondaryColor,
         [Semantic.Default]: DefaultColor,
         [Config.Radii]: MediumRadius
-    } = UseToken(
+    } = useToken(
         Semantic.Secondary,
         Semantic.Default,
         Config.Radii

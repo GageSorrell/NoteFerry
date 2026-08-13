@@ -10,69 +10,34 @@
  */
 
 import type * as Domain from "@notivex/domain";
-import {
-    Body,
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectLabel,
-    SelectSeparator,
-    SelectTrigger,
-    SelectValue
-} from "@notivex/ui/Primitive";
-import { Fragment } from "react";
-import { PropertyLabel } from "@/features/page-creation/property-label";
-import { PropertyOptionBackground } from
-    "@/features/page-creation/select-property-field";
+import { Body, type BottomSheet } from "@notivex/ui/Primitive";
 import { StyleSheet, View } from "react-native";
-
-const PropertyOptionDot:
-Readonly<Record<Domain.Property.PropertyOptionColor, string>> = Object.freeze({
-    Blue: "#337EA9",
-    Brown: "#9F6B53",
-    Default: "#9B9A97",
-    Gray: "#787774",
-    Green: "#448361",
-    Orange: "#D9730D",
-    Pink: "#C14C8A",
-    Purple: "#9065B0",
-    Red: "#D44C47",
-    Yellow: "#CB912F"
-});
+import { PropertyLabel } from "@/features/page-creation/property-label";
+import { Predicate } from "@sorrell/utility";
+import {
+    PropertyOptionPill,
+    PropertyOptionSheet,
+    PropertyOptionSheetTrigger
+} from "@/features/page-creation/property-option-sheet";
+import { Token } from "@notivex/ui";
+import { useRef } from "react";
 
 interface DisplayStatusGroup
 {
     readonly Id: string;
     readonly Name: string;
-    readonly Options: readonly Domain.Property.PropertyOption[];
+    readonly Options: ReadonlyArray<Domain.Property.PropertyOption>;
 }
 
 /** Props for a grouped Notion status field. */
 export interface StatusPropertyFieldProps
 {
     readonly Disabled?: boolean | undefined;
-    readonly OnValueChange: (OptionId: string) => void;
+    readonly Inline?: boolean | undefined;
+    readonly OnValueChange: (OptionId: string | undefined) => void;
     readonly Property: Domain.Property.StatusPropertyDefinition;
     readonly Value?: string | undefined;
 }
-
-interface StatusPillProps
-{
-    readonly Option: Domain.Property.PropertyOption;
-}
-
-/** Renders the compact colored-dot tag used by Notion for a status. */
-const StatusPill = ({ Option }: StatusPillProps): React.JSX.Element =>
-    <View style={ [
-        styles.pill,
-        { backgroundColor: PropertyOptionBackground[ Option.Color ] }
-    ] }>
-        <View style={ [
-            styles.dot,
-            { backgroundColor: PropertyOptionDot[ Option.Color ] }
-        ] } />
-        <Body NumberOfLines={ 1 }>{ Option.Name }</Body>
-    </View>;
 
 const FallbackGroupFor = (
     Option: Domain.Property.PropertyOption
@@ -93,7 +58,7 @@ const FallbackGroupFor = (
 
 const BuildDisplayGroups = (
     Property: Domain.Property.StatusPropertyDefinition
-): readonly DisplayStatusGroup[] =>
+): ReadonlyArray<DisplayStatusGroup> =>
 {
     if (Property.Groups !== undefined && Property.Groups.length > 0)
     {
@@ -109,11 +74,11 @@ const BuildDisplayGroups = (
 
                 if (Option === undefined)
                 {
-                    return [ ];
+                    return [ ] as const;
                 }
 
                 AssignedOptionIds.add(OptionId);
-                return [ Option ];
+                return [ Option ] as const;
             })
         }));
         const Unassigned = Property.Options.filter((Option) =>
@@ -123,13 +88,17 @@ const BuildDisplayGroups = (
             ? Groups
             : [
                 ...Groups,
-                { Id: "unassigned", Name: "Other", Options: Unassigned }
+                {
+                    Id: "unassigned",
+                    Name: "Other",
+                    Options: Unassigned
+                }
             ];
     }
 
     const Names = [ "To-do", "In progress", "Complete" ] as const;
 
-    return Names.map((Name) => ({
+    return Names.map((Name: typeof Names[number]) => ({
         Id: Name,
         Name,
         Options: Property.Options.filter((Option) =>
@@ -140,86 +109,60 @@ const BuildDisplayGroups = (
 /** Renders a Notion-style status picker with its three ordered groups. */
 export function StatusPropertyField({
     Disabled = false,
+    Inline = false,
     OnValueChange,
     Property,
     Value
 }: StatusPropertyFieldProps): React.JSX.Element
 {
-    const SelectedOption = Property.Options.find((Option) => Option.Id === Value);
+    const SheetRef = useRef<BottomSheet | null>(null);
+    const SelectedOption = Property.Options.find(Predicate.HasPropertyValue("Id", Value));
     const Groups = BuildDisplayGroups(Property).filter((Group) =>
         Group.Options.length > 0);
 
     return (
-        <View style={ styles.field }>
-            <PropertyLabel Property={ Property } />
-            <Select
-                OnValueChange={ OnValueChange }
-                Value={ Value === "" ? undefined : Value }>
-                <SelectTrigger
-                    AccessibilityLabel={ Property.Name }
-                    Disabled={ Disabled }
-                    Style={ styles.trigger }>
-                    { SelectedOption === undefined
-                        ? <SelectValue Placeholder="Choose an option" />
-                        : <StatusPill Option={ SelectedOption } /> }
-                </SelectTrigger>
-                <SelectContent MatchTriggerWidth>
-                    { Groups.map((Group, GroupIndex) => (
-                        <Fragment key={ Group.Id }>
-                            { GroupIndex === 0
-                                ? null
-                                : <SelectSeparator Style={ styles.separator } /> }
-                            <SelectLabel>{ Group.Name }</SelectLabel>
-                            { Group.Options.map((Option) => (
-                                <SelectItem
-                                    DisplayLabel={ <StatusPill Option={ Option } /> }
-                                    HideCheck
-                                    Label={ Option.Name }
-                                    Style={ styles.option }
-                                    Value={ Option.Id }
-                                    key={ Option.Id }
-                                />
-                            )) }
-                        </Fragment>
-                    )) }
-                </SelectContent>
-            </Select>
+        <View style={ [ styles.field, Inline && styles.inlineField ] }>
+            { Inline ? null : <PropertyLabel Property={ Property } /> }
+            <PropertyOptionSheetTrigger
+                AccessibilityLabel={ Property.Name }
+                Disabled={ Disabled }
+                Inline={ Inline }
+                OnPress={ () => SheetRef.current?.present() }>
+                { SelectedOption === undefined
+                    ? <Body Color={ Token.Semantic.Muted }>Empty</Body>
+                    : <PropertyOptionPill Option={ SelectedOption } Status /> }
+            </PropertyOptionSheetTrigger>
+            <PropertyOptionSheet
+                OnOptionPress={ (Option: Domain.Property.PropertyOption) =>
+                {
+                    OnValueChange(Option.Id);
+                    SheetRef.current?.dismiss();
+                } }
+                OnRemoveOption={ () => OnValueChange(undefined) }
+                PropertyName={ Property.Name }
+                Ref={ SheetRef }
+                Sections={ Groups.map((Group: DisplayStatusGroup) => ({
+                    Id: Group.Id,
+                    Label: Group.Name,
+                    Options: Group.Options
+                })) }
+                SelectedOptionIds={ SelectedOption === undefined
+                    ? [ ]
+                    : [ SelectedOption.Id ] }
+                Status
+            />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    dot:
-    {
-        borderRadius: 4,
-        height: 8,
-        width: 8
-    },
     field:
     {
         gap: 6
     },
-    option:
+    inlineField:
     {
-        paddingVertical: 3
-    },
-    pill:
-    {
-        alignItems: "center",
-        alignSelf: "flex-start",
-        borderRadius: 999,
-        flexDirection: "row",
-        flexShrink: 1,
-        gap: 5,
-        paddingHorizontal: 8,
-        paddingVertical: 2
-    },
-    separator:
-    {
-        marginVertical: 6
-    },
-    trigger:
-    {
-        minHeight: 36
+        flex: 1,
+        minWidth: 0
     }
 });

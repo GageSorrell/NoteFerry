@@ -10,12 +10,12 @@
  */
 
 import { SignInModalStepOneView } from "@/features/onboarding/onboarding-views";
-import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useDevelopmentOnboarding } from "@/features/onboarding/onboarding-development";
 
 const SignInModalStepOne = () =>
 {
-    const Router = UseLazyRouter();
+    const Router = useLazyRouter();
     const Development = useDevelopmentOnboarding();
 
     const OnContinue = Development.Active

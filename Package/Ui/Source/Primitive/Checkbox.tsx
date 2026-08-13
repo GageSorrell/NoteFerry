@@ -12,9 +12,10 @@
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { Check, Minus } from "lucide-react-native";
-import { Pressable, type StyleProp, type ViewStyle } from "react-native";
+import { type StyleProp, type ViewStyle } from "react-native";
+import { Pressable } from "./Pressable.js";
 import type { ReadonlyRecord } from "effect/Record";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 
 /**
  * The size of a given `Checkbox` component.
@@ -73,7 +74,7 @@ const Checkbox = ({
     const {
         [Semantic.BorderButton]: BorderButtonColor,
         [Semantic.Blue]: BlueColor
-    } = UseToken(
+    } = useToken(
         Semantic.BorderButton,
         Semantic.Blue
     );
@@ -85,12 +86,14 @@ const Checkbox = ({
 
     return (
         <Pressable
-            accessibilityLabel={ AccessibilityLabel }
-            accessibilityRole="checkbox"
-            accessibilityState={ { checked: IsIndeterminate ? "mixed" : IsChecked, disabled: Disabled } }
-            disabled={ Disabled }
+            Accessibility={ {
+                Label: AccessibilityLabel,
+                Role: "checkbox",
+                State: { checked: IsIndeterminate ? "mixed" : IsChecked, disabled: Disabled }
+            } }
+            Disabled={ Disabled }
+            OnPress={ () => OnCheckedChange?.(!IsChecked) }
             hitSlop={ 8 }
-            onPress={ () => OnCheckedChange?.(!IsChecked) }
             style={ [
                 {
                     alignItems: "center",

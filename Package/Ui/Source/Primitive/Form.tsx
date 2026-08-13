@@ -31,7 +31,7 @@ import {
 } from "react-hook-form";
 import { Field, FieldDescription, FieldError, FieldLabel } from "./Field.js";
 import type { StyleProp, ViewStyle } from "react-native";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 
 export/** {@inheritDoc FormProvider} */
 const Form = FormProvider;
@@ -137,7 +137,7 @@ export/**
 const FormLabel = (Props: React.ComponentProps<typeof FieldLabel>): React.JSX.Element =>
 {
     const { error } = useFormField();
-    const { [Semantic.Red]: RedColor } = UseToken(Semantic.Red);
+    const { [Semantic.Red]: RedColor } = useToken(Semantic.Red);
 
     return (
         <FieldLabel

@@ -26,6 +26,7 @@ export/**
        * @since 1.0.0
        */
 const CreatePageCommand = Schema.Struct({
+    Body: Schema.optional(Schema.String),
     DestinationId: Id.DestinationId,
     OperationId: Id.OperationId,
     Title: Schema.optional(Schema.String),

@@ -1,6 +1,4 @@
 /**
- *
- *
  * @module notivex/Domain/Miscellaneous/StatusBar
  *
  * @file      StatusBar.tsx
@@ -11,7 +9,7 @@
 
 import * as React from "react";
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
-import { UseTheme } from "@notivex/ui";
+import { useTheme } from "@notivex/ui";
 
 export/**
        * The status bar, whose style is derived from the NotivexTheme provider.
@@ -21,7 +19,7 @@ export/**
        */
 const StatusBar = (): React.JSX.Element =>
 {
-    const { Mode } = UseTheme();
+    const { Mode } = useTheme();
 
     return <ExpoStatusBar style={ Mode === "Dark" ? "light" : "dark" } />;
 };

@@ -18,16 +18,16 @@ import {
 import { ConnectNotion } from "@/Domain/Connection";
 import { RefreshDataSource } from "@/Domain/Runtime/NotivexApi";
 import { SyncView } from "@/features/onboarding/onboarding-views";
-import { UseAuth } from "@/Domain/Auth";
-import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { useAuth } from "@/Domain/Auth";
+import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useOnboarding } from "@/features/onboarding/onboarding-context";
 import { useState } from "react";
 
 const SyncScreen = () =>
 {
-    const Router = UseLazyRouter();
+    const Router = useLazyRouter();
     const Development = useDevelopmentOnboarding();
-    const { SignOut } = UseAuth();
+    const { SignOut } = useAuth();
     const {
         AuthorizationSucceeded,
         Complete,

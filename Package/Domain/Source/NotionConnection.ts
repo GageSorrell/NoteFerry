@@ -47,6 +47,7 @@ const NotionConnection = Schema.Struct({
     ConnectedAt: Schema.DateFromString,
     Id: Id.NotionConnectionId,
     LastUsedAt: Schema.optional(Schema.DateFromString),
+    NotionOwnerAvatarUrl: Schema.optional(Schema.String),
     NotionOwnerUserId: Schema.optional(Schema.String),
     RevokedAt: Schema.optional(Schema.DateFromString),
     Status: NotionConnectionStatus,

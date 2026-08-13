@@ -93,6 +93,72 @@ const DecodeFailed = (Error_: unknown): Domain.Error.DatabaseError =>
     new Domain.Error.DatabaseError({ Message: `Destination configuration codec failed: ${String(Error_)}` });
 
 /**
+ * Applies a refreshed Notion property schema to every destination that uses
+ * the data source, preserving user settings by stable property ID.
+ */
+export function ReconcileForDataSource(
+    UserId: string,
+    ConnectionId: string,
+    DataSourceId: string,
+    Properties: ReadonlyArray<Domain.Property.PropertyDefinition>
+)
+{
+    return Effect.gen(function* ()
+    {
+        const { data, error } = yield* Effect.promise(async () =>
+            await AdminClient
+                .from("destinations")
+                .select("id, configuration")
+                .eq("user_id", UserId)
+                .eq("connection_id", ConnectionId)
+                .eq("data_source_id", DataSourceId));
+
+        if (error)
+        {
+            return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: error.message }));
+        }
+
+        for (const Row of data ?? [])
+        {
+            const Current = yield* Effect.try({
+                catch: DecodeFailed,
+                try: () => DecodeConfiguration(Row.configuration as ConfigurationEncoded)
+            });
+            const FieldConfiguration = Domain.Destination.ReconcileFieldConfiguration(
+                Current.FieldConfiguration,
+                Properties
+            );
+            const Configuration = yield* Effect.try({
+                catch: DecodeFailed,
+                try: () => EncodeConfiguration({
+                    FieldConfiguration,
+                    Template: Current.Template
+                })
+            });
+
+            if (JSON.stringify(Configuration) === JSON.stringify(Row.configuration))
+            {
+                continue;
+            }
+
+            const { error: UpdateError } = yield* Effect.promise(async () =>
+                await AdminClient
+                    .from("destinations")
+                    .update({ configuration: Configuration })
+                    .eq("id", Row.id)
+                    .eq("user_id", UserId));
+
+            if (UpdateError)
+            {
+                return yield* Effect.fail(new Domain.Error.DatabaseError({
+                    Message: UpdateError.message
+                }));
+            }
+        }
+    });
+}
+
+/**
  * Every destination the user has configured, ordered for display.
  *
  * @category Destinations

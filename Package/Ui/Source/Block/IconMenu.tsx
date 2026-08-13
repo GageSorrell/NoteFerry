@@ -27,7 +27,7 @@
  *   to build a skin-tone picker over, so source's `SkinPicker` wasn't
  *   ported either.
  * - The Lucide tab's color swatches are `Token.Color`'s ten Notion colors
- *   (already resolved via the public `UseTheme` hook — this file never
+ *   (already resolved via the public `useTheme` hook — this file never
  *   reaches into `Token/Color`'s internal values directly), not source's arbitrary
  *   `COLOR` hex map.
  * - "Recent" tracking is a plain most-recently-used id list in
@@ -72,7 +72,7 @@ import { String } from "effect";
 import type { Thunk } from "@sorrell/utility/Function";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import { Upload } from "lucide-react-native";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 
 const MaxEmojiSearchResults = 60 as const;
 const MaxIconSearchResults = 100 as const;
@@ -149,7 +149,7 @@ const CategoryChip = ({ Label, IsActive, OnPress }: CategoryChipProps): React.JS
         [Semantic.Primary]: PrimaryColor,
         [Semantic.Border]: BorderColor,
         [Radii.Small]: SmallRadius
-    } = UseToken(
+    } = useToken(
         Semantic.Primary,
         Semantic.Border,
         Radii.Small
@@ -366,7 +366,7 @@ const IconsTab = ({ OnSelect }: IconsTabProps): React.JSX.Element =>
         [Color.Purple]: PurpleHex,
         [Color.Pink]: PinkHex,
         [Color.Red]: RedHex
-    } = UseToken(
+    } = useToken(
         Color.Default,
         Color.Gray,
         Color.Brown,

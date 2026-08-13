@@ -29,7 +29,14 @@ export type NotionOAuthTokens =
     readonly access_token: string;
     readonly bot_id: string;
     readonly duplicated_template_id: string | null;
-    readonly owner: { readonly user?: { readonly id?: string } } | null;
+    readonly owner:
+    {
+        readonly user?:
+        {
+            readonly avatar_url?: string | null;
+            readonly id?: string;
+        };
+    } | null;
     readonly refresh_token: string | null;
     readonly workspace_icon: string | null;
     readonly workspace_id: string;
@@ -541,6 +548,7 @@ export async function RetrievePage(
 /** The Notion Create Page request body Notivex sends (§20-21). */
 export interface NotionCreatePageBody
 {
+    readonly children?: ReadonlyArray<unknown>;
     readonly parent: { readonly type: "data_source_id"; readonly data_source_id: string };
     readonly properties: Readonly<Record<string, unknown>>;
 }

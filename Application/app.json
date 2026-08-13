@@ -21,8 +21,8 @@
       "package": "com.sorrell.notivex",
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF",
-        "foregroundImage": "./Resource/NotivexLogoLight.png",
-        "monochromeImage": "./Resource/NotivexLogoLight.png"
+        "foregroundImage": "./Resource/NotivexAdaptiveForeground.png",
+        "monochromeImage": "./Resource/NotivexAdaptiveMono.png"
       },
       "predictiveBackGestureEnabled": false
     },

@@ -25,12 +25,13 @@ import {
     type AutocompleteItemProps,
     useAutocompleteContext
 } from "./Autocomplete.js";
-import { Pressable, type StyleProp, type ViewStyle } from "react-native";
+import { type StyleProp, type ViewStyle } from "react-native";
 import { Body } from "./Text.js";
+import { Pressable } from "./Pressable.js";
 import { ChevronDown } from "lucide-react-native";
 import { MenuItemCheck } from "./Menu.js";
 import type { Thunk } from "@sorrell/utility/Function";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 
 export {
     AutocompleteContent as ComboboxContent,
@@ -135,7 +136,7 @@ const ComboboxTrigger = ({ Disabled = false, Style, children }: ComboboxTriggerP
         [Semantic.Ring]: RingColor,
         [Semantic.Muted]: MutedColor,
         [Radii.Medium]: MediumRadius
-    } = UseToken(
+    } = useToken(
         Semantic.Ring,
         Semantic.Muted,
         Radii.Medium
@@ -143,10 +144,13 @@ const ComboboxTrigger = ({ Disabled = false, Style, children }: ComboboxTriggerP
 
     return (
         <Pressable
-            accessibilityRole="button"
-            accessibilityState={ { disabled: Disabled, expanded: IsOpen } }
-            disabled={ Disabled }
-            onPress={ () => SetIsOpen(!IsOpen) }
+            Accessibility={ {
+                Label: undefined,
+                Role: "button",
+                State: { disabled: Disabled, expanded: IsOpen }
+            } }
+            Disabled={ Disabled }
+            OnPress={ () => SetIsOpen(!IsOpen) }
             ref={ AnchorRef }
             style={ [
                 {
@@ -187,7 +191,7 @@ export/**
 const ComboboxValue = ({ Placeholder }: ComboboxValueProps): React.JSX.Element =>
 {
     const { Value, Labels } = useComboboxValueContext();
-    const { [Semantic.Muted]: MutedColor } = UseToken(Semantic.Muted);
+    const { [Semantic.Muted]: MutedColor } = useToken(Semantic.Muted);
     const Label = Value === undefined ? undefined : Labels.current.get(Value);
 
     return (

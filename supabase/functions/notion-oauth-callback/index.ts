@@ -91,6 +91,8 @@ Deno.serve(async (Request: Request) =>
             .upsert(
                 {
                     bot_id: Tokens.bot_id,
+                    notion_owner_avatar_url:
+                        Tokens.owner?.user?.avatar_url ?? null,
                     notion_owner_user_id: Tokens.owner?.user?.id ?? null,
                     revoked_at: null,
                     status: "Active",

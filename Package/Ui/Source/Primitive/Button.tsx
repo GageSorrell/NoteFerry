@@ -1,7 +1,7 @@
 /**
  * Ported from `@notion-kit/ui`'s `primitives/button.tsx` +
  * `primitives/variants.ts`'s `buttonVariants` cva. Source's `variant`/`size`
- * axes become `Variant`/`Size`; colors are resolved live via `UseTheme`
+ * axes become `Variant`/`Size`; colors are resolved live via `useTheme`
  * (rather than baked into a static stylesheet) since they're theme-aware.
  *
  * @module @notivex/ui/Primitive/Button
@@ -27,7 +27,7 @@ import {
 import type { ReadonlyRecord } from "effect/Record";
 import { Spinner } from "./Spinner.js";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /**
@@ -118,7 +118,7 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
         [Radii.Medium]: MediumRadius,
         [Radii.Small]: SmallRadius,
         [Radii.Full]: FullRadius
-    } = UseToken(
+    } = useToken(
         Semantic.Primary,
         Semantic.Icon,
         Semantic.BorderButton,
@@ -298,6 +298,12 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
             accessibilityState={ { disabled: Disabled || Loading } }
             disabled={ Disabled || Loading }
             hitSlop={ IsIconOnly ? 8 : undefined }
+            /* `react-native-gesture-handler`'s `TouchableOpacity` captures its
+               base opacity at construction and only re-reads it on press-out, so
+               a button disabled after mount never applies `Styles.Disabled`'s
+               dimming. Re-key on the disabled/loading state to remount it and
+               pick up the correct base opacity. */
+            key={ Disabled || Loading ? "disabled" : "enabled" }
             onPress={ OnPress }
             { ...{ onPressIn, onPressOut } }
             ref={ ForwardedRef }

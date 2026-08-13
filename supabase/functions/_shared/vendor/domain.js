@@ -320,6 +320,7 @@ var NotionConnection = Schema6.Struct({
   ConnectedAt: Schema6.DateFromString,
   Id: NotionConnectionId,
   LastUsedAt: Schema6.optional(Schema6.DateFromString),
+  NotionOwnerAvatarUrl: Schema6.optional(Schema6.String),
   NotionOwnerUserId: Schema6.optional(Schema6.String),
   RevokedAt: Schema6.optional(Schema6.DateFromString),
   Status: NotionConnectionStatus,
@@ -336,7 +337,9 @@ __export(Destination_exports, {
   DestinationTemplate: () => DestinationTemplate,
   FieldConfiguration: () => FieldConfiguration,
   FieldConfigurationVersion: () => FieldConfigurationVersion,
-  FieldSetting: () => FieldSetting
+  FieldSetting: () => FieldSetting,
+  IsQuickEntryProperty: () => IsQuickEntryProperty,
+  ReconcileFieldConfiguration: () => ReconcileFieldConfiguration
 });
 import { Schema as Schema7 } from "effect";
 var DestinationTemplate = Schema7.Union([
@@ -359,6 +362,46 @@ var FieldConfiguration = Schema7.Struct({
   Fields: Schema7.Array(FieldSetting),
   Version: FieldConfigurationVersion
 });
+function IsQuickEntryProperty(Property) {
+  return !["Files", "People", "Relation"].includes(Property.Type);
+}
+function ReconcileFieldConfiguration(Current, Properties) {
+  const PropertyById = new Map(Properties.map((Property) => [Property.Id, Property]));
+  const SettingById = new Map(Current.Fields.map((Field) => [Field.PropertyId, Field]));
+  const SeenIds = /* @__PURE__ */ new Set();
+  const FieldOrder = [];
+  for (const PropertyId of Current.FieldOrder) {
+    if (PropertyById.has(PropertyId) && !SeenIds.has(PropertyId)) {
+      SeenIds.add(PropertyId);
+      FieldOrder.push(PropertyId);
+    }
+  }
+  for (const Property of Properties) {
+    if (!SeenIds.has(Property.Id)) {
+      SeenIds.add(Property.Id);
+      FieldOrder.push(Property.Id);
+    }
+  }
+  const Fields = FieldOrder.map((PropertyId) => {
+    const Property = PropertyById.get(PropertyId);
+    const Existing = SettingById.get(PropertyId);
+    if (Existing === void 0) {
+      return {
+        PropertyId,
+        Required: Property.Type === "Title",
+        Visible: IsQuickEntryProperty(Property)
+      };
+    }
+    const CompatibleDefault = Existing.Default !== void 0 && Existing.Default.Type === Property.Type ? Existing.Default : void 0;
+    return {
+      ...CompatibleDefault === void 0 ? {} : { Default: CompatibleDefault },
+      PropertyId,
+      Required: Property.Type === "Title" || Existing.Required,
+      Visible: Existing.Visible
+    };
+  });
+  return { FieldOrder, Fields, Version: 1 };
+}
 var Destination = Schema7.Struct({
   ConnectionId: NotionConnectionId,
   CreatedAt: Schema7.DateFromString,
@@ -385,6 +428,7 @@ var PropertyInputValue = Schema8.Struct({
   Value: PropertyInput
 });
 var PageDraft = Schema8.Struct({
+  Body: Schema8.optional(Schema8.String),
   DestinationId,
   Title: Schema8.optional(Schema8.String),
   UpdatedAt: Schema8.DateFromString,
@@ -399,6 +443,7 @@ __export(Command_exports, {
 });
 import { Schema as Schema9 } from "effect";
 var CreatePageCommand = Schema9.Struct({
+  Body: Schema9.optional(Schema9.String),
   DestinationId,
   OperationId,
   Title: Schema9.optional(Schema9.String),

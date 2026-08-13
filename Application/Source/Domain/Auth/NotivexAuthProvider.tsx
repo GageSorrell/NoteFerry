@@ -16,7 +16,7 @@ import * as React from "react";
 import type { AuthChangeEvent, AuthError, Session } from "@supabase/supabase-js";
 import { Supabase } from "@/Domain/Runtime/Supabase";
 
-/** The shape provided to consumers of {@link UseAuth}. */
+/** The shape provided to consumers of {@link useAuth}. */
 export interface NotivexAuth
 {
     readonly IsLoading: boolean;
@@ -160,4 +160,4 @@ export/**
        * @category Auth
        * @since 1.0.0
        */
-const UseAuth = (): NotivexAuth => React.useContext(AuthContext);
+const useAuth = (): NotivexAuth => React.useContext(AuthContext);

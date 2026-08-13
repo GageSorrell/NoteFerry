@@ -17,6 +17,7 @@ import {
     Hash,
     Link,
     ListTodo,
+    type LucideIcon,
     Mail,
     Paperclip,
     Phone,
@@ -24,12 +25,11 @@ import {
     Tags,
     Text,
     Type,
-    Users,
-    type LucideIcon
+    Users
 } from "lucide-react-native";
-import { LabelText } from "@notivex/ui/Primitive";
 import { StyleSheet, View } from "react-native";
-import { UseTheme } from "@notivex/ui";
+import { LabelText } from "@notivex/ui/Primitive";
+import { useTheme } from "@notivex/ui";
 
 const PropertyTypeIcon:
 Readonly<Record<Domain.Property.PropertyDefinition["Type"], LucideIcon>> =
@@ -53,24 +53,35 @@ Readonly<Record<Domain.Property.PropertyDefinition["Type"], LucideIcon>> =
 /** Props for a property icon followed by its display name. */
 export interface PropertyLabelProps
 {
+    readonly Muted?: boolean | undefined;
     readonly Property: Domain.Property.PropertyDefinition;
 }
 
 /** Displays the type-specific icon and name of a Notion property. */
-export function PropertyLabel({ Property }: PropertyLabelProps): React.JSX.Element
+export function PropertyLabel({
+    Muted = false,
+    Property
+}: PropertyLabelProps): React.JSX.Element
 {
-    const Theme = UseTheme();
+    const Theme = useTheme();
     const Icon = PropertyTypeIcon[ Property.Type ];
+    const Color = Theme.Semantic.Primary;
 
     return (
-        <View style={ styles.container }>
+        <View style={ [ styles.container, Muted && styles.muted ] }>
             <Icon
                 accessible={ false }
-                color={ Theme.Semantic.Secondary }
+                color={ Color }
                 size={ 14 }
                 strokeWidth={ 2 }
             />
-            <LabelText>{ Property.Name }</LabelText>
+            <LabelText
+                Color={ Color }
+                NumberOfLines={ 2 }
+                Style={ styles.name }
+                Weight="500">
+                { Property.Name }
+            </LabelText>
         </View>
     );
 }
@@ -81,5 +92,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         flexDirection: "row",
         gap: 6
+    },
+    muted:
+    {
+        opacity: 0.65
+    },
+    name:
+    {
+        flexShrink: 1
     }
 });

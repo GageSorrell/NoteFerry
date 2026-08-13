@@ -25,13 +25,14 @@ import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { MenuItem, MenuItemCheck, type MenuItemProps } from "./Menu.js";
 import { Popup, type PopupAnchor, type PopupPlacement } from "./Popup.js";
-import { Pressable, ScrollView, type StyleProp, type ViewStyle } from "react-native";
+import { ScrollView, type StyleProp, type ViewStyle } from "react-native";
 export { MenuGroup as SelectGroup, MenuLabel as SelectLabel } from "./Menu.js";
+import { Pressable } from "./Pressable.js";
 import { Body } from "./Text.js";
 import { ChevronDown } from "lucide-react-native";
 import { NotivexUiError } from "../NotivexUiError.js";
 import type { Thunk } from "@sorrell/utility/Function";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 
 export { Separator as SelectSeparator } from "./Separator.js";
 
@@ -147,7 +148,7 @@ const SelectTrigger = ({
         [Semantic.Ring]: RingColor,
         [Semantic.Muted]: MutedColor,
         [Radii.Medium]: MediumRadius
-    } = UseToken(
+    } = useToken(
         Semantic.Ring,
         Semantic.Muted,
         Radii.Medium
@@ -155,11 +156,13 @@ const SelectTrigger = ({
 
     return (
         <Pressable
-            accessibilityLabel={ AccessibilityLabel }
-            accessibilityRole="button"
-            accessibilityState={ { disabled: Disabled, expanded: IsOpen } }
-            disabled={ Disabled }
-            onPress={ () => SetIsOpen(!IsOpen) }
+            Accessibility={ {
+                Label: AccessibilityLabel,
+                Role: "button",
+                State: { disabled: Disabled, expanded: IsOpen }
+            } }
+            Disabled={ Disabled }
+            OnPress={ () => SetIsOpen(!IsOpen) }
             ref={ AnchorRef }
             style={ [
                 {
@@ -201,7 +204,7 @@ export/**
 const SelectValue = ({ Placeholder }: SelectValueProps): React.JSX.Element =>
 {
     const { Value, Labels } = useSelectContext();
-    const { [Semantic.Muted]: MutedColor } = UseToken(Semantic.Muted);
+    const { [Semantic.Muted]: MutedColor } = useToken(Semantic.Muted);
     const Label = Value === undefined ? undefined : Labels.current.get(Value);
 
     return (
@@ -229,7 +232,7 @@ export/**
        * @since 1.0.0
        */
 const SelectContent = ({
-    MatchTriggerWidth = false,
+    MatchTriggerWidth = true,
     Placement = "Bottom",
     Style,
     children

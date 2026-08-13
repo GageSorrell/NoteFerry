@@ -112,6 +112,17 @@ const Muted: unique symbol = Symbol.for(GetSymbolKey("Muted"));
 export type Muted = typeof Muted;
 
 export/**
+       * The insertion cursor and text-selection accent color token.
+       *
+       * @category Token
+       * @since 1.0.0
+       */
+const Cursor: unique symbol = Symbol.for(GetSymbolKey("Cursor"));
+
+/** {@inheritDoc Cursor} */
+export type Cursor = typeof Cursor;
+
+export/**
        * The default icon color token.
        *
        * @category Token
@@ -315,6 +326,7 @@ export type Semantic =
     | Primary
     | Secondary
     | Muted
+    | Cursor
     | Icon
     | IconPrimary
     | IconSecondary
@@ -384,6 +396,11 @@ const Value: ReadonlyRecord<Semantic, LightDark> = Object.freeze({
     {
         Dark: "rgba(255, 255, 255, 0.3)",
         Light: "rgba(70, 68, 64, 0.45)"
+    },
+    [ Cursor ]:
+    {
+        Dark: "#ADA9A3",
+        Light: "#8E8B86"
     },
     [ Icon ]:
     {

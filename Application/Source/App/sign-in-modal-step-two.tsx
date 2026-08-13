@@ -14,14 +14,14 @@ import { OnboardingMockTiming, useDevelopmentOnboarding } from
 import { ConnectNotion } from "@/Domain/Connection";
 import { SignInModalStepTwoView } from "@/features/onboarding/onboarding-views";
 import { SignInWithOAuth } from "@/Domain/Auth/OAuth";
-import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useOnboarding } from "@/features/onboarding/onboarding-context";
 import { useState } from "react";
 
 const SignInModalStepTwo = () =>
 {
     const [ Busy, SetBusy ] = useState(false);
-    const Router = UseLazyRouter();
+    const Router = useLazyRouter();
     const Development = useDevelopmentOnboarding();
     const { Begin, Complete, RecordAuthorizationResult } = useOnboarding();
 

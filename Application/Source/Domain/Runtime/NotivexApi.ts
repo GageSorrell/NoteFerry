@@ -260,6 +260,16 @@ export interface CreateDestinationInput
     readonly Template: Domain.Destination.DestinationTemplate;
 }
 
+/** The fields the client may change on an existing destination. */
+export interface UpdateDestinationInput
+{
+    readonly FieldConfiguration?: Domain.Destination.FieldConfiguration | undefined;
+    readonly Icon?: string | undefined;
+    readonly Name?: string | undefined;
+    readonly Position?: number | undefined;
+    readonly Template?: Domain.Destination.DestinationTemplate | undefined;
+}
+
 export/**
        * Creates a quick-entry destination for a cached data source.
        *
@@ -278,6 +288,33 @@ const CreateDestination = async (
             const Client = yield* MakeClient(Token);
 
             return yield* Client.Destinations.Create({ payload: Input });
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
+};
+
+export/**
+       * Updates a quick-entry destination's presentation or field configuration.
+       *
+       * @category Api
+       * @since 1.0.0
+       */
+const UpdateDestination = async (
+    DestinationId: Domain.Id.DestinationId,
+    Input: UpdateDestinationInput
+): Promise<Domain.Destination.Destination> =>
+{
+    const Token = await GetAccessToken();
+
+    return Effect.runPromise(pipe(
+        Effect.gen(function* ()
+        {
+            const Client = yield* MakeClient(Token);
+
+            return yield* Client.Destinations.Update({
+                params: { DestinationId },
+                payload: Input
+            });
         }),
         Effect.provide(FetchHttpClient.layer)
     ));

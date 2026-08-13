@@ -28,7 +28,9 @@ import {
     type ViewStyle,
     useWindowDimensions
 } from "react-native";
-import { ThemeProvider, UseTheme, UseToken } from "../ThemeProvider.js";
+import { ThemeProvider, useTheme, useToken } from "../ThemeProvider.js";
+
+const DefaultSnapPoints = [ "83.333%" ];
 
 /** {@inheritDoc BottomSheet} */
 export interface BottomSheet extends Gorhom.BottomSheetModal { }
@@ -36,8 +38,12 @@ export interface BottomSheet extends Gorhom.BottomSheetModal { }
 /** {@inheritDoc BottomSheet} */
 export interface BottomSheetProps extends React.PropsWithChildren
 {
+    /** Overrides the sheet surface and handle-edge background. */
+    readonly BackgroundColor?: string | undefined;
     readonly OnChange?: Gorhom.BottomSheetModalProps["onChange"];
     readonly OnDismiss?: (() => void) | undefined;
+    /** Sheet heights. The first entry is used when the sheet opens. */
+    readonly SnapPoints?: Gorhom.BottomSheetModalProps["snapPoints"];
     readonly ShowDragIndicator?: boolean;
     readonly Ref: React.RefObject<Gorhom.BottomSheetModal | null>;
     readonly TestId?: string;
@@ -52,8 +58,10 @@ export/**
        * @since 1.0.0
        */
 const BottomSheet = ({
+    BackgroundColor,
     OnChange,
     OnDismiss,
+    SnapPoints,
     ShowDragIndicator = true,
     Ref,
     TestId,
@@ -62,13 +70,17 @@ const BottomSheet = ({
 {
     const MaxWidth = 480 as const;
 
-    const ColorScheme = UseTheme().Mode;
+    const Theme = useTheme();
+    const ColorScheme = Theme.Mode;
+    const SheetBackgroundColor = BackgroundColor
+        ?? Theme.Semantic.BackgroundModal;
+    const HandleColor = ColorScheme === "Dark"
+        ? "rgba(255, 255, 255, 0.22)"
+        : "rgba(55, 53, 47, 0.16)";
 
     const { width: WindowWidth } = useWindowDimensions();
 
     const marginHorizontal = Math.max(0, (WindowWidth - MaxWidth) / 2);
-
-    const snapPoints = React.useMemo(() => [ "83.333%" ], [ ]);
 
     return (
         <Gorhom.BottomSheetModal
@@ -79,12 +91,24 @@ const BottomSheet = ({
                     disappearsOnIndex={ -1 }
                     opacity={ 0.667 }
                 /> }
+            backgroundStyle={ [
+                Styles.Background,
+                { backgroundColor: SheetBackgroundColor }
+            ] }
             containerStyle={ { marginHorizontal } }
             enableDynamicSizing={ false }
             enablePanDownToClose
+            handleIndicatorStyle={ [
+                Styles.HandleIndicator,
+                { backgroundColor: HandleColor }
+            ] }
+            handleStyle={ [
+                Styles.Handle,
+                { backgroundColor: SheetBackgroundColor }
+            ] }
             index={ 0 }
             ref={ Ref }
-            snapPoints={ snapPoints }
+            snapPoints={ SnapPoints ?? DefaultSnapPoints }
             { ...(OnChange !== undefined ? { onChange: OnChange } : { }) }
             { ...(OnDismiss !== undefined ? { onClose: OnDismiss } : { }) }
             { ...(ShowDragIndicator ? { } : { handleComponent: null }) }
@@ -167,7 +191,7 @@ const BottomSheetFooter = ({ Style, children }: BottomSheetFooterProps): React.J
     const {
         [Spacing.S]: gap,
         [Spacing.SheetHorizontal]: padding
-    } = UseToken(
+    } = useToken(
         Spacing.S,
         Spacing.SheetHorizontal
     );
@@ -202,7 +226,7 @@ const BottomSheetView = ({
     ...Tail
 }: BottomSheetViewProps): React.JSX.Element =>
 {
-    const { [Semantic.BackgroundModal]: backgroundColor } = UseToken(Semantic.BackgroundModal);
+    const { [Semantic.BackgroundModal]: backgroundColor } = useToken(Semantic.BackgroundModal);
 
     return (
         <Gorhom.BottomSheetView
@@ -225,7 +249,7 @@ const BottomSheetScrollView = ({
     ...Tail
 }: BottomSheetScrollViewProps): React.JSX.Element =>
 {
-    const { [Semantic.BackgroundModal]: backgroundColor } = UseToken(Semantic.BackgroundModal);
+    const { [Semantic.BackgroundModal]: backgroundColor } = useToken(Semantic.BackgroundModal);
 
     return (
         <Gorhom.BottomSheetScrollView
@@ -237,9 +261,26 @@ const BottomSheetScrollView = ({
 };
 
 const Styles = StyleSheet.create({
+    Background:
+    {
+        borderTopLeftRadius: 14,
+        borderTopRightRadius: 14
+    },
     Footer:
     {
         flexDirection: "column",
         marginTop: "auto"
+    },
+    Handle:
+    {
+        borderTopLeftRadius: 14,
+        borderTopRightRadius: 14,
+        paddingBottom: 8,
+        paddingTop: 6
+    },
+    HandleIndicator:
+    {
+        height: 4,
+        width: 36
     }
 });

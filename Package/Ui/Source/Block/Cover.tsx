@@ -27,7 +27,7 @@ import { Image as ExpoImage } from "expo-image";
 import { Skeleton } from "../Primitive/Skeleton.js";
 import type { Thunk } from "@sorrell/utility/Function";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 
 const MaxHeight = 280 as const;
 
@@ -66,7 +66,7 @@ const Cover = ({
     const {
         [Semantic.BackgroundPopover]: PopoverBackground,
         [Semantic.Icon]: IconColor
-    } = UseToken(
+    } = useToken(
         Semantic.BackgroundPopover,
         Semantic.Icon
     );

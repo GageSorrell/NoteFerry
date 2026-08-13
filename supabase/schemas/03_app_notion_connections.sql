@@ -12,6 +12,7 @@ create table app.notion_connections (
     workspace_id text not null,
     workspace_name text not null,
     workspace_icon_url text,
+    notion_owner_avatar_url text,
     notion_owner_user_id text,
     status text not null default 'Active' check (status in ('Active', 'Revoked')),
     connected_at timestamptz not null default now(),

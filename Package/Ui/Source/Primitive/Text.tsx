@@ -28,7 +28,7 @@ import {
     type TextStyle
 } from "react-native";
 import type { ReadonlyRecord } from "effect/Record";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 
 /**
  * Semantic text roles observed throughout Notion's mobile UI and editor.
@@ -188,9 +188,9 @@ const Text = ({
     ...RestProps
 }: TextProps): React.ReactNode =>
 {
-    const { [VariantToken[Variant]]: ResolvedTypography } = UseToken(VariantToken[Variant]);
+    const { [VariantToken[Variant]]: ResolvedTypography } = useToken(VariantToken[Variant]);
     const TokenColorArgument = typeof ColorProp === "symbol" ? ColorProp : Semantic.Primary;
-    const { [TokenColorArgument]: ResolvedTokenColor } = UseToken(TokenColorArgument);
+    const { [TokenColorArgument]: ResolvedTokenColor } = useToken(TokenColorArgument);
     const FinalColor = typeof ColorProp === "string" ? ColorProp : ResolvedTokenColor;
     const EffectiveWeight = Weight ?? ResolvedTypography.FontWeight;
 

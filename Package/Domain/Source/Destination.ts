@@ -17,6 +17,7 @@
  */
 
 import * as Id from "./Id.js";
+import type { PropertyDefinition } from "./Property/Definition.js";
 import { PropertyInput } from "./Property/Input.js";
 import { Schema } from "effect";
 
@@ -85,6 +86,77 @@ const FieldConfiguration = Schema.Struct({
 
 /** {@inheritDoc FieldConfiguration} */
 export type FieldConfiguration = Schema.Schema.Type<typeof FieldConfiguration>;
+
+/** Whether a property can be edited by the current quick-entry form. */
+export function IsQuickEntryProperty(Property: PropertyDefinition): boolean
+{
+    return ![ "Files", "People", "Relation" ].includes(Property.Type);
+}
+
+/**
+ * Reconciles saved field preferences with a freshly fetched Notion schema.
+ * Existing settings follow stable property IDs, deleted properties disappear,
+ * and new writable properties are appended and shown by default.
+ */
+export function ReconcileFieldConfiguration(
+    Current: FieldConfiguration,
+    Properties: ReadonlyArray<PropertyDefinition>
+): FieldConfiguration
+{
+    const PropertyById = new Map(Properties.map((Property: PropertyDefinition) =>
+        [ Property.Id, Property ] as const));
+    const SettingById = new Map(Current.Fields.map((Field: FieldSetting) =>
+        [ Field.PropertyId, Field ] as const));
+    const SeenIds = new Set<Id.NotionPropertyId>();
+    const FieldOrder: Array<Id.NotionPropertyId> = [];
+
+    for (const PropertyId of Current.FieldOrder)
+    {
+        if (PropertyById.has(PropertyId) && !SeenIds.has(PropertyId))
+        {
+            SeenIds.add(PropertyId);
+            FieldOrder.push(PropertyId);
+        }
+    }
+
+    for (const Property of Properties)
+    {
+        if (!SeenIds.has(Property.Id))
+        {
+            SeenIds.add(Property.Id);
+            FieldOrder.push(Property.Id);
+        }
+    }
+
+    const Fields = FieldOrder.map((PropertyId: Id.NotionPropertyId): FieldSetting =>
+    {
+        const Property = PropertyById.get(PropertyId)!;
+        const Existing = SettingById.get(PropertyId);
+
+        if (Existing === undefined)
+        {
+            return {
+                PropertyId,
+                Required: Property.Type === "Title",
+                Visible: IsQuickEntryProperty(Property)
+            };
+        }
+
+        const CompatibleDefault = Existing.Default !== undefined
+            && Existing.Default.Type === Property.Type
+            ? Existing.Default
+            : undefined;
+
+        return {
+            ...(CompatibleDefault === undefined ? { } : { Default: CompatibleDefault }),
+            PropertyId,
+            Required: Property.Type === "Title" || Existing.Required,
+            Visible: Existing.Visible
+        };
+    });
+
+    return { FieldOrder, Fields, Version: 1 };
+}
 
 export/**
        * A user-configured quick-entry experience for one Notion data source.

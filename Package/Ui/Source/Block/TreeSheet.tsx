@@ -56,7 +56,7 @@ import { StyleSheet, View } from "react-native";
 import { Input } from "../Primitive/Input.js";
 import type { Thunk } from "@sorrell/utility/Function";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 
 const IndentWidth = 16 as const;
 const MaxSearchResults = 100 as const;
@@ -214,7 +214,7 @@ const TreeSheetRow = <A extends TreeItemData,>({
     OnSelect
 }: TreeSheetRowProps<A>): React.JSX.Element =>
 {
-    const { [Semantic.Muted]: MutedColor } = UseToken(Semantic.Muted);
+    const { [Semantic.Muted]: MutedColor } = useToken(Semantic.Muted);
 
     return (
         <MenuItem
@@ -337,7 +337,7 @@ const TreeSheet = <A extends TreeItemData,>({
         return Matches;
     }, [ IsSearching, Query, Entity, ExpandedIds ]);
 
-    const { [Spacing.SheetHorizontal]: HorizontalPadding } = UseToken(Spacing.SheetHorizontal);
+    const { [Spacing.SheetHorizontal]: HorizontalPadding } = useToken(Spacing.SheetHorizontal);
 
     return (
         <BottomSheet

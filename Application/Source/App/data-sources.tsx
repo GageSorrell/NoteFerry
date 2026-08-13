@@ -16,9 +16,10 @@ import type * as Domain from "@notivex/domain";
 import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 import { Body, Button, Description, Heading1, LabelText } from "@notivex/ui/Primitive";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useDataSources } from "@/features/data-sources/use-data-sources";
 import { useLocalSearchParams } from "expo-router";
+import { useTheme } from "@notivex/ui";
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 function IsEmoji(Icon: string | undefined): Icon is string
@@ -28,7 +29,8 @@ function IsEmoji(Icon: string | undefined): Icon is string
 
 const DataSourcesScreen = () =>
 {
-    const Router = UseLazyRouter();
+    const Router = useLazyRouter();
+    const Theme = useTheme();
     const Params = useLocalSearchParams<{ connectionId: string; workspaceName?: string }>();
     const ConnectionId = Params.connectionId as Domain.Id.NotionConnectionId;
 
@@ -68,7 +70,7 @@ const DataSourcesScreen = () =>
                     contentContainerStyle={ styles.list }
                     style={ styles.listContainer }>
                     { IsSearching && Discovered.length === 0
-                        ? <ActivityIndicator />
+                        ? <ActivityIndicator color={ Theme.Semantic.Cursor } />
                         : Discovered.length === 0
                             ? (
                                 <Description>

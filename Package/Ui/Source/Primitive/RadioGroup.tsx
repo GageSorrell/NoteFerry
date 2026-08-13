@@ -13,8 +13,9 @@
 
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
-import { Pressable, type StyleProp, View, type ViewStyle } from "react-native";
-import { UseToken } from "../ThemeProvider.js";
+import { type StyleProp, View, type ViewStyle } from "react-native";
+import { Pressable } from "./Pressable.js";
+import { useToken } from "../ThemeProvider.js";
 
 interface RadioGroupContextValue
 {
@@ -94,7 +95,7 @@ const RadioGroupItem = ({
     const {
         [Semantic.Border]: BorderColor,
         [Semantic.Blue]: BlueColor
-    } = UseToken(
+    } = useToken(
         Semantic.Border,
         Semantic.Blue
     );
@@ -104,11 +105,14 @@ const RadioGroupItem = ({
 
     return (
         <Pressable
-            accessibilityRole="radio"
-            accessibilityState={ { checked: IsChecked, disabled: IsDisabled } }
-            disabled={ IsDisabled }
+            Accessibility={ {
+                Label: undefined,
+                Role: "radio",
+                State: { checked: IsChecked, disabled: IsDisabled }
+            } }
+            Disabled={ IsDisabled }
+            OnPress={ () => Context.OnValueChange?.(ItemValue) }
             hitSlop={ 8 }
-            onPress={ () => Context.OnValueChange?.(ItemValue) }
             style={ [
                 {
                     alignItems: "center",

@@ -37,7 +37,7 @@ import {
 import { type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
 import { Check } from "lucide-react-native";
 import type { Thunk } from "@sorrell/utility/Function";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 
 interface SelectableContextValue
 {
@@ -306,7 +306,7 @@ const SelectableCheckmark = ({ IsSelected, Style }: SelectableCheckmarkProps): R
         [Semantic.Border]: BorderColor,
         [Semantic.Blue]: BlueColor,
         [Radii.Full]: FullRadius
-    } = UseToken(
+    } = useToken(
         Semantic.Border,
         Semantic.Blue,
         Radii.Full

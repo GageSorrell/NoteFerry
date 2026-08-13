@@ -18,7 +18,7 @@ import * as Semantic from "../Token/Semantic.js";
 import { Image, type ImageSource } from "expo-image";
 import { type ImageStyle, type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
 
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 type AvatarStatus =
@@ -62,7 +62,7 @@ export/**
 const Avatar = ({ Size = 40, Style, children }: AvatarProps): React.JSX.Element =>
 {
     const [ Status, SetStatus ] = React.useState<AvatarStatus>("Idle");
-    const { [Semantic.Border]: BorderColor } = UseToken(Semantic.Border);
+    const { [Semantic.Border]: BorderColor } = useToken(Semantic.Border);
 
     const ContextValue = React.useMemo<AvatarContextValue>(() => ({ SetStatus, Status }), [ Status ]);
 
@@ -124,7 +124,7 @@ export/**
 const AvatarFallback = ({ children }: AvatarFallbackProps): React.JSX.Element | null =>
 {
     const { Status } = useAvatarContext();
-    const { [Semantic.Default]: DefaultColor } = UseToken(Semantic.Default);
+    const { [Semantic.Default]: DefaultColor } = useToken(Semantic.Default);
 
     if (Status === "Loaded")
     {

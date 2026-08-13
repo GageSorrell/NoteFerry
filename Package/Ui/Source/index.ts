@@ -19,8 +19,8 @@ export { NotivexUiError } from "./NotivexUiError.js";
 export {
     ThemeProvider,
     type ThemeProviderProps,
-    UseToken,
-    UseTheme,
+    useToken,
+    useTheme,
     type Theme,
     type ThemeMode,
     type ResolvableToken,

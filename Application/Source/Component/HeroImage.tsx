@@ -12,7 +12,7 @@
 
 import { Image } from "expo-image";
 import type { ImageAsset } from "@/Domain/Utility/Asset";
-import { UseTheme } from "@notivex/ui";
+import { useTheme } from "@notivex/ui";
 import { View } from "react-native";
 
 /** {@inheritDoc HeroImage} */
@@ -29,7 +29,7 @@ export/**
        */
 const HeroImage = ({ Source }: HeroImageProps) =>
 {
-    const { Mode } = UseTheme();
+    const { Mode } = useTheme();
 
     const Base =
         <Image

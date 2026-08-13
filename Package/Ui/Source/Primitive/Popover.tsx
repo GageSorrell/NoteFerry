@@ -23,7 +23,7 @@ import {
     View,
     type ViewStyle
 } from "react-native";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 
 interface PopoverContextValue
 {
@@ -142,7 +142,7 @@ export/**
 const PopoverContent = ({ Placement = "Bottom", Style, children }: PopoverContentProps): React.JSX.Element =>
 {
     const { IsOpen, SetIsOpen, AnchorRef } = usePopoverContext();
-    const { [Spacing.S]: Padding } = UseToken(Spacing.S);
+    const { [Spacing.S]: Padding } = useToken(Spacing.S);
 
     return (
         <Popup

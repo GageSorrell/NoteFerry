@@ -19,6 +19,7 @@
  */
 
 import * as Domain from "@notivex/domain";
+import * as Destinations from "./Destinations.ts";
 import * as Notion from "./Notion.ts";
 import { CallNotionData, LoadConnectionTokens, RateLimited } from "./NotionAuth.ts";
 import { AdminClient } from "./Database.ts";
@@ -686,6 +687,13 @@ export function RefreshForUser(UserId: string, ConnectionId: string, DataSourceI
         {
             return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: error.message }));
         }
+
+        yield* Destinations.ReconcileForDataSource(
+            UserId,
+            ConnectionId,
+            DataSourceId,
+            Properties
+        );
 
         return {
             ConnectionId: ConnectionId as Domain.Id.NotionConnectionId,

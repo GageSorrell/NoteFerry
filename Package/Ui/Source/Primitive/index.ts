@@ -35,6 +35,7 @@ export * from "./Input.js";
 export * from "./Label.js";
 export * from "./Link.js";
 export * from "./Meter.js";
+export * from "./Pressable.js";
 export * from "./RadioGroup.js";
 export * from "./Separator.js";
 export * from "./Skeleton.js";

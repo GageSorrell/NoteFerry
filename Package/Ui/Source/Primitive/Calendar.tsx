@@ -28,12 +28,22 @@
 
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
+import { ChevronLeft, ChevronRight } from "lucide-react-native";
 import { type DateData, Calendar as RNCalendar } from "react-native-calendars";
-import { type StyleProp, type ViewStyle } from "react-native";
+import { Mix, WithAlpha } from "../Utility/index.js";
+import {
+    type PressableStateCallbackType,
+    type StyleProp,
+    StyleSheet,
+    Text,
+    View,
+    type ViewStyle
+} from "react-native";
 import { eachDayOfInterval, format, isBefore } from "date-fns";
+import { Body } from "./Text.js";
+import { Pressable } from "./Pressable.js";
 import type { ReadonlyRecord } from "effect/Record";
-import { UseToken } from "../ThemeProvider.js";
-import { WithAlpha } from "../Utility/index.js";
+import { useToken } from "../ThemeProvider.js";
 
 /**
  * `react-native-calendars` doesn't export its `Theme` type from the package root; derived from
@@ -42,6 +52,7 @@ import { WithAlpha } from "../Utility/index.js";
 type RnCalendarTheme = NonNullable<React.ComponentProps<typeof RNCalendar>[ "theme" ]>;
 
 const ToDateKey = (Value: Date): string => format(Value, "yyyy-MM-dd");
+const ToMonthKey = (Value: Date): string => format(Value, "yyyy-MM");
 
 interface CalendarThemeColors
 {
@@ -50,6 +61,225 @@ interface CalendarThemeColors
     readonly MutedColor: string;
     readonly BlueColor: string;
 }
+
+/** Visual treatment used by the compact mobile date-property sheet. */
+export type CalendarAppearance = "Default" | "DateSheet";
+
+const WeekdayLabels = [ "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa" ] as const;
+
+interface DateSheetCalendarHeaderProps
+{
+    readonly addMonth?: ((Amount: number) => void) | undefined;
+    readonly month?: { readonly toString: (Format: string) => string; } | undefined;
+}
+
+/** Notion-mobile month header: label on the left, adjacent arrows on the right. */
+const DateSheetCalendarHeader = ({
+    addMonth,
+    month
+}: DateSheetCalendarHeaderProps): React.JSX.Element =>
+{
+    const {
+        [Semantic.SidebarPrimary]: IconColor,
+        [Semantic.Muted]: MutedColor
+    } = useToken(Semantic.SidebarPrimary, Semantic.Muted);
+
+    return (
+        <View>
+            <View style={ Styles.DateSheetMonthHeader }>
+                <Body Weight="600">
+                    { month?.toString("MMM yyyy") ?? "" }
+                </Body>
+                <View style={ Styles.DateSheetMonthActions }>
+                    <Pressable
+                        Accessibility={ {
+                            Label: "Previous month",
+                            Role: "button"
+                        } }
+                        OnPress={ () => addMonth?.(-1) }
+                        hitSlop={ 8 }
+                        style={ DateSheetMonthButtonStyle }>
+                        <ChevronLeft
+                            color={ IconColor }
+                            size={ 19 }
+                        />
+                    </Pressable>
+                    <Pressable
+                        Accessibility={ {
+                            Label: "Next month",
+                            Role: "button"
+                        } }
+                        OnPress={ () => addMonth?.(1) }
+                        hitSlop={ 8 }
+                        style={ DateSheetMonthButtonStyle }>
+                        <ChevronRight
+                            color={ IconColor }
+                            size={ 19 }
+                        />
+                    </Pressable>
+                </View>
+            </View>
+            <View
+                accessibilityElementsHidden
+                importantForAccessibility="no-hide-descendants"
+                style={ Styles.DateSheetWeekdays }>
+                { WeekdayLabels.map((Label: string) => (
+                    <Body
+                        Color={ MutedColor }
+                        Style={ Styles.DateSheetWeekday }
+                        key={ Label }>
+                        { Label }
+                    </Body>
+                )) }
+            </View>
+        </View>
+    );
+};
+
+const DateSheetMonthButtonStyle = ({
+    pressed
+}: PressableStateCallbackType): StyleProp<ViewStyle> => [
+    Styles.DateSheetMonthButton,
+    pressed && Styles.DateSheetMonthButtonPressed
+];
+
+interface DateSheetCalendarDayMarking
+{
+    readonly color?: string | undefined;
+    readonly disabled?: boolean | undefined;
+    readonly disableTouchEvent?: boolean | undefined;
+    readonly endingDay?: boolean | undefined;
+    readonly endpoint?: "Focused" | "Unfocused" | undefined;
+    readonly inactive?: boolean | undefined;
+    readonly selected?: boolean | undefined;
+    readonly startingDay?: boolean | undefined;
+    readonly textColor?: string | undefined;
+}
+
+interface DateSheetCalendarDayProps extends React.PropsWithChildren
+{
+    readonly accessibilityLabel?: string | undefined;
+    readonly date?: DateData | undefined;
+    readonly marking?: DateSheetCalendarDayMarking | undefined;
+    readonly onPress?: ((Date: DateData | undefined) => void) | undefined;
+    readonly state?: "" | "disabled" | "inactive" | "selected" | "today" | undefined;
+    readonly testID?: string | undefined;
+}
+
+/**
+ * Date-sheet day cell with a press-in selection preview. The calendar library's
+ * stock cells only apply their selected style after `onPress`; using the
+ * `Pressable` render state makes the rounded square visible as soon as the
+ * finger goes down, while still committing the date only after a completed tap.
+ */
+const DateSheetCalendarDay = ({
+    accessibilityLabel,
+    children,
+    date,
+    marking,
+    onPress,
+    state,
+    testID
+}: DateSheetCalendarDayProps): React.JSX.Element =>
+{
+    const {
+        [ Semantic.BackgroundModal ]: CardBackground,
+        [ Semantic.BlueHover ]: SelectedColor,
+        [ Semantic.Muted ]: MutedColor,
+        [ Semantic.Primary ]: PrimaryColor,
+        [ Semantic.Red ]: RedColor
+    } = useToken(
+        Semantic.BackgroundModal,
+        Semantic.BlueHover,
+        Semantic.Muted,
+        Semantic.Primary,
+        Semantic.Red
+    );
+    const RangeBandColor = React.useMemo(() => WithAlpha(SelectedColor, 0.16), [ SelectedColor ]);
+    const UnfocusedEndpointColor = React.useMemo(
+        () => Mix(CardBackground, SelectedColor, 0.3),
+        [ CardBackground, SelectedColor ]
+    );
+    const IsDisabled = marking?.disabled ?? state === "disabled";
+    const IsInactive = marking?.inactive ?? state === "inactive";
+    const IsToday = state === "today";
+    const IsRangeStart = marking?.startingDay === true;
+    const IsRangeEnd = marking?.endingDay === true;
+    const IsSelected = marking?.selected === true || IsRangeStart || IsRangeEnd;
+    const HasRange = marking?.color !== undefined
+        && (IsRangeStart || IsRangeEnd || !marking.selected);
+    const IsSingleDayRange = IsRangeStart && IsRangeEnd;
+    const IsTouchDisabled = marking?.disableTouchEvent === true || IsDisabled;
+
+    return (
+        <View style={ Styles.DateSheetDayCell }>
+            { HasRange && !IsSingleDayRange && (
+                <View
+                    pointerEvents="none"
+                    style={ [
+                        Styles.DateSheetRangeBand,
+                        { backgroundColor: RangeBandColor },
+                        IsRangeStart && Styles.DateSheetRangeBandStart,
+                        IsRangeEnd && Styles.DateSheetRangeBandEnd
+                    ] }
+                />
+            ) }
+            <Pressable
+                Accessibility={ {
+                    Label: accessibilityLabel,
+                    Role: IsDisabled ? undefined : "button"
+                } }
+                Disabled={ IsTouchDisabled }
+                OnPress={ () => onPress?.(date) }
+                style={ Styles.DateSheetDayPressable }
+                testID={ testID }>
+                { ({ pressed }: PressableStateCallbackType) =>
+                {
+                    const ShowSelected = pressed || IsSelected;
+                    const ShowToday = IsToday && !ShowSelected;
+                    const IsOutlinedEndpoint = ShowSelected
+                        && marking?.endpoint === "Unfocused"
+                        && !pressed;
+                    const ShowSolid = ShowSelected && !IsOutlinedEndpoint;
+                    const TextColor = ShowSolid || ShowToday
+                        ? "#FFFFFF"
+                        : IsDisabled || IsInactive
+                            ? MutedColor
+                            : marking?.textColor ?? PrimaryColor;
+
+                    return (
+                        <View
+                            pointerEvents="none"
+                            style={ Styles.DateSheetDayIndicator }>
+                            { (ShowToday || ShowSelected) && (
+                                <View style={ [
+                                    Styles.DateSheetDayBackground,
+                                    ShowToday && {
+                                        backgroundColor: RedColor
+                                    },
+                                    ShowToday && Styles.DateSheetTodayBackground,
+                                    IsOutlinedEndpoint && {
+                                        backgroundColor: UnfocusedEndpointColor,
+                                        borderColor: SelectedColor,
+                                        borderRadius: 7,
+                                        borderWidth: 2
+                                    },
+                                    ShowSolid && {
+                                        backgroundColor: SelectedColor,
+                                        borderRadius: 7
+                                    }
+                                ] } />
+                            ) }
+                            <Text style={ [ Styles.DateSheetDayText, { color: TextColor } ] }>
+                                { children }
+                            </Text>
+                        </View>
+                    );
+                } }
+            </Pressable>
+        </View>
+    );
+};
 
 /**
  * An endpoint when specifying a tuple of dates or times.
@@ -65,37 +295,86 @@ export type Endpoint =
  * Shared theme-color resolution for `SingleCalendar`/`RangeCalendar`, so the two
  * don't duplicate the `Semantic` → `RnCalendarTheme` mapping.
  */
-const useCalendarTheme = (): CalendarThemeColors =>
+const useCalendarTheme = (Appearance: CalendarAppearance): CalendarThemeColors =>
 {
     const {
         [ Semantic.Primary ]: PrimaryColor,
         [ Semantic.Muted ]: MutedColor,
-        [ Semantic.Blue ]: BlueColor
-    } = UseToken(
+        [ Semantic.Red ]: RedColor,
+        [ Semantic.Blue ]: BlueColor,
+        [ Semantic.BlueHover ]: BlueHoverColor
+    } = useToken(
         Semantic.Primary,
         Semantic.Muted,
-        Semantic.Blue
+        Semantic.Red,
+        Semantic.Blue,
+        Semantic.BlueHover
     );
+    const SelectedDayColor = Appearance === "DateSheet" ? BlueHoverColor : BlueColor;
 
     const Theme = React.useMemo<RnCalendarTheme>(() => ({
         arrowColor: PrimaryColor,
         calendarBackground: "transparent",
         dayTextColor: PrimaryColor,
         monthTextColor: PrimaryColor,
-        selectedDayBackgroundColor: BlueColor,
+        selectedDayBackgroundColor: SelectedDayColor,
         selectedDayTextColor: "#FFFFFF",
         textDisabledColor: MutedColor,
         textInactiveColor: MutedColor,
         textSectionTitleColor: MutedColor,
-        todayTextColor: BlueColor,
+        todayBackgroundColor: Appearance === "DateSheet" ? RedColor : "transparent",
+        todayTextColor: Appearance === "DateSheet" ? "#FFFFFF" : BlueColor,
 
         textDayFontFamily: "Inter_400Regular",
         textDayHeaderFontFamily: "Inter_400Regular",
         textMonthFontFamily: "Inter_400Regular",
-        todayButtonFontFamily: "Inter_400Regular"
-    }), [ PrimaryColor, MutedColor, BlueColor ]);
+        todayButtonFontFamily: "Inter_400Regular",
+        ...(Appearance === "DateSheet"
+            ? {
+                "stylesheet.day.basic":
+                {
+                    base:
+                    {
+                        alignItems: "center",
+                        height: 36,
+                        justifyContent: "center",
+                        width: 36
+                    },
+                    selected:
+                    {
+                        backgroundColor: SelectedDayColor,
+                        borderRadius: 7
+                    },
+                    today:
+                    {
+                        borderRadius: 18
+                    }
+                },
+                "stylesheet.day.period":
+                {
+                    base:
+                    {
+                        alignItems: "center",
+                        height: 36,
+                        justifyContent: "center",
+                        width: 36
+                    },
+                    selectedText:
+                    {
+                        color: "#FFFFFF"
+                    }
+                },
+                textDayFontSize: 16,
+                textDayStyle:
+                {
+                    marginTop: 0
+                },
+                weekVerticalMargin: 4
+            }
+            : { })
+    }), [ Appearance, PrimaryColor, MutedColor, RedColor, BlueColor, SelectedDayColor ]);
 
-    return { BlueColor, MutedColor, PrimaryColor, Theme } as const;
+    return { BlueColor: SelectedDayColor, MutedColor, PrimaryColor, Theme } as const;
 };
 
 /**
@@ -110,6 +389,7 @@ export interface CalendarRange extends Partial<ReadonlyRecord<Endpoint, Date | u
 
 interface CalendarCommonProps
 {
+    readonly Appearance?: CalendarAppearance | undefined;
     readonly MinDate?: Date | undefined;
     readonly MaxDate?: Date | undefined;
     readonly Style?: StyleProp<ViewStyle> | undefined;
@@ -150,6 +430,7 @@ export type CalendarProps =
     | CalendarRangeProps;
 
 const SingleCalendar = ({
+    Appearance = "Default",
     Value,
     DefaultValue,
     OnValueChange,
@@ -161,12 +442,15 @@ const SingleCalendar = ({
     const [ UncontrolledValue, SetUncontrolledValue ] = React.useState(DefaultValue);
     const CurrentValue = Value ?? UncontrolledValue;
 
-    const { Theme } = useCalendarTheme();
+    const { Theme } = useCalendarTheme(Appearance);
 
     const MarkedDates = React.useMemo(() => CurrentValue === undefined
         ? { }
         : { [ ToDateKey(CurrentValue) ]: { selected: true } },
     [ CurrentValue ]);
+    const CalendarKey = CurrentValue === undefined
+        ? "single-current-month"
+        : `single-${ ToMonthKey(CurrentValue) }`;
 
     const HandleDayPress = React.useCallback((Day: DateData) =>
     {
@@ -177,10 +461,17 @@ const SingleCalendar = ({
 
     return (
         <RNCalendar
+            key={ CalendarKey }
             { ...(CurrentValue === undefined ? { } : { current: ToDateKey(CurrentValue) }) }
             { ...(MinDate === undefined ? { } : { minDate: ToDateKey(MinDate) }) }
             { ...(MaxDate === undefined ? { } : { maxDate: ToDateKey(MaxDate) }) }
             enableSwipeMonths
+            { ...(Appearance === "DateSheet"
+                ? {
+                    customHeader: DateSheetCalendarHeader,
+                    dayComponent: DateSheetCalendarDay
+                }
+                : { }) }
             markedDates={ MarkedDates }
             onDayPress={ HandleDayPress }
             style={ Style }
@@ -192,26 +483,51 @@ const SingleCalendar = ({
 interface RangeMarking
 {
     readonly color: string;
+    readonly customContainerStyle?: ViewStyle;
     readonly textColor: string;
     readonly startingDay: boolean;
     readonly endingDay: boolean;
+    readonly endpoint?: "Focused" | "Unfocused" | undefined;
 }
+
+const DateSheetSelectedDayStyle: ViewStyle =
+    {
+        borderRadius: 7,
+        height: 36,
+        justifyContent: "center",
+        paddingTop: 0,
+        width: 36
+    };
 
 /**
  * One `markedDates` entry per day spanned by `Range`. The two endpoints get
  * `BlueColor` (solid, matching `SingleCalendar`'s selected-day color); days
  * strictly between them get the lighter `BandColor` — `PeriodDay` (from
  * `react-native-calendars`) renders `startingDay`/`endingDay` as rounded
- * caps and everything else as a flat, edge-to-edge band, which is exactly
- * the "range highlight" look in the reference screenshots.
+ * caps and everything else as a flat, edge-to-edge band. `DateSheet`
+ * endpoints receive the same softly rounded square used by single dates.
+ *
+ * For the `DateSheet` appearance each endpoint is additionally tagged
+ * `endpoint: "Focused" | "Unfocused"` from `ActiveEndpoint`, so the day cell
+ * can render the focused endpoint as a solid box and the other as a lighter
+ * outlined box (Notion's range style). Tagging is skipped for the default
+ * appearance, whose stock `PeriodDay` keeps both endpoints solid.
  */
 const BuildRangeMarkedDates = (
     Range: CalendarRange,
     BlueColor: string,
     BandColor: string,
-    PrimaryColor: string
+    PrimaryColor: string,
+    SelectedDayStyle: ViewStyle | undefined,
+    ActiveEndpoint: Endpoint | undefined
 ): Record<string, RangeMarking> =>
 {
+    const IsDateSheet = SelectedDayStyle !== undefined;
+    const FocusedDate = IsDateSheet && ActiveEndpoint !== undefined
+        ? Range[ ActiveEndpoint ]
+        : undefined;
+    const FocusedKey = FocusedDate === undefined ? undefined : ToDateKey(FocusedDate);
+
     if (Range.Start === undefined)
     {
         return { };
@@ -221,7 +537,16 @@ const BuildRangeMarkedDates = (
     {
         return {
             [ ToDateKey(Range.Start) ]:
-                { color: BlueColor, endingDay: true, startingDay: true, textColor: "#FFFFFF" }
+                {
+                    color: BlueColor,
+                    ...(SelectedDayStyle === undefined
+                        ? { }
+                        : { customContainerStyle: SelectedDayStyle }),
+                    ...(IsDateSheet ? { endpoint: "Focused" as const } : { }),
+                    endingDay: true,
+                    startingDay: true,
+                    textColor: "#FFFFFF"
+                }
         };
     }
 
@@ -233,12 +558,21 @@ const BuildRangeMarkedDates = (
     return Object.fromEntries(Days.map((Day: Date, Index: number) =>
     {
         const IsEndpoint = Index === 0 || Index === Days.length - 1;
+        const IsFocusedEndpoint = FocusedKey === undefined || ToDateKey(Day) === FocusedKey;
 
         return [ ToDateKey(Day), {
             color: IsEndpoint ? BlueColor : BandColor,
+            ...(IsEndpoint && SelectedDayStyle !== undefined
+                ? { customContainerStyle: SelectedDayStyle }
+                : { }),
+            ...(IsDateSheet && IsEndpoint
+                ? { endpoint: IsFocusedEndpoint ? "Focused" as const : "Unfocused" as const }
+                : { }),
             endingDay: Index === Days.length - 1,
             startingDay: Index === 0,
-            textColor: IsEndpoint ? "#FFFFFF" : PrimaryColor
+            textColor: IsEndpoint
+                ? (IsDateSheet && !IsFocusedEndpoint ? PrimaryColor : "#FFFFFF")
+                : PrimaryColor
         } ];
     }));
 };
@@ -293,6 +627,7 @@ const ResolveTargetedRange = (
 };
 
 const RangeCalendar = ({
+    Appearance = "Default",
     Value,
     DefaultValue,
     OnValueChange,
@@ -314,13 +649,26 @@ const RangeCalendar = ({
         || OnActiveEndpointChange !== undefined;
     const CurrentActiveEndpoint = ActiveEndpoint ?? UncontrolledActiveEndpoint;
 
-    const { BlueColor, PrimaryColor, Theme } = useCalendarTheme();
+    const { BlueColor, PrimaryColor, Theme } = useCalendarTheme(Appearance);
     const BandColor = React.useMemo(() => WithAlpha(BlueColor, 0.16), [ BlueColor ]);
 
     const MarkedDates = React.useMemo(
-        () => BuildRangeMarkedDates(CurrentValue, BlueColor, BandColor, PrimaryColor),
-        [ CurrentValue, BlueColor, BandColor, PrimaryColor ]
+        () => BuildRangeMarkedDates(
+            CurrentValue,
+            BlueColor,
+            BandColor,
+            PrimaryColor,
+            Appearance === "DateSheet" ? DateSheetSelectedDayStyle : undefined,
+            CurrentActiveEndpoint
+        ),
+        [ CurrentValue, BlueColor, BandColor, PrimaryColor, Appearance, CurrentActiveEndpoint ]
     );
+    const DisplayedValue = CurrentActiveEndpoint === "End"
+        ? CurrentValue.End ?? CurrentValue.Start
+        : CurrentValue.Start ?? CurrentValue.End;
+    const CalendarKey = DisplayedValue === undefined
+        ? "range-current-month"
+        : `range-${ ToMonthKey(DisplayedValue) }`;
 
     const HandleDayPress = React.useCallback((Day: DateData) =>
     {
@@ -354,10 +702,17 @@ const RangeCalendar = ({
 
     return (
         <RNCalendar
-            { ...(CurrentValue.Start === undefined ? {} : { current: ToDateKey(CurrentValue.Start) }) }
+            key={ CalendarKey }
+            { ...(DisplayedValue === undefined ? {} : { current: ToDateKey(DisplayedValue) }) }
             { ...(MinDate === undefined ? {} : { minDate: ToDateKey(MinDate) }) }
             { ...(MaxDate === undefined ? {} : { maxDate: ToDateKey(MaxDate) }) }
             enableSwipeMonths
+            { ...(Appearance === "DateSheet"
+                ? {
+                    customHeader: DateSheetCalendarHeader,
+                    dayComponent: DateSheetCalendarDay
+                }
+                : { }) }
             markedDates={ MarkedDates }
             markingType="period"
             onDayPress={ HandleDayPress }
@@ -377,3 +732,108 @@ export/**
        */
 const Calendar = (Props: CalendarProps): React.JSX.Element =>
     Props.Mode === "Range" ? <RangeCalendar { ...Props } /> : <SingleCalendar { ...Props } />;
+
+const Styles = StyleSheet.create({
+    DateSheetDayBackground:
+    {
+        height: 36,
+        left: "50%",
+        marginLeft: -18,
+        marginTop: -18,
+        position: "absolute",
+        top: "50%",
+        width: 36
+    },
+    DateSheetDayCell:
+    {
+        alignItems: "center",
+        height: 36,
+        justifyContent: "center",
+        width: "100%"
+    },
+    DateSheetDayIndicator:
+    {
+        alignItems: "center",
+        height: 36,
+        justifyContent: "center",
+        width: 36
+    },
+    DateSheetDayPressable:
+    {
+        alignItems: "center",
+        height: 36,
+        justifyContent: "center",
+        width: "100%"
+    },
+    DateSheetDayText:
+    {
+        fontFamily: "Inter_400Regular",
+        fontSize: 16
+    },
+    DateSheetMonthActions:
+    {
+        flexDirection: "row",
+        gap: 0,
+        paddingRight: 5
+    },
+    DateSheetMonthButton:
+    {
+        alignItems: "center",
+        borderRadius: 6,
+        height: 32,
+        justifyContent: "center",
+        width: 32
+    },
+    DateSheetMonthButtonPressed:
+    {
+        backgroundColor: "rgba(55, 53, 47, 0.08)"
+    },
+    DateSheetMonthHeader:
+    {
+        alignItems: "center",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        paddingLeft: 18,
+        paddingRight: 0,
+        paddingTop: 10
+    },
+    DateSheetRangeBand:
+    {
+        height: 36,
+        left: 0,
+        position: "absolute",
+        right: 0
+    },
+    DateSheetRangeBandEnd:
+    {
+        left: 0,
+        right: "50%"
+    },
+    DateSheetRangeBandStart:
+    {
+        left: "50%",
+        right: 0
+    },
+    DateSheetTodayBackground:
+    {
+        borderRadius: 16,
+        height: 32,
+        marginLeft: -16,
+        marginTop: -16,
+        width: 32
+    },
+    DateSheetWeekday:
+    {
+        fontSize: 16,
+        textAlign: "center",
+        width: 32
+    },
+    DateSheetWeekdays:
+    {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        marginBottom: 4,
+        marginTop: 5,
+        paddingHorizontal: 5
+    }
+});

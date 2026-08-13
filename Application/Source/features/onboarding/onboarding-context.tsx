@@ -22,7 +22,7 @@ import { ListConnections, ListDataSources } from "@/Domain/Runtime/NotivexApi";
 import { type UseNotionSync, useNotionSync } from "@/features/onboarding/use-notion-sync";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { AsyncThunk } from "@sorrell/utility/Function";
-import { UseAuth } from "@/Domain/Auth";
+import { useAuth } from "@/Domain/Auth";
 
 const PendingOnboardingStorageKey = "@notivex/onboarding-pending" as const;
 const StorageReadAttempts = 12 as const;
@@ -112,7 +112,7 @@ export function OnboardingProvider({
     children
 }: OnboardingProviderProps)
 {
-    const { Session } = UseAuth();
+    const { Session } = useAuth();
     const [ HasConnection, SetHasConnection ] = React.useState(false);
     const [ HasSelectedDatabases, SetHasSelectedDatabases ] = React.useState(false);
     const [ IsLoadingConnection, SetIsLoadingConnection ] = React.useState(true);

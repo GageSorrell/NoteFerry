@@ -6,7 +6,7 @@
  * `Token.Typography`, `Token.Shadow`) against the current light/dark mode using `effect`
  * (`Context.Tag` + `Effect.gen`) — but that is strictly an implementation
  * detail. Nothing exported from this module ever returns an `Effect`,
- * `Layer`, `Context.Tag`, or any other `effect` type; `UseTheme` returns
+ * `Layer`, `Context.Tag`, or any other `effect` type; `useTheme` returns
  * plain records containing strings, numbers, and style objects.
  *
  * `ThemeProvider` also embeds React Navigation's own `ThemeProvider` (from
@@ -90,9 +90,9 @@ export type ResolvedTypographyTokens =
     Readonly<{ [Name in SymbolTokenKeys<typeof Typography>]: Typography.TypographyValue }>;
 
 /**
- * All resolved design-token categories returned by `UseTheme`.
+ * All resolved design-token categories returned by `useTheme`.
  * Each token is selected through normal property access, for example
- * `UseTheme().Semantic.BackgroundMain`.
+ * `useTheme().Semantic.BackgroundMain`.
  */
 export interface ResolvedTheme
 {
@@ -128,7 +128,7 @@ export interface Theme extends ResolvedTheme
     readonly SetMode: (Mode: ThemeMode | "System") => void;
 }
 
-/** Any design-token symbol that can be resolved by `UseToken`. */
+/** Any design-token symbol that can be resolved by `useToken`. */
 export type ResolvableToken =
     | Color.Color
     | Radii.Radii
@@ -267,7 +267,7 @@ export interface ThemeProviderProps extends React.PropsWithChildren
     /**
      * `"Light"` / `"Dark"` pin the theme; `"System"` (the default) follows
      * the device's `Appearance` setting and can still be overridden at
-     * runtime via `UseTheme().SetMode`.
+     * runtime via `useTheme().SetMode`.
      */
     readonly ColorScheme?: ColorScheme;
 }
@@ -365,7 +365,7 @@ export/**
        *
        * @example
        * ```tsx
-       * const Theme = UseTheme();
+       * const Theme = useTheme();
        *
        * return <View style={ {
        *     backgroundColor: Theme.Semantic.BackgroundMain,
@@ -379,13 +379,13 @@ export/**
        * @category Hook
        * @since 1.0.0
        */
-const UseTheme = (): Theme =>
+const useTheme = (): Theme =>
 {
     const Value = React.useContext(ThemeContext);
 
     if (Value === undefined)
     {
-        throw new Error("[@notivex/ui] `UseTheme` was used outside of `<ThemeProvider>`.");
+        throw new Error("[@notivex/ui] `useTheme` was used outside of `<ThemeProvider>`.");
     }
 
     return Value;
@@ -417,7 +417,7 @@ export/**
        *
        * @example
        * ```tsx
-       * const Tokens = UseToken(Token.Semantic.Primary, Token.Radii.Medium);
+       * const Tokens = useToken(Token.Semantic.Primary, Token.Radii.Medium);
        * const PrimaryColor = Tokens[Token.Semantic.Primary];
        * const MediumRadius = Tokens[Token.Radii.Medium];
        * ```
@@ -427,7 +427,7 @@ export/**
        * @category Hook
        * @since 1.0.0
        */
-const UseToken = <const Tokens extends Array.NonEmptyReadonlyArray<ResolvableToken>>(
+const useToken = <const Tokens extends Array.NonEmptyReadonlyArray<ResolvableToken>>(
     ...Tokens: Tokens
 ): ResolvedTokenRecord<typeof Tokens[number]> =>
 {

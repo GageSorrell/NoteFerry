@@ -38,6 +38,7 @@ export/**
        * @since 1.0.0
        */
 const PageDraft = Schema.Struct({
+    Body: Schema.optional(Schema.String),
     DestinationId: Id.DestinationId,
     Title: Schema.optional(Schema.String),
     UpdatedAt: Schema.DateFromString,

@@ -12,13 +12,13 @@
 import { OnboardingMockTiming, useDevelopmentOnboarding } from
     "@/features/onboarding/onboarding-development";
 import { DoneView } from "@/features/onboarding/onboarding-views";
-import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useOnboarding } from "@/features/onboarding/onboarding-context";
 import { useState } from "react";
 
 const DoneScreen = () =>
 {
-    const Router = UseLazyRouter();
+    const Router = useLazyRouter();
     const { Complete, RefetchConnection } = useOnboarding();
     const Development = useDevelopmentOnboarding();
     const [ Pending, SetPending ] = useState(false);

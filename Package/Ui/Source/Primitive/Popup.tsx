@@ -22,8 +22,6 @@ import * as Semantic from "../Token/Semantic.js";
 import * as Shadow from "../Token/Shadow.js";
 import {
     type GestureResponderEvent,
-    Platform,
-    StatusBar,
     type StyleProp,
     useWindowDimensions,
     type ViewStyle
@@ -31,7 +29,7 @@ import {
 import RNPopover, { PopoverPlacement, Rect } from "react-native-popover-view";
 import type { ReadonlyRecord } from "effect/Record";
 import type { Thunk } from "@sorrell/utility/Function";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 
 /**
  * The relative location where a given `Popup` component may be placed.
@@ -141,7 +139,7 @@ const Popup = ({
         [Radii.Large]: LargeRadius,
         [Radii.Small]: SmallRadius,
         [Shadow.Card]: CardShadow
-    } = UseToken(
+    } = useToken(
         Semantic.BackgroundPopover,
         Semantic.BackgroundTooltip,
         Semantic.Border,
@@ -173,11 +171,7 @@ const Popup = ({
                 return;
             }
 
-            const StatusBarOffset = Platform.OS === "android"
-                ? StatusBar.currentHeight ?? 0
-                : 0;
-
-            SetAnchorRect(new Rect(X, Y + StatusBarOffset, Width, Height));
+            SetAnchorRect(new Rect(X, Y, Width, Height));
         });
 
         return () =>

@@ -27,6 +27,7 @@ import { Effect } from "effect";
  * in `Destinations.ts` about not reusing the inlined `@notivex/api` payload). */
 export interface CreatePageInput
 {
+    readonly Body?: string | undefined;
     readonly DestinationId: Domain.Id.DestinationId;
     readonly OperationId: Domain.Id.OperationId;
     readonly Title?: string | undefined;
@@ -74,6 +75,24 @@ function MapValueToNotion(Value: Domain.Property.PropertyInput): unknown
         default:
             return {};
     }
+}
+
+const NotionRichTextContentLimit = 2_000;
+
+/** Splits plaintext across Notion text objects without applying Markdown formatting. */
+function MapPlainTextToNotion(Value: string): ReadonlyArray<unknown>
+{
+    const RichText: Array<unknown> = [];
+
+    for (let Index = 0; Index < Value.length; Index += NotionRichTextContentLimit)
+    {
+        RichText.push({
+            text: { content: Value.slice(Index, Index + NotionRichTextContentLimit) },
+            type: "text"
+        });
+    }
+
+    return RichText;
 }
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
@@ -205,6 +224,13 @@ export function CreateForUser(UserId: string, Command: CreatePageInput)
         }
 
         const Configuration = Destination.configuration as StoredConfiguration;
+        const PageChildren = Command.Body === undefined || Command.Body.trim() === ""
+            ? undefined
+            : [ {
+                object: "block",
+                paragraph: { rich_text: MapPlainTextToNotion(Command.Body) },
+                type: "paragraph"
+            } ];
 
         for (const Field of Configuration.FieldConfiguration?.Fields ?? [])
         {
@@ -264,6 +290,7 @@ export function CreateForUser(UserId: string, Command: CreatePageInput)
         const Page = yield* Effect.tryPromise({
             catch: (Error_) => MapCreateError(Error_, DataSourceId),
             try: () => CallNotionData(Tokens, ConnectionId, (Token) => Notion.CreatePage(Token, {
+                ...(PageChildren === undefined ? { } : { children: PageChildren }),
                 parent: { data_source_id: DataSourceId, type: "data_source_id" },
                 properties: NotionProperties
             }))

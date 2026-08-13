@@ -17,7 +17,7 @@ import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { type StyleProp, View, type ViewStyle } from "react-native";
 import Svg, { Circle, G } from "react-native-svg";
-import { UseToken } from "../ThemeProvider.js";
+import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
 /** {@inheritDoc MeterBar} */
@@ -40,7 +40,7 @@ const MeterBar = ({ Value, Max = 100, TrackColor, Style, children }: MeterBarPro
     const {
         [Semantic.Default]: DefaultColor,
         [Semantic.Blue]: BlueColor
-    } = UseToken(
+    } = useToken(
         Semantic.Default,
         Semantic.Blue
     );
@@ -103,7 +103,7 @@ const MeterRing = ({
     const {
         [Semantic.Default]: DefaultColor,
         [Semantic.Blue]: BlueColor
-    } = UseToken(
+    } = useToken(
         Semantic.Default,
         Semantic.Blue
     );
