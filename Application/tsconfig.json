@@ -4,7 +4,7 @@
     "strict": true,
     "paths": {
       "@/*": [
-        "./src/*"
+        "./Source/*"
       ],
       "@/Resource/*": [
         "./Resource/*"
@@ -16,5 +16,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "src/Domain/Connection/UseConnections.ts.old"  ]
+, "Source/Domain/Connection/UseConnections.ts.old"  ]
 }
