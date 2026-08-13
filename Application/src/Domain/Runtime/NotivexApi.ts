@@ -303,3 +303,26 @@ const DeleteDestination = async (DestinationId: Domain.Id.DestinationId): Promis
         Effect.provide(FetchHttpClient.layer)
     ));
 };
+
+export/**
+       * Creates a Notion page using a configured quick-entry destination.
+       *
+       * @category Api
+       * @since 1.0.0
+       */
+const CreatePage = async (
+    Command: Domain.Command.CreatePageCommand
+): Promise<Domain.Command.CreatePageResult> =>
+{
+    const Token = await GetAccessToken();
+
+    return Effect.runPromise(pipe(
+        Effect.gen(function* ()
+        {
+            const Client = yield* MakeClient(Token);
+
+            return yield* Client.Pages.Create({ payload: Command });
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
+};

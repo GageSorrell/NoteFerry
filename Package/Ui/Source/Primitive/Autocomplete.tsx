@@ -32,6 +32,7 @@ import { Input, type InputProps } from "./Input.js";
 import { MenuGroup, MenuItem, type MenuItemVariant, MenuLabel } from "./Menu.js";
 import { ScrollView, type StyleProp, View, type ViewStyle } from "react-native";
 import { Description } from "./Text.js";
+import type { Thunk } from "@sorrell/utility/Function";
 import { UseToken } from "../ThemeProvider.js";
 
 export { Separator as AutocompleteSeparator } from "./Separator.js";

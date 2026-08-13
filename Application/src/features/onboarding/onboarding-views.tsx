@@ -36,8 +36,10 @@ import {
     Link,
     ScreenTitle
 } from "@notivex/ui/Primitive";
+import { ChevronDown, ChevronUp } from "lucide-react-native";
 import { IconBlock, type LucideIconName } from "@notivex/ui/Block";
 import { Token, UseTheme } from "@notivex/ui";
+import { Boolean } from "effect";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { HeroImage } from "@/Component";
 import { Image } from "expo-image";
@@ -46,6 +48,7 @@ import type { NotionSyncStatus } from "@/features/onboarding/use-notion-sync";
 import { OnboardingScreen } from "@/features/onboarding/onboarding-screen";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Semantic } from "@notivex/ui/Token";
+import { SvgUri } from "react-native-svg";
 import type { Thunk } from "@sorrell/utility/Function";
 
 /** Props shared by views with a single primary action. */
@@ -83,7 +86,7 @@ const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element => (
         Header={
             <View style={ signInStyles.header }>
                 <Image
-                    source={ require("../../../assets/NotivexLogoLight.png") }
+                    source={ require("../../../Resource/NotivexLogoLight.png") }
                     style={ { height: 52, marginBottom: 16, width: 52 } }
                 />
                 <HeroTitle Style={ signInStyles.headerText }>
@@ -97,14 +100,14 @@ const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element => (
                 </HeroTitle>
             </View>
         }
-        Hero={ require("../../../assets/Onboarding/Welcome.png") }
+        Hero={ require("../../../Resource/Onboarding/Welcome.png") }
         Subtitle="Log in with your Notion account"
         Title="Your notes, faster.">
         <View style={ signInStyles.spacer } />
         <AuthButton
             Icon={
                 <Image
-                    source={ require("../../../assets/Onboarding/NotionLogoLight.svg") }
+                    source={ require("../../../Resource/Onboarding/NotionLogoLight.svg") }
                     style={ signInStyles.authIcon }
                 />
             }
@@ -176,7 +179,7 @@ const SignInModalStepOneView = ({
                     <View style={ modalStyles.header }>
                         <ScreenTitle>What’s Ahead: Two Steps</ScreenTitle>
                     </View>
-                    <HeroImage Source={ require("../../../assets/Onboarding/SignInModalStepOne.png") } />
+                    <HeroImage Source={ require("../../../Resource/Onboarding/SignInModalStepOne.png") } />
                     <Body>
                         First, you’ll sign into Notion and add the{" "}
                         Notivex integration to your workspace.
@@ -227,7 +230,7 @@ const SignInModalStepTwoView = ({
                     <View style={ modalStyles.header }>
                         <ScreenTitle>What’s Ahead: Two Steps</ScreenTitle>
                     </View>
-                    <HeroImage Source={ require("../../../assets/Onboarding/SignInModalStepTwo.png") } />
+                    <HeroImage Source={ require("../../../Resource/Onboarding/SignInModalStepTwo.png") } />
                     <Body>
                         Then, you’ll choose which databases Notivex can see.
                     </Body>
@@ -239,7 +242,7 @@ const SignInModalStepTwoView = ({
                     <AuthButton
                         Icon={
                             <Image
-                                source={ require("../../../assets/Onboarding/NotionLogoLight.svg") }
+                                source={ require("../../../Resource/Onboarding/NotionLogoLight.svg") }
                                 style={ { height: 24, width: 24 } }
                             />
                         }
@@ -264,39 +267,6 @@ const SignInModalStepTwoView = ({
     );
 };
 
-/** Props for the content-integration grant screen. */
-export interface GrantViewProps extends PendingOnboardingActionProps
-{
-    readonly OnGrant: Thunk;
-}
-
-export/**
-       * Renders the content-integration grant screen and its pending state.
-       *
-       * @category Onboarding
-       * @since 1.0.0
-       */
-const GrantView = ({ OnGrant, IsPending: Pending }: GrantViewProps): React.JSX.Element => (
-    <OnboardingScreen
-        Hero={ require("../../../assets/Onboarding/Grant.png") }
-        Subtitle="Pick the databases and pages Notivex can write to — nothing else is ever touched."
-        Title="Give Notivex a place to write">
-        <View style={ onboardingStyles.spacer } />
-        <Body
-            Color={ Token.Semantic.Muted }
-            Style={ onboardingStyles.note }>
-            You can change what&apos;s shared anytime, right from Notion.
-        </Body>
-        <Button
-            Appearance="Primary"
-            Loading={ Pending }
-            OnPress={ OnGrant }
-            Style={ onboardingStyles.cta }>
-            Choose pages in Notion
-        </Button>
-    </OnboardingScreen>
-);
-
 export/**
        * Official Notion guidance linked from every access-recovery outcome.
        *
@@ -312,7 +282,9 @@ export interface SyncViewProps
     readonly Data: Domain.DataSource.OnboardingDiscovery | null;
     readonly IsPending: boolean;
     readonly OnAuthorize: Thunk;
-    readonly OnContinue: Thunk;
+    readonly OnContinue: (
+        Databases: ReadonlyArray<Domain.DataSource.OnboardingDatabase>
+    ) => void;
     readonly OnRetry: Thunk;
     readonly OnStartOver: Thunk;
     readonly ShowLoading: boolean;
@@ -322,6 +294,9 @@ export interface SyncViewProps
 /** Whether a Notion icon string can be rendered by `expo-image`. */
 const IsImageUrl = (Value: string): boolean =>
     Value.startsWith("https://") || Value.startsWith("http://");
+
+/** Whether a Notion image URL points to SVG artwork. */
+const IsSvgUrl = (Value: string): boolean => /\.svg(?:$|[?#])/iu.test(Value);
 
 /** Converts Notion's native icon names to the local Lucide key format. */
 const ToLucideIconName = (Value: string): LucideIconName =>
@@ -351,6 +326,17 @@ const OnboardingDatabaseIcon = ({
 
     if (Database.IconType === "Image" || IsImageUrl(Database.Icon))
     {
+        if (IsSvgUrl(Database.Icon))
+        {
+            return (
+                <SvgUri
+                    height={ 22 }
+                    uri={ Database.Icon }
+                    width={ 22 }
+                />
+            );
+        }
+
         return (
             <Image
                 accessibilityIgnoresInvertColors
@@ -381,7 +367,7 @@ const PageAccessDisclosure = ({
     const [ IsExpanded, SetIsExpanded ] = React.useState(false);
     const HelpSheet = React.useRef<BottomSheetModal | null>(null);
     const Theme = UseTheme();
-    const Remaining = Math.max(0, PageCount - Pages.length);
+    const NumRemaining = Math.max(0, PageCount - Pages.length);
 
     return (
         <View style={ onboardingResultStyles.disclosureSection }>
@@ -389,25 +375,37 @@ const PageAccessDisclosure = ({
                 <Pressable
                     accessibilityRole="button"
                     accessibilityState={ { expanded: IsExpanded } }
-                    onPress={ () => SetIsExpanded((Value: boolean) => !Value) }
+                    onPress={ () => SetIsExpanded(Boolean.not) }
                     style={ onboardingResultStyles.disclosureTrigger }>
-                    <Body Weight="600">
-                        { PageCount } { PageCount === 1 ? "page" : "pages" } shared
-                    </Body>
-                    <Body Color={ Token.Semantic.Muted }>
-                        { IsExpanded ? "⌃" : "⌄" }
-                    </Body>
-                </Pressable>
-                <Pressable
-                    accessibilityLabel="Why pages are shown"
-                    accessibilityRole="button"
-                    hitSlop={ 8 }
-                    onPress={ () => HelpSheet.current?.present() }
-                    style={ [
-                        onboardingResultStyles.helpButton,
-                        { borderColor: Theme.Semantic.Border }
-                    ] }>
-                    <Description Weight="600">?</Description>
+                    <View style={ { alignItems: "center", flexDirection: "row", gap: 8 } }>
+                        <Body Weight="600">
+                            { PageCount } { PageCount === 1 ? "page" : "pages" } found
+                        </Body>
+                        <Pressable
+                            accessibilityLabel="Why pages are shown"
+                            accessibilityRole="button"
+                            hitSlop={ 8 }
+                            onPress={ () => HelpSheet.current?.present() }
+                            style={ [
+                                onboardingResultStyles.helpButton,
+                                { borderColor: Theme.Semantic.Border }
+                            ] }>
+                            <Description Weight="600">?</Description>
+                        </Pressable>
+                    </View>
+                    <View
+                        accessible={ false }
+                        style={ onboardingResultStyles.disclosureChevron }>
+                        { IsExpanded
+                            ? <ChevronUp
+                                color={ Theme.Semantic.Muted }
+                                size={ 20 }
+                            />
+                            : <ChevronDown
+                                color={ Theme.Semantic.Muted }
+                                size={ 20 }
+                            /> }
+                    </View>
                 </Pressable>
             </View>
 
@@ -435,10 +433,10 @@ const PageAccessDisclosure = ({
                                     </Description>
                                 </View>
                             )) }
-                        { Remaining > 0
+                        { NumRemaining > 0
                             ? (
                                 <Description Color={ Token.Semantic.Muted }>
-                                    and { Remaining } more
+                                    and { NumRemaining } more
                                 </Description>
                             )
                             : null }
@@ -469,15 +467,20 @@ const PageAccessDisclosure = ({
     );
 };
 
+interface AccessOutcomeLayoutProps extends React.PropsWithChildren
+{
+    readonly Subtitle: string;
+    readonly Title: string;
+    readonly HeroImageAsset?: ImageAsset | undefined;
+}
+
 /** Shared scrollable hero layout for post-authorization recovery outcomes. */
 const AccessOutcomeLayout = ({
+    HeroImageAsset,
     Title,
     Subtitle,
     children
-}: React.PropsWithChildren<{
-    readonly Subtitle: string;
-    readonly Title: string;
-}>): React.JSX.Element => (
+}: AccessOutcomeLayoutProps): React.JSX.Element => (
     <SafeAreaView style={ onboardingResultStyles.safeArea }>
         <ScrollView
             contentContainerStyle={ onboardingResultStyles.outcomeContent }
@@ -486,7 +489,10 @@ const AccessOutcomeLayout = ({
                 <Heading1>{ Title }</Heading1>
                 <Description>{ Subtitle }</Description>
             </View>
-            <HeroImage Source={ require("../../../assets/Onboarding/Grant.png") } />
+            {
+                HeroImageAsset !== undefined &&
+                <HeroImage Source={ HeroImageAsset } />
+            }
             <View style={ onboardingResultStyles.outcomeActions }>
                 { children }
             </View>
@@ -502,38 +508,75 @@ const DatabaseSelectionView = ({
 }: {
     readonly Data: Domain.DataSource.OnboardingDiscovery;
     readonly IsPending: boolean;
-    readonly OnContinue: Thunk;
+    readonly OnContinue: (
+        Databases: ReadonlyArray<Domain.DataSource.OnboardingDatabase>
+    ) => void;
 }): React.JSX.Element =>
 {
     const [ Search, SetSearch ] = React.useState("");
     const Theme = UseTheme();
-    const Databases: ReadonlyArray<Domain.DataSource.OnboardingDatabase> = React.useMemo(
-        () => [ ...Data.Databases ]
-            .sort((
-                Left: Domain.DataSource.OnboardingDatabase,
-                Right: Domain.DataSource.OnboardingDatabase
-            ) =>
-            {
-                const ByTitle = Left.Title.localeCompare(Right.Title, undefined, {
-                    sensitivity: "base"
-                });
-
-                if (ByTitle !== 0)
+    const SortedDatabases: ReadonlyArray<Domain.DataSource.OnboardingDatabase> =
+        React.useMemo(
+            () => [ ...Data.Databases ]
+                .sort((
+                    Left: Domain.DataSource.OnboardingDatabase,
+                    Right: Domain.DataSource.OnboardingDatabase
+                ) =>
                 {
-                    return ByTitle;
-                }
+                    const ByTitle = Left.Title.localeCompare(Right.Title, undefined, {
+                        sensitivity: "base"
+                    });
 
-                const LeftCount = Left.HasMoreThan100Pages ? 101 : Left.PageCount;
-                const RightCount = Right.HasMoreThan100Pages ? 101 : Right.PageCount;
+                    if (ByTitle !== 0)
+                    {
+                        return ByTitle;
+                    }
 
-                return RightCount - LeftCount;
-            })
-            .filter((Database: Domain.DataSource.OnboardingDatabase) =>
-                Database.Title.toLocaleLowerCase().includes(
-                    Search.trim().toLocaleLowerCase()
-                )),
-        [ Data.Databases, Search ]
+                    const LeftCount = Left.HasMoreThan100Pages ? 101 : Left.PageCount;
+                    const RightCount = Right.HasMoreThan100Pages ? 101 : Right.PageCount;
+
+                    return RightCount - LeftCount;
+                }),
+            [ Data.Databases ]
+        );
+    const [ SelectedIds, SetSelectedIds ] = React.useState<ReadonlySet<string>>(
+        () => new Set(SortedDatabases
+            .slice(0, 10)
+            .map((Database: Domain.DataSource.OnboardingDatabase) =>
+                Database.DataSourceId))
     );
+    const Databases: ReadonlyArray<Domain.DataSource.OnboardingDatabase> = React.useMemo(
+        () => SortedDatabases.filter((Database: Domain.DataSource.OnboardingDatabase) =>
+            Database.Title.toLocaleLowerCase().includes(
+                Search.trim().toLocaleLowerCase()
+            )),
+        [ Search, SortedDatabases ]
+    );
+    const ToggleDatabase = React.useCallback((DataSourceId: string): void =>
+    {
+        SetSelectedIds((Current: ReadonlySet<string>) =>
+        {
+            const Next = new Set(Current);
+
+            if (Next.has(DataSourceId))
+            {
+                Next.delete(DataSourceId);
+            }
+            else
+            {
+                Next.add(DataSourceId);
+            }
+
+            return Next;
+        });
+    }, [ ]);
+    const Continue = React.useCallback((): void =>
+    {
+        OnContinue(Data.Databases.filter((
+            Database: Domain.DataSource.OnboardingDatabase
+        ) =>
+            SelectedIds.has(Database.DataSourceId)));
+    }, [ Data.Databases, OnContinue, SelectedIds ]);
 
     return (
         <SafeAreaView style={ onboardingResultStyles.safeArea }>
@@ -544,7 +587,7 @@ const DatabaseSelectionView = ({
                 <View style={ onboardingResultStyles.outcomeHeader }>
                     <Heading1>Choose your databases</Heading1>
                     <Description>
-                        These are the databases Notivex can use when you create a page.
+                        These are the databases that Notivex will display for creating pages.
                     </Description>
                 </View>
 
@@ -562,46 +605,68 @@ const DatabaseSelectionView = ({
                     )
                     : null }
 
-                <View
-                    accessibilityRole="list"
-                    style={ [
-                        onboardingResultStyles.databaseTable,
-                        { borderColor: Theme.Semantic.Border }
-                    ] }>
-                    { Databases.map((
-                        Database: Domain.DataSource.OnboardingDatabase,
-                        Index: number
-                    ) => (
-                        <View
-                            accessibilityRole="none"
-                            key={ Database.DataSourceId }
-                            style={ [
-                                onboardingResultStyles.databaseRow,
-                                Index < Databases.length - 1
-                                    ? { borderBottomColor: Theme.Semantic.Border, borderBottomWidth: 1 }
-                                    : null
-                            ] }>
-                            <Checkbox
-                                AccessibilityLabel={ `Select ${ Database.Title }` }
-                                Disabled
-                            />
-                            <OnboardingDatabaseIcon { ...{ Database } } />
-                            <ItemTitle
-                                NumberOfLines={ 2 }
-                                Style={ onboardingResultStyles.databaseTitle }>
-                                { Database.Title }
-                            </ItemTitle>
-                            <Description
-                                Color={ Token.Semantic.Muted }
-                                Style={ onboardingResultStyles.databaseCount }>
-                                { Database.HasMoreThan100Pages
-                                    ? ">100 pages"
-                                    : `${ Database.PageCount } ${
-                                        Database.PageCount === 1 ? "page" : "pages"
-                                    }` }
-                            </Description>
-                        </View>
-                    )) }
+                <View style={ onboardingResultStyles.databaseTableSection }>
+                    <Description
+                        Style={ [
+                            onboardingResultStyles.selectedDatabaseCount,
+                            SelectedIds.size === 0 ? { opacity: 0 } : null
+                        ] }
+                        accessibilityElementsHidden={ SelectedIds.size === 0 }
+                        importantForAccessibility={ SelectedIds.size === 0
+                            ? "no-hide-descendants"
+                            : "auto" }>
+                        { SelectedIds.size } { SelectedIds.size === 1
+                            ? "database"
+                            : "databases" } selected
+                    </Description>
+
+                    <View
+                        accessibilityRole="list"
+                        style={ [
+                            onboardingResultStyles.databaseTable,
+                            { borderColor: Theme.Semantic.Border }
+                        ] }>
+                        { Databases.map((
+                            Database: Domain.DataSource.OnboardingDatabase,
+                            Index: number
+                        ) => (
+                            <View
+                                accessibilityRole="none"
+                                key={ Database.DataSourceId }
+                                style={ [
+                                    onboardingResultStyles.databaseRow,
+                                    Index < Databases.length - 1
+                                        ? {
+                                            borderBottomColor: Theme.Semantic.Border,
+                                            borderBottomWidth: 1
+                                        }
+                                        : null
+                                ] }>
+                                <Checkbox
+                                    AccessibilityLabel={ `Select ${ Database.Title }` }
+                                    Checked={ SelectedIds.has(Database.DataSourceId) }
+                                    Disabled={ IsPending }
+                                    OnCheckedChange={ () =>
+                                        ToggleDatabase(Database.DataSourceId) }
+                                />
+                                <OnboardingDatabaseIcon { ...{ Database } } />
+                                <ItemTitle
+                                    NumberOfLines={ 2 }
+                                    Style={ onboardingResultStyles.databaseTitle }>
+                                    { Database.Title }
+                                </ItemTitle>
+                                <Description
+                                    Color={ Token.Semantic.Muted }
+                                    Style={ onboardingResultStyles.databaseCount }>
+                                    { Database.HasMoreThan100Pages
+                                        ? ">100 pages"
+                                        : `${ Database.PageCount } ${
+                                            Database.PageCount === 1 ? "page" : "pages"
+                                        }` }
+                                </Description>
+                            </View>
+                        )) }
+                    </View>
                 </View>
 
                 { Databases.length === 0
@@ -620,11 +685,16 @@ const DatabaseSelectionView = ({
                 />
 
                 <Button
-                    Appearance="Primary"
+                    Appearance={ SelectedIds.size === 0 ? "Primary" : "Blue" }
+                    Disabled={ IsPending || SelectedIds.size === 0 }
                     Loading={ IsPending }
-                    OnPress={ OnContinue }
+                    OnPress={ Continue }
                     Style={ onboardingStyles.cta }>
-                    Continue
+                    { SelectedIds.size === 0
+                        ? "Select at least one database"
+                        : `Continue with ${ SelectedIds.size } ${
+                            SelectedIds.size === 1 ? "database" : "databases"
+                        }` }
                 </Button>
             </ScrollView>
         </SafeAreaView>
@@ -737,6 +807,7 @@ const SyncView = ({
     {
         return (
             <AccessOutcomeLayout
+                HeroImageAsset={ require("../../../Resource/Onboarding/Empty.png") }
                 Subtitle={
                     "Notivex can see regular pages, but none of the shared page "
                     + "trees contain a database."
@@ -789,6 +860,7 @@ const SyncView = ({
 /** Props for the final onboarding screen. */
 export interface DoneViewProps extends PendingOnboardingActionProps
 {
+    readonly OnCustomize: Thunk;
     readonly OnStart: Thunk;
 }
 
@@ -798,12 +870,28 @@ export/**
        * @category Onboarding
        * @since 1.0.0
        */
-const DoneView = ({ OnStart, IsPending: Pending }: DoneViewProps): React.JSX.Element => (
-    <OnboardingScreen
-        Hero={ "" as ImageAsset }
-        Subtitle="Capture a thought and it lands in Notion in seconds."
-        Title="You're all set">
-        <View style={ onboardingStyles.spacer } />
+const DoneView = ({
+    IsPending: Pending,
+    OnCustomize,
+    OnStart
+}: DoneViewProps): React.JSX.Element => (
+    <SafeAreaView style={ customizeFormsStyles.safeArea }>
+        <View style={ customizeFormsStyles.header }>
+            <Heading1>Optional: Customize Forms</Heading1>
+            <Description>
+                You&apos;re all set to start using Notivex. If you&apos;d like, you can
+                edit the properties displayed when creating pages, create aliases
+                for databases, and more.
+            </Description>
+        </View>
+        <View style={ customizeFormsStyles.centerAction }>
+            <Button
+                Appearance="SoftBlue"
+                Disabled={ Pending }
+                OnPress={ OnCustomize }>
+                Open database settings
+            </Button>
+        </View>
         <Button
             Appearance="Primary"
             Loading={ Pending }
@@ -811,8 +899,28 @@ const DoneView = ({ OnStart, IsPending: Pending }: DoneViewProps): React.JSX.Ele
             Style={ onboardingStyles.cta }>
             Start using Notivex
         </Button>
-    </OnboardingScreen>
+    </SafeAreaView>
 );
+
+const customizeFormsStyles = StyleSheet.create({
+    centerAction:
+    {
+        alignItems: "center",
+        flex: 1,
+        justifyContent: "center"
+    },
+    header:
+    {
+        gap: 12
+    },
+    safeArea:
+    {
+        flex: 1,
+        paddingBottom: 40,
+        paddingHorizontal: 32,
+        paddingTop: 24
+    }
+});
 
 const onboardingResultStyles = StyleSheet.create({
     databaseCount:
@@ -847,9 +955,20 @@ const onboardingResultStyles = StyleSheet.create({
         borderWidth: 1,
         overflow: "hidden"
     },
+    databaseTableSection:
+    {
+        gap: 8
+    },
     databaseTitle:
     {
         flex: 1
+    },
+    disclosureChevron:
+    {
+        alignItems: "center",
+        height: 24,
+        justifyContent: "center",
+        width: 24
     },
     disclosureHeader:
     {
@@ -941,6 +1060,10 @@ const onboardingResultStyles = StyleSheet.create({
     safeArea:
     {
         flex: 1
+    },
+    selectedDatabaseCount:
+    {
+        minHeight: 20
     },
     selectionContent:
     {

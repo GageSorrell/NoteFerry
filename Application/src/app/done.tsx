@@ -12,11 +12,13 @@
 import { OnboardingMockTiming, useDevelopmentOnboarding } from
     "@/features/onboarding/onboarding-development";
 import { DoneView } from "@/features/onboarding/onboarding-views";
+import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useOnboarding } from "@/features/onboarding/onboarding-context";
 import { useState } from "react";
 
 const DoneScreen = () =>
 {
+    const Router = UseLazyRouter();
     const { Complete, RefetchConnection } = useOnboarding();
     const Development = useDevelopmentOnboarding();
     const [ Pending, SetPending ] = useState(false);
@@ -25,7 +27,7 @@ const DoneScreen = () =>
         ? Development.Scenario === "DonePending"
         : Pending;
 
-    const HandleStart = async (): Promise<void> =>
+    const OnStart = async (): Promise<void> =>
     {
         if (IsPending)
         {
@@ -42,13 +44,13 @@ const DoneScreen = () =>
 
         SetPending(true);
         await RefetchConnection();
-        Complete();
+        await Complete();
     };
 
     return (
         <DoneView
-            OnStart={ () => void HandleStart() }
-            IsPending={ IsPending }
+            { ...{ IsPending, OnStart } }
+            OnCustomize={ Router.push("/database-settings") }
         />
     );
 };

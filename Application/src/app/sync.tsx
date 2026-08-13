@@ -9,6 +9,7 @@
  * @license   MIT
  */
 
+import type * as Domain from "@notivex/domain";
 import {
     OnboardingMockRegistry,
     OnboardingMockTiming,
@@ -28,7 +29,9 @@ const SyncScreen = () =>
     const Development = useDevelopmentOnboarding();
     const { SignOut } = UseAuth();
     const {
+        AuthorizationSucceeded,
         Complete,
+        IsAuthorizing,
         NotionSync: { Data: LiveData, Retry, Status: LiveStatus },
         RecordAuthorizationResult
     } = useOnboarding();
@@ -48,11 +51,20 @@ const SyncScreen = () =>
         : false;
     const Status = Development.Active && MockStatus !== undefined
         ? MockStatus
-        : LiveStatus;
+        : AuthorizationSucceeded === null && !IsAuthorizing
+            ? "NoIntegration"
+            : LiveStatus;
     const Data = Development.Active ? MockData ?? null : LiveData;
     const IsPending = Development.Active ? MockPending : Pending;
 
-    const HandleAuthorize = async (): Promise<void> =>
+    /* The content-authorization browser is still open. Mounting SyncView now
+     * would start its one-second loading delay before the user returns. */
+    if (!Development.Active && IsAuthorizing && AuthorizationSucceeded === null)
+    {
+        return null;
+    }
+
+    const OnAuthorize = async (): Promise<void> =>
     {
         if (IsPending)
         {
@@ -95,9 +107,11 @@ const SyncScreen = () =>
         }
     };
 
-    const HandleContinue = async (): Promise<void> =>
+    const OnContinue = async (
+        Databases: ReadonlyArray<Domain.DataSource.OnboardingDatabase>
+    ): Promise<void> =>
     {
-        if (IsPending || !Data)
+        if (IsPending || !Data || Databases.length === 0)
         {
             return;
         }
@@ -113,7 +127,7 @@ const SyncScreen = () =>
         SetPending(true);
         let CachedCount = 0;
 
-        for (const Database of Data.Databases)
+        for (const Database of Databases)
         {
             try
             {
@@ -137,7 +151,7 @@ const SyncScreen = () =>
         }
     };
 
-    const HandleRetry = (): void =>
+    const OnRetry = (): void =>
     {
         if (IsPending)
         {
@@ -155,7 +169,7 @@ const SyncScreen = () =>
         Retry();
     };
 
-    const HandleStartOver = async (): Promise<void> =>
+    const OnStartOver = async (): Promise<void> =>
     {
         if (IsPending)
         {
@@ -174,7 +188,7 @@ const SyncScreen = () =>
         {
             SetPending(true);
             await SignOut();
-            Complete();
+            await Complete();
         }
         finally
         {
@@ -184,14 +198,16 @@ const SyncScreen = () =>
 
     return (
         <SyncView
-            Data={ Data }
-            IsPending={ IsPending }
-            OnAuthorize={ () => void HandleAuthorize() }
-            OnContinue={ () => void HandleContinue() }
-            OnRetry={ HandleRetry }
-            OnStartOver={ () => void HandleStartOver() }
+            { ...{
+                Data,
+                IsPending,
+                OnAuthorize,
+                OnContinue,
+                OnRetry,
+                OnStartOver,
+                Status
+            } }
             ShowLoading={ Development.Active }
-            Status={ Status }
         />
     );
 };

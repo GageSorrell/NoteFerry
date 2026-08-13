@@ -50,3 +50,20 @@ const PropertyOption = Schema.Struct({
 
 /** {@inheritDoc PropertyOption} */
 export type PropertyOption = Schema.Schema.Type<typeof PropertyOption>;
+
+export/**
+       * One of the ordered groups that organizes a Notion status property's
+       * options.
+       *
+       * @category Property
+       * @since 1.0.0
+       */
+const StatusGroup = Schema.Struct({
+    Color: PropertyOptionColor,
+    Id: Schema.String,
+    Name: Schema.String,
+    OptionIds: Schema.Array(Id.NotionOptionId)
+});
+
+/** {@inheritDoc StatusGroup} */
+export type StatusGroup = Schema.Schema.Type<typeof StatusGroup>;

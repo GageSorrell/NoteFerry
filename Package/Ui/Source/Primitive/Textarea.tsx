@@ -16,7 +16,9 @@ import { type StyleProp, StyleSheet, TextInput, type ViewStyle } from "react-nat
 import { UseToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 
-export interface TextareaProps {
+/** {@inheritDoc Textarea} */
+export interface TextareaProps
+{
     readonly Value?: string;
     readonly Placeholder?: string;
     readonly OnChangeText?: (Text: string) => void;
@@ -25,20 +27,26 @@ export interface TextareaProps {
     readonly NumberOfLines?: number;
 }
 
-export const Textarea = ({
+export/**
+       * A themed multi-line text input with configurable visible line count.
+       *
+       * @category Component
+       * @since 1.0.0
+       */
+const Textarea = ({
     Value,
     Placeholder,
     OnChangeText,
     Disabled = false,
     Style,
-    NumberOfLines = 4,
+    NumberOfLines = 4
 }: TextareaProps): React.JSX.Element =>
 {
     const {
-        [Semantic.Ring]: RingColor,
-        [Semantic.BackgroundInput]: InputBackground,
-        [Semantic.Primary]: PrimaryColor,
-        [Radii.Medium]: MediumRadius
+        [ Semantic.Ring ]: RingColor,
+        [ Semantic.BackgroundInput ]: InputBackground,
+        [ Semantic.Primary ]: PrimaryColor,
+        [ Radii.Medium ]: MediumRadius
     } = UseToken(
         Semantic.Ring,
         Semantic.BackgroundInput,
@@ -48,36 +56,37 @@ export const Textarea = ({
 
     return (
         <TextInput
+            editable={ !Disabled }
             multiline
-            value={ Value }
+            numberOfLines={ NumberOfLines }
             onChangeText={ OnChangeText }
             placeholder={ Placeholder }
             placeholderTextColor={ WithAlpha(PrimaryColor, 0.45) }
-            editable={ !Disabled }
-            numberOfLines={ NumberOfLines }
             style={ [
                 Styles.Base,
                 {
-                    minHeight: 80,
-                    borderRadius: MediumRadius,
                     backgroundColor: InputBackground,
                     borderColor: RingColor,
+                    borderRadius: MediumRadius,
                     color: PrimaryColor,
-                    opacity: Disabled ? 0.5 : 1,
+                    minHeight: 80,
+                    opacity: Disabled ? 0.5 : 1
                 },
-                Style,
+                Style
             ] }
+            value={ Value }
         />
     );
 };
 
 const Styles = StyleSheet.create({
-    Base: {
-        width: "100%",
+    Base:
+    {
         borderWidth: 1,
-        padding: 10,
         fontSize: 14,
         lineHeight: 20,
+        padding: 10,
         textAlignVertical: "top",
-    },
+        width: "100%"
+    }
 });

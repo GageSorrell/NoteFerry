@@ -25,6 +25,7 @@ import {
     type ViewStyle
 } from "react-native";
 import { Search, X } from "lucide-react-native";
+import type { Thunk } from "@sorrell/utility/Function";
 import { UseToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 

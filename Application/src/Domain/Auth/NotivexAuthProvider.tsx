@@ -59,12 +59,12 @@ const NotivexAuthProvider = ({ children }: React.PropsWithChildren) =>
                 readonly error: null;
             }
             | {
-                data:
+                readonly data:
                 {
-                    session: null;
+                    readonly session: null;
                 };
 
-                error: AuthError;
+                readonly error: AuthError;
             }
             | {
                 readonly data:

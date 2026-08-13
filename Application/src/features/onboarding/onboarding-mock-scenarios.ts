@@ -24,8 +24,6 @@ export type OnboardingMockScenario =
     | "SignInModalStepOne"
     | "SignInModalStepTwo"
     | "SignInPending"
-    | "Grant"
-    | "GrantPending"
     | "Syncing"
     | "NoIntegration"
     | "NoIntegrationPending"
@@ -118,28 +116,15 @@ export/**
 const OnboardingMockRegistry = Object.freeze({
     Done:
     {
-        Label: "Done",
+        Label: "Optional customization",
         Route: "/done",
         Stage: "Onboarding"
     },
     DonePending:
     {
         IsPending: true,
-        Label: "Done · pending",
+        Label: "Optional customization · pending",
         Route: "/done",
-        Stage: "Onboarding"
-    },
-    Grant:
-    {
-        Label: "Grant access",
-        Route: "/grant",
-        Stage: "Onboarding"
-    },
-    GrantPending:
-    {
-        IsPending: true,
-        Label: "Grant access · pending",
-        Route: "/grant",
         Stage: "Onboarding"
     },
     NoAccess:
@@ -262,8 +247,6 @@ const OnboardingMockScenarios = Object.freeze([
     "SignInModalStepOne",
     "SignInModalStepTwo",
     "SignInPending",
-    "Grant",
-    "GrantPending",
     "Syncing",
     "NoIntegration",
     "NoIntegrationPending",

@@ -160,6 +160,15 @@ export type NotionOption =
     readonly color: string;
 };
 
+/** One ordered group of options belonging to a Notion status property. */
+export type NotionStatusGroup =
+{
+    readonly id: string;
+    readonly name: string;
+    readonly color: string;
+    readonly option_ids: readonly string[];
+};
+
 /**
  * A single Notion property as returned by the Data API. Only the fields
  * Notivex maps are typed; the rest of Notion's per-type payloads are ignored.
@@ -172,7 +181,11 @@ export type NotionProperty =
     readonly number?: { readonly format?: string };
     readonly select?: { readonly options?: readonly NotionOption[] };
     readonly multi_select?: { readonly options?: readonly NotionOption[] };
-    readonly status?: { readonly options?: readonly NotionOption[] };
+    readonly status?:
+    {
+        readonly groups?: readonly NotionStatusGroup[];
+        readonly options?: readonly NotionOption[];
+    };
     readonly relation?:
     {
         readonly data_source_id?: string;

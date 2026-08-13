@@ -29,7 +29,10 @@ import { Pressable, ScrollView, type StyleProp, type ViewStyle } from "react-nat
 export { MenuGroup as SelectGroup, MenuLabel as SelectLabel } from "./Menu.js";
 import { Body } from "./Text.js";
 import { ChevronDown } from "lucide-react-native";
+import { NotivexUiError } from "../NotivexUiError.js";
+import type { Thunk } from "@sorrell/utility/Function";
 import { UseToken } from "../ThemeProvider.js";
+
 export { Separator as SelectSeparator } from "./Separator.js";
 
 interface SelectContextValue
@@ -51,7 +54,7 @@ const useSelectContext = (): SelectContextValue =>
 
     if (Value === undefined)
     {
-        throw new Error("[@notivex/ui] A `Select` part was used outside of `<Select>`.");
+        throw new NotivexUiError("A Select part was used outside of Select.");
     }
 
     return Value;
@@ -121,6 +124,7 @@ const Select = ({
 /** {@inheritDoc SelectTrigger} */
 export interface SelectTriggerProps extends React.PropsWithChildren
 {
+    readonly AccessibilityLabel?: string;
     readonly Disabled?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
 }
@@ -131,7 +135,12 @@ export/**
        * @category Component
        * @since 1.0.0
        */
-const SelectTrigger = ({ Disabled = false, Style, children }: SelectTriggerProps): React.JSX.Element =>
+const SelectTrigger = ({
+    AccessibilityLabel,
+    Disabled = false,
+    Style,
+    children
+}: SelectTriggerProps): React.JSX.Element =>
 {
     const { IsOpen, SetIsOpen, AnchorRef } = useSelectContext();
     const {
@@ -146,6 +155,7 @@ const SelectTrigger = ({ Disabled = false, Style, children }: SelectTriggerProps
 
     return (
         <Pressable
+            accessibilityLabel={ AccessibilityLabel }
             accessibilityRole="button"
             accessibilityState={ { disabled: Disabled, expanded: IsOpen } }
             disabled={ Disabled }
@@ -207,6 +217,7 @@ const SelectValue = ({ Placeholder }: SelectValueProps): React.JSX.Element =>
 /** {@inheritDoc SelectContent} */
 export interface SelectContentProps extends React.PropsWithChildren
 {
+    readonly MatchTriggerWidth?: boolean;
     readonly Placement?: PopupPlacement;
     readonly Style?: StyleProp<ViewStyle>;
 }
@@ -217,7 +228,12 @@ export/**
        * @category Component
        * @since 1.0.0
        */
-const SelectContent = ({ Placement = "Bottom", Style, children }: SelectContentProps): React.JSX.Element =>
+const SelectContent = ({
+    MatchTriggerWidth = false,
+    Placement = "Bottom",
+    Style,
+    children
+}: SelectContentProps): React.JSX.Element =>
 {
     const { IsOpen, SetIsOpen, AnchorRef } = useSelectContext();
 
@@ -225,6 +241,7 @@ const SelectContent = ({ Placement = "Bottom", Style, children }: SelectContentP
         <Popup
             Anchor={ AnchorRef }
             IsVisible={ IsOpen }
+            MatchAnchorWidth={ MatchTriggerWidth }
             OnRequestClose={ () => SetIsOpen(false) }
             Placement={ Placement }
             Style={ [ { minWidth: 144 }, Style ] }>
@@ -242,6 +259,7 @@ export interface SelectItemProps extends Omit<MenuItemProps, "OnPress" | "Label"
 {
     readonly Value: string;
     readonly Label: string;
+    readonly DisplayLabel?: React.ReactNode;
     readonly HideCheck?: boolean;
 }
 
@@ -255,6 +273,7 @@ export/**
 const SelectItem = ({
     Value,
     Label,
+    DisplayLabel,
     HideCheck = false,
     children,
     ...Rest
@@ -286,7 +305,8 @@ const SelectItem = ({
     return (
         <MenuItem
             { ...Rest }
-            Label={ Label }
+            AccessibilityLabel={ Label }
+            Label={ DisplayLabel ?? Label }
             OnPress={ () =>
             {
                 OnValueChange?.(Value);

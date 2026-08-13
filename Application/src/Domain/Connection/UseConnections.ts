@@ -16,8 +16,7 @@ import type * as Domain from "@notivex/domain";
 import {
     ListConnections,
     ListDataSources,
-    RefreshDataSource,
-    SearchDataSources
+    RefreshDataSource
 } from "@/Domain/Runtime/NotivexApi";
 import { useCallback, useEffect, useState } from "react";
 
@@ -31,9 +30,9 @@ export interface UseConnections
 }
 
 /**
- * Loads the current user's Notion connections and databases on mount. Shared
- * databases are refreshed so time-limited Notion image URLs and cached schemas
- * remain current for existing as well as newly onboarded users.
+ * Loads the current user's Notion connections and selected databases on mount.
+ * Only those selected databases are refreshed so discovery cannot silently add
+ * databases the user left unchecked during onboarding.
  *
  * @category Connections
  * @since 1.0.0
@@ -62,18 +61,10 @@ export function useConnections(): UseConnections
 
                 SetDataSources(Cached);
 
-                const ActiveConnections = NextConnections.filter((
-                    Connection: Domain.NotionConnection.NotionConnection
-                ) =>
-                    Connection.Status === "Active");
-                const Discovered = (await Promise.all(ActiveConnections.map((
-                    Connection: Domain.NotionConnection.NotionConnection
-                ) =>
-                    SearchDataSources(Connection.Id)))).flat();
-                if (Discovered.length > 0)
+                if (Cached.length > 0)
                 {
-                    await Promise.allSettled(Discovered.map((
-                        Source: Domain.DataSource.DiscoveredDataSource
+                    await Promise.allSettled(Cached.map((
+                        Source: Domain.DataSource.CachedDataSourceSchema
                     ) =>
                         RefreshDataSource(Source.ConnectionId, Source.DataSourceId)));
                     Cached = await ListDataSources();

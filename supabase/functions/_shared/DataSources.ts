@@ -57,6 +57,19 @@ function MapOptions(Options: readonly Notion.NotionOption[] | undefined): Domain
     }));
 }
 
+/* eslint-disable-next-line jsdoc/require-jsdoc */
+function MapStatusGroups(
+    Groups: readonly Notion.NotionStatusGroup[] | undefined
+): Domain.Property.StatusGroup[]
+{
+    return (Groups ?? []).map((Group) => ({
+        Color: MapColor(Group.color),
+        Id: Group.id,
+        Name: Group.name,
+        OptionIds: Group.option_ids as readonly Domain.Id.NotionOptionId[]
+    }));
+}
+
 /**
  * Maps one Notion property to its `PropertyDefinition`, or `null` for property
  * types Notivex does not let a user fill in a quick-add form (formula, rollup,
@@ -84,7 +97,12 @@ function MapProperty(Property: Notion.NotionProperty): Domain.Property.PropertyD
         case "multi_select":
             return { ...Base, Options: MapOptions(Property.multi_select?.options), Type: "MultiSelect" as const };
         case "status":
-            return { ...Base, Options: MapOptions(Property.status?.options), Type: "Status" as const };
+            return {
+                ...Base,
+                Groups: MapStatusGroups(Property.status?.groups),
+                Options: MapOptions(Property.status?.options),
+                Type: "Status" as const
+            };
         case "relation":
         {
             const RelatedId = Property.relation?.data_source_id ?? Property.relation?.database_id;
@@ -155,7 +173,23 @@ export function ComputeSchemaHash(Properties: readonly Domain.Property.PropertyD
 
             if ("Options" in Property)
             {
-                Entry.Options = Property.Options.map((Option) => Option.Id).sort();
+                Entry.Options = Property.Options
+                    .map((Option) => ({
+                        Color: Option.Color,
+                        Id: Option.Id,
+                        Name: Option.Name
+                    }))
+                    .sort((Left, Right) => Left.Id.localeCompare(Right.Id));
+            }
+
+            if ("Groups" in Property && Property.Groups !== undefined)
+            {
+                Entry.Groups = Property.Groups.map((Group) => ({
+                    Color: Group.Color,
+                    Id: Group.Id,
+                    Name: Group.Name,
+                    OptionIds: [ ...Group.OptionIds ]
+                }));
             }
 
             if ("Format" in Property)
@@ -418,6 +452,8 @@ export function DiscoverOnboardingForUser(UserId: string, ConnectionId: string)
                 const Result: Array<{
                     readonly Count: Notion.NotionDataSourcePageCount;
                     readonly Database?: Notion.NotionDatabaseObject;
+                    readonly DataSource?: Notion.NotionDataSourceObject;
+                    readonly ParentPage?: Notion.NotionPageObject;
                 }> = [];
 
                 /* Notion averages three requests per second per connection.
@@ -426,6 +462,8 @@ export function DiscoverOnboardingForUser(UserId: string, ConnectionId: string)
                 for (const Source of DisplayedDataSources)
                 {
                     let Database: Notion.NotionDatabaseObject | undefined;
+                    let DataSource: Notion.NotionDataSourceObject | undefined;
+                    let ParentPage: Notion.NotionPageObject | undefined;
                     let Count: Notion.NotionDataSourcePageCount = {
                         HasMoreThan100Pages: false,
                         PageCount: 0
@@ -448,6 +486,62 @@ export function DiscoverOnboardingForUser(UserId: string, ConnectionId: string)
 
                     await new Promise((Resolve) => setTimeout(Resolve, 350));
 
+                    /* Search results and the parent database can both omit an
+                     * icon that is attached directly to the newer Notion data
+                     * source object. Resolve that object only for the missing
+                     * icon case so the common path does not add another API
+                     * request for every database. */
+                    if (!Source.Icon && !Database?.icon)
+                    {
+                        try
+                        {
+                            DataSource = await Notion.RetrieveDataSource(
+                                AccessToken,
+                                Source.DataSourceId
+                            );
+                        }
+                        catch (Error_)
+                        {
+                            if (Error_ instanceof Notion.NotionApiError
+                                && Error_.Status === 401)
+                            {
+                                throw Error_;
+                            }
+                        }
+
+                        await new Promise<void>((Resolve: () => void) =>
+                            setTimeout(Resolve, 350));
+                    }
+
+                    const ParentPageId = Database?.parent?.type === "page_id"
+                        ? Database.parent.page_id
+                        : undefined;
+
+                    if (!Source.Icon
+                        && !Database?.icon
+                        && !DataSource?.icon
+                        && ParentPageId)
+                    {
+                        try
+                        {
+                            ParentPage = await Notion.RetrievePage(
+                                AccessToken,
+                                ParentPageId
+                            );
+                        }
+                        catch (Error_)
+                        {
+                            if (Error_ instanceof Notion.NotionApiError
+                                && Error_.Status === 401)
+                            {
+                                throw Error_;
+                            }
+                        }
+
+                        await new Promise<void>((Resolve: () => void) =>
+                            setTimeout(Resolve, 350));
+                    }
+
                     try
                     {
                         Count = await Notion.QueryDataSourcePageCount(
@@ -463,7 +557,12 @@ export function DiscoverOnboardingForUser(UserId: string, ConnectionId: string)
                         }
                     }
 
-                    Result.push({ Count, ...(Database ? { Database } : {}) });
+                    Result.push({
+                        Count,
+                        ...(Database ? { Database } : {}),
+                        ...(DataSource ? { DataSource } : {}),
+                        ...(ParentPage ? { ParentPage } : {})
+                    });
                     await new Promise((Resolve) => setTimeout(Resolve, 350));
                 }
 
@@ -475,7 +574,11 @@ export function DiscoverOnboardingForUser(UserId: string, ConnectionId: string)
             Index
         ) => ({
             ...Source,
-            ...(NormalizeIcon(Enriched[Index]?.Database?.icon) ?? {}),
+            ...(NormalizeIcon(
+                Enriched[Index]?.Database?.icon
+                    ?? Enriched[Index]?.DataSource?.icon
+                    ?? Enriched[Index]?.ParentPage?.icon
+            ) ?? {}),
             HasMoreThan100Pages: Enriched[Index]?.Count.HasMoreThan100Pages ?? false,
             PageCount: Enriched[Index]?.Count.PageCount ?? 0,
             Title: TitleToString(Enriched[Index]?.Database?.title) === "Untitled"
@@ -572,6 +675,7 @@ export function RefreshForUser(UserId: string, ConnectionId: string, DataSourceI
                         property_schema: Properties,
                         refreshed_at: RefreshedAt.toISOString(),
                         schema_hash: SchemaHash,
+                        selected: true,
                         title: Title,
                         user_id: UserId
                     },
@@ -614,6 +718,7 @@ export function ListForUser(UserId: string)
                 .from("data_sources")
                 .select("*")
                 .eq("user_id", UserId)
+                .eq("selected", true)
                 .order("refreshed_at", { ascending: false }));
 
         if (error)

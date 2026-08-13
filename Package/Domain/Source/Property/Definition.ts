@@ -15,7 +15,7 @@
  */
 
 import * as Id from "../Id.js";
-import { PropertyOption } from "./Option.js";
+import { PropertyOption, StatusGroup } from "./Option.js";
 import { Schema } from "effect";
 
 /**
@@ -139,6 +139,7 @@ export/**
        */
 const StatusPropertyDefinition = Schema.Struct({
     ...Base,
+    Groups: Schema.optional(Schema.Array(StatusGroup)),
     Options: Schema.Array(PropertyOption),
     Type: Schema.tag("Status")
 });

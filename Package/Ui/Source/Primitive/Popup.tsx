@@ -1,8 +1,7 @@
 /**
  * Internal anchored-overlay primitive, built on `react-native-popover-view`
  * (it owns anchor measurement, screen-edge collision, and platform-
- * appropriate presentation — a real `Modal` on iOS/Android, an absolutely
- * positioned `View` on web). `Popover`, `Tooltip`, `DropdownMenu`,
+ * appropriate presentation). `Popover`, `Tooltip`, `DropdownMenu`,
  * `ContextMenu`, and `Select` are all thin wrappers around this one
  * primitive — they differ only in trigger gesture (tap / long-press /
  * hover) and content, not in how the overlay itself is anchored and
@@ -21,10 +20,17 @@ import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import * as Shadow from "../Token/Shadow.js";
-import { type GestureResponderEvent, type StyleProp, type ViewStyle } from "react-native";
-import RNPopover, { PopoverPlacement } from "react-native-popover-view";
-
+import {
+    type GestureResponderEvent,
+    Platform,
+    StatusBar,
+    type StyleProp,
+    useWindowDimensions,
+    type ViewStyle
+} from "react-native";
+import RNPopover, { PopoverPlacement, Rect } from "react-native-popover-view";
 import type { ReadonlyRecord } from "effect/Record";
+import type { Thunk } from "@sorrell/utility/Function";
 import { UseToken } from "../ThemeProvider.js";
 
 /**
@@ -101,6 +107,7 @@ export interface PopupProps extends React.PropsWithChildren
     readonly OnRequestClose: Thunk;
     readonly Anchor: PopupAnchor;
     readonly Placement?: PopupPlacement;
+    readonly MatchAnchorWidth?: boolean;
 
     /**
      * `"Tooltip"` uses the tooltip color/shape; `"Popup"` (the default) is
@@ -121,6 +128,7 @@ const Popup = ({
     OnRequestClose,
     Anchor,
     Placement = "Bottom",
+    MatchAnchorWidth = false,
     Variant = "Popup",
     Style,
     children
@@ -141,6 +149,42 @@ const Popup = ({
         Radii.Small,
         Shadow.Card
     );
+    const Window = useWindowDimensions();
+    const [ AnchorRect, SetAnchorRect ] = React.useState<Rect | null>(null);
+
+    React.useEffect(() =>
+    {
+        if (!IsVisible)
+        {
+            return;
+        }
+
+        let IsActive = true;
+        const Current = Anchor.current as {
+            readonly measureInWindow?: (
+                Callback: (X: number, Y: number, Width: number, Height: number) => void
+            ) => void;
+        } | null;
+
+        Current?.measureInWindow?.((X, Y, Width, Height) =>
+        {
+            if (!IsActive)
+            {
+                return;
+            }
+
+            const StatusBarOffset = Platform.OS === "android"
+                ? StatusBar.currentHeight ?? 0
+                : 0;
+
+            SetAnchorRect(new Rect(X, Y + StatusBarOffset, Width, Height));
+        });
+
+        return () =>
+        {
+            IsActive = false;
+        };
+    }, [ Anchor, IsVisible, Window.height, Window.width ]);
 
     const VariantStyle: ViewStyle = Variant === "Tooltip"
         ? {
@@ -155,6 +199,10 @@ const Popup = ({
         }
         : {
             backgroundColor: PopoverBackground,
+            /* react-native-popover-view hard-codes a dark bottom-edge color
+             * in its base content style. Override that side explicitly so it
+             * matches the rest of Notivex's themed popup border. */
+            borderBottomColor: BorderColor,
             borderColor: BorderColor,
             borderRadius: LargeRadius,
             borderWidth: 1,
@@ -181,12 +229,20 @@ const Popup = ({
             // } }
             arrowSize={ { height: 0, width: 0 } }
             backgroundStyle={ { opacity: 0 } }
-            from={ Anchor }
-            isVisible={ IsVisible }
+            from={ AnchorRect ?? Anchor }
+            isVisible={ IsVisible && AnchorRect !== null }
             offset={ -1 }
+            onCloseComplete={ () => SetAnchorRect(null) }
             onRequestClose={ OnRequestClose }
             placement={ PlacementMap[ Placement ] }
-            popoverStyle={ [ { overflow: "hidden" }, VariantStyle, Style ] as StyleProp<ViewStyle> }>
+            popoverStyle={ [
+                { overflow: "hidden" },
+                VariantStyle,
+                MatchAnchorWidth && AnchorRect !== null
+                    ? { width: AnchorRect.width }
+                    : undefined,
+                Style
+            ] as StyleProp<ViewStyle> }>
             { children }
         </RNPopover>
     );

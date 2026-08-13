@@ -63,6 +63,7 @@ import {
 import { Button } from "./Button.js";
 import { Separator } from "./Separator.js";
 import { Switch } from "./Switch.js";
+import type { Thunk } from "@sorrell/utility/Function";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import { UseToken } from "../ThemeProvider.js";
 import { format } from "date-fns";

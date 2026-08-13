@@ -29,6 +29,7 @@ import { Pressable, type StyleProp, type ViewStyle } from "react-native";
 import { Body } from "./Text.js";
 import { ChevronDown } from "lucide-react-native";
 import { MenuItemCheck } from "./Menu.js";
+import type { Thunk } from "@sorrell/utility/Function";
 import { UseToken } from "../ThemeProvider.js";
 
 export {

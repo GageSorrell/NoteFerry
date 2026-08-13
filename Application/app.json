@@ -5,13 +5,13 @@
     "owner": "gagesorrell",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/NotivexLogoLight.png",
+    "icon": "./Resource/NotivexLogoLight.png",
     "scheme": "notivex",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": {
-        "light": "./assets/NotivexLogoLight.png",
-        "dark": "./assets/NotivexLogoDark.png"
+        "light": "./Resource/NotivexLogoLight.png",
+        "dark": "./Resource/NotivexLogoDark.png"
       },
       "config": {
         "usesNonExemptEncryption": false
@@ -21,14 +21,14 @@
       "package": "com.sorrell.notivex",
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF",
-        "foregroundImage": "./assets/NotivexLogoLight.png",
-        "monochromeImage": "./assets/NotivexLogoLight.png"
+        "foregroundImage": "./Resource/NotivexLogoLight.png",
+        "monochromeImage": "./Resource/NotivexLogoLight.png"
       },
       "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/NotivexLogoLight.png"
+      "favicon": "./Resource/NotivexLogoLight.png"
     },
     "plugins": [
       "expo-router",
@@ -36,11 +36,11 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#FFFFFF",
-          "image": "./assets/NotivexLogoLight.png",
+          "image": "./Resource/NotivexLogoLight.png",
           "imageWidth": 76,
           "dark": {
             "backgroundColor": "#000000",
-            "image": "./assets/NotivexLogoDark.png"
+            "image": "./Resource/NotivexLogoDark.png"
           }
         }
       ],

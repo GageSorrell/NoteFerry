@@ -84,6 +84,7 @@ export type MenuItemVariant =
 /** {@inheritDoc MenuItem} */
 export interface MenuItemProps extends React.PropsWithChildren
 {
+    readonly AccessibilityLabel?: string;
     readonly Variant?: MenuItemVariant | undefined;
     readonly Icon?: React.ReactNode;
     readonly Label?: React.ReactNode;
@@ -104,6 +105,7 @@ export/**
        * @since 1.0.0
        */
 const MenuItem = React.forwardRef<React.ComponentRef<typeof Pressable>, MenuItemProps>(({
+    AccessibilityLabel,
     Variant = "Default",
     Icon,
     Label,
@@ -136,7 +138,8 @@ const MenuItem = React.forwardRef<React.ComponentRef<typeof Pressable>, MenuItem
 
     return (
         <Pressable
-            accessibilityLabel={ typeof Label === "string" ? Label : undefined }
+            accessibilityLabel={ AccessibilityLabel
+                ?? (typeof Label === "string" ? Label : undefined) }
             accessibilityRole="menuitem"
             accessibilityState={ { disabled: Disabled } }
             disabled={ Disabled }

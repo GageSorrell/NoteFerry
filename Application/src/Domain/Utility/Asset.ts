@@ -1,5 +1,5 @@
 /**
- *
+ * Branded types and utilities for using assets, such as images.
  *
  * @module notivex/Domain/Utility/Asset
  *
@@ -15,6 +15,7 @@ import { Brand } from "effect";
 export type ImageAsset = Brand.Branded<string, "ImageAsset">;
 
 export/**
+       * A branded path to an image file.
        *
        * @category Utility
        * @since 1.0.0

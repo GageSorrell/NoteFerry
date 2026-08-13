@@ -12,7 +12,6 @@
 
 import {
     DoneView,
-    GrantView,
     SignInModalStepOneView,
     SignInModalStepTwoView,
     SignInView,
@@ -34,8 +33,8 @@ interface OnboardingScenarioStoryProps
 
 const Authorize = action("Open Notion authorization");
 const Continue = action("Continue");
+const Customize = action("Open database settings");
 const GoBack = action("Go back");
-const Grant = action("Grant access");
 const Retry = action("Retry");
 const SignIn = action("Sign in");
 const Start = action("Start using Notivex");
@@ -44,7 +43,7 @@ const StartOver = action("Start over");
 /** Renders a selected scenario using pure onboarding views only. */
 const OnboardingScenarioStory = ({
     Scenario
-}: OnboardingScenarioStoryProps): React.JSX.Element =>
+}: OnboardingScenarioStoryProps): React.ReactNode =>
 {
     const Definition = OnboardingMockRegistry[Scenario];
     const IsPending = "IsPending" in Definition && Definition.IsPending === true;
@@ -62,14 +61,6 @@ const OnboardingScenarioStory = ({
                     IsPending={ IsPending }
                     OnBack={ GoBack }
                     OnSignIn={ SignIn }
-                />
-            );
-        case "Grant":
-        case "GrantPending":
-            return (
-                <GrantView
-                    IsPending={ IsPending }
-                    OnGrant={ Grant }
                 />
             );
         case "Syncing":
@@ -101,10 +92,13 @@ const OnboardingScenarioStory = ({
             return (
                 <DoneView
                     IsPending={ IsPending }
+                    OnCustomize={ Customize }
                     OnStart={ Start }
                 />
             );
     }
+
+    return undefined;
 };
 
 const meta =
@@ -130,8 +124,6 @@ export const SignInScreen: Story = { args: { Scenario: "SignIn" } };
 export const SignInIntroStepOne: Story = { args: { Scenario: "SignInModalStepOne" } };
 export const SignInIntroStepTwo: Story = { args: { Scenario: "SignInModalStepTwo" } };
 export const SignInPending: Story = { args: { Scenario: "SignInPending" } };
-export const GrantAccess: Story = { args: { Scenario: "Grant" } };
-export const GrantAccessPending: Story = { args: { Scenario: "GrantPending" } };
 export const CheckingNotionAccess: Story = { args: { Scenario: "Syncing" } };
 export const IntegrationNotAdded: Story = { args: { Scenario: "NoIntegration" } };
 export const IntegrationNotAddedPending: Story = { args: { Scenario: "NoIntegrationPending" } };

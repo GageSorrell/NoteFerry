@@ -39,13 +39,21 @@ function RootNavigator()
     "use no memo";
 
     const { IsLoading: IsLoadingSession, Session } = UseAuth();
-    const { HasConnection, IsActive, IsLoadingConnection } = useOnboarding();
+    const {
+        HasConnection,
+        HasSelectedDatabases,
+        IsActive,
+        IsLoadingActivity,
+        IsLoadingConnection
+    } = useOnboarding();
     const Development = useDevelopmentOnboarding();
 
     const IsAuthenticated = Session !== null;
 
     if (!Development.Active
-        && (IsLoadingSession || (IsAuthenticated && IsLoadingConnection)))
+        && (IsLoadingSession
+            || IsLoadingActivity
+            || (IsAuthenticated && IsLoadingConnection)))
     {
         /* Session and/or connection state is still resolving; render nothing to
          * avoid flashing the wrong stage. */
@@ -53,8 +61,8 @@ function RootNavigator()
     }
 
     /* Three mutually exclusive stages: signed out → welcome + sign-in; signed in
-     * without a usable connection (or mid-flow) → grant/sync/done; signed in with
-     * a connection → the app. */
+     * without a usable connection (or mid-flow) → sync/done; signed in with a
+     * connection → the app. */
     const MockStage = Development.Scenario === null
         ? null
         : OnboardingMockRegistry[Development.Scenario].Stage;
@@ -63,11 +71,16 @@ function RootNavigator()
         : !IsAuthenticated;
     const IsInOnboarding = Development.Active
         ? MockStage === "Onboarding"
-        : IsAuthenticated && (!HasConnection || IsActive);
+        : IsAuthenticated
+            && (!HasConnection || !HasSelectedDatabases || IsActive);
     const IsInApp = !Development.Active
         && IsAuthenticated
         && HasConnection
+        && HasSelectedDatabases
         && !IsActive;
+    const CanAccessDatabaseConfiguration = Development.Active
+        ? MockStage === "Onboarding"
+        : IsAuthenticated;
 
     return (
         <Stack screenOptions={ { headerShown: false } }>
@@ -83,13 +96,24 @@ function RootNavigator()
                 />
             </Stack.Protected>
             <Stack.Protected guard={ IsInOnboarding }>
-                <Stack.Screen name="grant" />
                 <Stack.Screen name="sync" />
                 <Stack.Screen name="done" />
             </Stack.Protected>
             <Stack.Protected guard={ IsInApp }>
                 <Stack.Screen name="index" />
                 <Stack.Screen name="data-sources" />
+                <Stack.Screen
+                    name="page-create"
+                    options={ {
+                        headerBackButtonDisplayMode: "minimal",
+                        headerBackButtonMenuEnabled: false,
+                        headerShown: true,
+                        title: ""
+                    } }
+                />
+            </Stack.Protected>
+            <Stack.Protected guard={ CanAccessDatabaseConfiguration }>
+                <Stack.Screen name="database-settings" />
                 <Stack.Screen name="destination-config" />
             </Stack.Protected>
             <Stack.Protected guard={ __DEV__ }>

@@ -17,6 +17,7 @@ create table app.data_sources (
     cover_url text,
     icon text,
     icon_type text check (icon_type in ('Emoji', 'Image', 'Native')),
+    selected boolean not null default false,
     property_schema jsonb not null,
     schema_hash text not null,
     notion_last_edited_time timestamptz not null,

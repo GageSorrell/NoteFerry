@@ -6,3 +6,5 @@ Intermediate
 .env*
 
 NotionKit
+
+Application/.agent-device/

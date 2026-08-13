@@ -8,11 +8,10 @@
  */
 
 import type * as Domain from "@notivex/domain";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 import { Body, Heading1 } from "@notivex/ui/Primitive";
 import { DatabaseCard } from "@/Component/DatabaseCard";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { UseAuth } from "@/Domain/Auth";
 import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useConnections } from "@/Domain/Connection";
 
@@ -20,8 +19,7 @@ const HomeScreen = () =>
 {
     "use no memo";
 
-    const { SignOut } = UseAuth();
-    const { Connections, DataSources, IsLoading } = useConnections();
+    const { DataSources, IsLoading } = useConnections();
     const Router = UseLazyRouter();
 
     return (
@@ -57,11 +55,10 @@ const HomeScreen = () =>
                                                     OnPress={ Router.push({
                                                         params:
                                                         {
-                                                            connectionId: Source.ConnectionId,
                                                             dataSourceId: Source.DataSourceId,
                                                             title: Source.Title
                                                         },
-                                                        pathname: "/destination-config"
+                                                        pathname: "/page-create"
                                                     }) }
                                                     Source={ Source }
                                                     key={
@@ -71,53 +68,9 @@ const HomeScreen = () =>
                                             ))}
                                         </View>
                                     )}
-
-                                <Body Style={ styles.sectionTitle }>
-                                    Notion workspaces
-                                </Body>
-                                {Connections.length === 0
-                                    ? (
-                                        <Body>
-                                            No connections yet.
-                                        </Body>
-                                    )
-                                    : Connections.map((
-                                        Connection: Domain.NotionConnection.NotionConnection
-                                    ) => (
-                                        <View
-                                            key={ Connection.Id }
-                                            style={ styles.workspaceRow }>
-                                            <Body>
-                                                { Connection.WorkspaceName }
-                                            </Body>
-                                            <View style={ styles.rowActions }>
-                                                <Pressable
-                                                    onPress={ Router.push({
-                                                        params:
-                                                        {
-                                                            connectionId: Connection.Id,
-                                                            workspaceName: Connection.WorkspaceName
-                                                        },
-                                                        pathname: "/data-sources"
-                                                    }) }>
-                                                    <Body>
-                                                        Data sources
-                                                    </Body>
-                                                </Pressable>
-                                            </View>
-                                        </View>
-                                    ))}
                             </>
                         )}
                 </ScrollView>
-
-                <Pressable
-                    onPress={ SignOut }
-                    style={ styles.signOut }>
-                    <Body>
-                        Sign out
-                    </Body>
-                </Pressable>
             </SafeAreaView>
         </View>
     );

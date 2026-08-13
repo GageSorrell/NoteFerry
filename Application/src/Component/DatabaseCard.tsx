@@ -26,6 +26,12 @@ export interface DatabaseCardProps
     readonly Source: Domain.DataSource.CachedDataSourceSchema;
 }
 
+/** Props shared by compact database icon presentations. */
+export interface DatabaseIconProps
+{
+    readonly Source: Domain.DataSource.CachedDataSourceSchema;
+}
+
 /** Returns whether a cached icon string can be displayed as an image. */
 const IsImageUrl = (Value: string): boolean =>
     Value.startsWith("https://") || Value.startsWith("http://");
@@ -203,6 +209,46 @@ DatabaseSvgCover.displayName = "DatabaseSvgCover";
 const ToLucideIconName = (Value: string): LucideIconName =>
     Value.trim().toLowerCase().replaceAll("_", "-").replaceAll(" ", "-") as LucideIconName;
 
+/** Renders the emoji, image, or native icon supplied by Notion. */
+export const DatabaseIcon = React.memo(({ Source }: DatabaseIconProps): React.JSX.Element | null =>
+{
+    if (!Source.Icon)
+    {
+        return null;
+    }
+
+    if (Source.IconType === "Native")
+    {
+        return (
+            <IconBlock
+                Icon={ {
+                    Src: ToLucideIconName(Source.Icon),
+                    Type: "Lucide"
+                } }
+                Size="Small"
+            />
+        );
+    }
+
+    if (IsImageUrl(Source.Icon) || Source.IconType === "Image")
+    {
+        return (
+            <Image
+                accessibilityIgnoresInvertColors
+                cachePolicy="memory-disk"
+                contentFit="contain"
+                source={ { uri: Source.Icon } }
+                style={ styles.icon }
+                transition={ 100 }
+            />
+        );
+    }
+
+    return <ItemTitle Style={ styles.emoji }>{ Source.Icon }</ItemTitle>;
+});
+
+DatabaseIcon.displayName = "DatabaseIcon";
+
 export/**
        * Shows the database cover and icon only when Notion supplied them. The whole
        * surface is the navigation target, replacing the former Configure button.
@@ -215,8 +261,6 @@ const DatabaseCard = ({ OnPress, Source }: DatabaseCardProps): React.JSX.Element
     const Theme = UseTheme();
     const CardShadow = Theme.Shadow.Card;
     const CoverIsSvg = Source.CoverUrl ? IsSvgUrl(Source.CoverUrl) : false;
-    const IconIsImage = Source.Icon ? IsImageUrl(Source.Icon) : false;
-    const IconIsNative = Source.IconType === "Native";
 
     return (
         <Pressable
@@ -265,34 +309,7 @@ const DatabaseCard = ({ OnPress, Source }: DatabaseCardProps): React.JSX.Element
                     : null}
 
                 <View style={ styles.titleRow }>
-                    {Source.Icon
-                        ? IconIsNative
-                            ? (
-                                <IconBlock
-                                    Icon={ {
-                                        Src: ToLucideIconName(Source.Icon),
-                                        Type: "Lucide"
-                                    } }
-                                    Size="Small"
-                                />
-                            )
-                            : IconIsImage || Source.IconType === "Image"
-                                ? (
-                                    <Image
-                                        accessibilityIgnoresInvertColors
-                                        cachePolicy="memory-disk"
-                                        contentFit="contain"
-                                        source={ { uri: Source.Icon } }
-                                        style={ styles.icon }
-                                        transition={ 100 }
-                                    />
-                                )
-                                : (
-                                    <ItemTitle Style={ styles.emoji }>
-                                        { Source.Icon }
-                                    </ItemTitle>
-                                )
-                        : null}
+                    <DatabaseIcon Source={ Source } />
                     <ItemTitle
                         NumberOfLines={ 2 }
                         Style={ styles.title }

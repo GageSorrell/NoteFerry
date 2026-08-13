@@ -29,6 +29,7 @@ import {
 import { Popup, type PopupAnchor, type PopupPlacement } from "./Popup.js";
 import { Image } from "expo-image";
 import { LabelText } from "./Text.js";
+import type { Thunk } from "@sorrell/utility/Function";
 
 interface TooltipContextValue
 {

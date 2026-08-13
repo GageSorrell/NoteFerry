@@ -11,9 +11,11 @@
 
 import { OnboardingMockTiming, useDevelopmentOnboarding } from
     "@/features/onboarding/onboarding-development";
+import { ConnectNotion } from "@/Domain/Connection";
 import { SignInModalStepTwoView } from "@/features/onboarding/onboarding-views";
 import { SignInWithOAuth } from "@/Domain/Auth/OAuth";
 import { UseLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { useOnboarding } from "@/features/onboarding/onboarding-context";
 import { useState } from "react";
 
 const SignInModalStepTwo = () =>
@@ -21,6 +23,7 @@ const SignInModalStepTwo = () =>
     const [ Busy, SetBusy ] = useState(false);
     const Router = UseLazyRouter();
     const Development = useDevelopmentOnboarding();
+    const { Begin, Complete, RecordAuthorizationResult } = useOnboarding();
 
     const IsPending = Development.Active
         ? Development.Scenario === "SignInPending"
@@ -36,20 +39,49 @@ const SignInModalStepTwo = () =>
         if (Development.Active)
         {
             Development.Transition("SignInPending");
-            Development.Schedule("Grant", OnboardingMockTiming.PendingMs);
+            Development.Schedule("Syncing", OnboardingMockTiming.PendingMs);
+            Development.Schedule(
+                "Ready",
+                OnboardingMockTiming.PendingMs + OnboardingMockTiming.SyncMs
+            );
 
             return;
         }
 
+        /* Enter onboarding before authentication changes the protected route
+         * tree. The content authorization starts immediately after sign-in, so
+         * there is no intermediate grant screen. */
+        await Begin();
+        let IsSignedIn = false;
+
         try
         {
             SetBusy(true);
-            await SignInWithOAuth();
+            const Session = await SignInWithOAuth();
+
+            if (Session === null)
+            {
+                await Complete();
+
+                return;
+            }
+
+            IsSignedIn = true;
+            RecordAuthorizationResult(await ConnectNotion());
         }
         catch (Error)
         {
+            if (IsSignedIn)
+            {
+                RecordAuthorizationResult(false);
+            }
+            else
+            {
+                await Complete();
+            }
+
             /* eslint-disable-next-line no-console */
-            console.error("Notion sign-in failed", Error);
+            console.error("Notion sign-in or authorization failed", Error);
         }
         finally
         {

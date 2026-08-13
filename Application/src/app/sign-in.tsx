@@ -20,11 +20,11 @@ const SignInScreen = () =>
     const Router = UseLazyRouter();
     const Development = useDevelopmentOnboarding();
 
-    const HandleContinue = Development.Active
+    const OnContinue = Development.Active
         ? () => Development.Transition("SignInModalStepOne")
         : Router.push("/sign-in-modal-step-one");
 
-    return <SignInView OnContinue={ HandleContinue } />;
+    return <SignInView { ...{ OnContinue } } />;
 };
 
 export default SignInScreen;

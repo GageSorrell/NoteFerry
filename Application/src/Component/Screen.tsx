@@ -62,12 +62,13 @@ export/**
        */
 const Screen = (Props: ScreenProps): React.JSX.Element =>
 {
-    const { InnerProps: InInnerProps = { }, OuterProps: InOuterProps = { }, children } = Props;
+    const {
+        InnerProps: InInnerProps = { },
+        OuterProps: InOuterProps = { },
+        children
+    } = Props;
 
-    const OuterBaseStyle =
-        {
-            flex: 1
-        } as const;
+    const OuterBaseStyle = { flex: 1 } as const;
 
     const InnerBaseStyle =
         {

@@ -25,6 +25,7 @@ import {
     type ViewStyle
 } from "react-native";
 import { MenuItem, MenuItemCheck, type MenuItemProps } from "./Menu.js";
+import type { Thunk } from "@sorrell/utility/Function";
 
 export {
     MenuFooter as DropdownMenuFooter,
@@ -112,6 +113,8 @@ export interface DropdownMenuTriggerProps extends React.PropsWithChildren
      * @see {@link CloneTrigger}
      */
     readonly AsChild?: boolean;
+    readonly AccessibilityLabel?: string;
+    readonly Disabled?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
 }
 
@@ -123,6 +126,8 @@ export/**
        */
 const DropdownMenuTrigger = ({
     AsChild = false,
+    AccessibilityLabel,
+    Disabled = false,
     Style,
     children
 }: DropdownMenuTriggerProps): React.JSX.Element =>
@@ -141,9 +146,13 @@ const DropdownMenuTrigger = ({
 
     return (
         <Pressable
+            accessibilityLabel={ AccessibilityLabel }
+            accessibilityRole="button"
+            accessibilityState={ { disabled: Disabled, expanded: IsOpen } }
+            disabled={ Disabled }
             onPress={ Toggle }
             ref={ AnchorRef }
-            style={ Style }>
+            style={ [ Disabled ? { opacity: 0.3 } : undefined, Style ] }>
             { children }
         </Pressable>
     );

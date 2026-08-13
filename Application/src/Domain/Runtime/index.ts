@@ -1,6 +1,4 @@
 /**
- *
- *
  * @module notivex/Domain/Runtime
  *
  * @file      index.ts

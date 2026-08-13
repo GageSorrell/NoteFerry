@@ -60,6 +60,7 @@ __export(Property_exports, {
   RichTextPropertyInput: () => RichTextPropertyInput,
   SelectPropertyDefinition: () => SelectPropertyDefinition,
   SelectPropertyInput: () => SelectPropertyInput,
+  StatusGroup: () => StatusGroup,
   StatusPropertyDefinition: () => StatusPropertyDefinition,
   StatusPropertyInput: () => StatusPropertyInput,
   TitlePropertyDefinition: () => TitlePropertyDefinition,
@@ -86,6 +87,12 @@ var PropertyOption = Schema2.Struct({
   Color: PropertyOptionColor,
   Id: NotionOptionId,
   Name: Schema2.String
+});
+var StatusGroup = Schema2.Struct({
+  Color: PropertyOptionColor,
+  Id: Schema2.String,
+  Name: Schema2.String,
+  OptionIds: Schema2.Array(NotionOptionId)
 });
 
 // Package/Domain/Distribution/Property/Definition.js
@@ -127,6 +134,7 @@ var MultiSelectPropertyDefinition = Schema3.Struct({
 });
 var StatusPropertyDefinition = Schema3.Struct({
   ...Base,
+  Groups: Schema3.optional(Schema3.Array(StatusGroup)),
   Options: Schema3.Array(PropertyOption),
   Type: Schema3.tag("Status")
 });

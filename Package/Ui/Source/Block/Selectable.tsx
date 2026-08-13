@@ -36,6 +36,7 @@ import {
 } from "react-native-gesture-handler";
 import { type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
 import { Check } from "lucide-react-native";
+import type { Thunk } from "@sorrell/utility/Function";
 import { UseToken } from "../ThemeProvider.js";
 
 interface SelectableContextValue
