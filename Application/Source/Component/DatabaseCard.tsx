@@ -13,6 +13,7 @@ import type * as Domain from "@notivex/domain";
 import * as React from "react";
 import { Defs, LinearGradient, Rect, Stop, Svg, SvgXml } from "react-native-svg";
 import { IconBlock, type LucideIconName } from "@notivex/ui/Block";
+import { ItemTitle, Pressable } from "@notivex/ui/Primitive";
 import {
     Platform,
     type PressableStateCallbackType,
@@ -20,7 +21,6 @@ import {
     View
 } from "react-native";
 import { Image } from "expo-image";
-import { ItemTitle, Pressable } from "@notivex/ui/Primitive";
 import type { Thunk } from "@sorrell/utility/Function";
 import { useTheme } from "@notivex/ui";
 
@@ -44,11 +44,11 @@ const IsImageUrl = (Value: string): boolean =>
 /** Returns whether a remote image URL points to an SVG document. */
 const IsSvgUrl = (Value: string): boolean => /\.svg(?:$|[?#])/iu.test(Value);
 
-type SvgGradient =
-    {
-        readonly EndColor: string;
-        readonly StartColor: string;
-    };
+interface SvgGradient
+{
+    readonly EndColor: string;
+    readonly StartColor: string;
+}
 
 const SvgCache = new Map<string, Promise<string>>();
 
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         flexDirection: "row",
         gap: 10,
-        minHeight: 64,
+        minHeight: 60,
         paddingHorizontal: 16,
         paddingVertical: 12
     }

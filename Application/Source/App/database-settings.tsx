@@ -15,9 +15,9 @@ import { Body, Button, Description, Heading1 } from "@notivex/ui/Primitive";
 import { useEffect, useState } from "react";
 import { ListDataSources } from "@/Domain/Runtime/NotivexApi";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useDevelopmentOnboarding } from
     "@/features/onboarding/onboarding-development";
+import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useTheme } from "@notivex/ui";
 
 const DatabaseSettingsScreen = (): React.JSX.Element =>

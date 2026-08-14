@@ -16,7 +16,9 @@ import type { Meta, StoryObj } from "@storybook/react-native";
 const AlertModalExample = (): React.JSX.Element => (
     <Dialog>
         <DialogTrigger AsChild>
-            <Button Variant="Red">Delete workspace…</Button>
+            <Button Appearance="Red">
+                Delete workspace…
+            </Button>
         </DialogTrigger>
         <AlertModal
             OnTrigger={ () => new Promise((Resolve: (() => void)) => setTimeout(Resolve, 1200)) }

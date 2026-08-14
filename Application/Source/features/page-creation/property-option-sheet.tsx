@@ -26,7 +26,7 @@ import {
     View,
     type ViewStyle
 } from "react-native";
-import { Check, ChevronDown, X } from "lucide-react-native";
+import { Check, X } from "lucide-react-native";
 import type { PropsWithChildren, RefObject } from "react";
 import { useTheme } from "@notivex/ui";
 
@@ -177,8 +177,6 @@ export function PropertyOptionSheetTrigger({
                 Disabled && styles.disabled
             ] }>
             <View style={ styles.triggerValue }>{ children }</View>
-            <ChevronDown color={ Theme.Semantic.Muted }
-                size={ 14 } />
         </Pressable>
     );
 }

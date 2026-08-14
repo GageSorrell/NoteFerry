@@ -20,6 +20,7 @@ import {
     StyleSheet,
     TextInput,
     type TextInputProps,
+    type TextStyle,
     View,
     type ViewStyle
 } from "react-native";
@@ -67,6 +68,9 @@ export interface InputProps
     readonly EndIcon?: React.ReactNode;
     readonly SecureTextEntry?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
+
+    /** Overrides the value text's style — e.g. a larger `FontSize`/`LineHeight` to match another component. `Style` above only reaches the outer container. */
+    readonly TextStyle?: StyleProp<TextStyle>;
     readonly AutoFocus?: boolean | undefined;
     readonly OnSubmitEditing?: TextInputProps[ "onSubmitEditing" ];
     readonly OnFocus?: TextInputProps[ "onFocus" ];
@@ -97,6 +101,7 @@ const Input = ({
     EndIcon,
     SecureTextEntry,
     Style,
+    TextStyle: TextStyleOverride,
     AutoFocus,
     OnSubmitEditing,
     OnFocus,
@@ -160,7 +165,8 @@ const Input = ({
                         color: PrimaryColor,
                         fontSize: FontSizeBySize[Size],
                         opacity: Disabled ? 0.5 : 1
-                    }
+                    },
+                    TextStyleOverride
                 ] }
                 value={ Value }
             />

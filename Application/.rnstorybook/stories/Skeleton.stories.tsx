@@ -2,7 +2,7 @@
  * @module notivex/Storybook/Skeleton
  * @internal
  *
- * @file      Skeleton.stories.ts
+ * @file      Skeleton.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
  * @copyright (c) 2026 Gage Sorrell
  * @license   MIT

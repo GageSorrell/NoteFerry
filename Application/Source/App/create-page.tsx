@@ -25,7 +25,6 @@ import {
 import {
     type BottomSheet,
     Button,
-    Checkbox,
     Description,
     Input,
     ItemTitle,
@@ -44,23 +43,36 @@ import {
     UpdateDestination
 } from "@/Domain/Runtime/NotivexApi";
 import type { EventArg, NavigationAction } from "expo-router/build/react-navigation";
+import { FileMediaPropertyField, type FileMediaValue } from
+    "@/features/page-creation/file-media-property-field";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
+import { String, pipe } from "effect";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AddMediaButton } from "@/features/page-creation/add-media-button";
+import { CheckboxPropertyField } from
+    "@/features/page-creation/checkbox-property-field";
 import { DatabaseIcon } from "@/Component/DatabaseCard";
 import { DatePropertyField } from
     "@/features/page-creation/date-property-field";
+import { EmailPropertyField } from
+    "@/features/page-creation/email-property-field";
 import { MultiSelectPropertyField } from
     "@/features/page-creation/multi-select-property-field";
 import { NumberPropertyField } from
     "@/features/page-creation/number-property-field";
+import { PhoneNumberPropertyField } from
+    "@/features/page-creation/phone-number-property-field";
 import { PropertyLabel } from "@/features/page-creation/property-label";
 import { SelectPropertyField } from
     "@/features/page-creation/select-property-field";
 import { StatusPropertyField } from
     "@/features/page-creation/status-property-field";
+import { TextPropertyField } from
+    "@/features/page-creation/text-property-field";
 import type { Thunk } from "@sorrell/utility/Function";
+import { UrlPropertyField } from
+    "@/features/page-creation/url-property-field";
 import { randomUUID } from "expo-crypto";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useTheme } from "@notivex/ui";
@@ -70,6 +82,7 @@ const MaxPageBodyLength = 200_000;
 type FieldValue =
     | boolean
     | Domain.Property.DatePropertyInput
+    | FileMediaValue
     | string
     | ReadonlyArray<Domain.Id.NotionOptionId>;
 
@@ -176,6 +189,14 @@ const IsDateValue = (
     && "Type" in Value
     && Value.Type === "Date";
 
+const IsFileMediaValue = (
+    Value: FieldValue | undefined
+): Value is FileMediaValue =>
+    typeof Value === "object"
+    && Value !== null
+    && "Type" in Value
+    && (Value.Type === "Local" || Value.Type === "Link");
+
 /** Renders the input appropriate for one normalized Notion property. */
 const PageFormField = ({
     Disabled,
@@ -189,19 +210,18 @@ const PageFormField = ({
         ? Value as ReadonlyArray<Domain.Id.NotionOptionId>
         : [ ];
     const DateValue = IsDateValue(Value) ? Value : undefined;
+    const FileMediaFieldValue = IsFileMediaValue(Value) ? Value : undefined;
     let Control: React.JSX.Element;
 
     if (Property.Type === "Checkbox")
     {
         Control = (
-            <View style={ styles.checkboxValue }>
-                <Checkbox
-                    AccessibilityLabel={ Property.Name }
-                    Checked={ Value === true }
-                    Disabled={ Disabled }
-                    OnCheckedChange={ OnChange }
-                />
-            </View>
+            <CheckboxPropertyField
+                { ...{ Disabled, Property } }
+                Inline
+                OnValueChange={ OnChange }
+                Value={ Value === true }
+            />
         );
     }
     else if (Property.Type === "Select")
@@ -259,15 +279,57 @@ const PageFormField = ({
             />
         );
     }
+    else if (Property.Type === "Url")
+    {
+        Control = (
+            <UrlPropertyField
+                { ...{ Disabled, Property } }
+                Inline
+                OnValueChange={ OnChange }
+                Value={ StringValue }
+            />
+        );
+    }
+    else if (Property.Type === "Email")
+    {
+        Control = (
+            <EmailPropertyField
+                { ...{ Disabled, Property } }
+                Inline
+                OnValueChange={ OnChange }
+                Value={ StringValue }
+            />
+        );
+    }
+    else if (Property.Type === "PhoneNumber")
+    {
+        Control = (
+            <PhoneNumberPropertyField
+                { ...{ Disabled, Property } }
+                Inline
+                OnValueChange={ OnChange }
+                Value={ StringValue }
+            />
+        );
+    }
+    else if (Property.Type === "Files")
+    {
+        Control = (
+            <FileMediaPropertyField
+                { ...{ Disabled, Property } }
+                Inline
+                OnValueChange={ OnChange }
+                Value={ FileMediaFieldValue }
+            />
+        );
+    }
     else if (Property.Type === "RichText")
     {
         Control = (
-            <Textarea
-                Disabled={ Disabled }
-                NumberOfLines={ 1 }
-                OnChangeText={ OnChange }
-                Placeholder="Empty"
-                Style={ styles.inlineTextarea }
+            <TextPropertyField
+                { ...{ Disabled, Property } }
+                Inline
+                OnValueChange={ OnChange }
                 Value={ StringValue }
             />
         );
@@ -923,9 +985,9 @@ const PageCreateScreen = (): React.JSX.Element =>
 
                                     <Button
                                         Appearance="Blue"
-                                        Disabled={ PageTitleText.trim() === "" }
+                                        Disabled={ pipe(PageTitleText, String.trim, String.isEmpty) }
                                         Loading={ IsSaving }
-                                        OnPress={ () => void Submit() }
+                                        OnPress={ Submit }
                                         Style={ styles.submit }>
                                         Create page
                                     </Button>
@@ -995,12 +1057,6 @@ const styles = StyleSheet.create({
     {
         marginVertical: 16
     },
-    checkboxValue:
-    {
-        alignItems: "center",
-        flexDirection: "row",
-        minHeight: 32
-    },
     container:
     {
         flex: 1
@@ -1058,14 +1114,6 @@ const styles = StyleSheet.create({
     {
         height: 32,
         paddingHorizontal: 0
-    },
-    inlineTextarea:
-    {
-        backgroundColor: "transparent",
-        borderWidth: 0,
-        minHeight: 32,
-        paddingHorizontal: 0,
-        paddingVertical: 5
     },
     loading:
     {

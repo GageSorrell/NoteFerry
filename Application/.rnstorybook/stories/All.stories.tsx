@@ -125,6 +125,7 @@ import {
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { ScrollView, View } from "react-native";
 import { Array } from "effect";
+import type { Thunk } from "@sorrell/utility/Function";
 import { useForm } from "react-hook-form";
 
 interface SectionProps extends React.PropsWithChildren
@@ -402,7 +403,7 @@ const AllExample = (): React.JSX.Element =>
                         </DialogTrigger>
                         <AlertModal
                             OnTrigger={ () => new Promise<void>(
-                                (Resolve: () => void) => setTimeout(Resolve, 800)
+                                (Resolve: Thunk) => setTimeout(Resolve, 800)
                             ) }
                             Primary="Delete"
                             Secondary="Cancel"

@@ -47,8 +47,8 @@ const BottomSheetExample = (): React.JSX.Element =>
                 </BottomSheetHeader>
                 <BottomSheetFooter>
                     <Button
-                        OnPress={ () => SetIsPresented(false) }
-                        Variant="Blue">
+                        Appearance="Blue"
+                        OnPress={ () => SetIsPresented(false) }>
                         Copy link
                     </Button>
                 </BottomSheetFooter>

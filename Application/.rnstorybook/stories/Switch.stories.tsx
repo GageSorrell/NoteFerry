@@ -2,7 +2,7 @@
  * @module notivex/Storybook/Switch
  * @internal
  *
- * @file      Switch.stories.ts
+ * @file      Switch.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
  * @copyright (c) 2026 Gage Sorrell
  * @license   MIT

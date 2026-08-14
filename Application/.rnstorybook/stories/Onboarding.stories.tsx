@@ -16,14 +16,13 @@ import {
     SignInModalStepTwoView,
     SignInView,
     SyncView
-} from "@/features/onboarding/onboarding-views";
+} from "../../Source/features/onboarding/onboarding-views";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import {
     OnboardingMockRegistry,
+    type OnboardingMockScenario,
     OnboardingMockScenarios
-} from "@/features/onboarding/onboarding-mock-scenarios";
-import type { OnboardingMockScenario } from
-    "@/features/onboarding/onboarding-mock-scenarios";
+} from "../../Source/features/onboarding/onboarding-mock-scenarios";
 import { action } from "storybook/actions";
 
 interface OnboardingScenarioStoryProps

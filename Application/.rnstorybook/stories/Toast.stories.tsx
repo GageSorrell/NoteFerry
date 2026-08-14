@@ -29,13 +29,13 @@ const ToastExample = (): React.JSX.Element =>
             } }>
             <Button OnPress={ () => Toast("Saved changes") }>Default</Button>
             <Button
-                OnPress={ () => Toast.Success("Page published") }
-                Variant="Blue">
+                Appearance="Blue"
+                OnPress={ () => Toast.Success("Page published") }>
                 Success
             </Button>
             <Button
-                OnPress={ () => Toast.Error("Could not connect") }
-                Variant="Red">
+                Appearance="Red"
+                OnPress={ () => Toast.Error("Could not connect") }>
                 Error
             </Button>
             <Button

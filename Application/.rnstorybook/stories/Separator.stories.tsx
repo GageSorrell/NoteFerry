@@ -2,7 +2,7 @@
  * @module notivex/Storybook/Separator
  * @internal
  *
- * @file      Separator.stories.ts
+ * @file      Separator.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
  * @copyright (c) 2026 Gage Sorrell
  * @license   MIT

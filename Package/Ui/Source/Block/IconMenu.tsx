@@ -592,10 +592,10 @@ const IconMenu = ({ OnDismiss, Ref, OnSelect, OnRemove, TestID }: IconMenuProps)
     <BottomSheet
         { ...{ OnDismiss, Ref } }
         { ...(TestID === undefined ? { } : { TestId: TestID }) }>
-        <Tabs
-            DefaultValue="Emoji"
-            Style={ Styles.Root }>
-            <BottomSheetView>
+        <BottomSheetView style={ Styles.Sheet }>
+            <Tabs
+                DefaultValue="Emoji"
+                Style={ Styles.Root }>
                 <TabsList>
                     <TabsTrigger Value="Emoji">Emoji</TabsTrigger>
                     <TabsTrigger Value="Icons">Icons</TabsTrigger>
@@ -610,17 +610,17 @@ const IconMenu = ({ OnDismiss, Ref, OnSelect, OnRemove, TestID }: IconMenuProps)
                         </Button>
                     ) }
                 </TabsList>
-            </BottomSheetView>
-            <TabsContent Value="Emoji">
-                <EmojiTab OnSelect={ OnSelect } />
-            </TabsContent>
-            <TabsContent Value="Icons">
-                <IconsTab OnSelect={ OnSelect } />
-            </TabsContent>
-            <TabsContent Value="Upload">
-                <UploadTab OnSelect={ OnSelect } />
-            </TabsContent>
-        </Tabs>
+                <TabsContent Value="Emoji">
+                    <EmojiTab OnSelect={ OnSelect } />
+                </TabsContent>
+                <TabsContent Value="Icons">
+                    <IconsTab OnSelect={ OnSelect } />
+                </TabsContent>
+                <TabsContent Value="Upload">
+                    <UploadTab OnSelect={ OnSelect } />
+                </TabsContent>
+            </Tabs>
+        </BottomSheetView>
     </BottomSheet>;
 
 const Styles = StyleSheet.create({
@@ -700,7 +700,12 @@ const Styles = StyleSheet.create({
     SearchInput:
     {
         marginHorizontal: 12,
-        marginTop: 8
+        marginTop: 8,
+        width: "auto"
+    },
+    Sheet:
+    {
+        flex: 1
     },
     TabBody:
     {

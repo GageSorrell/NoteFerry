@@ -21,6 +21,7 @@ import { RegisterDevelopmentMenu } from "@/Domain/Runtime/DevelopmentMenu";
 import { Stack } from "expo-router";
 import { StatusBar } from "@/Domain/Miscellaneous/StatusBar";
 import { useEffect } from "react";
+import { Function } from "@sorrell/utility";
 
 /**
  * The navigator, split out so it can read the auth and onboarding contexts
@@ -141,10 +142,7 @@ function RuntimeProviders()
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 export default function RootLayout()
 {
-    useEffect(() =>
-    {
-        void RegisterDevelopmentMenu();
-    }, [ ]);
+    useEffect(Function.AsVoid(RegisterDevelopmentMenu), [ ]);
 
     /* `NotivexThemeProvider` embeds React Navigation's `ThemeProvider` internally
      * (with the app-wide background bound to `Semantic.BackgroundMain`), so there

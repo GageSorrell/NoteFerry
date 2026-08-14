@@ -24,7 +24,6 @@ import {
     Pressable
 } from "@notivex/ui/Primitive";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown } from "lucide-react-native";
 import { format } from "date-fns";
 import { PropertyLabel } from "@/features/page-creation/property-label";
 import { useTheme } from "@notivex/ui";
@@ -172,11 +171,6 @@ export function DatePropertyField({
                     Style={ styles.value }>
                     { DisplayValue ?? "Empty" }
                 </Body>
-                <ChevronDown
-                    color={ Theme.Semantic.Muted }
-                    size={ 14 }
-                    style={ styles.chevron }
-                />
             </Pressable>
             <DateSheet
                 EndValue={ Value?.End }
@@ -195,11 +189,6 @@ export function DatePropertyField({
 }
 
 const styles = StyleSheet.create({
-    chevron:
-    {
-        flexShrink: 0,
-        marginLeft: 6
-    },
     field:
     {
         gap: 6

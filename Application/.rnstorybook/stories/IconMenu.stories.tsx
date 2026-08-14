@@ -41,8 +41,8 @@ const IconMenuExample = (): React.JSX.Element =>
     return (
         <View style={ { alignItems: "flex-start", gap: 12 } }>
             <Button
-                { ...{ OnPress } }
-                Variant="Icon">
+                Appearance="Icon"
+                { ...{ OnPress } }>
                 <IconBlock
                     Icon={ Icon ?? { Src: "Untitled", Type: "Text" } }
                     Size="Medium"

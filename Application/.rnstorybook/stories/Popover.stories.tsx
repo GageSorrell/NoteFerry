@@ -15,7 +15,9 @@ import { View } from "react-native";
 const PopoverExample = (): React.JSX.Element => (
     <Popover>
         <PopoverTrigger AsChild>
-            <Button>Open popover</Button>
+            <Button>
+                Open popover
+            </Button>
         </PopoverTrigger>
         <PopoverContent>
             <View

@@ -2,6 +2,7 @@
  * Storybook stories for `@notivex/ui`'s `Tooltip` primitive.
  *
  * @module notivex/app/.rnstorybook/stories/Tooltip
+ * @internal
  *
  * @file      Tooltip.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
