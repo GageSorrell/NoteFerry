@@ -25,7 +25,7 @@ import { type StyleProp, StyleSheet, View, type ViewStyle, useWindowDimensions }
 import { Body } from "../Primitive/Text.js";
 import { Image as ExpoImage } from "expo-image";
 import { Skeleton } from "../Primitive/Skeleton.js";
-import type { Thunk } from "@sorrell/utility/Function";
+import type { Thunk } from "@sorrell/effect/Function";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import { useToken } from "../ThemeProvider.js";
 

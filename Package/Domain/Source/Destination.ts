@@ -16,6 +16,7 @@
  * @license   MIT
  */
 
+import * as Behavior from "./Behavior.js";
 import * as Id from "./Id.js";
 import type { PropertyDefinition } from "./Property/Definition.js";
 import { PropertyInput } from "./Property/Input.js";
@@ -173,6 +174,7 @@ const Destination = Schema.Struct({
     Id: Id.DestinationId,
     Name: Schema.String,
     Position: Schema.Number,
+    PostCreationBehavior: Schema.optional(Behavior.PostCreationBehavior),
     Template: DestinationTemplate,
     UpdatedAt: Schema.DateFromString,
     UserId: Id.UserId
@@ -180,3 +182,17 @@ const Destination = Schema.Struct({
 
 /** {@inheritDoc Destination} */
 export type Destination = Schema.Schema.Type<typeof Destination>;
+
+/**
+ * A destination's post-creation behavior, defaulting to `Home` for
+ * destinations saved before this field existed.
+ *
+ * @category Destination
+ * @since 2.0.0
+ */
+export function ResolvePostCreationBehavior(
+    Destination: Destination
+): Behavior.PostCreationBehavior
+{
+    return Destination.PostCreationBehavior ?? { Type: "Home" };
+}

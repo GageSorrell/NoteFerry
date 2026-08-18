@@ -16,6 +16,7 @@
     "./deno-shim.d.ts",
     "../_shared/**/*.ts",
     "../api/**/*.ts",
-    "../notion-oauth-callback/**/*.ts"
+    "../notion-oauth-callback/**/*.ts",
+    "../notify-account-data-request/**/*.ts"
   ]
 }

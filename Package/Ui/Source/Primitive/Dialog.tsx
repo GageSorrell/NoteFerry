@@ -31,10 +31,10 @@ import {
     type ViewStyle
 } from "react-native";
 import { CloneTrigger } from "./Popup.js";
-import { Pressable } from "./Pressable.js";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useToken } from "../ThemeProvider.js";
+import { Pressable } from "./Pressable.js";
 import { WithAlpha } from "../Utility/index.js";
+import { useToken } from "../ThemeProvider.js";
 
 interface DialogContextValue
 {

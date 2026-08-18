@@ -24,10 +24,10 @@ import {
     View,
     type ViewStyle
 } from "react-native";
+import { Pressable, type RnPressableRef } from "./Pressable.js";
 import { Predicate } from "effect";
-import { Pressable } from "./Pressable.js";
-import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
+import { useToken } from "../ThemeProvider.js";
 
 /** {@inheritDoc MenuGroup} */
 export interface MenuGroupProps extends React.PropsWithChildren
@@ -94,6 +94,12 @@ export interface MenuItemProps extends React.PropsWithChildren
     readonly Style?: StyleProp<ViewStyle>;
 }
 
+/* eslint-disable-next-line jsdoc/require-jsdoc */
+export type MenuItemComponent = React.ForwardRefExoticComponent<
+    React.PropsWithoutRef<MenuItemProps> &
+    React.RefAttributes<RnPressableRef>
+>;
+
 export/**
        * Forwards its ref to the underlying `Pressable` — needed so a `MenuItem`
        * can be used as an anchor for its own `Popup` (e.g. `DateSheet`'s
@@ -104,7 +110,7 @@ export/**
        * @category Component
        * @since 1.0.0
        */
-const MenuItem = React.forwardRef<React.ComponentRef<typeof Pressable>, MenuItemProps>(({
+const MenuItem: MenuItemComponent = React.forwardRef<React.ComponentRef<typeof Pressable>, MenuItemProps>(({
     AccessibilityLabel,
     Variant = "Default",
     Icon,

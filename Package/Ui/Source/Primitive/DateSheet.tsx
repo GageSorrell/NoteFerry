@@ -60,7 +60,7 @@ import { DateTimePicker as NativeDateTimePicker } from "@expo/ui/community/datet
 import { Pressable } from "./Pressable.js";
 import { Separator } from "./Separator.js";
 import { Switch } from "./Switch.js";
-import type { Thunk } from "@sorrell/utility/Function";
+import type { Thunk } from "@sorrell/effect/Function";
 import { WithAlpha } from "../Utility/index.js";
 import { format } from "date-fns";
 import { useToken } from "../ThemeProvider.js";

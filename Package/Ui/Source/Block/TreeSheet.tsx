@@ -54,7 +54,7 @@ import { IconBlock, type IconData } from "./IconBlock.js";
 import { MenuItem, MenuItemCheck } from "../Primitive/Menu.js";
 import { StyleSheet, View } from "react-native";
 import { Input } from "../Primitive/Input.js";
-import type { Thunk } from "@sorrell/utility/Function";
+import type { Thunk } from "@sorrell/effect/Function";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import { useToken } from "../ThemeProvider.js";
 

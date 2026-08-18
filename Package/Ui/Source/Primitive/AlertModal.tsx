@@ -1,9 +1,7 @@
 /**
- * Ported from `@notion-kit/ui`'s `alert-modal/index.tsx` — a small
- * confirmation dialog (title + primary/secondary buttons), composed on top
- * of `Dialog.tsx` rather than talking to `Modal` directly. Renders as a
- * `DialogContent`, so it's meant to be used as a `Dialog`'s child, not
- * mounted standalone.
+ * A small confirmation dialog (title + primary/secondary buttons), composed on top
+ * of `Dialog` (as opposed to `Modal`).  This renders as a `DialogContent`, so it is
+ * meant to be used as a `Dialog`'s child, not mounted as a standalone component.
  *
  * @module @notivex/ui/Primitive/AlertModal
  *

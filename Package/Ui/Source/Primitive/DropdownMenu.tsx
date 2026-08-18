@@ -25,7 +25,7 @@ import {
 } from "react-native";
 import { MenuItem, MenuItemCheck, type MenuItemProps } from "./Menu.js";
 import { Pressable } from "./Pressable.js";
-import type { Thunk } from "@sorrell/utility/Function";
+import type { Thunk } from "@sorrell/effect/Function";
 
 export {
     MenuFooter as DropdownMenuFooter,

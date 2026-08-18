@@ -12,9 +12,6 @@
 /**
  * An error originating from `@notivex/ui`.
  *
- * Its message is always prefixed with `"[@notivex/ui] "` so package
- * failures can be identified consistently in logs and error boundaries.
- *
  * @category Error
  * @since 1.0.0
  */

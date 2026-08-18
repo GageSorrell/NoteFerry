@@ -18,6 +18,8 @@
 			"Gumroad",
 			"httpapi",
 			"Jetpack",
+			"logcat",
+			"navigations",
 			"notivex",
 			"ondevice",
 			"Pressable",
@@ -30,6 +32,7 @@
 			"uistorybook",
 			"usehooks",
 			"vaul",
+			"WHATWG",
 			"worklets"
 		],
 		"sorrellWmCodeExtension.headers.insertOnAnyFileCreation": false

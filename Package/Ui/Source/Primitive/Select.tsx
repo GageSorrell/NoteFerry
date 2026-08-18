@@ -27,11 +27,11 @@ import { MenuItem, MenuItemCheck, type MenuItemProps } from "./Menu.js";
 import { Popup, type PopupAnchor, type PopupPlacement } from "./Popup.js";
 import { ScrollView, type StyleProp, type ViewStyle } from "react-native";
 export { MenuGroup as SelectGroup, MenuLabel as SelectLabel } from "./Menu.js";
-import { Pressable } from "./Pressable.js";
 import { Body } from "./Text.js";
 import { ChevronDown } from "lucide-react-native";
 import { NotivexUiError } from "../NotivexUiError.js";
-import type { Thunk } from "@sorrell/utility/Function";
+import { Pressable } from "./Pressable.js";
+import type { Thunk } from "@sorrell/effect/Function";
 import { useToken } from "../ThemeProvider.js";
 
 export { Separator as SelectSeparator } from "./Separator.js";

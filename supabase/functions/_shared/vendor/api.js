@@ -4,6 +4,22 @@ var __export = (target, all) => {
     __defProp(target, name, { get: all[name], enumerable: true });
 };
 
+// Package/Api/Distribution/AccountApi.js
+var AccountApi_exports = {};
+__export(AccountApi_exports, {
+  AccountApi: () => AccountApi,
+  Delete: () => Delete
+});
+import * as Domain from "@notivex/domain";
+import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
+var Delete = HttpApiEndpoint.delete("Delete", "/", {
+  error: [
+    Domain.Error.AuthenticationRequired,
+    Domain.Error.DatabaseError
+  ]
+});
+var AccountApi = HttpApiGroup.make("Account").add(Delete);
+
 // Package/Api/Distribution/ConnectionsApi.js
 var ConnectionsApi_exports = {};
 __export(ConnectionsApi_exports, {
@@ -13,37 +29,37 @@ __export(ConnectionsApi_exports, {
   StartAuthorization: () => StartAuthorization,
   StartAuthorizationResult: () => StartAuthorizationResult
 });
-import * as Domain from "@notivex/domain";
-import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
+import * as Domain2 from "@notivex/domain";
+import { HttpApiEndpoint as HttpApiEndpoint2, HttpApiGroup as HttpApiGroup2 } from "effect/unstable/httpapi";
 import { Schema } from "effect";
 var StartAuthorizationResult = Schema.Struct({
   AuthorizationUrl: Schema.String
 });
-var List = HttpApiEndpoint.get("List", "/", {
+var List = HttpApiEndpoint2.get("List", "/", {
   error: [
-    Domain.Error.AuthenticationRequired,
-    Domain.Error.DatabaseError
+    Domain2.Error.AuthenticationRequired,
+    Domain2.Error.DatabaseError
   ],
-  success: Schema.Array(Domain.NotionConnection.NotionConnection)
+  success: Schema.Array(Domain2.NotionConnection.NotionConnection)
 });
-var StartAuthorization = HttpApiEndpoint.post("StartAuthorization", "/Notion/Start", {
+var StartAuthorization = HttpApiEndpoint2.post("StartAuthorization", "/Notion/Start", {
   error: [
-    Domain.Error.AuthenticationRequired,
-    Domain.Error.DatabaseError
+    Domain2.Error.AuthenticationRequired,
+    Domain2.Error.DatabaseError
   ],
   success: StartAuthorizationResult
 });
-var Disconnect = HttpApiEndpoint.delete("Disconnect", "/:ConnectionId", {
+var Disconnect = HttpApiEndpoint2.delete("Disconnect", "/:ConnectionId", {
   error: [
-    Domain.Error.AuthenticationRequired,
-    Domain.Error.NotionConnectionNotFound,
-    Domain.Error.DatabaseError
+    Domain2.Error.AuthenticationRequired,
+    Domain2.Error.NotionConnectionNotFound,
+    Domain2.Error.DatabaseError
   ],
   params: {
-    ConnectionId: Domain.Id.NotionConnectionId
+    ConnectionId: Domain2.Id.NotionConnectionId
   }
 });
-var ConnectionsApi = HttpApiGroup.make("Connections").add(List, StartAuthorization, Disconnect);
+var ConnectionsApi = HttpApiGroup2.make("Connections").add(List, StartAuthorization, Disconnect);
 
 // Package/Api/Distribution/DataSourcesApi.js
 var DataSourcesApi_exports = {};
@@ -56,149 +72,167 @@ __export(DataSourcesApi_exports, {
   RefreshDataSourcePayload: () => RefreshDataSourcePayload,
   Search: () => Search
 });
-import * as Domain2 from "@notivex/domain";
-import { HttpApiEndpoint as HttpApiEndpoint2, HttpApiGroup as HttpApiGroup2 } from "effect/unstable/httpapi";
+import * as Domain3 from "@notivex/domain";
+import { HttpApiEndpoint as HttpApiEndpoint3, HttpApiGroup as HttpApiGroup3 } from "effect/unstable/httpapi";
 import { Schema as Schema2 } from "effect";
 var RefreshDataSourcePayload = Schema2.Struct({
-  ConnectionId: Domain2.Id.NotionConnectionId,
-  DataSourceId: Domain2.Id.NotionDataSourceId
+  ConnectionId: Domain3.Id.NotionConnectionId,
+  DataSourceId: Domain3.Id.NotionDataSourceId
 });
-var Search = HttpApiEndpoint2.get("Search", "/Search/:ConnectionId", {
+var Search = HttpApiEndpoint3.get("Search", "/Search/:ConnectionId", {
   error: [
-    Domain2.Error.AuthenticationRequired,
-    Domain2.Error.NotionConnectionNotFound,
-    Domain2.Error.NotionConnectionRevoked,
-    Domain2.Error.NotionUnauthorized,
-    Domain2.Error.NotionRateLimited,
-    Domain2.Error.NotionUnavailable,
-    Domain2.Error.DatabaseError
+    Domain3.Error.AuthenticationRequired,
+    Domain3.Error.NotionConnectionNotFound,
+    Domain3.Error.NotionConnectionRevoked,
+    Domain3.Error.NotionUnauthorized,
+    Domain3.Error.NotionRateLimited,
+    Domain3.Error.NotionUnavailable,
+    Domain3.Error.DatabaseError
   ],
   params: {
-    ConnectionId: Domain2.Id.NotionConnectionId
+    ConnectionId: Domain3.Id.NotionConnectionId
   },
-  success: Schema2.Array(Domain2.DataSource.DiscoveredDataSource)
+  success: Schema2.Array(Domain3.DataSource.DiscoveredDataSource)
 });
-var DiscoverOnboarding = HttpApiEndpoint2.get("DiscoverOnboarding", "/Onboarding/:ConnectionId", {
+var DiscoverOnboarding = HttpApiEndpoint3.get("DiscoverOnboarding", "/Onboarding/:ConnectionId", {
   error: [
-    Domain2.Error.AuthenticationRequired,
-    Domain2.Error.NotionConnectionNotFound,
-    Domain2.Error.NotionConnectionRevoked,
-    Domain2.Error.NotionUnauthorized,
-    Domain2.Error.NotionRateLimited,
-    Domain2.Error.NotionUnavailable,
-    Domain2.Error.DatabaseError
+    Domain3.Error.AuthenticationRequired,
+    Domain3.Error.NotionConnectionNotFound,
+    Domain3.Error.NotionConnectionRevoked,
+    Domain3.Error.NotionUnauthorized,
+    Domain3.Error.NotionRateLimited,
+    Domain3.Error.NotionUnavailable,
+    Domain3.Error.DatabaseError
   ],
   params: {
-    ConnectionId: Domain2.Id.NotionConnectionId
+    ConnectionId: Domain3.Id.NotionConnectionId
   },
-  success: Domain2.DataSource.OnboardingDiscovery
+  success: Domain3.DataSource.OnboardingDiscovery
 });
-var List2 = HttpApiEndpoint2.get("List", "/", {
+var List2 = HttpApiEndpoint3.get("List", "/", {
   error: [
-    Domain2.Error.AuthenticationRequired,
-    Domain2.Error.DatabaseError
+    Domain3.Error.AuthenticationRequired,
+    Domain3.Error.DatabaseError
   ],
-  success: Schema2.Array(Domain2.DataSource.CachedDataSourceSchema)
+  success: Schema2.Array(Domain3.DataSource.CachedDataSourceSchema)
 });
-var Refresh = HttpApiEndpoint2.post("Refresh", "/Refresh", {
+var Refresh = HttpApiEndpoint3.post("Refresh", "/Refresh", {
   error: [
-    Domain2.Error.AuthenticationRequired,
-    Domain2.Error.NotionConnectionNotFound,
-    Domain2.Error.NotionConnectionRevoked,
-    Domain2.Error.DataSourceNotFound,
-    Domain2.Error.NotionResourceNotShared,
-    Domain2.Error.NotionUnauthorized,
-    Domain2.Error.NotionRateLimited,
-    Domain2.Error.NotionUnavailable,
-    Domain2.Error.DatabaseError
+    Domain3.Error.AuthenticationRequired,
+    Domain3.Error.NotionConnectionNotFound,
+    Domain3.Error.NotionConnectionRevoked,
+    Domain3.Error.DataSourceNotFound,
+    Domain3.Error.NotionResourceNotShared,
+    Domain3.Error.NotionUnauthorized,
+    Domain3.Error.NotionRateLimited,
+    Domain3.Error.NotionUnavailable,
+    Domain3.Error.DatabaseError
   ],
   payload: RefreshDataSourcePayload,
-  success: Domain2.DataSource.CachedDataSourceSchema
+  success: Domain3.DataSource.CachedDataSourceSchema
 });
-var Get = HttpApiEndpoint2.get("Get", "/:DataSourceId", {
+var Get = HttpApiEndpoint3.get("Get", "/:DataSourceId", {
   error: [
-    Domain2.Error.AuthenticationRequired,
-    Domain2.Error.DataSourceNotFound,
-    Domain2.Error.DatabaseError
+    Domain3.Error.AuthenticationRequired,
+    Domain3.Error.DataSourceNotFound,
+    Domain3.Error.DatabaseError
   ],
   params: {
-    DataSourceId: Domain2.Id.NotionDataSourceId
+    DataSourceId: Domain3.Id.NotionDataSourceId
   },
-  success: Domain2.DataSource.CachedDataSourceSchema
+  success: Domain3.DataSource.CachedDataSourceSchema
 });
-var DataSourcesApi = HttpApiGroup2.make("DataSources").add(Search, DiscoverOnboarding, List2, Refresh, Get);
+var DataSourcesApi = HttpApiGroup3.make("DataSources").add(Search, DiscoverOnboarding, List2, Refresh, Get);
 
 // Package/Api/Distribution/DestinationsApi.js
 var DestinationsApi_exports = {};
 __export(DestinationsApi_exports, {
   Create: () => Create,
   CreateDestinationPayload: () => CreateDestinationPayload,
-  Delete: () => Delete,
+  Delete: () => Delete2,
   DestinationsApi: () => DestinationsApi,
   List: () => List3,
   Update: () => Update,
   UpdateDestinationPayload: () => UpdateDestinationPayload
 });
-import * as Domain3 from "@notivex/domain";
-import { HttpApiEndpoint as HttpApiEndpoint3, HttpApiGroup as HttpApiGroup3 } from "effect/unstable/httpapi";
+import * as Domain4 from "@notivex/domain";
+import { HttpApiEndpoint as HttpApiEndpoint4, HttpApiGroup as HttpApiGroup4 } from "effect/unstable/httpapi";
 import { Schema as Schema3 } from "effect";
 var CreateDestinationPayload = Schema3.Struct({
-  ConnectionId: Domain3.Id.NotionConnectionId,
-  DataSourceId: Domain3.Id.NotionDataSourceId,
-  FieldConfiguration: Domain3.Destination.FieldConfiguration,
+  ConnectionId: Domain4.Id.NotionConnectionId,
+  DataSourceId: Domain4.Id.NotionDataSourceId,
+  FieldConfiguration: Domain4.Destination.FieldConfiguration,
   Icon: Schema3.optional(Schema3.String),
   Name: Schema3.String,
   Position: Schema3.Number,
-  Template: Domain3.Destination.DestinationTemplate
+  PostCreationBehavior: Schema3.optional(Domain4.Behavior.PostCreationBehavior),
+  Template: Domain4.Destination.DestinationTemplate
 });
 var UpdateDestinationPayload = Schema3.Struct({
-  FieldConfiguration: Schema3.optional(Domain3.Destination.FieldConfiguration),
+  FieldConfiguration: Schema3.optional(Domain4.Destination.FieldConfiguration),
   Icon: Schema3.optional(Schema3.String),
   Name: Schema3.optional(Schema3.String),
   Position: Schema3.optional(Schema3.Number),
-  Template: Schema3.optional(Domain3.Destination.DestinationTemplate)
+  PostCreationBehavior: Schema3.optional(Domain4.Behavior.PostCreationBehavior),
+  Template: Schema3.optional(Domain4.Destination.DestinationTemplate)
 });
-var List3 = HttpApiEndpoint3.get("List", "/", {
+var List3 = HttpApiEndpoint4.get("List", "/", {
   error: [
-    Domain3.Error.AuthenticationRequired,
-    Domain3.Error.DatabaseError
+    Domain4.Error.AuthenticationRequired,
+    Domain4.Error.DatabaseError
   ],
-  success: Schema3.Array(Domain3.Destination.Destination)
+  success: Schema3.Array(Domain4.Destination.Destination)
 });
-var Create = HttpApiEndpoint3.post("Create", "/", {
+var Create = HttpApiEndpoint4.post("Create", "/", {
   error: [
-    Domain3.Error.AuthenticationRequired,
-    Domain3.Error.NotionConnectionNotFound,
-    Domain3.Error.DataSourceNotFound,
-    Domain3.Error.DatabaseError
+    Domain4.Error.AuthenticationRequired,
+    Domain4.Error.NotionConnectionNotFound,
+    Domain4.Error.DataSourceNotFound,
+    Domain4.Error.DatabaseError
   ],
   payload: CreateDestinationPayload,
-  success: Domain3.Destination.Destination
+  success: Domain4.Destination.Destination
 });
-var Update = HttpApiEndpoint3.patch("Update", "/:DestinationId", {
+var Update = HttpApiEndpoint4.patch("Update", "/:DestinationId", {
   error: [
-    Domain3.Error.AuthenticationRequired,
-    Domain3.Error.DestinationNotFound,
-    Domain3.Error.DataSourceNotFound,
-    Domain3.Error.DataSourceSchemaChanged,
-    Domain3.Error.DatabaseError
+    Domain4.Error.AuthenticationRequired,
+    Domain4.Error.DestinationNotFound,
+    Domain4.Error.DataSourceNotFound,
+    Domain4.Error.DataSourceSchemaChanged,
+    Domain4.Error.DatabaseError
   ],
   params: {
-    DestinationId: Domain3.Id.DestinationId
+    DestinationId: Domain4.Id.DestinationId
   },
   payload: UpdateDestinationPayload,
-  success: Domain3.Destination.Destination
+  success: Domain4.Destination.Destination
 });
-var Delete = HttpApiEndpoint3.delete("Delete", "/:DestinationId", {
+var Delete2 = HttpApiEndpoint4.delete("Delete", "/:DestinationId", {
   error: [
-    Domain3.Error.AuthenticationRequired,
-    Domain3.Error.DatabaseError
+    Domain4.Error.AuthenticationRequired,
+    Domain4.Error.DatabaseError
   ],
   params: {
-    DestinationId: Domain3.Id.DestinationId
+    DestinationId: Domain4.Id.DestinationId
   }
 });
-var DestinationsApi = HttpApiGroup3.make("Destinations").add(List3, Create, Update, Delete);
+var DestinationsApi = HttpApiGroup4.make("Destinations").add(List3, Create, Update, Delete2);
+
+// Package/Api/Distribution/ExportRequestsApi.js
+var ExportRequestsApi_exports = {};
+__export(ExportRequestsApi_exports, {
+  Create: () => Create2,
+  ExportRequestsApi: () => ExportRequestsApi
+});
+import * as Domain5 from "@notivex/domain";
+import { HttpApiEndpoint as HttpApiEndpoint5, HttpApiGroup as HttpApiGroup5 } from "effect/unstable/httpapi";
+var Create2 = HttpApiEndpoint5.post("Create", "/", {
+  error: [
+    Domain5.Error.AuthenticationRequired,
+    Domain5.Error.DatabaseError
+  ]
+});
+var ExportRequestsApi = HttpApiGroup5.make("ExportRequests").add(Create2);
 
 // Package/Api/Distribution/Api.js
 import { HttpApi } from "effect/unstable/httpapi";
@@ -206,39 +240,78 @@ import { HttpApi } from "effect/unstable/httpapi";
 // Package/Api/Distribution/PagesApi.js
 var PagesApi_exports = {};
 __export(PagesApi_exports, {
-  Create: () => Create2,
+  Create: () => Create3,
   PagesApi: () => PagesApi
 });
-import * as Domain4 from "@notivex/domain";
-import { HttpApiEndpoint as HttpApiEndpoint4, HttpApiGroup as HttpApiGroup4 } from "effect/unstable/httpapi";
-var Create2 = HttpApiEndpoint4.post("Create", "/", {
+import * as Domain6 from "@notivex/domain";
+import { HttpApiEndpoint as HttpApiEndpoint6, HttpApiGroup as HttpApiGroup6 } from "effect/unstable/httpapi";
+var Create3 = HttpApiEndpoint6.post("Create", "/", {
   error: [
-    Domain4.Error.AuthenticationRequired,
-    Domain4.Error.NotionConnectionNotFound,
-    Domain4.Error.NotionConnectionRevoked,
-    Domain4.Error.DataSourceNotFound,
-    Domain4.Error.DataSourceSchemaChanged,
-    Domain4.Error.InvalidPageDraft,
-    Domain4.Error.NotionUnauthorized,
-    Domain4.Error.NotionRateLimited,
-    Domain4.Error.NotionValidationError,
-    Domain4.Error.NotionUnavailable,
-    Domain4.Error.DatabaseError
+    Domain6.Error.AuthenticationRequired,
+    Domain6.Error.NotionConnectionNotFound,
+    Domain6.Error.NotionConnectionRevoked,
+    Domain6.Error.DataSourceNotFound,
+    Domain6.Error.DataSourceSchemaChanged,
+    Domain6.Error.InvalidPageDraft,
+    Domain6.Error.NotionUnauthorized,
+    Domain6.Error.NotionRateLimited,
+    Domain6.Error.NotionValidationError,
+    Domain6.Error.NotionUnavailable,
+    Domain6.Error.DatabaseError
   ],
-  payload: Domain4.Command.CreatePageCommand,
-  success: Domain4.Command.CreatePageResult
+  payload: Domain6.Command.CreatePageCommand,
+  success: Domain6.Command.CreatePageResult
 });
-var PagesApi = HttpApiGroup4.make("Pages").add(Create2);
+var PagesApi = HttpApiGroup6.make("Pages").add(Create3);
+
+// Package/Api/Distribution/ProfileApi.js
+var ProfileApi_exports = {};
+__export(ProfileApi_exports, {
+  Get: () => Get2,
+  ProfileApi: () => ProfileApi,
+  UpdateSettings: () => UpdateSettings
+});
+import * as Domain7 from "@notivex/domain";
+import { HttpApiEndpoint as HttpApiEndpoint7, HttpApiGroup as HttpApiGroup7 } from "effect/unstable/httpapi";
+var Get2 = HttpApiEndpoint7.get("Get", "/", {
+  error: [
+    Domain7.Error.AuthenticationRequired,
+    Domain7.Error.DatabaseError
+  ],
+  success: Domain7.Profile.Profile
+});
+var UpdateSettings = HttpApiEndpoint7.patch("UpdateSettings", "/Settings", {
+  error: [
+    Domain7.Error.AuthenticationRequired,
+    Domain7.Error.DatabaseError
+  ],
+  payload: Domain7.Settings.AppSettings,
+  success: Domain7.Profile.Profile
+});
+var ProfileApi = HttpApiGroup7.make("Profile").add(Get2, UpdateSettings);
 
 // Package/Api/Distribution/Api.js
-var NotivexApi = HttpApi.make("NotivexApi").add(ConnectionsApi.prefix("/Connections"), DataSourcesApi.prefix("/DataSources"), DestinationsApi.prefix("/Destinations"), PagesApi.prefix("/Pages"));
+var NotivexApi = HttpApi.make("NotivexApi").add(ConnectionsApi.prefix("/Connections"), DataSourcesApi.prefix("/DataSources"), DestinationsApi.prefix("/Destinations"), PagesApi.prefix("/Pages"), ProfileApi.prefix("/Profile"), AccountApi.prefix("/Account"), ExportRequestsApi.prefix("/ExportRequests"));
 export {
+  AccountApi_exports as AccountApi,
   ConnectionsApi_exports as ConnectionsApi,
   DataSourcesApi_exports as DataSourcesApi,
   DestinationsApi_exports as DestinationsApi,
+  ExportRequestsApi_exports as ExportRequestsApi,
   NotivexApi,
-  PagesApi_exports as PagesApi
+  PagesApi_exports as PagesApi,
+  ProfileApi_exports as ProfileApi
 };
+/**
+ * The `Account` group: permanently deleting the current user's account.
+ *
+ * @module @notivex/api/AccountApi
+ *
+ * @file      AccountApi.ts
+ * @author    Gage Sorrell <gage@sorrell.sh>
+ * @copyright (c) 2026 Gage Sorrell
+ * @license   MIT
+ */
 /**
  * The `Connections` group: starting Notion's OAuth authorization flow,
  * listing a user's authorized Notion connections, and disconnecting one.
@@ -277,6 +350,18 @@ export {
  * @license   MIT
  */
 /**
+ * The `ExportRequests` group: asking Notivex to prepare an export of the
+ * current user's account data. Requests are fulfilled manually — creating one
+ * only records the request and notifies Notivex.
+ *
+ * @module @notivex/api/ExportRequestsApi
+ *
+ * @file      ExportRequestsApi.ts
+ * @author    Gage Sorrell <gage@sorrell.sh>
+ * @copyright (c) 2026 Gage Sorrell
+ * @license   MIT
+ */
+/**
  * The `Pages` group: creating a Notion page from a destination. This is the
  * one place the wire contract accepts a Notivex-shaped
  * {@link Domain.Command.CreatePageCommand} rather than Notion's own request
@@ -286,6 +371,17 @@ export {
  * @module @notivex/api/PagesApi
  *
  * @file      PagesApi.ts
+ * @author    Gage Sorrell <gage@sorrell.sh>
+ * @copyright (c) 2026 Gage Sorrell
+ * @license   MIT
+ */
+/**
+ * The `Profile` group: reading the current user's profile and updating their
+ * app-wide {@link Domain.Settings.AppSettings}.
+ *
+ * @module @notivex/api/ProfileApi
+ *
+ * @file      ProfileApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
  * @copyright (c) 2026 Gage Sorrell
  * @license   MIT

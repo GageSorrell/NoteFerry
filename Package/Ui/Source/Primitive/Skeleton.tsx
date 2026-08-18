@@ -14,8 +14,8 @@ import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { Animated, Easing, type StyleProp, type ViewStyle } from "react-native";
-import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
+import { useToken } from "../ThemeProvider.js";
 
 /** {@inheritDoc Skeleton} */
 export interface SkeletonProps

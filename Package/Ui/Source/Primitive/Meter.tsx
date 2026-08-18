@@ -17,8 +17,8 @@ import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { type StyleProp, View, type ViewStyle } from "react-native";
 import Svg, { Circle, G } from "react-native-svg";
-import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
+import { useToken } from "../ThemeProvider.js";
 
 /** {@inheritDoc MeterBar} */
 export interface MeterBarProps extends React.PropsWithChildren

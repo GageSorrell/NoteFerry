@@ -4,7 +4,9 @@
   "private": true,
   "homepage": "https://notivex.sorrell.sh",
   "workspaces": [
-    "./Application",
+    "./Application/Mobile",
+    "./Application/Windows",
+    "./Application/Mac",
     "./Package/Api",
     "./Package/Domain",
     "./Package/Icons",
@@ -40,6 +42,7 @@
     "@notivex/ui": "1.0.0",
     "@sorrell/eslint-config": "2.3.0",
     "eslint": "9.39.5",
+    "react-native": "0.86.2",
     "typescript": "6.0.3"
   }
 }

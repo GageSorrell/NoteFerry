@@ -5,6 +5,12 @@
 create table app.profiles (
     user_id uuid primary key references auth.users (id) on delete cascade,
     display_name text,
+    -- App-wide, cross-device settings (`@notivex/domain`'s `Settings.AppSettings`
+    -- — launch behavior, home-screen database order, quick-action picks,
+    -- offline-notify preference). Every field is optional in the schema, so an
+    -- empty object decodes cleanly for a brand-new profile; `Settings.WithDefaults`
+    -- fills the gaps. Per-database settings live on `app.destinations` instead.
+    settings jsonb not null default '{}'::jsonb,
     created_at timestamptz not null default now(),
     updated_at timestamptz not null default now()
 );

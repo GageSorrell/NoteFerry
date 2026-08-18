@@ -14,12 +14,15 @@
  * @license   MIT
  */
 
+import * as Account from "../_shared/Account.ts";
 import * as DataSources from "../_shared/DataSources.ts";
 import * as Destinations from "../_shared/Destinations.ts";
 import * as Domain from "@notivex/domain";
+import * as ExportRequests from "../_shared/ExportRequests.ts";
 import * as FileSystem from "effect/FileSystem";
 import * as Pages from "../_shared/Pages.ts";
 import * as Path from "effect/Path";
+import * as Profile from "../_shared/Profile.ts";
 import { AdminClient, PrivateSchema } from "../_shared/Database.ts";
 import { Effect, Layer } from "effect";
 import { Etag, HttpPlatform, HttpRouter } from "effect/unstable/http";
@@ -215,6 +218,41 @@ const PagesLive = HttpApiBuilder.group(NotivexApi, "Pages", (Handlers) =>
             return yield* Pages.CreateForUser(UserId, Input.payload);
         })));
 
+const ProfileLive = HttpApiBuilder.group(NotivexApi, "Profile", (Handlers) =>
+    Handlers
+        .handle("Get", () =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                return yield* Profile.GetForUser(UserId);
+            }))
+        .handle("UpdateSettings", (Input) =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                return yield* Profile.UpdateSettingsForUser(UserId, Input.payload);
+            })));
+
+const AccountLive = HttpApiBuilder.group(NotivexApi, "Account", (Handlers) =>
+    Handlers.handle("Delete", () =>
+        Effect.gen(function* ()
+        {
+            const UserId = yield* RequireUser;
+
+            yield* Account.DeleteForUser(UserId);
+        })));
+
+const ExportRequestsLive = HttpApiBuilder.group(NotivexApi, "ExportRequests", (Handlers) =>
+    Handlers.handle("Create", () =>
+        Effect.gen(function* ()
+        {
+            const UserId = yield* RequireUser;
+
+            yield* ExportRequests.CreateForUser(UserId);
+        })));
+
 /* The web platform services the served HttpApi needs. Edge functions never
  * serve files, so a no-op FileSystem is sufficient. */
 const PlatformLayer = Layer.mergeAll(
@@ -228,6 +266,9 @@ const AppLayer = HttpApiBuilder.layer(NotivexApi).pipe(
     Layer.provide(DataSourcesLive),
     Layer.provide(DestinationsLive),
     Layer.provide(PagesLive),
+    Layer.provide(ProfileLive),
+    Layer.provide(AccountLive),
+    Layer.provide(ExportRequestsLive),
     Layer.provide(PlatformLayer)
 );
 

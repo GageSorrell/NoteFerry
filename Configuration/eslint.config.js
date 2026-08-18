@@ -34,7 +34,7 @@ export default defineConfig(
     {
         /* Storybook story files are demo/config code, not documented API
            surface, so don't require JSDoc blocks on their exports. */
-        files: [ "Application/**/*.stories.tsx" ],
+        files: [ "Application/Mobile/**/*.stories.tsx" ],
         rules:
         {
             "jsdoc/require-jsdoc": "off"

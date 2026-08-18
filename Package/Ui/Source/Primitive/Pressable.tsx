@@ -17,8 +17,7 @@ import * as React from "react";
 import {
     type AccessibilityProps,
     Pressable as RNPressable,
-    type PressableProps as RNPressableProps,
-    type View
+    type PressableProps as RNPressableProps
 } from "react-native";
 
 /** The accessibility props of {@link Pressable}, grouped into one object. */
@@ -44,6 +43,14 @@ export interface PressableProps extends Omit<
     readonly OnPress?: RNPressableProps["onPress"];
 }
 
+/* eslint-disable-next-line jsdoc/require-jsdoc */
+export type RnPressableRef = React.ComponentRef<typeof RNPressable>;
+
+type PressableComponent = React.ForwardRefExoticComponent<
+    React.PropsWithoutRef<PressableProps> &
+    React.RefAttributes<RnPressableRef>
+>;
+
 export/**
        * A `Pressable` whose accessibility props are supplied through a single
        * `Accessibility` object rather than three separate props.
@@ -51,22 +58,23 @@ export/**
        * @category Component
        * @since 1.0.0
        */
-const Pressable = React.forwardRef<React.ComponentRef<typeof RNPressable>, PressableProps>(({
-    Accessibility,
-    Disabled,
-    OnPress,
-    ...Rest
-}: PressableProps, ForwardedRef: React.ForwardedRef<View>): React.JSX.Element =>
-    (
-        <RNPressable
-            accessibilityLabel={ Accessibility?.Label }
-            accessibilityRole={ Accessibility?.Role }
-            accessibilityState={ Accessibility?.State }
-            disabled={ Disabled }
-            onPress={ OnPress }
-            ref={ ForwardedRef }
-            { ...Rest }
-        />
-    ));
+const Pressable: PressableComponent =
+    React.forwardRef<React.ComponentRef<typeof RNPressable>, PressableProps>(({
+        Accessibility,
+        Disabled,
+        OnPress,
+        ...Rest
+    }: PressableProps, ForwardedRef: React.ForwardedRef<RnPressableRef>): React.JSX.Element =>
+        (
+            <RNPressable
+                accessibilityLabel={ Accessibility?.Label }
+                accessibilityRole={ Accessibility?.Role }
+                accessibilityState={ Accessibility?.State }
+                disabled={ Disabled }
+                onPress={ OnPress }
+                ref={ ForwardedRef }
+                { ...Rest }
+            />
+        ));
 
 Pressable.displayName = "Pressable";

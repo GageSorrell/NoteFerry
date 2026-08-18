@@ -28,6 +28,7 @@ const CreateDestinationPayload = Schema.Struct({
     Icon: Schema.optional(Schema.String),
     Name: Schema.String,
     Position: Schema.Number,
+    PostCreationBehavior: Schema.optional(Domain.Behavior.PostCreationBehavior),
     Template: Domain.Destination.DestinationTemplate
 });
 
@@ -47,6 +48,7 @@ const UpdateDestinationPayload = Schema.Struct({
     Icon: Schema.optional(Schema.String),
     Name: Schema.optional(Schema.String),
     Position: Schema.optional(Schema.Number),
+    PostCreationBehavior: Schema.optional(Domain.Behavior.PostCreationBehavior),
     Template: Schema.optional(Domain.Destination.DestinationTemplate)
 });
 

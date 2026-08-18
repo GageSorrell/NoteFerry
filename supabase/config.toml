@@ -405,6 +405,12 @@ verify_jwt = true
 [functions.notion-oauth-callback]
 verify_jwt = false
 
+# Server-to-server webhook from the `account_data_requests_notify` trigger
+# (11_notifications.sql) — no user JWT to present, verified instead by a
+# shared secret checked inside the function.
+[functions.notify-account-data-request]
+verify_jwt = false
+
 # Experimental features may be deprecated any time
 [experimental]
 # Configures Postgres storage engine to use OrioleDB (S3)

@@ -30,7 +30,7 @@ import { Body } from "./Text.js";
 import { Pressable } from "./Pressable.js";
 import { ChevronDown } from "lucide-react-native";
 import { MenuItemCheck } from "./Menu.js";
-import type { Thunk } from "@sorrell/utility/Function";
+import type { Thunk } from "@sorrell/effect/Function";
 import { useToken } from "../ThemeProvider.js";
 
 export {

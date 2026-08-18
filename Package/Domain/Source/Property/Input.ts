@@ -199,6 +199,35 @@ const PhoneNumberPropertyInput = Schema.Struct({
 export type PhoneNumberPropertyInput = Schema.Schema.Type<typeof PhoneNumberPropertyInput>;
 
 export/**
+       * One attachment for a Files & media property: either a link to an
+       * externally-hosted file, or a local file's contents (base64-encoded,
+       * since the server has no access to the client's filesystem) for the
+       * server to upload to Notion on the client's behalf.
+       *
+       * @category Property
+       * @since 1.0.0
+       */
+const FilesPropertyInput = Schema.Struct({
+    Type: Schema.tag("Files"),
+    Value: Schema.Union([
+        Schema.Struct({
+            Name: Schema.String,
+            Type: Schema.tag("External"),
+            Url: Schema.String
+        }),
+        Schema.Struct({
+            Base64: Schema.String,
+            MimeType: Schema.optional(Schema.String),
+            Name: Schema.String,
+            Type: Schema.tag("Upload")
+        })
+    ])
+});
+
+/** {@inheritDoc FilesPropertyInput} */
+export type FilesPropertyInput = Schema.Schema.Type<typeof FilesPropertyInput>;
+
+export/**
        * "What the user wants to put into it" — the value a Notivex form collects
        * for a single property, before it is translated into a Notion API request
        * body.
@@ -219,7 +248,8 @@ const PropertyInput = Schema.Union([
     PeoplePropertyInput,
     UrlPropertyInput,
     EmailPropertyInput,
-    PhoneNumberPropertyInput
+    PhoneNumberPropertyInput,
+    FilesPropertyInput
 ]);
 
 /** {@inheritDoc PropertyInput} */

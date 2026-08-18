@@ -61,6 +61,17 @@ create policy operations_select_own on app.operations
     for select to authenticated
     using ((select auth.uid()) = user_id);
 
+-- app.account_data_requests --------------------------------------------------
+alter table app.account_data_requests enable row level security;
+
+create policy account_data_requests_select_own on app.account_data_requests
+    for select to authenticated
+    using ((select auth.uid()) = user_id);
+
+create policy account_data_requests_insert_own on app.account_data_requests
+    for insert to authenticated
+    with check ((select auth.uid()) = user_id);
+
 -- private.* ----------------------------------------------------------------
 -- Enable RLS with no policies: client roles can never read these rows, and the
 -- service role (edge functions) bypasses RLS. Belt-and-braces with the schema

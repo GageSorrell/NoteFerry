@@ -5,8 +5,10 @@
 -- constrain, and one schema-versioned JSONB blob for flexible UI config.
 --
 -- `configuration` holds the versioned FieldConfiguration (field order, per-field
--- settings) and the DestinationTemplate, decoded through Effect Schema whenever
--- it enters application code (§25). `data_source_id` is Notion's data-source id.
+-- settings), the DestinationTemplate, and the optional PostCreationBehavior
+-- (defaults to `Home` when absent, e.g. for destinations saved before this
+-- field existed), decoded through Effect Schema whenever it enters
+-- application code (§25). `data_source_id` is Notion's data-source id.
 
 create table app.destinations (
     id uuid primary key default gen_random_uuid(),

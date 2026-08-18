@@ -23,12 +23,12 @@ import * as Shadow from "../Token/Shadow.js";
 import {
     type GestureResponderEvent,
     type StyleProp,
-    useWindowDimensions,
-    type ViewStyle
+    type ViewStyle,
+    useWindowDimensions
 } from "react-native";
 import RNPopover, { PopoverPlacement, Rect } from "react-native-popover-view";
 import type { ReadonlyRecord } from "effect/Record";
-import type { Thunk } from "@sorrell/utility/Function";
+import type { Thunk } from "@sorrell/effect/Function";
 import { useToken } from "../ThemeProvider.js";
 
 /**
@@ -164,7 +164,7 @@ const Popup = ({
             ) => void;
         } | null;
 
-        Current?.measureInWindow?.((X, Y, Width, Height) =>
+        Current?.measureInWindow?.((X: number, Y: number, Width: number, Height: number) =>
         {
             if (!IsActive)
             {

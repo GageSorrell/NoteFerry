@@ -26,7 +26,7 @@ import {
 } from "react-native";
 import { Pressable } from "./Pressable.js";
 import { Search, X } from "lucide-react-native";
-import type { Thunk } from "@sorrell/utility/Function";
+import type { Thunk } from "@sorrell/effect/Function";
 import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 

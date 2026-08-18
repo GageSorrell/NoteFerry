@@ -28,6 +28,7 @@ import { Effect, Schema } from "effect";
  * domain: `Date`) round-trips correctly. */
 const ConfigurationSchema = Schema.Struct({
     FieldConfiguration: Domain.Destination.FieldConfiguration,
+    PostCreationBehavior: Schema.optional(Domain.Behavior.PostCreationBehavior),
     Template: Domain.Destination.DestinationTemplate
 });
 
@@ -54,6 +55,7 @@ export interface DestinationCreateInput
     readonly Icon?: string | undefined;
     readonly Name: string;
     readonly Position: number;
+    readonly PostCreationBehavior?: Domain.Behavior.PostCreationBehavior | undefined;
     readonly Template: Domain.Destination.DestinationTemplate;
 }
 
@@ -64,6 +66,7 @@ export interface DestinationUpdateInput
     readonly Icon?: string | undefined;
     readonly Name?: string | undefined;
     readonly Position?: number | undefined;
+    readonly PostCreationBehavior?: Domain.Behavior.PostCreationBehavior | undefined;
     readonly Template?: Domain.Destination.DestinationTemplate | undefined;
 }
 
@@ -82,6 +85,7 @@ function RowToDestination(Row: Record<string, unknown>): Domain.Destination.Dest
         Id: Row.id as Domain.Id.DestinationId,
         Name: Row.name as string,
         Position: Row.position as number,
+        ...(Config.PostCreationBehavior ? { PostCreationBehavior: Config.PostCreationBehavior } : {}),
         Template: Config.Template,
         UpdatedAt: new Date(Row.updated_at as string),
         UserId: Row.user_id as Domain.Id.UserId
@@ -239,6 +243,9 @@ export function CreateForUser(UserId: string, Payload: DestinationCreateInput)
             catch: DecodeFailed,
             try: () => EncodeConfiguration({
                 FieldConfiguration: Payload.FieldConfiguration,
+                ...(Payload.PostCreationBehavior
+                    ? { PostCreationBehavior: Payload.PostCreationBehavior }
+                    : {}),
                 Template: Payload.Template
             })
         });
@@ -302,10 +309,15 @@ export function UpdateForUser(UserId: string, DestinationId: string, Payload: De
             try: () => DecodeConfiguration(Existing.configuration as ConfigurationEncoded)
         });
 
+        const ResolvedPostCreationBehavior = Payload.PostCreationBehavior
+            ?? Current.PostCreationBehavior;
         const ConfigurationJson = yield* Effect.try({
             catch: DecodeFailed,
             try: () => EncodeConfiguration({
                 FieldConfiguration: Payload.FieldConfiguration ?? Current.FieldConfiguration,
+                ...(ResolvedPostCreationBehavior
+                    ? { PostCreationBehavior: ResolvedPostCreationBehavior }
+                    : {}),
                 Template: Payload.Template ?? Current.Template
             })
         });

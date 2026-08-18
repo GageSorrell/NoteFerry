@@ -545,6 +545,83 @@ export async function RetrievePage(
     return await Response.json() as NotionPageObject;
 }
 
+/** A Notion File Upload object, as returned by `POST /file_uploads`. */
+export type NotionFileUploadObject =
+{
+    readonly id: string;
+    readonly status: string;
+    readonly upload_url: string;
+};
+
+/**
+ * Creates a Notion File Upload object in `pending` status. The returned `id`
+ * is sent bytes via {@link SendFileUpload}, then referenced in a page's Files
+ * & media property. Throws {@link NotionApiError} on failure.
+ *
+ * @category Notion
+ * @since 1.0.0
+ */
+export async function CreateFileUpload(
+    AccessToken: string,
+    Options: { readonly ContentType?: string; readonly Filename: string }
+): Promise<NotionFileUploadObject>
+{
+    const Response = await fetch(`${ApiBase}/file_uploads`, {
+        body: JSON.stringify({
+            filename: Options.Filename,
+            ...(Options.ContentType ? { content_type: Options.ContentType } : {})
+        }),
+        headers: DataApiHeaders(AccessToken),
+        method: "POST"
+    });
+
+    if (!Response.ok)
+    {
+        return await ThrowNotionApiError(Response);
+    }
+
+    return await Response.json() as NotionFileUploadObject;
+}
+
+/**
+ * Sends a file's bytes to a previously-created File Upload object, completing
+ * a single-part upload (files up to Notion's ~20MB single-part limit). Throws
+ * {@link NotionApiError} on failure.
+ *
+ * @category Notion
+ * @since 1.0.0
+ */
+export async function SendFileUpload(
+    AccessToken: string,
+    FileUploadId: string,
+    Bytes: Uint8Array,
+    Filename: string,
+    ContentType: string
+): Promise<NotionFileUploadObject>
+{
+    const Form = new FormData();
+
+    Form.append("file", new Blob([ Bytes ], { type: ContentType }), Filename);
+
+    const Response = await fetch(`${ApiBase}/file_uploads/${FileUploadId}/send`, {
+        body: Form,
+        headers:
+        {
+            /* No Content-Type: `fetch` derives the multipart boundary from `Form`. */
+            "Authorization": `Bearer ${AccessToken}`,
+            "Notion-Version": NotionVersion
+        },
+        method: "POST"
+    });
+
+    if (!Response.ok)
+    {
+        return await ThrowNotionApiError(Response);
+    }
+
+    return await Response.json() as NotionFileUploadObject;
+}
+
 /** The Notion Create Page request body Notivex sends (§20-21). */
 export interface NotionCreatePageBody
 {

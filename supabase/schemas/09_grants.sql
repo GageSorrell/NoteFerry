@@ -19,6 +19,10 @@ grant select, update on app.profiles to authenticated;
 -- Destinations: full owner-scoped CRUD directly through the Data API (§29).
 grant select, insert, update, delete on app.destinations to authenticated;
 
+-- Account data requests: create and read your own; never update or delete —
+-- fulfillment is a manual, out-of-band process.
+grant select, insert on app.account_data_requests to authenticated;
+
 -- Backend role for the edge functions. `service_role` is NOT a client role — its
 -- key lives only in the edge-function environment and never reaches the app — so
 -- granting it access to `private` does not contradict the "no client-role grants

@@ -31,7 +31,7 @@ import * as Shadow from "./Token/Shadow.js";
 import * as Size from "./Token/Size.js";
 import * as Spacing from "./Token/Spacing.js";
 import * as Typography from "./Token/Typography.js";
-import { Context, Effect, Record, type Array } from "effect";
+import { type Array, Context, Effect, Record } from "effect";
 import {
     DarkTheme as NavigationDarkTheme,
     DefaultTheme as NavigationDefaultTheme,

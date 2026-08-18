@@ -19,7 +19,7 @@
 
 import * as Domain from "@notivex/domain";
 import * as Notion from "./Notion.ts";
-import { CallNotionData, LoadConnectionTokens, RateLimited } from "./NotionAuth.ts";
+import { CallNotionData, type ConnectionTokens, LoadConnectionTokens, RateLimited } from "./NotionAuth.ts";
 import { AdminClient } from "./Database.ts";
 import { Effect } from "effect";
 
@@ -75,6 +75,61 @@ function MapValueToNotion(Value: Domain.Property.PropertyInput): unknown
         default:
             return {};
     }
+}
+
+/** Base64-decodes a client-submitted local file's contents into raw bytes. */
+function DecodeBase64(Value: string): Uint8Array
+{
+    const Binary = atob(Value);
+    const Bytes = new Uint8Array(Binary.length);
+
+    for (let Index = 0; Index < Binary.length; Index += 1)
+    {
+        Bytes[Index] = Binary.charCodeAt(Index);
+    }
+
+    return Bytes;
+}
+
+/**
+ * Resolves one Files & media value into Notion's `files` property shape. An
+ * external link maps directly; a local upload is sent to Notion's File
+ * Upload API first (create the object, then send its bytes) and referenced
+ * by the resulting `file_upload` id. Errors are left unmapped here — the
+ * caller applies one shared {@link MapCreateError} over this and the
+ * subsequent Create Page call.
+ */
+function ResolveFilesValue(
+    Tokens: ConnectionTokens,
+    ConnectionId: string,
+    Value: Domain.Property.FilesPropertyInput["Value"]
+): Effect.Effect<{ readonly files: ReadonlyArray<unknown> }, unknown>
+{
+    if (Value.Type === "External")
+    {
+        return Effect.succeed({
+            files: [ { external: { url: Value.Url }, name: Value.Name, type: "external" } ]
+        });
+    }
+
+    return Effect.tryPromise({
+        catch: (Error_) => Error_,
+        try: async () =>
+        {
+            const Bytes = DecodeBase64(Value.Base64);
+            const ContentType = Value.MimeType ?? "application/octet-stream";
+
+            const Upload = await CallNotionData(Tokens, ConnectionId, (Token) =>
+                Notion.CreateFileUpload(Token, { ContentType, Filename: Value.Name }));
+
+            await CallNotionData(Tokens, ConnectionId, (Token) =>
+                Notion.SendFileUpload(Token, Upload.id, Bytes, Value.Name, ContentType));
+
+            return {
+                files: [ { file_upload: { id: Upload.id }, name: Value.Name, type: "file_upload" } ]
+            };
+        }
+    });
 }
 
 const NotionRichTextContentLimit = 2_000;
@@ -200,9 +255,16 @@ export function CreateForUser(UserId: string, Command: CreatePageInput)
         const PropertyById = new Map(Properties.map((Property) => [ Property.Id as string, Property ] as const));
         const TitleProperty = Properties.find((Property) => Property.Type === "Title");
 
-        /* 3. Build the Notion properties, validating against the schema. */
+        /* 3. Build the Notion properties, validating against the schema. Files &
+         * media values that need an actual Notion upload are deferred into
+         * `PendingFiles` — resolved only after the idempotency check below, so a
+         * retried, already-succeeded operation never re-uploads a file. */
         const NotionProperties: Record<string, unknown> = {};
         const Provided = new Set<string>();
+        const PendingFiles: Array<{
+            readonly PropertyId: string;
+            readonly Value: Domain.Property.FilesPropertyInput["Value"];
+        }> = [];
 
         for (const Entry of Command.Values)
         {
@@ -213,7 +275,15 @@ export function CreateForUser(UserId: string, Command: CreatePageInput)
                 return yield* Effect.fail(new Domain.Error.InvalidPageDraft({ Message: `Unknown property: ${PropertyId}` }));
             }
 
-            NotionProperties[PropertyId] = MapValueToNotion(Entry.Value);
+            if (Entry.Value.Type === "Files")
+            {
+                PendingFiles.push({ PropertyId, Value: Entry.Value.Value });
+            }
+            else
+            {
+                NotionProperties[PropertyId] = MapValueToNotion(Entry.Value);
+            }
+
             Provided.add(PropertyId);
         }
 
@@ -284,22 +354,35 @@ export function CreateForUser(UserId: string, Command: CreatePageInput)
             return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: OperationError.message }));
         }
 
-        /* 5. Call Notion; on failure, record it on the operation and re-fail. */
+        /* 5. Resolve any pending file uploads, then call Notion; on failure
+         * (either a file upload or the page creation itself), record it on the
+         * operation and re-fail. */
         const Tokens = yield* LoadConnectionTokens(UserId, ConnectionId);
 
-        const Page = yield* Effect.tryPromise({
-            catch: (Error_) => MapCreateError(Error_, DataSourceId),
-            try: () => CallNotionData(Tokens, ConnectionId, (Token) => Notion.CreatePage(Token, {
-                ...(PageChildren === undefined ? { } : { children: PageChildren }),
-                parent: { data_source_id: DataSourceId, type: "data_source_id" },
-                properties: NotionProperties
-            }))
-        }).pipe(Effect.tapError((Mapped) =>
-            Effect.promise(async () =>
-                await AdminClient
-                    .from("operations")
-                    .update({ error: Mapped._tag, state: "failed" })
-                    .eq("id", Command.OperationId))));
+        const Page = yield* Effect.gen(function* ()
+        {
+            for (const Pending of PendingFiles)
+            {
+                NotionProperties[Pending.PropertyId] =
+                    yield* ResolveFilesValue(Tokens, ConnectionId, Pending.Value);
+            }
+
+            return yield* Effect.tryPromise({
+                catch: (Error_) => Error_,
+                try: () => CallNotionData(Tokens, ConnectionId, (Token) => Notion.CreatePage(Token, {
+                    ...(PageChildren === undefined ? { } : { children: PageChildren }),
+                    parent: { data_source_id: DataSourceId, type: "data_source_id" },
+                    properties: NotionProperties
+                }))
+            });
+        }).pipe(
+            Effect.catchAll((Error_) => Effect.fail(MapCreateError(Error_, DataSourceId))),
+            Effect.tapError((Mapped) =>
+                Effect.promise(async () =>
+                    await AdminClient
+                        .from("operations")
+                        .update({ error: Mapped._tag, state: "failed" })
+                        .eq("id", Command.OperationId))));
 
         /* 6. Record success and return the result. */
         yield* Effect.promise(async () =>

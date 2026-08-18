@@ -15,11 +15,14 @@
  */
 
 import type * as Domain from "@notivex/domain";
+import { AccountApi } from "./AccountApi.js";
 import { ConnectionsApi } from "./ConnectionsApi.js";
 import { DataSourcesApi } from "./DataSourcesApi.js";
 import { DestinationsApi } from "./DestinationsApi.js";
+import { ExportRequestsApi } from "./ExportRequestsApi.js";
 import { HttpApi } from "effect/unstable/httpapi";
 import { PagesApi } from "./PagesApi.js";
+import { ProfileApi } from "./ProfileApi.js";
 
 /**
  * The union of every domain error any `NotivexApi` endpoint can produce.
@@ -35,7 +38,8 @@ export type NotivexApiError = Domain.Error.DomainError;
 
 export/**
        * The complete Notivex HTTP API: `Connections`, `DataSources`,
-       * `Destinations` and `Pages`, each prefixed under its own resource path.
+       * `Destinations`, `Pages`, `Profile`, `Account` and `ExportRequests`,
+       * each prefixed under its own resource path.
        *
        * @category Api
        * @since 1.0.0
@@ -44,5 +48,8 @@ const NotivexApi = HttpApi.make("NotivexApi").add(
     ConnectionsApi.prefix("/Connections"),
     DataSourcesApi.prefix("/DataSources"),
     DestinationsApi.prefix("/Destinations"),
-    PagesApi.prefix("/Pages")
+    PagesApi.prefix("/Pages"),
+    ProfileApi.prefix("/Profile"),
+    AccountApi.prefix("/Account"),
+    ExportRequestsApi.prefix("/ExportRequests")
 );

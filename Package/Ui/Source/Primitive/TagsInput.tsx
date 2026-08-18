@@ -31,9 +31,9 @@ import {
 import { Description } from "./Text.js";
 import { Pressable } from "./Pressable.js";
 import { String } from "effect";
-import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
 import { X } from "lucide-react-native";
+import { useToken } from "../ThemeProvider.js";
 
 /** {@inheritDoc TagsInput} */
 export interface TagsInputProps

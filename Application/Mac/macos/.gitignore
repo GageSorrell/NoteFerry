@@ -1,0 +1,13 @@
+# CocoaPods
+Pods/
+
+# Xcode
+build/
+DerivedData/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
