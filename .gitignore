@@ -9,4 +9,8 @@ NotionKit
 
 Application/Mobile/.agent-device/
 
+.next/
+out/
+next-env.d.ts
+
 Tasks.md

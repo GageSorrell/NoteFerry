@@ -4,10 +4,9 @@
  *
  * This is deliberately **only** the non-secret metadata a Supabase user is
  * allowed to read about their own connection. Access and refresh tokens are
- * a server-only concept and never appear here — see
- * `ArchitectureInitialDraft.md` §7, §8 and §35 ("the Expo app should know
+ * a server-only concept and never appear here: the Expo app should know
  * that a user has a Notion connection, but it should never possess the
- * Notion OAuth access token, refresh token, [or] Notion client secret").
+ * Notion OAuth access token, refresh token, or Notion client secret.
  *
  * A `NotionConnection` answers "which Notion authorization do I use?" — see
  * {@link Destination} for "how has this user configured a quick-entry

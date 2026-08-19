@@ -2,7 +2,7 @@
  * Data-source discovery screen for a single Notion connection: browse the data
  * sources the connection can see in Notion, and cache one (fetch + normalize
  * its schema) for later quick-entry. Reached from a connection row on the home
- * screen (ArchitectureInitialDraft.md §36).
+ * screen.
  *
  * @module notivex/app/data-sources
  *
@@ -13,13 +13,13 @@
  */
 
 import type * as Domain from "@notivex/domain";
-import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 import { Body, Button, Description, Heading1, LabelText } from "@notivex/ui/Primitive";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useDataSources } from "@/features/data-sources/use-data-sources";
+import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useLocalSearchParams } from "expo-router";
-import { useTheme } from "@notivex/ui";
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 function IsEmoji(Icon: string | undefined): Icon is string
@@ -31,30 +31,32 @@ const DataSourcesScreen = () =>
 {
     const Router = useLazyRouter();
     const Theme = useTheme();
+    const Styles = useStyles();
     const Params = useLocalSearchParams<{ connectionId: string; workspaceName?: string }>();
     const ConnectionId = Params.connectionId as Domain.Id.NotionConnectionId;
 
     const { Discovered, Cached, IsSearching, BusyId, Search, Cache } = useDataSources(ConnectionId);
 
-    const CachedById = new Map(
+    type CachedById = ReadonlyMap<Domain.Id.NotionDataSourceId, Domain.DataSource.CachedDataSourceSchema>;
+    const CachedById: CachedById = new Map(
         Cached.map((Entry: Domain.DataSource.CachedDataSourceSchema) =>
             [ Entry.DataSourceId, Entry ] as const)
     );
 
     return (
-        <View style={ styles.container }>
-            <SafeAreaView style={ styles.safeArea }>
+        <View style={ Styles.Container }>
+            <SafeAreaView style={ Styles.SafeArea }>
                 <Button
                     Appearance="Link"
                     OnPress={ Router.back }
-                    Style={ styles.back }>
+                    Style={ Styles.Back }>
                     ‹ Back
                 </Button>
 
                 <Heading1>
                     { Params.workspaceName ?? "Data sources" }
                 </Heading1>
-                <Description Style={ styles.subtitle }>
+                <Description Style={ Styles.Subtitle }>
                     Choose a Notion data source to enable quick entry.
                 </Description>
 
@@ -62,13 +64,13 @@ const DataSourcesScreen = () =>
                     Appearance="SoftBlue"
                     Disabled={ IsSearching }
                     OnPress={ Search }
-                    Style={ styles.searchButton }>
+                    Style={ Styles.SearchButton }>
                     { IsSearching ? "Searching…" : "Search again" }
                 </Button>
 
                 <ScrollView
-                    contentContainerStyle={ styles.list }
-                    style={ styles.listContainer }>
+                    contentContainerStyle={ Styles.List }
+                    style={ Styles.ListContainer }>
                     { IsSearching && Discovered.length === 0
                         ? <ActivityIndicator color={ Theme.Semantic.Cursor } />
                         : Discovered.length === 0
@@ -86,18 +88,18 @@ const DataSourcesScreen = () =>
                                 return (
                                     <View
                                         key={ Source.DataSourceId }
-                                        style={ styles.row }>
-                                        <View style={ styles.rowLeft }>
+                                        style={ Styles.Row }>
+                                        <View style={ Styles.RowLeft }>
                                             { IsEmoji(Source.Icon)
-                                                ? <Body Style={ styles.icon }>{ Source.Icon }</Body>
+                                                ? <Body Style={ Styles.Icon }>{ Source.Icon }</Body>
                                                 : null }
-                                            <View style={ styles.rowText }>
+                                            <View style={ Styles.RowText }>
                                                 <Body NumberOfLines={ 1 }>
                                                     { Source.Title }
                                                 </Body>
                                                 { Entry
                                                     ? (
-                                                        <LabelText Style={ styles.meta }>
+                                                        <LabelText Style={ Styles.Meta }>
                                                             Saved · { Entry.Properties.length } fields
                                                         </LabelText>
                                                     )
@@ -105,7 +107,7 @@ const DataSourcesScreen = () =>
                                             </View>
                                         </View>
 
-                                        <View style={ styles.rowActions }>
+                                        <View style={ Styles.RowActions }>
                                             { Entry
                                                 ? (
                                                     <Button
@@ -139,73 +141,60 @@ const DataSourcesScreen = () =>
     );
 };
 
-const styles = StyleSheet.create({
-    back:
-    {
+const useStyles = MakeStyles({
+    Back: ViewStyle({
         alignSelf: "flex-start"
-    },
-    container:
-    {
+    }),
+    Container: ViewStyle({
         flex: 1
-    },
-    icon:
-    {
+    }),
+    Icon: TextStyle({
         fontSize: 20
-    },
-    list:
-    {
-        gap: 16,
-        paddingVertical: 24
-    },
-    listContainer:
-    {
+    }),
+    List: ViewStyle({
+        gap: Token.Spacing.L,
+        paddingVertical: Token.Spacing.Xl
+    }),
+    ListContainer: ViewStyle({
         alignSelf: "stretch",
         flex: 1
-    },
-    meta:
-    {
+    }),
+    Meta: TextStyle({
         marginTop: 2
-    },
-    row:
-    {
+    }),
+    Row: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
-        gap: 16,
+        gap: Token.Spacing.L,
         justifyContent: "space-between"
-    },
-    rowActions:
-    {
+    }),
+    RowActions: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
-        gap: 8
-    },
-    rowLeft:
-    {
+        gap: Token.Spacing.S
+    }),
+    RowLeft: ViewStyle({
         alignItems: "center",
         flex: 1,
         flexDirection: "row",
-        gap: 12
-    },
-    rowText:
-    {
+        gap: Token.Spacing.M
+    }),
+    RowText: ViewStyle({
         flex: 1
-    },
-    safeArea:
-    {
+    }),
+    SafeArea: ViewStyle({
         flex: 1,
-        gap: 8,
-        paddingHorizontal: 24,
-        paddingVertical: 24
-    },
-    searchButton:
-    {
+        gap: Token.Spacing.S,
+        paddingHorizontal: Token.Spacing.Xl,
+        paddingVertical: Token.Spacing.Xl
+    }),
+    SearchButton: ViewStyle({
         alignSelf: "flex-start",
-        marginTop: 8
-    },
-    subtitle:
-    {
-        marginTop: 4
-    }
+        marginTop: Token.Spacing.S
+    }),
+    Subtitle: TextStyle({
+        marginTop: Token.Spacing.Xs
+    })
 });
 
 export default DataSourcesScreen;

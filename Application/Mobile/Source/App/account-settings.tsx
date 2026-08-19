@@ -12,12 +12,13 @@
  */
 
 import * as WebBrowser from "expo-web-browser";
+import { Alert, ScrollView, View } from "react-native";
 import { Button, Description, Heading1, Heading2 } from "@notivex/ui/Primitive";
-import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { DeleteAccount, RequestAccountData } from "@/Domain/Runtime/NotivexApi";
+import { MakeStyles, TextStyle, Token, ViewStyle } from "@notivex/ui";
+import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/Domain/Auth/NotivexAuthProvider";
-import { useCallback, useState } from "react";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 
 const NotionIntegrationsUrl = "https://www.notion.so/my-integrations";
@@ -25,6 +26,7 @@ const NotionIntegrationsUrl = "https://www.notion.so/my-integrations";
 const AccountSettingsScreen = (): React.JSX.Element =>
 {
     const Router = useLazyRouter();
+    const Styles = useStyles();
     const { SignOut } = useAuth();
     const [ IsDeleting, SetIsDeleting ] = useState(false);
     const [ IsRequestingData, SetIsRequestingData ] = useState(false);
@@ -94,29 +96,29 @@ const AccountSettingsScreen = (): React.JSX.Element =>
     }, [ PerformDelete ]);
 
     return (
-        <View style={ styles.container }>
-            <SafeAreaView style={ styles.safeArea }>
+        <View style={ Styles.Container }>
+            <SafeAreaView style={ Styles.SafeArea }>
                 <Button
                     AccessibilityLabel="Back"
                     Appearance="Link"
                     OnPress={ Router.back }
-                    Style={ styles.back }>
+                    Style={ Styles.Back }>
                     Back
                 </Button>
 
                 <Heading1>Account settings</Heading1>
 
                 <ScrollView
-                    contentContainerStyle={ styles.list }
-                    style={ styles.scroll }>
-                    <Heading2 Style={ styles.sectionHeading }>Notion</Heading2>
+                    contentContainerStyle={ Styles.List }
+                    style={ Styles.Scroll }>
+                    <Heading2 Style={ Styles.SectionHeading }>Notion</Heading2>
                     <Button
                         Appearance="Cell"
                         OnPress={ () => void HandleManageInNotion() }>
                         Manage the Notivex connection in Notion
                     </Button>
 
-                    <Heading2 Style={ styles.sectionHeading }>Your data</Heading2>
+                    <Heading2 Style={ Styles.SectionHeading }>Your data</Heading2>
                     <Button
                         Appearance="Cell"
                         Disabled={ IsRequestingData }
@@ -124,8 +126,8 @@ const AccountSettingsScreen = (): React.JSX.Element =>
                         { IsRequestingData ? "Requesting…" : "Request my account data" }
                     </Button>
 
-                    <Heading2 Style={ styles.sectionHeading }>Danger zone</Heading2>
-                    <Description Style={ styles.dangerDescription }>
+                    <Heading2 Style={ Styles.SectionHeading }>Danger zone</Heading2>
+                    <Description Style={ Styles.DangerDescription }>
                         Permanently deletes your account and everything associated
                         with it. This can't be undone.
                     </Description>
@@ -141,40 +143,33 @@ const AccountSettingsScreen = (): React.JSX.Element =>
     );
 };
 
-const styles = StyleSheet.create({
-    back:
-    {
+const useStyles = MakeStyles({
+    Back: ViewStyle({
         alignSelf: "flex-start"
-    },
-    container:
-    {
+    }),
+    Container: ViewStyle({
         flex: 1
-    },
-    dangerDescription:
-    {
+    }),
+    DangerDescription: TextStyle({
         marginBottom: 4
-    },
-    list:
-    {
-        gap: 12,
-        paddingVertical: 16
-    },
-    safeArea:
-    {
+    }),
+    List: ViewStyle({
+        gap: Token.Spacing.M,
+        paddingVertical: Token.Spacing.L
+    }),
+    SafeArea: ViewStyle({
         flex: 1,
-        gap: 8,
-        paddingHorizontal: 24,
-        paddingVertical: 24
-    },
-    scroll:
-    {
+        gap: Token.Spacing.S,
+        paddingHorizontal: Token.Spacing.Xl,
+        paddingVertical: Token.Spacing.Xl
+    }),
+    Scroll: ViewStyle({
         alignSelf: "stretch",
         flex: 1
-    },
-    sectionHeading:
-    {
-        marginTop: 12
-    }
+    }),
+    SectionHeading: TextStyle({
+        marginTop: Token.Spacing.M
+    })
 });
 
 export default AccountSettingsScreen;

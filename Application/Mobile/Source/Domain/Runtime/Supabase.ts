@@ -1,9 +1,8 @@
 /**
  * The single Supabase client for the app. The Expo client talks directly to
- * Supabase Auth (ArchitectureInitialDraft.md §6) using the publishable key,
- * which is safe in a public client because data access is guarded by RLS. The
- * session is persisted through {@link SecureSessionStore} and auto-refreshed
- * while the app is foregrounded.
+ * Supabase Auth using the publishable key, which is safe in a public client
+ * because data access is guarded by RLS. The session is persisted through
+ * {@link SecureSessionStore} and auto-refreshed while the app is foregrounded.
  *
  * @module notivex/Domain/Runtime/Supabase
  *

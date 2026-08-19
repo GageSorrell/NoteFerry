@@ -21,6 +21,11 @@ import { defineConfig } from "eslint/config";
 export default defineConfig(
     SorrellConfig,
     {
+        /* Next.js build output — never hand-authored, and picking it up
+           crashes some jsdoc rules on the minified/bundled JS inside it. */
+        ignores: [ "**/.next/**" ]
+    },
+    {
         /* ESLint ignores dot-directories by default (`.rnstorybook`,
            `.expo`, ...). `.rnstorybook/stories/*` and its `main.ts`/
            `preview.tsx` are hand-written source, not generated output, so
@@ -39,6 +44,33 @@ export default defineConfig(
         {
             "jsdoc/require-jsdoc": "off"
         }
+    },
+    {
+        /* shadcn/ui primitives are generated/vendored via the shadcn CLI,
+           not hand-authored documented API surface, so don't hold them to
+           the file-header/JSDoc conventions the rest of the repo follows.
+           The leading globstar keeps this pattern matching whether ESLint
+           resolves `files` globs relative to the repo root
+           (`Configuration/eslint.config.js` run directly) or relative to
+           `Website` (via that workspace's own `eslint.config.js`
+           re-export). */
+        files: [ "**/components/ui/**/*.tsx" ],
+        rules:
+        {
+            "jsdoc/require-jsdoc": "off",
+            "jsdoc/require-file-overview": "off",
+            "jsdoc/require-description": "off",
+            "jsdoc/no-blank-blocks": "off",
+            "sort-imports": "off",
+            "@stylistic/jsx-max-props-per-line": "off",
+            "@stylistic/max-len": "off",
+            "@typescript-eslint/naming-convention": "off"
+        }
+    },
+    {
+        /* Next.js writes and rewrites this file itself on every build/dev
+           run — nothing here is hand-authored. */
+        ignores: [ "**/next-env.d.ts" ]
     },
     {
         rules:

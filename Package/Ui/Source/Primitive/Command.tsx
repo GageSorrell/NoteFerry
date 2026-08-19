@@ -32,7 +32,8 @@ import {
     AutocompleteList
 } from "./Autocomplete.js";
 import { Dialog, DialogContent, type DialogProps } from "./Dialog.js";
-import { type StyleProp, StyleSheet, type ViewStyle } from "react-native";
+import { MakeStyles, ViewStyle as MakeViewStyle } from "../MakeStyles.js";
+import { type StyleProp, type ViewStyle } from "react-native";
 import { MenuItemShortcut } from "./Menu.js";
 
 export { AutocompleteSeparator as CommandSeparator } from "./Autocomplete.js";
@@ -61,13 +62,19 @@ const Command = ({
     Style,
     children
 }: CommandProps): React.JSX.Element =>
-    <Autocomplete { ...{ DefaultQuery, Filter, OnQueryChange, Query } }>
-        <AutocompleteContent
-            Style={ [ Styles.Root, Style ] }
-            Variant="Inline">
-            { children }
-        </AutocompleteContent>
-    </Autocomplete>;
+{
+    const Styles = useStyles();
+
+    return (
+        <Autocomplete { ...{ DefaultQuery, Filter, OnQueryChange, Query } }>
+            <AutocompleteContent
+                Style={ [ Styles.Root, Style ] }
+                Variant="Inline">
+                { children }
+            </AutocompleteContent>
+        </Autocomplete>
+    );
+};
 
 /** {@inheritDoc CommandInput} */
 export interface CommandInputProps
@@ -86,11 +93,17 @@ const CommandInput = ({
     AutoFocus,
     Placeholder = "Search for a command to run…"
 }: CommandInputProps): React.JSX.Element =>
-    <AutocompleteInput
-        { ...{ AutoFocus, Placeholder } }
-        OpenOnFocus={ false }
-        Style={ Styles.Input }
-    />;
+{
+    const Styles = useStyles();
+
+    return (
+        <AutocompleteInput
+            { ...{ AutoFocus, Placeholder } }
+            OpenOnFocus={ false }
+            Style={ Styles.Input }
+        />
+    );
+};
 
 /** {@inheritDoc CommandList} */
 export interface CommandListProps extends React.PropsWithChildren
@@ -174,30 +187,33 @@ const CommandDialog = ({
     Style,
     children
 }: CommandDialogProps): React.JSX.Element =>
-    <Dialog { ...{ DefaultOpen, OnOpenChange, Open } }>
-        <DialogContent
-            HideClose
-            Style={ Styles.DialogContent }>
-            <Command { ...{ DefaultQuery, Filter, OnQueryChange, Query, Style } }>
-                { children }
-            </Command>
-        </DialogContent>
-    </Dialog>;
+{
+    const Styles = useStyles();
 
-const Styles = StyleSheet.create({
-    DialogContent:
-    {
+    return (
+        <Dialog { ...{ DefaultOpen, OnOpenChange, Open } }>
+            <DialogContent
+                HideClose
+                Style={ Styles.DialogContent }>
+                <Command { ...{ DefaultQuery, Filter, OnQueryChange, Query, Style } }>
+                    { children }
+                </Command>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+const useStyles = MakeStyles({
+    DialogContent: MakeViewStyle({
         maxWidth: 480,
         overflow: "hidden",
         padding: 0,
         width: "92%"
-    },
-    Input:
-    {
+    }),
+    Input: MakeViewStyle({
         marginBottom: 4
-    },
-    Root:
-    {
+    }),
+    Root: MakeViewStyle({
         width: "100%"
-    }
+    })
 });

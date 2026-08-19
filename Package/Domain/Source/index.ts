@@ -4,8 +4,7 @@
  * Portable Effect `Schema` definitions shared across Notivex: branded ids,
  * the Notion property/data-source/connection/destination model, local
  * quick-entry drafts, and the tagged error vocabulary. This package must
- * never import Expo, Supabase, or the Notion SDK — see
- * `ArchitectureInitialDraft.md` §35.
+ * never import Expo, Supabase, or the Notion SDK.
  *
  * @module @notivex/domain
  *

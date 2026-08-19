@@ -62,7 +62,7 @@ import {
 } from "../Primitive/BottomSheet.js";
 import EmojiMartDataRaw, { type Emoji, type EmojiMartData } from "@emoji-mart/data";
 import { IconBlock, type IconData, LucideIconMap, type LucideIconName } from "./IconBlock.js";
-import { StyleSheet, View } from "react-native";
+import { MakeStyles, TextStyle, ViewStyle } from "../MakeStyles.js";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Primitive/Tabs.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button } from "../Primitive/Button.js";
@@ -72,6 +72,7 @@ import { String } from "effect";
 import type { Thunk } from "@sorrell/effect/Function";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import { Upload } from "lucide-react-native";
+import { View } from "react-native";
 import { useToken } from "../ThemeProvider.js";
 
 const MaxEmojiSearchResults = 60 as const;
@@ -145,6 +146,7 @@ interface CategoryChipProps
 
 const CategoryChip = ({ Label, IsActive, OnPress }: CategoryChipProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const {
         [Semantic.Primary]: PrimaryColor,
         [Semantic.Border]: BorderColor,
@@ -200,6 +202,7 @@ interface EmojiTabProps
 
 const EmojiTab = ({ OnSelect }: EmojiTabProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const [ RecentIds, TrackRecent ] = useRecentIconIds("notivex:recent-emoji");
     const [ Query, SetQuery ] = React.useState("");
 
@@ -346,6 +349,7 @@ interface IconsTabProps
 
 const IconsTab = ({ OnSelect }: IconsTabProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const [ RecentIds, TrackRecent ] = useRecentIconIds("notivex:recent-icons");
     const [ Query, SetQuery ] = React.useState("");
     const [ SelectedColor, SetSelectedColor ] = React.useState<Color.Color>(Color.Default);
@@ -523,6 +527,7 @@ interface UploadTabProps
 
 const UploadTab = ({ OnSelect }: UploadTabProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const [ IsPicking, SetIsPicking ] = React.useState(false);
 
     const HandlePress = async (): Promise<void> =>
@@ -589,133 +594,123 @@ export/**
        * @since 1.0.0
        */
 const IconMenu = ({ OnDismiss, Ref, OnSelect, OnRemove, TestID }: IconMenuProps): React.JSX.Element =>
-    <BottomSheet
-        { ...{ OnDismiss, Ref } }
-        { ...(TestID === undefined ? { } : { TestId: TestID }) }>
-        <BottomSheetView style={ Styles.Sheet }>
-            <Tabs
-                DefaultValue="Emoji"
-                Style={ Styles.Root }>
-                <TabsList>
-                    <TabsTrigger Value="Emoji">Emoji</TabsTrigger>
-                    <TabsTrigger Value="Icons">Icons</TabsTrigger>
-                    <TabsTrigger Value="Upload">Upload</TabsTrigger>
-                    { OnRemove !== undefined && (
-                        <Button
-                            Appearance="Hint"
-                            OnPress={ OnRemove }
-                            Size="Small"
-                            Style={ Styles.RemoveButton }>
-                            Remove
-                        </Button>
-                    ) }
-                </TabsList>
-                <TabsContent Value="Emoji">
-                    <EmojiTab OnSelect={ OnSelect } />
-                </TabsContent>
-                <TabsContent Value="Icons">
-                    <IconsTab OnSelect={ OnSelect } />
-                </TabsContent>
-                <TabsContent Value="Upload">
-                    <UploadTab OnSelect={ OnSelect } />
-                </TabsContent>
-            </Tabs>
-        </BottomSheetView>
-    </BottomSheet>;
+{
+    const Styles = useStyles();
 
-const Styles = StyleSheet.create({
-    CategoryChip:
-    {
+    return (
+        <BottomSheet
+            { ...{ OnDismiss, Ref } }
+            { ...(TestID === undefined ? { } : { TestId: TestID }) }>
+            <BottomSheetView style={ Styles.Sheet }>
+                <Tabs
+                    DefaultValue="Emoji"
+                    Style={ Styles.Root }>
+                    <TabsList>
+                        <TabsTrigger Value="Emoji">Emoji</TabsTrigger>
+                        <TabsTrigger Value="Icons">Icons</TabsTrigger>
+                        <TabsTrigger Value="Upload">Upload</TabsTrigger>
+                        { OnRemove !== undefined && (
+                            <Button
+                                Appearance="Hint"
+                                OnPress={ OnRemove }
+                                Size="Small"
+                                Style={ Styles.RemoveButton }>
+                                Remove
+                            </Button>
+                        ) }
+                    </TabsList>
+                    <TabsContent Value="Emoji">
+                        <EmojiTab OnSelect={ OnSelect } />
+                    </TabsContent>
+                    <TabsContent Value="Icons">
+                        <IconsTab OnSelect={ OnSelect } />
+                    </TabsContent>
+                    <TabsContent Value="Upload">
+                        <UploadTab OnSelect={ OnSelect } />
+                    </TabsContent>
+                </Tabs>
+            </BottomSheetView>
+        </BottomSheet>
+    );
+};
+
+const useStyles = MakeStyles({
+    CategoryChip: ViewStyle({
         borderWidth: 1,
         paddingHorizontal: 10,
         paddingVertical: 4
-    },
-    CategoryRow:
-    {
+    }),
+    CategoryRow: ViewStyle({
         flexDirection: "row",
         flexWrap: "wrap",
         gap: 6,
         paddingHorizontal: 12,
         paddingVertical: 8
-    },
-    ColorRow:
-    {
+    }),
+    ColorRow: ViewStyle({
         flexDirection: "row",
         gap: 8,
         paddingHorizontal: 12,
         paddingVertical: 8
-    },
-    ColorSwatch:
-    {
+    }),
+    ColorSwatch: ViewStyle({
         borderRadius: 10,
         height: 20,
         width: 20
-    },
-    ColorSwatchSelected:
-    {
+    }),
+    ColorSwatchSelected: ViewStyle({
         borderColor: "#FFFFFF",
         borderWidth: 2
-    },
-    EmojiCell:
-    {
+    }),
+    EmojiCell: ViewStyle({
         alignItems: "center",
         borderRadius: 6,
         height: 40,
         justifyContent: "center",
         width: 40
-    },
-    EmojiGlyph:
-    {
+    }),
+    EmojiGlyph: TextStyle({
         fontSize: 22
-    },
-    Grid:
-    {
+    }),
+    Grid: ViewStyle({
         flex: 1
-    },
-    GridWrap:
-    {
+    }),
+    GridWrap: ViewStyle({
         flexDirection: "row",
         flexWrap: "wrap",
         gap: 2,
         paddingHorizontal: 10,
         paddingVertical: 8
-    },
-    IconCell:
-    {
+    }),
+    IconCell: ViewStyle({
         alignItems: "center",
         borderRadius: 6,
         height: 44,
         justifyContent: "center",
         width: 44
-    },
-    RemoveButton:
-    {
+    }),
+    RemoveButton: ViewStyle({
         marginLeft: "auto",
         marginRight: 8
-    },
-    Root:
-    {
+    }),
+    Root: ViewStyle({
         flex: 1
-    },
-    SearchInput:
-    {
+    }),
+    SearchInput: ViewStyle({
         marginHorizontal: 12,
         marginTop: 8,
         width: "auto"
-    },
-    Sheet:
-    {
+    }),
+    Sheet: ViewStyle({
         flex: 1
-    },
-    TabBody:
-    {
+    }),
+    TabBody: ViewStyle({
         flex: 1
-    },
-    UploadBody:
-    {
+    }),
+    UploadBody: ViewStyle({
         alignItems: "center",
         flex: 1,
         justifyContent: "center",
         padding: 24
-    }
+    })
 });

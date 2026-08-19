@@ -15,9 +15,10 @@
 import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
+import { MakeStyles, TextStyle as MakeTextStyle, ViewStyle as MakeViewStyle } from "../MakeStyles.js";
+import { Search, X } from "lucide-react-native";
 import {
     type StyleProp,
-    StyleSheet,
     TextInput,
     type TextInputProps,
     type TextStyle,
@@ -25,10 +26,9 @@ import {
     type ViewStyle
 } from "react-native";
 import { Pressable } from "./Pressable.js";
-import { Search, X } from "lucide-react-native";
 import type { Thunk } from "@sorrell/effect/Function";
-import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
+import { useToken } from "../ThemeProvider.js";
 
 /**
  * The visual style of a given `Input` component.
@@ -69,7 +69,11 @@ export interface InputProps
     readonly SecureTextEntry?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
 
-    /** Overrides the value text's style — e.g. a larger `FontSize`/`LineHeight` to match another component. `Style` above only reaches the outer container. */
+    /**
+     * Overrides the value text's style — e.g. a larger `FontSize`/`LineHeight`
+     * to match another component. `Style` above only reaches the outer
+     * container.
+     */
     readonly TextStyle?: StyleProp<TextStyle>;
     readonly AutoFocus?: boolean | undefined;
     readonly OnSubmitEditing?: TextInputProps[ "onSubmitEditing" ];
@@ -108,6 +112,7 @@ const Input = ({
     OnBlur
 }: InputProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const {
         [Semantic.Ring]: RingColor,
         [Semantic.BackgroundInput]: InputBackground,
@@ -190,26 +195,22 @@ const Input = ({
     );
 };
 
-const Styles = StyleSheet.create({
-    Container:
-    {
+const useStyles = MakeStyles({
+    Container: MakeViewStyle({
         alignItems: "center",
         flexDirection: "row",
         paddingHorizontal: 8,
         width: "100%"
-    },
-    Input:
-    {
+    }),
+    Input: MakeTextStyle({
         flex: 1,
         margin: 0,
         padding: 0
-    },
-    LeadingIcon:
-    {
+    }),
+    LeadingIcon: MakeViewStyle({
         marginRight: 6
-    },
-    TrailingIcon:
-    {
+    }),
+    TrailingIcon: MakeViewStyle({
         marginLeft: 6
-    }
+    })
 });

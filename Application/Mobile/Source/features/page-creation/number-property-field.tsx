@@ -13,9 +13,9 @@
 
 import type * as Domain from "@notivex/domain";
 import { Body, Input } from "@notivex/ui/Primitive";
-import { StyleSheet, View } from "react-native";
+import { MakeStyles, Token, ViewStyle } from "@notivex/ui";
 import { PropertyLabel } from "@/features/page-creation/property-label";
-import { Token } from "@notivex/ui";
+import { View } from "react-native";
 
 interface NumberUnit
 {
@@ -86,13 +86,14 @@ export function NumberPropertyField({
     Value
 }: NumberPropertyFieldProps): React.JSX.Element
 {
+    const Styles = useStyles();
     const Unit = NumberUnits[Property.Format];
     const HasValue = (Value ?? "").trim() !== "";
 
     return (
-        <View style={ [ styles.field, Inline && styles.inlineField ] }>
+        <View style={ [ Styles.Field, Inline && Styles.InlineField ] }>
             { Inline ? null : <PropertyLabel Property={ Property } /> }
-            <View style={ styles.inputRow }>
+            <View style={ Styles.InputRow }>
                 { Unit?.Position === "Prefix" && HasValue
                     ? <Body Color={ Token.Semantic.Muted }>{ Unit.Symbol }</Body>
                     : null }
@@ -101,7 +102,7 @@ export function NumberPropertyField({
                     KeyboardType="numeric"
                     OnChangeText={ OnValueChange }
                     Placeholder="Empty"
-                    Style={ styles.input }
+                    Style={ Styles.Input }
                     Value={ Value }
                     Variant={ Inline ? "Flat" : "Default" }
                 />
@@ -113,25 +114,21 @@ export function NumberPropertyField({
     );
 }
 
-const styles = StyleSheet.create({
-    field:
-    {
+const useStyles = MakeStyles({
+    Field: ViewStyle({
         gap: 6
-    },
-    inlineField:
-    {
+    }),
+    InlineField: ViewStyle({
         flex: 1,
         minWidth: 0
-    },
-    input:
-    {
+    }),
+    Input: ViewStyle({
         flex: 1,
         minWidth: 0
-    },
-    inputRow:
-    {
+    }),
+    InputRow: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
         gap: 4
-    }
+    })
 });

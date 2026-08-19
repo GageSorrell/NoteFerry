@@ -4,7 +4,7 @@
  * from Supabase, `fetch`, Deno, or the Notion SDK — adapters translate those
  * into one of these instead, so callers can write
  * `Effect.catchTag("NotionRateLimited", ...)` rather than inspecting an HTTP
- * status code. See `ArchitectureInitialDraft.md` §14.
+ * status code.
  *
  * Each error also carries an `httpApiStatus` annotation. When these errors are
  * used as an `HttpApiEndpoint` failure schema, Effect's HttpApi tooling reads
@@ -65,7 +65,7 @@ export class NotionConnectionRevoked extends Schema.TaggedError<NotionConnection
 /**
  * A Notion resource (typically a relation target database) was referenced
  * but has not been shared with this connection, so Notion will not return
- * its schema. See `ArchitectureInitialDraft.md` §4.
+ * its schema.
  *
  * @category Error
  * @since 1.0.0

@@ -1,7 +1,7 @@
 /**
  * The authenticated Notivex API (`verify_jwt = true`). Serves the shared
  * `@notivex/api` HttpApi contract via Effect so the app can use a derived,
- * fully typed client (ArchitectureInitialDraft.md §16).
+ * fully typed client.
  *
  * Every group — `Connections`, `DataSources`, `Destinations` and `Pages` — is
  * implemented against the shared `@notivex/api` contract.

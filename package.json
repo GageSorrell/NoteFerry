@@ -10,7 +10,8 @@
     "./Package/Api",
     "./Package/Domain",
     "./Package/Icons",
-    "./Package/Ui"
+    "./Package/Ui",
+    "./Website"
   ],
   "version": "1.0.0",
   "author": {

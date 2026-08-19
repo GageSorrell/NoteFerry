@@ -315,9 +315,8 @@ export {
 /**
  * The `Connections` group: starting Notion's OAuth authorization flow,
  * listing a user's authorized Notion connections, and disconnecting one.
- * See `ArchitectureInitialDraft.md` §16-17 — the OAuth token exchange itself
- * happens in the separate, unauthenticated `notion-oauth-callback` Edge
- * Function, not here.
+ * The OAuth token exchange itself happens in the separate, unauthenticated
+ * `notion-oauth-callback` Edge Function, not here.
  *
  * @module @notivex/api/ConnectionsApi
  *
@@ -328,8 +327,7 @@ export {
  */
 /**
  * The `DataSources` group: reading and refreshing the normalized, cached
- * Notion data-source schemas that drive Notivex's quick-add forms. See
- * `ArchitectureInitialDraft.md` §11-12 and §26-27.
+ * Notion data-source schemas that drive Notivex's quick-add forms.
  *
  * @module @notivex/api/DataSourcesApi
  *
@@ -340,7 +338,7 @@ export {
  */
 /**
  * The `Destinations` group: creating, reading, updating and deleting a
- * user's quick-entry destinations. See `ArchitectureInitialDraft.md` §24-25.
+ * user's quick-entry destinations.
  *
  * @module @notivex/api/DestinationsApi
  *
@@ -365,8 +363,7 @@ export {
  * The `Pages` group: creating a Notion page from a destination. This is the
  * one place the wire contract accepts a Notivex-shaped
  * {@link Domain.Command.CreatePageCommand} rather than Notion's own request
- * body — only the server-side Notion adapter ever constructs that. See
- * `ArchitectureInitialDraft.md` §20-21.
+ * body — only the server-side Notion adapter ever constructs that.
  *
  * @module @notivex/api/PagesApi
  *

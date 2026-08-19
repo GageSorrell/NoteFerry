@@ -1,7 +1,6 @@
 /**
  * A Supabase Auth storage adapter that keeps the session out of plaintext on
- * the device (ArchitectureInitialDraft.md §6, §19: "favor SecureStore for
- * sensitive native session material").
+ * the device ("favor SecureStore for sensitive native session material").
  *
  * A Supabase session can exceed the ~2048-byte value size that `expo-secure-
  * store` may reject on some platforms, so this uses the Supabase-recommended

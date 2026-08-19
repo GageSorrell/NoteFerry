@@ -6,7 +6,7 @@
  * Notion remains the canonical source of truth; this is deliberately
  * a *normalized* Notivex schema rather than an opaque dump of Notion's API
  * response, so that a future change to Notion's representation only
- * requires updating one mapper. See `ArchitectureInitialDraft.md` §11-12.
+ * requires updating one mapper.
  *
  * @module @notivex/domain/DataSource
  *
@@ -35,7 +35,7 @@ export/**
        * A data source surfaced by discovery (Notion search) but not yet cached:
        * enough to list and pick one, without the full property schema. The
        * schema itself arrives via `DataSources.Refresh`, which produces a
-       * {@link CachedDataSourceSchema}. See `ArchitectureInitialDraft.md` §36.
+       * {@link CachedDataSourceSchema}.
        *
        * @category DataSource
        * @since 1.0.0

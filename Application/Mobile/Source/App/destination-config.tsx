@@ -2,9 +2,8 @@
  * Destination-config screen: turn a cached data source's schema into a
  * quick-entry destination; name it, pick a template, and choose which fields
  * are visible and required, then save.  Also lists and deletes the
- * destinations already configured for this data source
- * (ArchitectureInitialDraft.md §24-25). Reached from a cached row on the
- * data-sources screen.
+ * destinations already configured for this data source. Reached from a
+ * cached row on the data-sources screen.
  *
  * @module notivex/app/destination-config
  *
@@ -15,7 +14,7 @@
  */
 
 import type * as Domain from "@notivex/domain";
-import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 import {
     Body,
     Button,
@@ -26,6 +25,7 @@ import {
     Input,
     LabelText
 } from "@notivex/ui/Primitive";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { useCallback, useEffect, useState } from "react";
 import { BehaviorPicker } from "@/Component/BehaviorPicker";
 import { GetDataSource } from "@/Domain/Runtime/NotivexApi";
@@ -34,7 +34,6 @@ import { useConnections } from "@/Domain/Connection";
 import { useDestinations } from "@/features/destinations/use-destinations";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useLocalSearchParams } from "expo-router";
-import { useTheme } from "@notivex/ui";
 
 /** Per-field UI toggles held while the form is open. */
 interface FieldSetting
@@ -47,6 +46,7 @@ const DestinationConfigScreen = () =>
 {
     const Router = useLazyRouter();
     const Theme = useTheme();
+    const Styles = useStyles();
     const Params = useLocalSearchParams<{
         connectionId: string;
         dataSourceId: string;
@@ -166,19 +166,19 @@ const DestinationConfigScreen = () =>
     ]);
 
     return (
-        <View style={ styles.container }>
-            <SafeAreaView style={ styles.safeArea }>
+        <View style={ Styles.Container }>
+            <SafeAreaView style={ Styles.SafeArea }>
                 <Button
                     Appearance="Link"
                     OnPress={ Router.back }
-                    Style={ styles.back }>
+                    Style={ Styles.Back }>
                     ‹ Back
                 </Button>
 
                 <Heading1>
                     { Params.title ?? "Configure" }
                 </Heading1>
-                <Description Style={ styles.subtitle }>
+                <Description Style={ Styles.Subtitle }>
                     Set up a quick-entry destination for this data source.
                 </Description>
 
@@ -186,8 +186,8 @@ const DestinationConfigScreen = () =>
                     ? <ActivityIndicator color={ Theme.Semantic.Cursor } />
                     : (
                         <ScrollView
-                            contentContainerStyle={ styles.form }
-                            style={ styles.scroll }>
+                            contentContainerStyle={ Styles.Form }
+                            style={ Styles.Scroll }>
                             <LabelText>Name</LabelText>
                             <Input
                                 OnChangeText={ SetName }
@@ -195,7 +195,7 @@ const DestinationConfigScreen = () =>
                                 Value={ Name }
                             />
 
-                            <View style={ styles.templateRow }>
+                            <View style={ Styles.TemplateRow }>
                                 <Checkbox
                                     Checked={ UseDefaultTemplate }
                                     OnCheckedChange={ SetUseDefaultTemplate }
@@ -203,30 +203,30 @@ const DestinationConfigScreen = () =>
                                 <Body>Use the data source's default template</Body>
                             </View>
 
-                            <Heading2 Style={ styles.sectionHeading }>Fields</Heading2>
-                            <View style={ styles.fieldHeaderRow }>
-                                <View style={ styles.fieldNameCol } />
-                                <LabelText Style={ styles.toggleLabel }>Visible</LabelText>
-                                <LabelText Style={ styles.toggleLabel }>Required</LabelText>
+                            <Heading2 Style={ Styles.SectionHeading }>Fields</Heading2>
+                            <View style={ Styles.FieldHeaderRow }>
+                                <View style={ Styles.FieldNameCol } />
+                                <LabelText Style={ Styles.ToggleLabel }>Visible</LabelText>
+                                <LabelText Style={ Styles.ToggleLabel }>Required</LabelText>
                             </View>
                             { DataSource.Properties.map(
                                 (Property: Domain.Property.PropertyDefinition) => (
                                     <View
                                         key={ Property.Id }
-                                        style={ styles.fieldRow }>
-                                        <View style={ styles.fieldNameCol }>
+                                        style={ Styles.FieldRow }>
+                                        <View style={ Styles.FieldNameCol }>
                                             <Body NumberOfLines={ 1 }>{ Property.Name }</Body>
-                                            <LabelText Style={ styles.fieldType }>
+                                            <LabelText Style={ Styles.FieldType }>
                                                 { Property.Type }
                                             </LabelText>
                                         </View>
-                                        <View style={ styles.toggleCol }>
+                                        <View style={ Styles.ToggleCol }>
                                             <Checkbox
                                                 Checked={ Settings[Property.Id]?.Visible ?? true }
                                                 OnCheckedChange={ () => Toggle(Property.Id, "Visible") }
                                             />
                                         </View>
-                                        <View style={ styles.toggleCol }>
+                                        <View style={ Styles.ToggleCol }>
                                             <Checkbox
                                                 Checked={ Settings[Property.Id]?.Required ?? false }
                                                 OnCheckedChange={ () => Toggle(Property.Id, "Required") }
@@ -235,7 +235,7 @@ const DestinationConfigScreen = () =>
                                     </View>
                                 )) }
 
-                            <Heading2 Style={ styles.sectionHeading }>
+                            <Heading2 Style={ Styles.SectionHeading }>
                                 After creating a page
                             </Heading2>
                             <BehaviorPicker
@@ -249,18 +249,18 @@ const DestinationConfigScreen = () =>
                                 Appearance="Primary"
                                 Disabled={ Saving || Name.trim().length === 0 }
                                 OnPress={ HandleSave }
-                                Style={ styles.save }>
+                                Style={ Styles.Save }>
                                 { Saving ? "Saving…" : "Save destination" }
                             </Button>
 
                             { Destinations.length > 0
                                 ? (
                                     <>
-                                        <Heading2 Style={ styles.sectionHeading }>Configured</Heading2>
+                                        <Heading2 Style={ Styles.SectionHeading }>Configured</Heading2>
                                         { Destinations.map((Destination: Domain.Destination.Destination) => (
                                             <View
                                                 key={ Destination.Id }
-                                                style={ styles.destinationRow }>
+                                                style={ Styles.DestinationRow }>
                                                 <Body NumberOfLines={ 1 }>{ Destination.Name }</Body>
                                                 <Button
                                                     Appearance="Link"
@@ -279,89 +279,73 @@ const DestinationConfigScreen = () =>
     );
 };
 
-const styles = StyleSheet.create({
-    back:
-    {
+const useStyles = MakeStyles({
+    Back: ViewStyle({
         alignSelf: "flex-start"
-    },
-    container:
-    {
+    }),
+    Container: ViewStyle({
         flex: 1
-    },
-    destinationRow:
-    {
+    }),
+    DestinationRow: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
         justifyContent: "space-between",
-        paddingVertical: 8
-    },
-    fieldHeaderRow:
-    {
+        paddingVertical: Token.Spacing.S
+    }),
+    FieldHeaderRow: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
-        gap: 12
-    },
-    fieldNameCol:
-    {
+        gap: Token.Spacing.M
+    }),
+    FieldNameCol: ViewStyle({
         flex: 1
-    },
-    fieldRow:
-    {
+    }),
+    FieldRow: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
-        gap: 12,
-        paddingVertical: 8
-    },
-    fieldType:
-    {
+        gap: Token.Spacing.M,
+        paddingVertical: Token.Spacing.S
+    }),
+    FieldType: TextStyle({
         marginTop: 2
-    },
-    form:
-    {
-        gap: 12,
-        paddingVertical: 16
-    },
-    safeArea:
-    {
+    }),
+    Form: ViewStyle({
+        gap: Token.Spacing.M,
+        paddingVertical: Token.Spacing.L
+    }),
+    SafeArea: ViewStyle({
         flex: 1,
-        gap: 8,
-        paddingHorizontal: 24,
-        paddingVertical: 24
-    },
-    save:
-    {
-        marginTop: 16
-    },
-    scroll:
-    {
+        gap: Token.Spacing.S,
+        paddingHorizontal: Token.Spacing.Xl,
+        paddingVertical: Token.Spacing.Xl
+    }),
+    Save: ViewStyle({
+        marginTop: Token.Spacing.L
+    }),
+    Scroll: ViewStyle({
         alignSelf: "stretch",
         flex: 1
-    },
-    sectionHeading:
-    {
-        marginTop: 16
-    },
-    subtitle:
-    {
-        marginTop: 4
-    },
-    templateRow:
-    {
+    }),
+    SectionHeading: TextStyle({
+        marginTop: Token.Spacing.L
+    }),
+    Subtitle: TextStyle({
+        marginTop: Token.Spacing.Xs
+    }),
+    TemplateRow: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
-        gap: 12,
-        marginTop: 8
-    },
-    toggleCol:
-    {
+        gap: Token.Spacing.M,
+        marginTop: Token.Spacing.S
+    }),
+    ToggleCol: ViewStyle({
         alignItems: "center",
         width: 64
-    },
-    toggleLabel:
-    {
+    }),
+    ToggleLabel: TextStyle({
         textAlign: "center",
         width: 64
-    }
+    })
 });
 
 export default DestinationConfigScreen;

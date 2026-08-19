@@ -10,9 +10,10 @@
  */
 
 import type * as Domain from "@notivex/domain";
-import { StyleSheet, View } from "react-native";
+import { MakeStyles, ViewStyle } from "@notivex/ui";
 import { Checkbox } from "@notivex/ui/Primitive";
 import { PropertyLabel } from "@/features/page-creation/property-label";
+import { View } from "react-native";
 
 /** Props for a Notion Checkbox property field. */
 export interface CheckboxPropertyFieldProps
@@ -33,10 +34,12 @@ export function CheckboxPropertyField({
     Value
 }: CheckboxPropertyFieldProps): React.JSX.Element
 {
+    const Styles = useStyles();
+
     return (
-        <View style={ [ styles.field, Inline && styles.inlineField ] }>
+        <View style={ [ Styles.Field, Inline && Styles.InlineField ] }>
             { Inline ? null : <PropertyLabel Property={ Property } /> }
-            <View style={ styles.checkboxValue }>
+            <View style={ Styles.CheckboxValue }>
                 <Checkbox
                     AccessibilityLabel={ Property.Name }
                     Checked={ Value === true }
@@ -48,20 +51,17 @@ export function CheckboxPropertyField({
     );
 }
 
-const styles = StyleSheet.create({
-    checkboxValue:
-    {
+const useStyles = MakeStyles({
+    CheckboxValue: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
         minHeight: 32
-    },
-    field:
-    {
+    }),
+    Field: ViewStyle({
         gap: 6
-    },
-    inlineField:
-    {
+    }),
+    InlineField: ViewStyle({
         flex: 1,
         minWidth: 0
-    }
+    })
 });

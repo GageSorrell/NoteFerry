@@ -1,6 +1,4 @@
 /**
- *
- *
  * @module notivex/App/Providers
  *
  * @file      Providers.tsx

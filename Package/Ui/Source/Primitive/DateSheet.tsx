@@ -44,13 +44,13 @@ import {
 import { Calendar, type CalendarRange } from "./Calendar.js";
 import { ChevronDown, HelpCircle } from "lucide-react-native";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./Dialog.js";
+import { MakeStyles, ViewStyle as MakeViewStyle, TextStyle } from "../MakeStyles.js";
 import { MenuItem, MenuItemCheck, MenuItemSelect } from "./Menu.js";
 import {
     Platform,
     type PressableStateCallbackType,
     ScrollView,
     type StyleProp,
-    StyleSheet,
     View,
     type ViewStyle
 } from "react-native";
@@ -243,6 +243,7 @@ const DateSheetChipSegment = React.forwardRef<
     Style
 }: DateSheetChipSegmentProps, ForwardedRef: React.ForwardedRef<View>) =>
 {
+    const Styles = useStyles();
     const { [Semantic.Muted]: MutedColor } = useToken(Semantic.Muted);
 
     return (
@@ -281,6 +282,7 @@ interface DateSheetChipProps extends React.PropsWithChildren
 
 const DateSheetChip = ({ Highlighted, Style, children }: DateSheetChipProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const {
         [Semantic.BackgroundInput]: InputBackgroundColor,
         [Semantic.Ring]: RingColor,
@@ -320,6 +322,7 @@ interface DateSheetTimeSegmentProps
 
 const DateSheetTimeSegment = ({ OnPress, Value, TimeFormat }: DateSheetTimeSegmentProps) =>
 {
+    const Styles = useStyles();
     const Pattern = GetTimeFormatPattern(TimeFormat);
     const Reference = Value ?? new Date(2000, 0, 1, 9, 0);
 
@@ -364,6 +367,7 @@ const DateSheetNativePicker = ({
     Timezone
 }: DateSheetNativePickerProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const [ DraftValue, SetDraftValue ] = React.useState(Request.Value);
     const Title = Request.Mode === "date" ? "Select a date" : "Select a time";
 
@@ -460,39 +464,20 @@ const DateSheetFieldRow = ({
     TimeFormat,
     OnOpenPicker
 }: DateSheetFieldRowProps): React.JSX.Element =>
-    <View style={ [
-        Styles.FieldRow,
-        ShowEndDate && Styles.FieldRowWithEnd
-    ] }>
-        <DateSheetChip
-            Highlighted={ ActiveField === "Start" && Value !== undefined }
-            Style={ ShowEndDate ? Styles.ChipFull : Styles.ChipFlex }>
-            <DateSheetChipSegment
-                Label={ FormatChipDate(Value) }
-                OnPress={ () => OnOpenPicker("Start", "date") }
-                Style={ Styles.DateSegment }
-            />
-            { IncludeTime && (
-                <>
-                    <Separator
-                        Orientation="Vertical"
-                        Style={ Styles.ChipDivider }
-                    />
-                    <DateSheetTimeSegment
-                        OnPress={ () => OnOpenPicker("Start", "time") }
-                        TimeFormat={ TimeFormat }
-                        Value={ Value }
-                    />
-                </>
-            ) }
-        </DateSheetChip>
-        { ShowEndDate
-            && <DateSheetChip
-                Highlighted={ ActiveField === "End" && EndValue !== undefined }
-                Style={ Styles.ChipFull }>
+{
+    const Styles = useStyles();
+
+    return (
+        <View style={ [
+            Styles.FieldRow,
+            ShowEndDate && Styles.FieldRowWithEnd
+        ] }>
+            <DateSheetChip
+                Highlighted={ ActiveField === "Start" && Value !== undefined }
+                Style={ ShowEndDate ? Styles.ChipFull : Styles.ChipFlex }>
                 <DateSheetChipSegment
-                    Label={ FormatChipDate(EndValue) }
-                    OnPress={ () => OnOpenPicker("End", "date") }
+                    Label={ FormatChipDate(Value) }
+                    OnPress={ () => OnOpenPicker("Start", "date") }
                     Style={ Styles.DateSegment }
                 />
                 { IncludeTime && (
@@ -502,14 +487,39 @@ const DateSheetFieldRow = ({
                             Style={ Styles.ChipDivider }
                         />
                         <DateSheetTimeSegment
-                            OnPress={ () => OnOpenPicker("End", "time") }
+                            OnPress={ () => OnOpenPicker("Start", "time") }
                             TimeFormat={ TimeFormat }
-                            Value={ EndValue }
+                            Value={ Value }
                         />
                     </>
                 ) }
-            </DateSheetChip> }
-    </View>;
+            </DateSheetChip>
+            { ShowEndDate
+                && <DateSheetChip
+                    Highlighted={ ActiveField === "End" && EndValue !== undefined }
+                    Style={ Styles.ChipFull }>
+                    <DateSheetChipSegment
+                        Label={ FormatChipDate(EndValue) }
+                        OnPress={ () => OnOpenPicker("End", "date") }
+                        Style={ Styles.DateSegment }
+                    />
+                    { IncludeTime && (
+                        <>
+                            <Separator
+                                Orientation="Vertical"
+                                Style={ Styles.ChipDivider }
+                            />
+                            <DateSheetTimeSegment
+                                OnPress={ () => OnOpenPicker("End", "time") }
+                                TimeFormat={ TimeFormat }
+                                Value={ EndValue }
+                            />
+                        </>
+                    ) }
+                </DateSheetChip> }
+        </View>
+    );
+};
 
 interface DateSheetSwitchRowProps
 {
@@ -519,13 +529,19 @@ interface DateSheetSwitchRowProps
 }
 
 const DateSheetSwitchRow = ({ Label, Value, OnValueChange }: DateSheetSwitchRowProps): React.JSX.Element =>
-    <View style={ Styles.SwitchRow }>
-        <Body>{ Label }</Body>
-        <Switch
-            { ...{ OnValueChange, Value } }
-            Size="Medium"
-        />
-    </View>;
+{
+    const Styles = useStyles();
+
+    return (
+        <View style={ Styles.SwitchRow }>
+            <Body>{ Label }</Body>
+            <Switch
+                { ...{ OnValueChange, Value } }
+                Size="Medium"
+            />
+        </View>
+    );
+};
 
 interface DateSheetOptionPopupProps<A extends string>
 {
@@ -546,29 +562,35 @@ const DateSheetOptionPopup = <A extends string,>({
     Value,
     OnValueChange
 }: DateSheetOptionPopupProps<A>): React.JSX.Element =>
-    <Popup
-        Anchor={ Anchor }
-        IsVisible={ IsVisible }
-        OnRequestClose={ OnRequestClose }
-        Placement="Bottom"
-        Style={ { minWidth: 180 } }>
-        <ScrollView
-            contentContainerStyle={ Styles.PopupList }
-            style={ Styles.PopupScroll }>
-            { Options.map((Option: OptionEntry<A>) => (
-                <MenuItem
-                    Label={ Option.Label }
-                    OnPress={ () =>
-                    {
-                        OnValueChange(Option.Value);
-                        OnRequestClose();
-                    } }
-                    key={ Option.Value }>
-                    { Option.Value === Value && <MenuItemCheck /> }
-                </MenuItem>
-            )) }
-        </ScrollView>
-    </Popup>;
+{
+    const Styles = useStyles();
+
+    return (
+        <Popup
+            Anchor={ Anchor }
+            IsVisible={ IsVisible }
+            OnRequestClose={ OnRequestClose }
+            Placement="Bottom"
+            Style={ { minWidth: 180 } }>
+            <ScrollView
+                contentContainerStyle={ Styles.PopupList }
+                style={ Styles.PopupScroll }>
+                { Options.map((Option: OptionEntry<A>) => (
+                    <MenuItem
+                        Label={ Option.Label }
+                        OnPress={ () =>
+                        {
+                            OnValueChange(Option.Value);
+                            OnRequestClose();
+                        } }
+                        key={ Option.Value }>
+                        { Option.Value === Value && <MenuItemCheck /> }
+                    </MenuItem>
+                )) }
+            </ScrollView>
+        </Popup>
+    );
+};
 
 /** {@inheritDoc DateSheet} */
 export interface DateSheetProps extends Pick<BottomSheetProps, "OnDismiss" | "Ref">
@@ -659,6 +681,7 @@ const DateSheet = ({
     Title = "Date"
 }: DateSheetProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const [ CurrentValue, SetValue ] =
         useControllable<Date | undefined>(Value, DefaultValue, OnValueChange);
     const [ CurrentEndValue, SetEndValue ] =
@@ -1024,143 +1047,117 @@ const DateSheet = ({
     );
 };
 
-const Styles = StyleSheet.create({
-    Calendar:
-    {
+const useStyles = MakeStyles({
+    Calendar: MakeViewStyle({
         alignSelf: "center",
         width: "94%"
-    },
-    CalendarCard:
-    {
+    }),
+    CalendarCard: MakeViewStyle({
         paddingHorizontal: 16
-    },
-    CalendarFrame:
-    {
+    }),
+    CalendarFrame: MakeViewStyle({
         justifyContent: "flex-start",
         paddingBottom: 16,
         width: "100%"
-    },
-    Card:
-    {
+    }),
+    Card: MakeViewStyle({
         overflow: "hidden"
-    },
-    Chip:
-    {
+    }),
+    Chip: MakeViewStyle({
         alignItems: "center",
         flexDirection: "row",
         overflow: "hidden"
-    },
-    ChipDivider:
-    {
+    }),
+    ChipDivider: MakeViewStyle({
         alignSelf: "center",
         height: 14
-    },
-    ChipFlex:
-    {
+    }),
+    ChipFlex: MakeViewStyle({
         flex: 1
-    },
-    ChipFull:
-    {
+    }),
+    ChipFull: MakeViewStyle({
         width: "100%"
-    },
-    ChipSegment:
-    {
+    }),
+    ChipSegment: MakeViewStyle({
         alignItems: "center",
         flexDirection: "row",
         gap: 4,
         height: 28,
         justifyContent: "space-between",
         paddingHorizontal: 12
-    },
-    ChipSegmentLabel:
-    {
+    }),
+    ChipSegmentLabel: TextStyle({
         flexShrink: 1
-    },
-    ChipSegmentPressed:
-    {
+    }),
+    ChipSegmentPressed: MakeViewStyle({
         opacity: 0.55
-    },
-    DateSegment:
-    {
+    }),
+    DateSegment: MakeViewStyle({
         flex: 1,
         minWidth: 0,
         paddingRight: 8
-    },
-    FieldCard:
-    {
+    }),
+    FieldCard: MakeViewStyle({
         padding: 16
-    },
-    FieldRow:
-    {
+    }),
+    FieldRow: MakeViewStyle({
         flexDirection: "row",
         gap: 8
-    },
-    FieldRowWithEnd:
-    {
+    }),
+    FieldRowWithEnd: MakeViewStyle({
         flexDirection: "column"
-    },
-    Header:
-    {
+    }),
+    Header: MakeViewStyle({
         alignItems: "center",
         flexDirection: "row",
         justifyContent: "space-between",
         minHeight: 44,
         paddingHorizontal: 10
-    },
-    HeaderSpacer:
-    {
+    }),
+    HeaderSpacer: MakeViewStyle({
         height: 28,
         width: 28
-    },
-    HeaderTitle:
-    {
+    }),
+    HeaderTitle: TextStyle({
         flex: 1,
         fontSize: 15,
         lineHeight: 20,
         textAlign: "center",
         transform: [ { translateY: -14 } ]
-    },
-    NativePicker:
-    {
+    }),
+    NativePicker: MakeViewStyle({
         height: 216,
         width: "100%"
-    },
-    NativePickerDialog:
-    {
+    }),
+    NativePickerDialog: MakeViewStyle({
         width: 340
-    },
-    NativePickerFooter:
-    {
+    }),
+    NativePickerFooter: MakeViewStyle({
         alignSelf: "stretch",
         flexDirection: "row",
         justifyContent: "flex-end"
-    },
-    PopupList:
-    {
+    }),
+    PopupList: MakeViewStyle({
         paddingVertical: 4
-    },
-    PopupScroll:
-    {
+    }),
+    PopupScroll: MakeViewStyle({
         maxHeight: 240
-    },
-    ScrollContent:
-    {
+    }),
+    ScrollContent: MakeViewStyle({
         paddingBottom: 24
-    },
-    SwitchRow:
-    {
+    }),
+    SwitchRow: MakeViewStyle({
         alignItems: "center",
         flexDirection: "row",
         justifyContent: "space-between",
         marginHorizontal: 4,
         minHeight: 48,
         paddingHorizontal: 8
-    },
-    TimeSegment:
-    {
+    }),
+    TimeSegment: MakeViewStyle({
         flex: 1,
         minWidth: 0,
         paddingLeft: 10,
         paddingRight: 10
-    }
+    })
 });

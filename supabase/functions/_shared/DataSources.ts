@@ -1,14 +1,14 @@
 /**
  * Server-only data-source discovery, caching and refresh (Deno + Effect). This
- * is the single Notion → Notivex mapper (ArchitectureInitialDraft.md §11): it
- * translates Notion's live property DTOs into the normalized
- * `PropertyDefinition` union and persists a `CachedDataSourceSchema`, so a
- * later Notion API change only touches this file.
+ * is the single Notion → Notivex mapper: it translates Notion's live property
+ * DTOs into the normalized `PropertyDefinition` union and persists a
+ * `CachedDataSourceSchema`, so a later Notion API change only touches this
+ * file.
  *
  * Each exported operation is an `Effect` whose error channel is a subset of the
  * `@notivex/domain` tagged errors declared on the matching `DataSources`
  * endpoint. Notion access tokens are read from the `private` schema and, on a
- * 401, refreshed once and retried (§31).
+ * 401, refreshed once and retried.
  *
  * @module notivex/functions/_shared/DataSources
  *
@@ -158,7 +158,7 @@ export function MapProperties(
 
 /**
  * A stable, order-independent hash of a normalized property schema, used to
- * detect when Notion's schema has changed since the last cache (§26). Not
+ * detect when Notion's schema has changed since the last cache. Not
  * cryptographic — a fast content fingerprint (djb2 over canonical JSON).
  *
  * @category DataSources

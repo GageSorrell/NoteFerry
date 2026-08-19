@@ -14,9 +14,9 @@ import * as Semantic from "../Token/Semantic.js";
 import {
     type GestureResponderEvent,
     Linking,
-    type TextProps as RNTextProps,
-    StyleSheet
+    type TextProps as RNTextProps
 } from "react-native";
+import { MakeStyles, TextStyle } from "../MakeStyles.js";
 
 import { Text, type TextProps } from "./Text.js";
 
@@ -41,6 +41,7 @@ export/**
        */
 const Link = ({ Href, OnPress, Style, children, ...RestProps }: LinkProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const HandlePress = React.useCallback<NonNullable<RNTextProps["onPress"]>>(
         (Event: GestureResponderEvent) =>
         {
@@ -67,9 +68,8 @@ const Link = ({ Href, OnPress, Style, children, ...RestProps }: LinkProps): Reac
     );
 };
 
-const Styles = StyleSheet.create({
-    Link:
-    {
+const useStyles = MakeStyles({
+    Link: TextStyle({
         textDecorationLine: "underline"
-    }
+    })
 });

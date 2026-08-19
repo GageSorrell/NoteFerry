@@ -26,11 +26,12 @@ import * as Shadow from "../Token/Shadow.js";
 import { AlertTriangle, CheckCircle2, Info as InfoIcon, XCircle } from "lucide-react-native";
 import Animated, { FadeInDown, FadeOutDown, LinearTransition } from "react-native-reanimated";
 import { Body, Description } from "./Text.js";
+import { MakeStyles, ViewStyle } from "../MakeStyles.js";
 import { StyleSheet, View } from "react-native";
 import { Pressable } from "./Pressable.js";
 import { Spinner } from "./Spinner.js";
-import { useToken } from "../ThemeProvider.js";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useToken } from "../ThemeProvider.js";
 
 /**
  * The intent of a `Toast`.
@@ -260,6 +261,7 @@ const ToastItemIcon = ({ Variant }: { readonly Variant: ToastVariant }): React.J
 
 const ToastItem = ({ Record }: { readonly Record: ToastRecord }): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const {
         [Semantic.BackgroundModal]: ModalBackground,
         [Semantic.Border]: BorderColor,
@@ -333,6 +335,7 @@ export/**
        */
 const Toaster = ({ Position = "Bottom" }: ToasterProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const [ Toasts, SetToasts ] = React.useState(ToastState);
     const Insets = useSafeAreaInsets();
 
@@ -359,26 +362,23 @@ const Toaster = ({ Position = "Bottom" }: ToasterProps): React.JSX.Element =>
     );
 };
 
-const Styles = StyleSheet.create({
-    Body:
-    {
+const useStyles = MakeStyles({
+    Body: ViewStyle({
         flex: 1,
         gap: 2
-    },
-    Container:
-    {
+    }),
+    Container: ViewStyle({
         gap: 8,
         left: 12,
         position: "absolute",
         right: 12
-    },
-    Item:
-    {
+    }),
+    Item: ViewStyle({
         alignItems: "center",
         borderWidth: StyleSheet.hairlineWidth,
         flexDirection: "row",
         gap: 10,
         paddingHorizontal: 14,
         paddingVertical: 12
-    }
+    })
 });

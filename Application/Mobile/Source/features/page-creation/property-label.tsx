@@ -27,9 +27,9 @@ import {
     Type,
     Users
 } from "lucide-react-native";
-import { StyleSheet, View } from "react-native";
+import { MakeStyles, TextStyle, ViewStyle, useTheme } from "@notivex/ui";
 import { LabelText } from "@notivex/ui/Primitive";
-import { useTheme } from "@notivex/ui";
+import { View } from "react-native";
 
 const PropertyTypeIcon:
 Readonly<Record<Domain.Property.PropertyDefinition["Type"], LucideIcon>> =
@@ -64,11 +64,12 @@ export function PropertyLabel({
 }: PropertyLabelProps): React.JSX.Element
 {
     const Theme = useTheme();
+    const Styles = useStyles();
     const Icon = PropertyTypeIcon[ Property.Type ];
     const Color = Theme.Semantic.Primary;
 
     return (
-        <View style={ [ styles.container, Muted && styles.muted ] }>
+        <View style={ [ Styles.Container, Muted && Styles.Muted ] }>
             <Icon
                 accessible={ false }
                 color={ Color }
@@ -78,7 +79,7 @@ export function PropertyLabel({
             <LabelText
                 Color={ Color }
                 NumberOfLines={ 2 }
-                Style={ styles.name }
+                Style={ Styles.Name }
                 Weight="500">
                 { Property.Name }
             </LabelText>
@@ -86,19 +87,16 @@ export function PropertyLabel({
     );
 }
 
-const styles = StyleSheet.create({
-    container:
-    {
+const useStyles = MakeStyles({
+    Container: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
         gap: 6
-    },
-    muted:
-    {
+    }),
+    Muted: ViewStyle({
         opacity: 0.65
-    },
-    name:
-    {
+    }),
+    Name: TextStyle({
         flexShrink: 1
-    }
+    })
 });

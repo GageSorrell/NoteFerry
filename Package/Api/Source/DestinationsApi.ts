@@ -1,6 +1,6 @@
 /**
  * The `Destinations` group: creating, reading, updating and deleting a
- * user's quick-entry destinations. See `ArchitectureInitialDraft.md` §24-25.
+ * user's quick-entry destinations.
  *
  * @module @notivex/api/DestinationsApi
  *

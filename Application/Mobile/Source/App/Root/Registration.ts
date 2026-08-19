@@ -1,6 +1,4 @@
 /**
- *
- *
  * @module notivex/App/Root/Registration
  *
  * @file      Registration.ts
@@ -24,7 +22,6 @@ export/**
        */
 const useRootRegistration = () =>
 {
-    /* eslint-disable react-hooks/exhaustive-deps */
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     useEffect(Function.AsVoid(RegisterDevelopmentMenu), [ ]);
-    /* eslint-enable react-hooks/exhaustive-deps */
 };

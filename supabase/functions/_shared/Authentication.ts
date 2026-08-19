@@ -4,8 +4,7 @@
  * token; this recovers the Notivex user id from it and fails with
  * {@link Domain.Error.AuthenticationRequired} when it is missing or invalid.
  *
- * Mirrors the app-side seam in `Application/Mobile/Source/Domain/Runtime/CurrentUser.ts`
- * (ArchitectureInitialDraft.md §15, §35).
+ * Mirrors the app-side seam in `Application/Mobile/Source/Domain/Runtime/CurrentUser.ts`.
  *
  * @module notivex/functions/_shared/Authentication
  *

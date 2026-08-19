@@ -25,12 +25,12 @@ import {
     Input
 } from "@notivex/ui/Primitive";
 import { File as FileIcon, Link as LinkIcon, Play, Upload } from "lucide-react-native";
-import { StyleSheet, View } from "react-native";
-import { Token, useTheme } from "@notivex/ui";
+import { ImageStyle, MakeStyles, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { useEffect, useRef, useState } from "react";
 import { Image } from "expo-image";
 import { PropertyLabel } from "@/features/page-creation/property-label";
 import { PropertyOptionSheetTrigger } from "@/features/page-creation/property-option-sheet";
+import { View } from "react-native";
 
 const VideoExtensions = new Set([
     "3gp",
@@ -88,19 +88,13 @@ interface MediaPlaceholderProps
 const MediaPlaceholder = ({ Video = false }: MediaPlaceholderProps): React.JSX.Element =>
 {
     const Theme = useTheme();
+    const Styles = useStyles();
 
     return (
-        <View style={ [
-            styles.thumbnail,
-            styles.placeholder,
-            {
-                backgroundColor: Theme.Semantic.BackgroundInput,
-                borderColor: Theme.Semantic.Ring
-            }
-        ] }>
+        <View style={ [ Styles.Thumbnail, Styles.Placeholder ] }>
             { Video
                 ? (
-                    <View style={ [ styles.playCircle, { backgroundColor: Theme.Semantic.Icon } ] }>
+                    <View style={ Styles.PlayCircle }>
                         <Play
                             color="#FFFFFF"
                             fill="#FFFFFF"
@@ -130,6 +124,7 @@ interface FileMediaThumbnailProps
  */
 const FileMediaThumbnail = ({ Value }: FileMediaThumbnailProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const [ LocalVideoThumbnail, SetLocalVideoThumbnail ] = useState<string | null>(null);
     const [ ImageFailed, SetImageFailed ] = useState(false);
     const IsLocalVideo = Value.Type === "Local" && IsVideoValue(Value);
@@ -187,7 +182,7 @@ const FileMediaThumbnail = ({ Value }: FileMediaThumbnailProps): React.JSX.Eleme
                     cachePolicy="memory-disk"
                     contentFit="cover"
                     source={ { uri: LocalVideoThumbnail } }
-                    style={ styles.thumbnail }
+                    style={ Styles.Thumbnail }
                 />
             );
     }
@@ -204,7 +199,7 @@ const FileMediaThumbnail = ({ Value }: FileMediaThumbnailProps): React.JSX.Eleme
             contentFit="cover"
             onError={ () => SetImageFailed(true) }
             source={ { uri: Value.Uri } }
-            style={ styles.thumbnail }
+            style={ Styles.Thumbnail }
         />
     );
 };
@@ -223,6 +218,7 @@ const FileMediaSheet = ({ OnRemove, OnSelect, Ref }: FileMediaSheetProps): React
     const [ LinkValue, SetLinkValue ] = useState("");
     const [ IsPicking, SetIsPicking ] = useState(false);
     const Theme = useTheme();
+    const Styles = useStyles();
 
     const Reset = (): void =>
     {
@@ -273,7 +269,7 @@ const FileMediaSheet = ({ OnRemove, OnSelect, Ref }: FileMediaSheetProps): React
         <BottomSheet
             OnDismiss={ Reset }
             Ref={ Ref }>
-            <BottomSheetView style={ styles.sheet }>
+            <BottomSheetView style={ Styles.Sheet }>
                 { OnRemove !== undefined && (
                     <Button
                         Appearance="Hint"
@@ -284,13 +280,13 @@ const FileMediaSheet = ({ OnRemove, OnSelect, Ref }: FileMediaSheetProps): React
                             Ref.current?.dismiss();
                         } }
                         Size="Small"
-                        Style={ styles.removeButton }>
+                        Style={ Styles.RemoveButton }>
                         Remove
                     </Button>
                 ) }
                 { Mode === "Choose"
                     ? (
-                        <View style={ styles.chooseRows }>
+                        <View style={ Styles.ChooseRows }>
                             <Button
                                 Appearance="Primary"
                                 Loading={ IsPicking }
@@ -313,7 +309,7 @@ const FileMediaSheet = ({ OnRemove, OnSelect, Ref }: FileMediaSheetProps): React
                         </View>
                     )
                     : (
-                        <View style={ styles.linkRow }>
+                        <View style={ Styles.LinkRow }>
                             <Input
                                 Clear
                                 KeyboardType="url"
@@ -321,7 +317,7 @@ const FileMediaSheet = ({ OnRemove, OnSelect, Ref }: FileMediaSheetProps): React
                                 OnChangeText={ SetLinkValue }
                                 OnSubmitEditing={ HandleLinkSubmit }
                                 Placeholder="Paste an image or video link…"
-                                Style={ styles.linkInput }
+                                Style={ Styles.LinkInput }
                                 Value={ LinkValue }
                             />
                             <Button
@@ -357,10 +353,11 @@ export function FileMediaPropertyField({
     Value
 }: FileMediaPropertyFieldProps): React.JSX.Element
 {
+    const Styles = useStyles();
     const SheetRef = useRef<BottomSheetHandle | null>(null);
 
     return (
-        <View style={ [ styles.field, Inline && styles.inlineField ] }>
+        <View style={ [ Styles.Field, Inline && Styles.InlineField ] }>
             { Inline ? null : <PropertyLabel Property={ Property } /> }
             <PropertyOptionSheetTrigger
                 AccessibilityLabel={ Property.Name }
@@ -380,60 +377,53 @@ export function FileMediaPropertyField({
     );
 }
 
-const styles = StyleSheet.create({
-    chooseRows:
-    {
+const useStyles = MakeStyles({
+    ChooseRows: ViewStyle({
         gap: 8,
         padding: 16
-    },
-    field:
-    {
+    }),
+    Field: ViewStyle({
         gap: 6
-    },
-    inlineField:
-    {
+    }),
+    InlineField: ViewStyle({
         flex: 1,
         minWidth: 0
-    },
-    linkInput:
-    {
+    }),
+    LinkInput: ViewStyle({
         flex: 1
-    },
-    linkRow:
-    {
+    }),
+    LinkRow: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
         gap: 8,
         padding: 16
-    },
-    placeholder:
-    {
+    }),
+    Placeholder: ViewStyle({
         alignItems: "center",
+        backgroundColor: Token.Semantic.BackgroundInput,
+        borderColor: Token.Semantic.Ring,
         borderWidth: 1,
         justifyContent: "center"
-    },
-    playCircle:
-    {
+    }),
+    PlayCircle: ViewStyle({
         alignItems: "center",
+        backgroundColor: Token.Semantic.Icon,
         borderRadius: 10,
         height: 20,
         justifyContent: "center",
         width: 20
-    },
-    removeButton:
-    {
+    }),
+    RemoveButton: ViewStyle({
         alignSelf: "flex-end",
         marginRight: 8,
         marginTop: 8
-    },
-    sheet:
-    {
-        paddingBottom: 24
-    },
-    thumbnail:
-    {
+    }),
+    Sheet: ViewStyle({
+        paddingBottom: Token.Spacing.Xl
+    }),
+    Thumbnail: ImageStyle({
         borderRadius: 6,
         height: 32,
         width: 32
-    }
+    })
 });

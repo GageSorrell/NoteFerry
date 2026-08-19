@@ -707,7 +707,7 @@ export {
  * Notion remains the canonical source of truth; this is deliberately
  * a *normalized* Notivex schema rather than an opaque dump of Notion's API
  * response, so that a future change to Notion's representation only
- * requires updating one mapper. See `ArchitectureInitialDraft.md` §11-12.
+ * requires updating one mapper.
  *
  * @module @notivex/domain/DataSource
  *
@@ -722,10 +722,9 @@ export {
  *
  * This is deliberately **only** the non-secret metadata a Supabase user is
  * allowed to read about their own connection. Access and refresh tokens are
- * a server-only concept and never appear here — see
- * `ArchitectureInitialDraft.md` §7, §8 and §35 ("the Expo app should know
+ * a server-only concept and never appear here: the Expo app should know
  * that a user has a Notion connection, but it should never possess the
- * Notion OAuth access token, refresh token, [or] Notion client secret").
+ * Notion OAuth access token, refresh token, or Notion client secret.
  *
  * A `NotionConnection` answers "which Notion authorization do I use?" — see
  * {@link Destination} for "how has this user configured a quick-entry
@@ -741,8 +740,7 @@ export {
  */
 /**
  * `Destination` — a first-class Notivex concept: how a user has configured a
- * quick-entry experience for one Notion data source. See
- * `ArchitectureInitialDraft.md` §24-25.
+ * quick-entry experience for one Notion data source.
  *
  * A `Destination` answers "how has this Notivex user configured a
  * quick-entry experience for this data source?" — see
@@ -784,8 +782,7 @@ export {
 /**
  * `PageDraft` — local, unsaved quick-entry state: what the user has typed
  * into a destination's form before it becomes a command sent to the
- * Notivex API. This is a Notivex-shaped value, never Notion-shaped JSON —
- * see `ArchitectureInitialDraft.md` §19-21.
+ * Notivex API. This is a Notivex-shaped value, never Notion-shaped JSON.
  *
  * @module @notivex/domain/PageDraft
  *
@@ -798,8 +795,7 @@ export {
  * `CreatePageCommand` — a Notivex-shaped request to create a Notion page,
  * distinct from both {@link PageDraft.PageDraft} (local, still-editable
  * state) and Notion's own Create Page request body, which only the
- * server-side Notion adapter ever constructs — see
- * `ArchitectureInitialDraft.md` §20-21.
+ * server-side Notion adapter ever constructs.
  *
  * @module @notivex/domain/Command
  *
@@ -814,7 +810,7 @@ export {
  * from Supabase, `fetch`, Deno, or the Notion SDK — adapters translate those
  * into one of these instead, so callers can write
  * `Effect.catchTag("NotionRateLimited", ...)` rather than inspecting an HTTP
- * status code. See `ArchitectureInitialDraft.md` §14.
+ * status code.
  *
  * Each error also carries an `httpApiStatus` annotation. When these errors are
  * used as an `HttpApiEndpoint` failure schema, Effect's HttpApi tooling reads
@@ -836,8 +832,7 @@ export {
  * Portable Effect `Schema` definitions shared across Notivex: branded ids,
  * the Notion property/data-source/connection/destination model, local
  * quick-entry drafts, and the tagged error vocabulary. This package must
- * never import Expo, Supabase, or the Notion SDK — see
- * `ArchitectureInitialDraft.md` §35.
+ * never import Expo, Supabase, or the Notion SDK.
  *
  * @module @notivex/domain
  *

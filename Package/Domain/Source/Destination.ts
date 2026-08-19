@@ -1,7 +1,6 @@
 /**
  * `Destination` — a first-class Notivex concept: how a user has configured a
- * quick-entry experience for one Notion data source. See
- * `ArchitectureInitialDraft.md` §24-25.
+ * quick-entry experience for one Notion data source.
  *
  * A `Destination` answers "how has this Notivex user configured a
  * quick-entry experience for this data source?" — see
@@ -25,8 +24,7 @@ import { Schema } from "effect";
 export/**
        * Which Notion page template, if any, a destination applies when creating a
        * page. Notion's Create Page API accepts no template, the data source's
-       * default template, or a specific template id — see
-       * `ArchitectureInitialDraft.md` §28.
+       * default template, or a specific template id.
        *
        * @category Destination
        * @since 1.0.0
@@ -45,8 +43,7 @@ export type DestinationTemplate = Schema.Schema.Type<typeof DestinationTemplate>
 
 export/**
        * A single field's Notivex-specific presentation settings, layered on top of
-       * (and never modifying) the underlying Notion property definition — see
-       * `ArchitectureInitialDraft.md` §23.
+       * (and never modifying) the underlying Notion property definition.
        *
        * @category Destination
        * @since 1.0.0
@@ -73,8 +70,7 @@ const FieldConfigurationVersion = Schema.Literal(1);
 
 export/**
        * The flexible, schema-versioned UI configuration for a destination's
-       * fields, decoded from the destination's JSONB configuration column — see
-       * `ArchitectureInitialDraft.md` §25.
+       * fields, decoded from the destination's JSONB configuration column.
        *
        * @category Destination
        * @since 1.0.0

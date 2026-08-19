@@ -1,10 +1,10 @@
 /**
  * The typed Notivex API client, derived from the shared `@notivex/api` HttpApi
- * contract (ArchitectureInitialDraft.md §16). The same schemas that type the
- * `api` edge function type these calls, so request/response shapes cannot drift.
+ * contract. The same schemas that type the `api` edge function type these
+ * calls, so request/response shapes cannot drift.
  *
  * Each call attaches the current Supabase session as a bearer token and runs the
- * Effect to a Promise at the React boundary (§34).
+ * Effect to a Promise at the React boundary.
  *
  * @module notivex/Domain/Runtime/NotivexApi
  *

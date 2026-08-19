@@ -18,21 +18,19 @@ import {
     ModalTitle,
     Pressable
 } from "@notivex/ui/Primitive";
+import { Check, X } from "lucide-react-native";
 import {
     Keyboard,
     type PressableStateCallbackType,
+    type ViewStyle as RnViewStyle,
     type StyleProp,
     StyleSheet,
-    View,
-    type ViewStyle
+    View
 } from "react-native";
-import { Check, X } from "lucide-react-native";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import type { PropsWithChildren, RefObject } from "react";
-import { useTheme } from "@notivex/ui";
 
-export /**
-        *
-        */
+export /** Notion's option-pill background color per `PropertyOptionColor`. */
 const PropertyOptionBackground:
 Readonly<Record<Domain.Property.PropertyOptionColor, string>> =
     Object.freeze({
@@ -88,16 +86,17 @@ export function PropertyOptionPill({
 }: PropertyOptionPillProps): React.JSX.Element
 {
     const Theme = useTheme();
+    const Styles = useStyles();
     const Content = (
         <>
             { Status
                 ? <View style={ [
-                    styles.dot,
+                    Styles.Dot,
                     { backgroundColor: PropertyOptionDot[Option.Color] }
                 ] } />
                 : null }
             <Body NumberOfLines={ 1 }
-                Style={ styles.pillLabel }>
+                Style={ Styles.PillLabel }>
                 { Option.Name }
             </Body>
             { OnRemove === undefined
@@ -107,8 +106,8 @@ export function PropertyOptionPill({
         </>
     );
     const PillStyle = [
-        styles.pill,
-        Status && styles.statusPill,
+        Styles.Pill,
+        Status && Styles.StatusPill,
         { backgroundColor: PropertyOptionBackground[Option.Color] }
     ];
 
@@ -123,7 +122,7 @@ export function PropertyOptionPill({
                 OnPress={ OnRemove }
                 style={ ({ pressed }: PressableStateCallbackType) => [
                     PillStyle,
-                    pressed && styles.pressed
+                    pressed && Styles.Pressed
                 ] }>
                 { Content }
             </Pressable>
@@ -137,7 +136,7 @@ export interface PropertyOptionSheetTriggerProps extends PropsWithChildren
     readonly Disabled?: boolean | undefined;
     readonly Inline?: boolean | undefined;
     readonly OnPress: () => void;
-    readonly Style?: StyleProp<ViewStyle> | undefined;
+    readonly Style?: StyleProp<RnViewStyle> | undefined;
 }
 
 /** Renders the common field trigger used by all option property types. */
@@ -150,7 +149,7 @@ export function PropertyOptionSheetTrigger({
     children
 }: PropertyOptionSheetTriggerProps): React.JSX.Element
 {
-    const Theme = useTheme();
+    const Styles = useStyles();
 
     return (
         <Pressable
@@ -166,17 +165,13 @@ export function PropertyOptionSheetTrigger({
                 OnPress();
             } }
             style={ ({ pressed }: PressableStateCallbackType) => [
-                styles.trigger,
-                {
-                    borderColor: Theme.Semantic.Ring,
-                    borderRadius: Theme.Radii.Medium
-                },
-                Inline && styles.inlineTrigger,
+                Styles.Trigger,
+                Inline && Styles.InlineTrigger,
                 Style,
-                pressed && styles.pressed,
-                Disabled && styles.disabled
+                pressed && Styles.Pressed,
+                Disabled && Styles.Disabled
             ] }>
-            <View style={ styles.triggerValue }>{ children }</View>
+            <View style={ Styles.TriggerValue }>{ children }</View>
         </Pressable>
     );
 }
@@ -207,6 +202,7 @@ export function PropertyOptionSheet({
 }: PropertyOptionSheetProps): React.JSX.Element
 {
     const Theme = useTheme();
+    const Styles = useStyles();
     const SelectedIds = new Set(SelectedOptionIds);
     const SelectedOptions = Sections
         .flatMap((Section: PropertyOptionSection) => Section.Options)
@@ -219,13 +215,10 @@ export function PropertyOptionSheet({
             Ref={ Ref }
             SnapPoints={ PropertyOptionSheetSnapPoints }>
             <BottomSheetScrollView
-                contentContainerStyle={ styles.sheetContent }
-                style={ { backgroundColor: Theme.Semantic.BackgroundSidebar } }>
-                <ModalTitle Style={ styles.sheetTitle }>{ PropertyName }</ModalTitle>
-                <View style={ [
-                    styles.selectedPanel,
-                    { backgroundColor: Theme.Semantic.BackgroundModal }
-                ] }>
+                contentContainerStyle={ Styles.SheetContent }
+                style={ Styles.SheetScroll }>
+                <ModalTitle Style={ Styles.SheetTitle }>{ PropertyName }</ModalTitle>
+                <View style={ Styles.SelectedPanel }>
                     { SelectedOptions.length === 0
                         ? <Body Color={ Theme.Semantic.Muted }>Empty</Body>
                         : SelectedOptions.map((Option: Domain.Property.PropertyOption) => (
@@ -238,27 +231,27 @@ export function PropertyOptionSheet({
                         )) }
                 </View>
                 <Body Color={ Theme.Semantic.Secondary }
-                    Style={ styles.instruction }>
+                    Style={ Styles.Instruction }>
                     { Multiple ? "Select options" : "Select an option" }
                 </Body>
                 { Sections.map((Section: PropertyOptionSection) => (
                     <View key={ Section.Id }
-                        style={ styles.section }>
+                        style={ Styles.Section }>
                         { Section.Label === undefined
                             ? null
                             : (
                                 <Body
                                     Color={ Theme.Semantic.Secondary }
-                                    Style={ styles.sectionLabel }
+                                    Style={ Styles.SectionLabel }
                                     Weight="600">
                                     { Section.Label }
                                 </Body>
                             ) }
-                        <View style={ [
-                            styles.optionList,
-                            { backgroundColor: Theme.Semantic.BackgroundModal }
-                        ] }>
-                            { Section.Options.map((Option, OptionIndex) =>
+                        <View style={ Styles.OptionList }>
+                            { Section.Options.map((
+                                Option: Domain.Property.PropertyOption,
+                                OptionIndex: number
+                            ) =>
                             {
                                 const Selected = SelectedIds.has(Option.Id);
 
@@ -272,15 +265,9 @@ export function PropertyOptionSheet({
                                         OnPress={ () => OnOptionPress(Option) }
                                         key={ Option.Id }
                                         style={ ({ pressed }: PressableStateCallbackType) => [
-                                            styles.optionRow,
-                                            OptionIndex > 0 && {
-                                                borderTopColor: Theme.Semantic.Border,
-                                                borderTopWidth: StyleSheet.hairlineWidth
-                                            },
-                                            pressed && {
-                                                backgroundColor:
-                                                    Theme.Semantic.BackgroundInput
-                                            }
+                                            Styles.OptionRow,
+                                            OptionIndex > 0 && Styles.OptionRowDivider,
+                                            pressed && Styles.OptionRowPressed
                                         ] }>
                                         <PropertyOptionPill
                                             Option={ Option }
@@ -303,44 +290,45 @@ export function PropertyOptionSheet({
     );
 }
 
-const styles = StyleSheet.create({
-    disabled:
-    {
+const useStyles = MakeStyles({
+    Disabled: ViewStyle({
         opacity: 0.55
-    },
-    dot:
-    {
+    }),
+    Dot: ViewStyle({
         borderRadius: 4,
         height: 8,
         width: 8
-    },
-    inlineTrigger:
-    {
+    }),
+    InlineTrigger: ViewStyle({
         borderWidth: 0,
         minHeight: 32,
         paddingHorizontal: 0
-    },
-    instruction:
-    {
+    }),
+    Instruction: TextStyle({
         marginHorizontal: 18,
         marginTop: 16
-    },
-    optionList:
-    {
+    }),
+    OptionList: ViewStyle({
+        backgroundColor: Token.Semantic.BackgroundModal,
         borderRadius: 14,
         overflow: "hidden"
-    },
-    optionRow:
-    {
+    }),
+    OptionRow: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
         justifyContent: "space-between",
         minHeight: 48,
         paddingHorizontal: 16,
         paddingVertical: 9
-    },
-    pill:
-    {
+    }),
+    OptionRowDivider: ViewStyle({
+        borderTopColor: Token.Semantic.Border,
+        borderTopWidth: StyleSheet.hairlineWidth
+    }),
+    OptionRowPressed: ViewStyle({
+        backgroundColor: Token.Semantic.BackgroundInput
+    }),
+    Pill: ViewStyle({
         alignItems: "center",
         alignSelf: "flex-start",
         borderRadius: 6,
@@ -349,28 +337,24 @@ const styles = StyleSheet.create({
         gap: 4,
         paddingHorizontal: 7,
         paddingVertical: 3
-    },
-    pillLabel:
-    {
+    }),
+    PillLabel: TextStyle({
         flexShrink: 1
-    },
-    pressed:
-    {
+    }),
+    Pressed: ViewStyle({
         opacity: 0.6
-    },
-    section:
-    {
+    }),
+    Section: ViewStyle({
         gap: 7,
         marginHorizontal: 16,
         marginTop: 8
-    },
-    sectionLabel:
-    {
+    }),
+    SectionLabel: TextStyle({
         marginHorizontal: 2
-    },
-    selectedPanel:
-    {
+    }),
+    SelectedPanel: ViewStyle({
         alignItems: "center",
+        backgroundColor: Token.Semantic.BackgroundModal,
         borderRadius: 14,
         flexDirection: "row",
         flexWrap: "wrap",
@@ -380,37 +364,37 @@ const styles = StyleSheet.create({
         minHeight: 56,
         paddingHorizontal: 16,
         paddingVertical: 10
-    },
-    sheetContent:
-    {
+    }),
+    SheetContent: ViewStyle({
         paddingBottom: 40
-    },
-    sheetTitle:
-    {
+    }),
+    SheetScroll: ViewStyle({
+        backgroundColor: Token.Semantic.BackgroundSidebar
+    }),
+    SheetTitle: TextStyle({
         marginTop: 2,
         textAlign: "center"
-    },
-    statusPill:
-    {
+    }),
+    StatusPill: ViewStyle({
         borderRadius: 999
-    },
-    trigger:
-    {
+    }),
+    Trigger: ViewStyle({
         alignItems: "center",
+        borderColor: Token.Semantic.Ring,
+        borderRadius: Token.Radii.Medium,
         borderWidth: 1,
         flexDirection: "row",
         minHeight: 36,
         minWidth: 0,
         paddingHorizontal: 8,
         paddingVertical: 4
-    },
-    triggerValue:
-    {
+    }),
+    TriggerValue: ViewStyle({
         alignItems: "center",
         flex: 1,
         flexDirection: "row",
         flexWrap: "wrap",
         gap: 4,
         minWidth: 0
-    }
+    })
 });

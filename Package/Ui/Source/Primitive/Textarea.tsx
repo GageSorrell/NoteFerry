@@ -12,9 +12,10 @@
 import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
-import { type StyleProp, StyleSheet, TextInput, type TextStyle } from "react-native";
-import { useToken } from "../ThemeProvider.js";
+import { MakeStyles, TextStyle as MakeTextStyle } from "../MakeStyles.js";
+import { type StyleProp, TextInput, type TextStyle } from "react-native";
 import { WithAlpha } from "../Utility/index.js";
+import { useToken } from "../ThemeProvider.js";
 
 /** {@inheritDoc Textarea} */
 export interface TextareaProps
@@ -46,6 +47,7 @@ const Textarea = ({
     NumberOfLines = 4
 }: TextareaProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const {
         [ Semantic.Ring ]: RingColor,
         [ Semantic.BackgroundInput ]: InputBackground,
@@ -89,14 +91,13 @@ const Textarea = ({
     );
 };
 
-const Styles = StyleSheet.create({
-    Base:
-    {
+const useStyles = MakeStyles({
+    Base: MakeTextStyle({
         borderWidth: 1,
         fontSize: 14,
         lineHeight: 20,
         padding: 10,
         textAlignVertical: "top",
         width: "100%"
-    }
+    })
 });

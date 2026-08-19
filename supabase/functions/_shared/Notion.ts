@@ -1,10 +1,10 @@
 /**
  * Server-only Notion OAuth helpers. Runs in the Supabase Edge (Deno) runtime.
  * The Notion client secret lives only here, via edge-function secrets — it can
- * never exist in the distributed mobile binary (ArchitectureInitialDraft.md §7).
+ * never exist in the distributed mobile binary.
  *
- * Kept deliberately small (§32): the OAuth authorization-code exchange, plus
- * the read seam the data-source slice needs — `SearchDataSources`,
+ * Kept deliberately small: the OAuth authorization-code exchange, plus the
+ * read seam the data-source slice needs — `SearchDataSources`,
  * `RetrieveDataSource` and `RefreshAuthorization`. `RevokeAuthorization` lands
  * with a later slice.
  *
@@ -16,14 +16,14 @@
  * @license   MIT
  */
 
-/** The current Notion API version (ArchitectureInitialDraft.md §4, §11). */
+/** The current Notion API version. */
 export const NotionVersion = "2026-03-11";
 
 const ApiBase = "https://api.notion.com/v1";
 const TokenEndpoint = `${ApiBase}/oauth/token`;
 const AuthorizeEndpoint = `${ApiBase}/oauth/authorize`;
 
-/** The subset of Notion's OAuth token response Notivex persists (§8). */
+/** The subset of Notion's OAuth token response Notivex persists. */
 export type NotionOAuthTokens =
 {
     readonly access_token: string;
@@ -85,7 +85,7 @@ export function BuildAuthorizationUrl(Options: {
 
 /**
  * Exchanges an authorization code for Notion OAuth tokens using HTTP Basic
- * `client_id:client_secret` auth (§7). Throws {@link NotionOAuthError} on
+ * `client_id:client_secret` auth. Throws {@link NotionOAuthError} on
  * failure.
  *
  * @category Notion
@@ -124,7 +124,7 @@ export async function ExchangeAuthorizationCode(Options: {
 /**
  * Exchanges a refresh token for a fresh access/refresh token pair. Notion
  * rotates *both* tokens on refresh, so callers must persist the whole pair
- * together (ArchitectureInitialDraft.md §31). Throws {@link NotionOAuthError}.
+ * together. Throws {@link NotionOAuthError}.
  *
  * @category Notion
  * @since 1.0.0
@@ -277,7 +277,7 @@ export type NotionDataSourcePageCount =
 /**
  * Thrown when a Notion Data API request fails. Carries the HTTP status and
  * body so the caller can map it to the right domain error, plus the parsed
- * `Retry-After` when Notion rate-limits (§14).
+ * `Retry-After` when Notion rate-limits.
  */
 export class NotionApiError extends Error
 {
@@ -622,7 +622,7 @@ export async function SendFileUpload(
     return await Response.json() as NotionFileUploadObject;
 }
 
-/** The Notion Create Page request body Notivex sends (§20-21). */
+/** The Notion Create Page request body Notivex sends. */
 export interface NotionCreatePageBody
 {
     readonly children?: ReadonlyArray<unknown>;

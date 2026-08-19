@@ -1,13 +1,12 @@
 /**
  * Server-only page creation (Deno + Effect). Translates a Notivex-shaped
  * `CreatePageCommand` into Notion's Create Page request and records the attempt
- * in `app.operations` for idempotency (ArchitectureInitialDraft.md §20-21):
- * the row is written `pending` before Notion is called, so a retried
- * `OperationId` whose first attempt already succeeded returns the same page
- * instead of creating a duplicate.
+ * in `app.operations` for idempotency: the row is written `pending` before
+ * Notion is called, so a retried `OperationId` whose first attempt already
+ * succeeded returns the same page instead of creating a duplicate.
  *
- * This is the single Notivex → Notion page mapper (§21, §33): domain
- * `PropertyInput`s become Notion property values here and nowhere else.
+ * This is the single Notivex → Notion page mapper: domain `PropertyInput`s
+ * become Notion property values here and nowhere else.
  *
  * @module notivex/functions/_shared/Pages
  *

@@ -19,10 +19,11 @@ import {
     StyleSheet,
     type ViewStyle
 } from "react-native";
+import { MakeStyles, ViewStyle as MakeViewStyle } from "../MakeStyles.js";
 import { Pressable } from "./Pressable.js";
 import type { ReadonlyRecord } from "effect/Record";
-import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
+import { useToken } from "../ThemeProvider.js";
 
 /**
  * The size of a `Switch` component.
@@ -86,6 +87,7 @@ const Switch = ({
     Value = false
 }: SwitchProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const {
         [Semantic.Blue]: BlueColor,
         [Semantic.Default]: DefaultColor
@@ -148,9 +150,8 @@ const Switch = ({
     );
 };
 
-const Styles = StyleSheet.create({
-    Thumb:
-    {
+const useStyles = MakeStyles({
+    Thumb: MakeViewStyle({
         borderColor: "rgba(15, 15, 15, 0.10)",
         borderWidth: StyleSheet.hairlineWidth,
         elevation: 2,
@@ -158,5 +159,5 @@ const Styles = StyleSheet.create({
         shadowOffset: { height: 1, width: 0 },
         shadowOpacity: 0.18,
         shadowRadius: 1.5
-    }
+    })
 });

@@ -3,7 +3,7 @@
  * (which also records the one-time OAuth state), open it in an in-app browser,
  * and let the `notion-oauth-callback` Edge Function redirect back into the app
  * at `notivex://notion/connected`. The token exchange happens server-side; the
- * app never sees Notion credentials (ArchitectureInitialDraft.md §7).
+ * app never sees Notion credentials.
  *
  * @module notivex/Domain/Connection/Connect
  *

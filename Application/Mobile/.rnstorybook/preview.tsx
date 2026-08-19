@@ -9,9 +9,33 @@
  */
 
 import type { Decorator, Preview } from "@storybook/react-native";
+import { MakeStyles, ThemeProvider, ViewStyle } from "@notivex/ui";
 import type { PartialStoryFn, StoryContext } from "storybook/internal/types";
-import { StyleSheet, View } from "react-native";
-import { ThemeProvider } from "@notivex/ui";
+import { View } from "react-native";
+
+/**
+ * Renders one story inside its themed stage. A separate component from
+ * `withNotivexTheme` on purpose — `useStyles` (like any `@notivex/ui` token
+ * hook) needs a `ThemeProvider` ancestor, and a component can't read a
+ * context it renders for the first time in its own body; only descendants
+ * (like this one) see it.
+ */
+const StoryStage = ({
+    Fullscreen,
+    Story
+}: {
+    readonly Fullscreen: boolean;
+    readonly Story: PartialStoryFn;
+}): React.JSX.Element =>
+{
+    const Styles = useStyles();
+
+    return (
+        <View style={ Fullscreen ? Styles.Fullscreen : Styles.Stage }>
+            <Story />
+        </View>
+    );
+};
 
 // Every story here renders a `@notivex/ui` component, and every one of
 // those reads design tokens via `ThemeProvider`'s hooks (`useColor`,
@@ -22,12 +46,10 @@ const withNotivexTheme: Decorator = (
     Context: StoryContext
 ) => (
     <ThemeProvider>
-        <View
-            style={ Context.parameters.layout === "fullscreen"
-                ? styles.fullscreen
-                : styles.stage }>
-            <Story />
-        </View>
+        <StoryStage
+            Fullscreen={ Context.parameters.layout === "fullscreen" }
+            Story={ Story }
+        />
     </ThemeProvider>
 );
 
@@ -49,18 +71,16 @@ const preview: Preview =
 
 export default preview;
 
-const styles = StyleSheet.create({
-    fullscreen:
-    {
+const useStyles = MakeStyles({
+    Fullscreen: ViewStyle({
         flex: 1,
         width: "100%"
-    },
-    stage:
-    {
+    }),
+    Stage: ViewStyle({
         alignItems: "center",
         flex: 1,
         gap: 16,
         justifyContent: "center",
         padding: 24
-    }
+    })
 });

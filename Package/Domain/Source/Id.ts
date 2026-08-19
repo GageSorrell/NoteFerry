@@ -167,7 +167,7 @@ export type DestinationId = Schema.Schema.Type<typeof DestinationId>;
 export/**
        * Identifies a single page-creation attempt, generated client-side before
        * the request is sent so it can be tracked (and, later, safely retried)
-       * across a crash or offline period — see `ArchitectureInitialDraft.md` §20.
+       * across a crash or offline period.
        *
        * @category Id
        * @since 1.0.0

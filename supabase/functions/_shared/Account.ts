@@ -17,7 +17,8 @@ import { AdminClient } from "./Database.ts";
 import { Effect } from "effect";
 
 /**
- * Permanently deletes the current user's Supabase Auth user. Irreversible.
+ * Permanently deletes the current user's Supabase Auth user.
+ * This is irreversible.
  *
  * @category Account
  * @since 1.0.0

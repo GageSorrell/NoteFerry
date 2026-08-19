@@ -1,5 +1,5 @@
 /**
- * Supabase clients for the edge functions (ArchitectureInitialDraft.md §30).
+ * Supabase clients for the edge functions.
  *
  * The **admin** client uses the service-role key and bypasses RLS — it is the
  * only way to touch the `private.*` schema (tokens, OAuth state) and to write

@@ -216,12 +216,13 @@ import {
     Zap
 } from "lucide-react-native";
 import { Avatar, AvatarFallback, AvatarImage } from "../Primitive/Avatar.js";
-import { type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
+import { MakeStyles, ViewStyle as MakeViewStyle, TextStyle } from "../MakeStyles.js";
+import { type StyleProp, View, type ViewStyle } from "react-native";
 import { Body } from "../Primitive/Text.js";
 import type { ReadonlyRecord } from "effect/Record";
 import { Spinner } from "../Primitive/Spinner.js";
-import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
+import { useToken } from "../ThemeProvider.js";
 
 /**
  * Every Lucide icon `IconBlock`/`IconMenu` can render, keyed by Lucide's own
@@ -493,6 +494,7 @@ export/**
        */
 const IconBlock = ({ Icon, Size = "Small", Fallback = " ", Style }: IconBlockProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const Config = SizeConfigs[ Size ];
     const {
         [Semantic.Secondary]: SecondaryColor,
@@ -575,18 +577,15 @@ const IconBlock = ({ Icon, Size = "Small", Fallback = " ", Style }: IconBlockPro
     );
 };
 
-const Styles = StyleSheet.create({
-    Center:
-    {
+const useStyles = MakeStyles({
+    Center: MakeViewStyle({
         alignItems: "center",
         justifyContent: "center"
-    },
-    Glyph:
-    {
+    }),
+    Glyph: TextStyle({
         textAlign: "center"
-    },
-    NoBorder:
-    {
+    }),
+    NoBorder: MakeViewStyle({
         borderWidth: 0
-    }
+    })
 });

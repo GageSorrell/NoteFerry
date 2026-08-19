@@ -1,6 +1,4 @@
 /**
- *
- *
  * @module notivex/App/Root/Navigator
  *
  * @file      Navigator.tsx
@@ -27,8 +25,7 @@ import { useQuickActionCallback } from "expo-quick-actions/hooks";
  * provided above it. The reachable routes are chosen from a stage derived purely
  * from `session + has-connection` (plus an in-memory "onboarding active" flag) —
  * nothing is persisted, so a returning user with a connection lands straight in
- * the app while a first-run user is walked through onboarding
- * (ArchitectureInitialDraft.md §5, §6).
+ * the app while a first-run user is walked through onboarding.
  */
 export function RootNavigator()
 {

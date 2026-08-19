@@ -13,11 +13,12 @@
  */
 
 import { Description, Heading1 } from "@notivex/ui/Primitive";
-import { StyleSheet, View } from "react-native";
+import { MakeStyles, ViewStyle } from "@notivex/ui";
 import { HeroImage } from "@/Component/HeroImage";
 import type { ImageAsset } from "@/Domain/Utility/Asset";
 import type { ReactNode } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { View } from "react-native";
 
 /** {@inheritDoc OnboardingScreen} */
 export interface OnboardingScreenProps
@@ -45,28 +46,27 @@ const OnboardingScreen = ({
     children
 }: OnboardingScreenProps): ReactNode =>
 {
+    const Styles = useStyles();
+    const SubtitleView = () => Subtitle === undefined
+        ? null
+        : <Description>{ Subtitle }</Description>;
+
     return (
-        <View style={ styles.container }>
-            <SafeAreaView style={ styles.safeArea }>
-                <View style={ styles.header }>
+        <View style={ Styles.Container }>
+            <SafeAreaView style={ Styles.SafeArea }>
+                <View style={ Styles.Header }>
                     { Header ?? (
                         <>
                             <Heading1>
                                 { Title }
                             </Heading1>
-                            { Subtitle === undefined
-                                ? null
-                                : (
-                                    <Description>
-                                        { Subtitle }
-                                    </Description>
-                                ) }
+                            <SubtitleView />
                         </>
                     ) }
                 </View>
 
                 <HeroImage Source={ Hero } />
-                <View style={ styles.content }>
+                <View style={ Styles.Content }>
                     { children }
                 </View>
             </SafeAreaView>
@@ -74,36 +74,30 @@ const OnboardingScreen = ({
     );
 };
 
-const styles = StyleSheet.create({
-    container:
-    {
+const useStyles = MakeStyles({
+    Container: ViewStyle({
         flex: 1
-    },
-    content:
-    {
+    }),
+    Content: ViewStyle({
         flex: 1,
         gap: 24,
         marginTop: 32
-    },
-    graphic:
-    {
+    }),
+    Graphic: ViewStyle({
         borderRadius: 28,
         height: 168,
         width: 168
-    },
-    graphicWrap:
-    {
+    }),
+    GraphicWrap: ViewStyle({
         alignItems: "center",
         marginTop: 40
-    },
-    header:
-    {
+    }),
+    Header: ViewStyle({
         gap: 8
-    },
-    safeArea:
-    {
+    }),
+    SafeArea: ViewStyle({
         flex: 1,
-        paddingHorizontal: 32,
+        paddingHorizontal: 8,
         paddingVertical: 24
-    }
+    })
 });

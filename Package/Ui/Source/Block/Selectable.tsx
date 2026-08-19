@@ -34,7 +34,8 @@ import {
     GestureDetector,
     GestureHandlerRootView
 } from "react-native-gesture-handler";
-import { type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
+import { MakeStyles, ViewStyle as MakeViewStyle } from "../MakeStyles.js";
+import { type StyleProp, View, type ViewStyle } from "react-native";
 import { Check } from "lucide-react-native";
 import type { Thunk } from "@sorrell/effect/Function";
 import { useToken } from "../ThemeProvider.js";
@@ -302,6 +303,7 @@ export/**
        */
 const SelectableCheckmark = ({ IsSelected, Style }: SelectableCheckmarkProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const {
         [Semantic.Border]: BorderColor,
         [Semantic.Blue]: BlueColor,
@@ -333,13 +335,12 @@ const SelectableCheckmark = ({ IsSelected, Style }: SelectableCheckmarkProps): R
     );
 };
 
-const Styles = StyleSheet.create({
-    Checkmark:
-    {
+const useStyles = MakeStyles({
+    Checkmark: MakeViewStyle({
         alignItems: "center",
         borderWidth: 1.5,
         height: 20,
         justifyContent: "center",
         width: 20
-    }
+    })
 });

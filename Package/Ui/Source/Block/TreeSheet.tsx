@@ -51,11 +51,12 @@ import {
 } from "../Primitive/BottomSheet.js";
 import { ChevronDown, ChevronRight } from "lucide-react-native";
 import { IconBlock, type IconData } from "./IconBlock.js";
+import { MakeStyles, TextStyle, ViewStyle } from "../MakeStyles.js";
 import { MenuItem, MenuItemCheck } from "../Primitive/Menu.js";
-import { StyleSheet, View } from "react-native";
 import { Input } from "../Primitive/Input.js";
 import type { Thunk } from "@sorrell/effect/Function";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
+import { View } from "react-native";
 import { useToken } from "../ThemeProvider.js";
 
 const IndentWidth = 16 as const;
@@ -214,6 +215,7 @@ const TreeSheetRow = <A extends TreeItemData,>({
     OnSelect
 }: TreeSheetRowProps<A>): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const { [Semantic.Muted]: MutedColor } = useToken(Semantic.Muted);
 
     return (
@@ -286,6 +288,7 @@ const TreeSheet = <A extends TreeItemData,>({
     TestID
 }: TreeSheetProps<A>): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const [ Query, SetQuery ] = React.useState("");
     const [ ExpandedIds, SetExpandedIds ] = React.useState<ReadonlySet<string>>(new Set());
 
@@ -388,36 +391,30 @@ const TreeSheet = <A extends TreeItemData,>({
     );
 };
 
-const Styles = StyleSheet.create({
-    Empty:
-    {
+const useStyles = MakeStyles({
+    Empty: TextStyle({
         paddingVertical: 32,
         textAlign: "center"
-    },
-    ExpandButton:
-    {
+    }),
+    ExpandButton: ViewStyle({
         alignItems: "center",
         height: 20,
         justifyContent: "center",
         width: 20
-    },
-    Header:
-    {
+    }),
+    Header: ViewStyle({
         gap: 12,
         paddingBottom: 8
-    },
-    HeaderTitle:
-    {
+    }),
+    HeaderTitle: TextStyle({
         textAlign: "center"
-    },
-    List:
-    {
+    }),
+    List: ViewStyle({
         flex: 1
-    },
-    RowLeading:
-    {
+    }),
+    RowLeading: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
         gap: 4
-    }
+    })
 });

@@ -25,11 +25,11 @@ import {
     Modal,
     Pressable as RNPressable,
     type StyleProp,
-    StyleSheet,
     type TextStyle,
     View,
     type ViewStyle
 } from "react-native";
+import { MakeStyles, TextStyle as MakeTextStyle, ViewStyle as MakeViewStyle } from "../MakeStyles.js";
 import { CloneTrigger } from "./Popup.js";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Pressable } from "./Pressable.js";
@@ -157,6 +157,7 @@ export/**
        */
 const DialogContent = ({ HideClose = false, Style, children }: DialogContentProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const { IsOpen, SetIsOpen } = useDialogContext();
     const {
         [Semantic.BackgroundModal]: ModalBackground,
@@ -316,7 +317,11 @@ export/**
        * @since 1.0.0
        */
 const DialogIcon = ({ Style, children }: DialogIconProps): React.JSX.Element =>
-    <View style={ [ Styles.Icon, Style ] }>{ children }</View>;
+{
+    const Styles = useStyles();
+
+    return <View style={ [ Styles.Icon, Style ] }>{ children }</View>;
+};
 
 /** {@inheritDoc DialogTitle} */
 export interface DialogTitleProps extends React.PropsWithChildren
@@ -331,9 +336,15 @@ export/**
        * @since 1.0.0
        */
 const DialogTitle = ({ Style, children }: DialogTitleProps): React.JSX.Element =>
-    <ModalTitle Style={ [ Styles.Centered, Style ] }>
-        { children }
-    </ModalTitle>;
+{
+    const Styles = useStyles();
+
+    return (
+        <ModalTitle Style={ [ Styles.Centered, Style ] }>
+            { children }
+        </ModalTitle>
+    );
+};
 
 /** {@inheritDoc DialogDescription} */
 export interface DialogDescriptionProps extends React.PropsWithChildren { }
@@ -345,39 +356,39 @@ export/**
        * @since 1.0.0
        */
 const DialogDescription = ({ children }: DialogDescriptionProps): React.JSX.Element =>
-    <Description Style={ Styles.Centered }>
-        { children }
-    </Description>;
+{
+    const Styles = useStyles();
 
-const Styles = StyleSheet.create({
-    Card:
-    {
+    return (
+        <Description Style={ Styles.Centered }>
+            { children }
+        </Description>
+    );
+};
+
+const useStyles = MakeStyles({
+    Card: MakeViewStyle({
         maxWidth: 384,
         width: "88%"
-    },
-    Centered:
-    {
+    }),
+    Centered: MakeTextStyle({
         textAlign: "center"
-    },
-    CloseButton:
-    {
+    }),
+    CloseButton: MakeViewStyle({
         position: "absolute",
         right: 16,
         top: 16
-    },
-    Icon:
-    {
+    }),
+    Icon: MakeViewStyle({
         alignItems: "center",
         justifyContent: "center"
-    },
-    Overlay:
-    {
+    }),
+    Overlay: MakeViewStyle({
         alignItems: "center",
         flex: 1,
         justifyContent: "center"
-    },
-    Root:
-    {
+    }),
+    Root: MakeViewStyle({
         flex: 1
-    }
+    })
 });

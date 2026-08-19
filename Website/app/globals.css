@@ -1,0 +1,118 @@
+/**
+ * Tailwind v4 entry point and design tokens for the Notivex marketing site.
+ *
+ * Every light/dark color value below is converted 1:1 from the semantic
+ * tokens already shipped in the mobile app's design system
+ * (`Package/Ui/Source/Token/Semantic.ts`), so the website matches the
+ * in-app light/dark palette exactly rather than approximating it with
+ * shadcn's stock neutral theme. `--radius` mirrors the base radius noted
+ * in `Package/Ui/Source/Token/Radii.ts`.
+ */
+
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+    --font-sans: var(--font-inter);
+
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-hover: var(--primary-hover);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-warning: var(--warning);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+}
+
+:root {
+    --radius: 0.5rem;
+
+    /* rgb(255,255,255) */
+    --background: oklch(1 0 90);
+    /* rgb(50,48,44) */
+    --foreground: oklch(0.31 0.0076 84.59);
+
+    /* rgb(255,255,255) */
+    --card: oklch(1 0 90);
+    /* rgb(50,48,44) */
+    --card-foreground: oklch(0.31 0.0076 84.59);
+
+    /* rgb(249,248,247) — Notion sidebar */
+    --muted: oklch(0.98 0.0017 67.8);
+    /* rgb(142,139,134) */
+    --muted-foreground: oklch(0.64 0.0082 80.71);
+
+    /* rgb(35,131,226) */
+    --primary: oklch(0.61 0.1674 252.7);
+    /* rgb(0,119,212) */
+    --primary-hover: oklch(0.57 0.1676 251.69);
+    --primary-foreground: oklch(1 0 90);
+
+    /* rgb(235,87,87) */
+    --destructive: oklch(0.65 0.1835 23.68);
+    /* rgb(218,163,64) */
+    --warning: oklch(0.75 0.1304 78.82);
+
+    /* rgba(50,48,44,0.1) */
+    --border: oklch(0.31 0.0076 84.59 / 10%);
+    --input: oklch(0.31 0.0076 84.59 / 15%);
+    --ring: oklch(0.61 0.1674 252.7 / 40%);
+}
+
+.dark {
+    /* rgb(25,25,25) */
+    --background: oklch(0.21 0 90);
+    /* rgb(255,255,255) */
+    --foreground: oklch(1 0 90);
+
+    /* rgb(32,32,32) */
+    --card: oklch(0.24 0 90);
+    --card-foreground: oklch(1 0 90);
+
+    /* rgb(32,32,32) */
+    --muted: oklch(0.24 0 90);
+    /* rgb(168,164,156) */
+    --muted-foreground: oklch(0.72 0.0123 84.59);
+
+    /* rgb(35,131,226) — same accent in both themes */
+    --primary: oklch(0.61 0.1674 252.7);
+    --primary-hover: oklch(0.57 0.1676 251.69);
+    --primary-foreground: oklch(1 0 90);
+
+    --destructive: oklch(0.65 0.1835 23.68);
+    --warning: oklch(0.75 0.1304 78.82);
+
+    /* rgba(255,255,255,0.1) */
+    --border: oklch(1 0 90 / 10%);
+    --input: oklch(1 0 90 / 15%);
+    --ring: oklch(0.61 0.1674 252.7 / 50%);
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}

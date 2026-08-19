@@ -2,8 +2,7 @@
  * `CreatePageCommand` — a Notivex-shaped request to create a Notion page,
  * distinct from both {@link PageDraft.PageDraft} (local, still-editable
  * state) and Notion's own Create Page request body, which only the
- * server-side Notion adapter ever constructs — see
- * `ArchitectureInitialDraft.md` §20-21.
+ * server-side Notion adapter ever constructs.
  *
  * @module @notivex/domain/Command
  *

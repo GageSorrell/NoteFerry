@@ -10,21 +10,22 @@
  */
 
 import type * as Domain from "@notivex/domain";
-import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 import { Body, Button, Description, Heading1 } from "@notivex/ui/Primitive";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { useEffect, useState } from "react";
 import { ListDataSources } from "@/Domain/Runtime/NotivexApi";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDevelopmentOnboarding } from
     "@/features/onboarding/onboarding-development";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
-import { useTheme } from "@notivex/ui";
 
 const DatabaseSettingsScreen = (): React.JSX.Element =>
 {
     const Development = useDevelopmentOnboarding();
     const Router = useLazyRouter();
     const Theme = useTheme();
+    const Styles = useStyles();
     const [ DataSources, SetDataSources ] =
         useState<ReadonlyArray<Domain.DataSource.CachedDataSourceSchema>>([ ]);
     const [ IsLoading, SetIsLoading ] = useState(!Development.Active);
@@ -70,17 +71,17 @@ const DatabaseSettingsScreen = (): React.JSX.Element =>
     }, [ Development.Active ]);
 
     return (
-        <View style={ styles.container }>
-            <SafeAreaView style={ styles.safeArea }>
+        <View style={ Styles.Container }>
+            <SafeAreaView style={ Styles.SafeArea }>
                 <Button
                     AccessibilityLabel="Back"
                     Appearance="Link"
                     OnPress={ Router.back }
-                    Style={ styles.back }>
+                    Style={ Styles.Back }>
                     Back
                 </Button>
 
-                <View style={ styles.header }>
+                <View style={ Styles.Header }>
                     <Heading1>Database settings</Heading1>
                     <Description>
                         Choose a database to customize its alias and the properties
@@ -89,8 +90,8 @@ const DatabaseSettingsScreen = (): React.JSX.Element =>
                 </View>
 
                 <ScrollView
-                    contentContainerStyle={ styles.list }
-                    style={ styles.scroll }>
+                    contentContainerStyle={ Styles.List }
+                    style={ Styles.Scroll }>
                     { IsLoading
                         ? <ActivityIndicator color={ Theme.Semantic.Cursor } />
                         : DataSources.length === 0
@@ -104,10 +105,10 @@ const DatabaseSettingsScreen = (): React.JSX.Element =>
                             ) => (
                                 <View
                                     key={ Source.DataSourceId }
-                                    style={ styles.row }>
+                                    style={ Styles.Row }>
                                     <Body
                                         NumberOfLines={ 2 }
-                                        Style={ styles.databaseTitle }>
+                                        Style={ Styles.DatabaseTitle }>
                                         { Source.Title }
                                     </Body>
                                     <Button
@@ -134,48 +135,40 @@ const DatabaseSettingsScreen = (): React.JSX.Element =>
     );
 };
 
-const styles = StyleSheet.create({
-    back:
-    {
+const useStyles = MakeStyles({
+    Back: ViewStyle({
         alignSelf: "flex-start"
-    },
-    container:
-    {
+    }),
+    Container: ViewStyle({
         flex: 1
-    },
-    databaseTitle:
-    {
+    }),
+    DatabaseTitle: TextStyle({
         flex: 1
-    },
-    header:
-    {
-        gap: 8
-    },
-    list:
-    {
-        gap: 12,
-        paddingVertical: 24
-    },
-    row:
-    {
+    }),
+    Header: ViewStyle({
+        gap: Token.Spacing.S
+    }),
+    List: ViewStyle({
+        gap: Token.Spacing.M,
+        paddingVertical: Token.Spacing.Xl
+    }),
+    Row: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
-        gap: 16,
+        gap: Token.Spacing.L,
         justifyContent: "space-between",
-        minHeight: 48
-    },
-    safeArea:
-    {
+        minHeight: Token.Size.Control.Large
+    }),
+    SafeArea: ViewStyle({
         flex: 1,
-        gap: 16,
-        paddingHorizontal: 24,
-        paddingVertical: 24
-    },
-    scroll:
-    {
+        gap: Token.Spacing.L,
+        paddingHorizontal: Token.Spacing.Xl,
+        paddingVertical: Token.Spacing.Xl
+    }),
+    Scroll: ViewStyle({
         alignSelf: "stretch",
         flex: 1
-    }
+    })
 });
 
 export default DatabaseSettingsScreen;

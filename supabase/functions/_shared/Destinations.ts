@@ -1,9 +1,8 @@
 /**
  * Server-only destination CRUD (Deno + Effect). A destination is how a user
- * configured a quick-entry experience for one cached data source
- * (ArchitectureInitialDraft.md §24-25).
+ * configured a quick-entry experience for one cached data source.
  *
- * Persistence follows the §25 hybrid: queryable columns (name, position, …)
+ * Persistence follows a hybrid: queryable columns (name, position, …)
  * plus one schema-versioned `configuration` JSONB blob holding the
  * `FieldConfiguration` and `DestinationTemplate`. That blob is *encoded and
  * decoded through Effect Schema* — a field default can be a
@@ -19,13 +18,13 @@
  */
 
 import * as Domain from "@notivex/domain";
-import { AdminClient } from "./Database.ts";
 import { Effect, Schema } from "effect";
+import { AdminClient } from "./Database.ts";
 
-/* The schema-versioned blob stored in `destinations.configuration`: the
- * `FieldConfiguration` and `DestinationTemplate`, encoded/decoded through
- * Effect Schema so a field default's `DatePropertyInput` (wire: ISO string;
- * domain: `Date`) round-trips correctly. */
+/* The schema-versioned blob stored in `destinations.configuration`: the     *
+ * `FieldConfiguration` and `DestinationTemplate`, encoded/decoded through   *
+ * Effect Schema so a field default's `DatePropertyInput` (wire: ISO string; *
+ * domain: `Date`) round-trips correctly.                                    */
 const ConfigurationSchema = Schema.Struct({
     FieldConfiguration: Domain.Destination.FieldConfiguration,
     PostCreationBehavior: Schema.optional(Domain.Behavior.PostCreationBehavior),
@@ -85,7 +84,7 @@ function RowToDestination(Row: Record<string, unknown>): Domain.Destination.Dest
         Id: Row.id as Domain.Id.DestinationId,
         Name: Row.name as string,
         Position: Row.position as number,
-        ...(Config.PostCreationBehavior ? { PostCreationBehavior: Config.PostCreationBehavior } : {}),
+        ...(Config.PostCreationBehavior ? { PostCreationBehavior: Config.PostCreationBehavior } : { }),
         Template: Config.Template,
         UpdatedAt: new Date(Row.updated_at as string),
         UserId: Row.user_id as Domain.Id.UserId
@@ -93,8 +92,10 @@ function RowToDestination(Row: Record<string, unknown>): Domain.Destination.Dest
 }
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-const DecodeFailed = (Error_: unknown): Domain.Error.DatabaseError =>
-    new Domain.Error.DatabaseError({ Message: `Destination configuration codec failed: ${String(Error_)}` });
+const DecodeFailed = (DecodeError: unknown): Domain.Error.DatabaseError =>
+    new Domain.Error.DatabaseError({
+        Message: `Destination configuration codec failed: ${String(DecodeError)}`
+    });
 
 /**
  * Applies a refreshed Notion property schema to every destination that uses
@@ -186,7 +187,7 @@ export function ListForUser(UserId: string)
 
         return yield* Effect.try({
             catch: DecodeFailed,
-            try: () => (data ?? []).map((Row) => RowToDestination(Row as Record<string, unknown>))
+            try: () => (data ?? [ ]).map(RowToDestination)
         });
     });
 }
@@ -217,7 +218,9 @@ export function CreateForUser(UserId: string, Payload: DestinationCreateInput)
 
         if (!Connection)
         {
-            return yield* Effect.fail(new Domain.Error.NotionConnectionNotFound({ ConnectionId: Payload.ConnectionId }));
+            return yield* Effect.fail(new Domain.Error.NotionConnectionNotFound({
+                ConnectionId: Payload.ConnectionId
+            }));
         }
 
         const { data: DataSource, error: DataSourceError } = yield* Effect.promise(async () =>
@@ -236,7 +239,9 @@ export function CreateForUser(UserId: string, Payload: DestinationCreateInput)
 
         if (!DataSource)
         {
-            return yield* Effect.fail(new Domain.Error.DataSourceNotFound({ DataSourceId: Payload.DataSourceId }));
+            return yield* Effect.fail(new Domain.Error.DataSourceNotFound({
+                DataSourceId: Payload.DataSourceId
+            }));
         }
 
         const ConfigurationJson = yield* Effect.try({
@@ -267,10 +272,15 @@ export function CreateForUser(UserId: string, Payload: DestinationCreateInput)
 
         if (error || !data)
         {
-            return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: error?.message ?? "Insert returned no row." }));
+            return yield* Effect.fail(new Domain.Error.DatabaseError({
+                Message: error?.message ?? "Insert returned no row."
+            }));
         }
 
-        return yield* Effect.try({ catch: DecodeFailed, try: () => RowToDestination(data as Record<string, unknown>) });
+        return yield* Effect.try({
+            catch: DecodeFailed,
+            try: () => RowToDestination(data as Record<string, unknown>)
+        });
     });
 }
 
@@ -301,7 +311,9 @@ export function UpdateForUser(UserId: string, DestinationId: string, Payload: De
 
         if (!Existing)
         {
-            return yield* Effect.fail(new Domain.Error.DestinationNotFound({ DestinationId: DestinationId as Domain.Id.DestinationId }));
+            return yield* Effect.fail(new Domain.Error.DestinationNotFound({
+                DestinationId: DestinationId as Domain.Id.DestinationId
+            }));
         }
 
         const Current = yield* Effect.try({
@@ -350,10 +362,15 @@ export function UpdateForUser(UserId: string, DestinationId: string, Payload: De
 
         if (error || !data)
         {
-            return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: error?.message ?? "Update returned no row." }));
+            return yield* Effect.fail(new Domain.Error.DatabaseError({
+                Message: error?.message ?? "Update returned no row."
+            }));
         }
 
-        return yield* Effect.try({ catch: DecodeFailed, try: () => RowToDestination(data as Record<string, unknown>) });
+        return yield* Effect.try({
+            catch: DecodeFailed,
+            try: () => RowToDestination(data as Record<string, unknown>)
+        });
     });
 }
 

@@ -1,8 +1,7 @@
 /**
  * `PageDraft` — local, unsaved quick-entry state: what the user has typed
  * into a destination's form before it becomes a command sent to the
- * Notivex API. This is a Notivex-shaped value, never Notion-shaped JSON —
- * see `ArchitectureInitialDraft.md` §19-21.
+ * Notivex API. This is a Notivex-shaped value, never Notion-shaped JSON.
  *
  * @module @notivex/domain/PageDraft
  *

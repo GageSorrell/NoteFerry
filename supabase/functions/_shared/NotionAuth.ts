@@ -1,9 +1,8 @@
 /**
  * Shared server helpers for authenticating Notion Data API calls on behalf of
  * a connection: loading its stored access/refresh tokens (verifying ownership
- * and status) and running a call with a one-shot token refresh on 401
- * (ArchitectureInitialDraft.md §30-31). Used by both the data-source and page
- * slices.
+ * and status) and running a call with a one-shot token refresh on 401. Used by
+ * both the data-source and page slices.
  *
  * @module notivex/functions/_shared/NotionAuth
  *
@@ -51,12 +50,20 @@ export function LoadConnectionTokens(UserId: string, ConnectionId: string)
 
         if (!Connection)
         {
-            return yield* Effect.fail(new Domain.Error.NotionConnectionNotFound({ ConnectionId: ConnectionId as Domain.Id.NotionConnectionId }));
+            return yield* Effect.fail(
+                new Domain.Error.NotionConnectionNotFound({
+                    ConnectionId: ConnectionId as Domain.Id.NotionConnectionId
+                })
+            );
         }
 
         if (Connection.status === "Revoked")
         {
-            return yield* Effect.fail(new Domain.Error.NotionConnectionRevoked({ ConnectionId: ConnectionId as Domain.Id.NotionConnectionId }));
+            return yield* Effect.fail(
+                new Domain.Error.NotionConnectionRevoked({
+                    ConnectionId: ConnectionId as Domain.Id.NotionConnectionId
+                })
+            );
         }
 
         const { data: Credential, error: CredentialError } = yield* Effect.promise(async () =>
@@ -73,14 +80,18 @@ export function LoadConnectionTokens(UserId: string, ConnectionId: string)
 
         if (!Credential)
         {
-            return yield* Effect.fail(new Domain.Error.NotionConnectionRevoked({ ConnectionId: ConnectionId as Domain.Id.NotionConnectionId }));
+            return yield* Effect.fail(
+                new Domain.Error.NotionConnectionRevoked({
+                    ConnectionId: ConnectionId as Domain.Id.NotionConnectionId
+                })
+            );
         }
 
         const Tokens: ConnectionTokens =
-        {
-            AccessToken: Credential.access_token as string,
-            RefreshToken: (Credential.refresh_token ?? null) as string | null
-        };
+            {
+                AccessToken: Credential.access_token as string,
+                RefreshToken: (Credential.refresh_token ?? null) as string | null
+            };
 
         return Tokens;
     });
@@ -88,20 +99,20 @@ export function LoadConnectionTokens(UserId: string, ConnectionId: string)
 
 /**
  * Runs a Notion Data API call with the connection's access token. On a 401,
- * refreshes the token once (rotating and persisting the whole pair, §31) and
+ * refreshes the token once (rotating and persisting the whole pair) and
  * retries; a failed refresh surfaces as a 401 {@link Notion.NotionApiError}.
  *
  * NOTE: the refresh is not yet serialized across concurrent requests for the
- * same connection (§31) — a follow-up once concurrency is observed.
+ * same connection — a follow-up once concurrency is observed.
  *
  * @category NotionAuth
  * @since 1.0.0
  */
-export async function CallNotionData<T>(
+export async function CallNotionData<A>(
     Tokens: ConnectionTokens,
     ConnectionId: string,
-    Operation: (AccessToken: string) => Promise<T>
-): Promise<T>
+    Operation: (AccessToken: string) => Promise<A>
+): Promise<A>
 {
     try
     {
@@ -157,9 +168,11 @@ export async function CallNotionData<T>(
  * @category NotionAuth
  * @since 1.0.0
  */
-export function RateLimited(Error_: Notion.NotionApiError): Domain.Error.NotionRateLimited
+export function RateLimited(ApiError: Notion.NotionApiError): Domain.Error.NotionRateLimited
 {
     return new Domain.Error.NotionRateLimited(
-        Error_.RetryAfterSeconds !== undefined ? { RetryAfterSeconds: Error_.RetryAfterSeconds } : {}
+        ApiError.RetryAfterSeconds !== undefined
+            ? { RetryAfterSeconds: ApiError.RetryAfterSeconds }
+            : { }
     );
 }

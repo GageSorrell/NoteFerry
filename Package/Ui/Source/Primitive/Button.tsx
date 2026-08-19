@@ -20,10 +20,10 @@ import {
     type GestureResponderEvent,
     View as RNView,
     type StyleProp,
-    StyleSheet,
     type View,
     type ViewStyle
 } from "react-native";
+import { MakeStyles, ViewStyle as MakeViewStyle, TextStyle } from "../MakeStyles.js";
 import type { ReadonlyRecord } from "effect/Record";
 import { Spinner } from "./Spinner.js";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
@@ -105,6 +105,7 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
     children
 }: ButtonProps, ForwardedRef: React.ForwardedRef<View>): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const {
         [Semantic.Primary]: PrimaryColor,
         [Semantic.Icon]: IconColor,
@@ -362,34 +363,40 @@ const AuthButton = ({
     children,
     ...Props
 }: AuthButtonProps): React.JSX.Element =>
-    <Button
-        { ...Props }
-        Appearance="Primary"
-        Size="Large"
-        Style={ [ Styles.AuthButton, Style ] }>
-        <RNView
-            accessible={ false }
-            style={ Styles.AuthButtonSide }>
-            { Icon }
-        </RNView>
-        { typeof children === "string"
-            ? (
-                <ButtonLabel
-                    Color={ Semantic.Primary }
-                    Style={ Styles.AuthButtonLabel }>
-                    { children }
-                </ButtonLabel>
-            )
-            : (
-                <RNView style={ Styles.AuthButtonContent }>
-                    { children }
-                </RNView>
-            ) }
-        <RNView
-            accessible={ false }
-            style={ Styles.AuthButtonSide }
-        />
-    </Button>;
+{
+    const Styles = useStyles();
+
+    return (
+        <Button
+            { ...Props }
+            Appearance="Primary"
+            Size="Large"
+            Style={ [ Styles.AuthButton, Style ] }>
+            <RNView
+                accessible={ false }
+                style={ Styles.AuthButtonSide }>
+                { Icon }
+            </RNView>
+            { typeof children === "string"
+                ? (
+                    <ButtonLabel
+                        Color={ Semantic.Primary }
+                        Style={ Styles.AuthButtonLabel }>
+                        { children }
+                    </ButtonLabel>
+                )
+                : (
+                    <RNView style={ Styles.AuthButtonContent }>
+                        { children }
+                    </RNView>
+                ) }
+            <RNView
+                accessible={ false }
+                style={ Styles.AuthButtonSide }
+            />
+        </Button>
+    );
+};
 
 AuthButton.displayName = "AuthButton";
 
@@ -403,68 +410,66 @@ const CloseButton = ({
     OnPress,
     AccessibilityLabel = "Close"
 }: Pick<ButtonProps, "OnPress" | "AccessibilityLabel">): React.JSX.Element =>
-    <Button
-        { ...{ AccessibilityLabel, OnPress } }
-        Appearance="Close"
-        Size="Circle">
-        <Body
-            Color={ Semantic.Muted }
-            Style={ Styles.CloseGlyph }>
-            ✕
-        </Body>
-    </Button>;
+{
+    const Styles = useStyles();
+
+    return (
+        <Button
+            { ...{ AccessibilityLabel, OnPress } }
+            Appearance="Close"
+            Size="Circle">
+            <Body
+                Color={ Semantic.Muted }
+                Style={ Styles.CloseGlyph }>
+                ✕
+            </Body>
+        </Button>
+    );
+};
 
 CloseButton.displayName = "CloseButton";
 
-const Styles = StyleSheet.create({
-    AuthButton:
-    {
+const useStyles = MakeStyles({
+    AuthButton: MakeViewStyle({
         alignSelf: "stretch",
         borderRadius: 12,
-        height: 52,
-        paddingHorizontal: 12
-    },
-    AuthButtonContent:
-    {
+        height: 52
+        // paddingHorizontal: 12
+    }),
+    AuthButtonContent: MakeViewStyle({
         alignItems: "center",
         flex: 1
-    },
-    AuthButtonLabel:
-    {
+    }),
+    AuthButtonLabel: TextStyle({
         flex: 1,
         textAlign: "center"
-    },
-    AuthButtonSide:
-    {
+    }),
+    AuthButtonSide: MakeViewStyle({
         alignItems: "center",
         height: 24,
         justifyContent: "center",
         width: 24
-    },
-    Base:
-    {
+    }),
+    Base: MakeViewStyle({
         alignItems: "center",
         flexDirection: "row",
         gap: 6,
         justifyContent: "center"
-    },
-    CloseGlyph:
-    {
+    }),
+    CloseGlyph: TextStyle({
         fontSize: 10,
         includeFontPadding: false,
         lineHeight: 12,
         textAlign: "center",
         textAlignVertical: "center"
-    },
-    Disabled:
-    {
+    }),
+    Disabled: MakeViewStyle({
         opacity: 0.4
-    },
-    Label:
-    {
+    }),
+    Label: TextStyle({
         /* Fill the row so `textAlign` positions the glyph. `justifyContent`
          * alone does not center a single child through the gesture-handler
          * touchable's inner wrapper on Android. */
         flexGrow: 1
-    }
+    })
 });

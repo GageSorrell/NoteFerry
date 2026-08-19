@@ -1,7 +1,6 @@
 /**
  * The unauthenticated notify webhook for a new `app.account_data_requests`
- * row (`ArchitectureInitialDraft.md` §29-ish — account-settings work).
- * Called server-to-server by the `account_data_requests_notify` Postgres
+ * row. Called server-to-server by the `account_data_requests_notify` Postgres
  * trigger (`supabase/schemas/11_notifications.sql`) via `pg_net`, not by the
  * app, so it carries no Supabase user JWT and is deployed with
  * `verify_jwt = false`. Authenticity is instead checked with a shared secret
@@ -56,16 +55,16 @@ Deno.serve(async (Request: Request) =>
 
     const EmailResponse = await fetch("https://api.resend.com/emails", {
         body: JSON.stringify({
-            from: "Notivex <notifications@notivex.app>",
-            html: `<p>User <code>${Payload.user_id}</code> requested a copy of `
-                + `their account data (request <code>${Payload.id}</code>, `
-                + `${Payload.created_at}).</p>`,
+            from: "Notivex <noreply@notifications.sorrell.sh>",
+            html: `<p>User <code>${ Payload.user_id }</code> requested a copy of `
+                + `their account data (request <code>${ Payload.id }</code>, `
+                + `${ Payload.created_at }).</p>`,
             subject: "Notivex: account data request",
             to: [ NotifyEmail ]
         }),
         headers:
         {
-            Authorization: `Bearer ${ResendApiKey}`,
+            Authorization: `Bearer ${ ResendApiKey }`,
             "Content-Type": "application/json"
         },
         method: "POST"

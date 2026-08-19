@@ -13,9 +13,10 @@
  */
 
 import * as Application from "expo-application";
+import type * as Domain from "@notivex/domain";
 import * as MailComposer from "expo-mail-composer";
 import * as StoreReview from "expo-store-review";
-import type * as Domain from "@notivex/domain";
+import { Alert, ScrollView, View } from "react-native";
 import {
     Body,
     Button,
@@ -28,16 +29,15 @@ import {
     Switch
 } from "@notivex/ui/Primitive";
 import { ChevronRight, Database, GripVertical } from "lucide-react-native";
-import type { PressableStateCallbackType } from "react-native";
-import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { BehaviorPicker } from "@/Component/BehaviorPicker";
 import Constants from "expo-constants";
+import type { PressableStateCallbackType } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useCallback } from "react";
 import { useConnections } from "@/Domain/Connection";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSettings } from "@/features/settings/use-settings";
-import { useTheme } from "@notivex/ui";
 
 const SortableItemExtent = 44;
 
@@ -52,15 +52,15 @@ interface SettingsRowProps extends React.PropsWithChildren
 function SettingsRow({ Label, OnPress, children }: SettingsRowProps): React.JSX.Element
 {
     const Theme = useTheme();
+    const Styles = useStyles();
 
     return (
         <Pressable
             Accessibility={ { Label, Role: "button" } }
             OnPress={ OnPress }
             style={ ({ pressed }: PressableStateCallbackType) => [
-                styles.row,
-                { backgroundColor: Theme.Semantic.BackgroundModal },
-                pressed && styles.rowPressed
+                Styles.Row,
+                pressed && Styles.RowPressed
             ] }>
             { children }
             <ChevronRight
@@ -78,6 +78,7 @@ const SettingsScreen = (): React.JSX.Element =>
 
     const Router = useLazyRouter();
     const Theme = useTheme();
+    const Styles = useStyles();
     const { DataSources } = useConnections();
     const { Settings: AppSettings, Update } = useSettings();
 
@@ -141,29 +142,29 @@ const SettingsScreen = (): React.JSX.Element =>
     }, [ ]);
 
     return (
-        <View style={ styles.container }>
-            <SafeAreaView style={ styles.safeArea }>
+        <View style={ Styles.Container }>
+            <SafeAreaView style={ Styles.SafeArea }>
                 <Button
                     AccessibilityLabel="Back"
                     Appearance="Link"
                     OnPress={ Router.back }
-                    Style={ styles.back }>
+                    Style={ Styles.Back }>
                     Back
                 </Button>
 
                 <ScrollView
-                    contentContainerStyle={ styles.list }
-                    style={ styles.scroll }>
+                    contentContainerStyle={ Styles.List }
+                    style={ Styles.Scroll }>
                     <SettingsRow
                         Label="Database settings"
                         OnPress={ Router.push("/database-settings") }>
-                        <View style={ styles.rowLeft }>
+                        <View style={ Styles.RowLeft }>
                             <Database
                                 color={ Theme.Semantic.IconSecondary }
                                 size={ 20 }
                                 strokeWidth={ 1.8 }
                             />
-                            <View style={ styles.rowText }>
+                            <View style={ Styles.RowText }>
                                 <Body>Databases</Body>
                                 <Description>
                                     Manage the databases available for quick entry.
@@ -172,8 +173,8 @@ const SettingsScreen = (): React.JSX.Element =>
                         </View>
                     </SettingsRow>
 
-                    <Heading2 Style={ styles.sectionHeading }>On launch</Heading2>
-                    <Description Style={ styles.sectionSubtitle }>
+                    <Heading2 Style={ Styles.SectionHeading }>On launch</Heading2>
+                    <Description Style={ Styles.SectionSubtitle }>
                         What Notivex shows when it opens.
                     </Description>
                     <BehaviorPicker
@@ -188,8 +189,8 @@ const SettingsScreen = (): React.JSX.Element =>
                         Value={ AppSettings.LaunchBehavior }
                     />
 
-                    <Heading2 Style={ styles.sectionHeading }>Home screen order</Heading2>
-                    <Description Style={ styles.sectionSubtitle }>
+                    <Heading2 Style={ Styles.SectionHeading }>Home screen order</Heading2>
+                    <Description Style={ Styles.SectionSubtitle }>
                         Drag to reorder the databases shown on the home screen.
                     </Description>
                     { DatabaseOrder.length === 0
@@ -208,11 +209,7 @@ const SettingsScreen = (): React.JSX.Element =>
                                             <Sortable.Item
                                                 Id={ Id }
                                                 key={ Id }>
-                                                <View
-                                                    style={ [
-                                                        styles.sortableRow,
-                                                        { backgroundColor: Theme.Semantic.BackgroundModal }
-                                                    ] }>
+                                                <View style={ Styles.SortableRow }>
                                                     <Body NumberOfLines={ 1 }>
                                                         { Source?.Title ?? Id }
                                                     </Body>
@@ -230,8 +227,8 @@ const SettingsScreen = (): React.JSX.Element =>
                             </Sortable.Root>
                         ) }
 
-                    <Heading2 Style={ styles.sectionHeading }>Quick actions</Heading2>
-                    <Description Style={ styles.sectionSubtitle }>
+                    <Heading2 Style={ Styles.SectionHeading }>Quick actions</Heading2>
+                    <Description Style={ Styles.SectionSubtitle }>
                         Choose up to six databases to show as home-screen shortcuts
                         (long-press the app icon). Leave all unchecked to use the first
                         six databases automatically.
@@ -245,7 +242,7 @@ const SettingsScreen = (): React.JSX.Element =>
                         return (
                             <View
                                 key={ Source.DataSourceId }
-                                style={ styles.quickActionRow }>
+                                style={ Styles.QuickActionRow }>
                                 <Checkbox
                                     Checked={ Checked }
                                     Disabled={ !Checked && AtLimit }
@@ -256,9 +253,9 @@ const SettingsScreen = (): React.JSX.Element =>
                         );
                     }) }
 
-                    <Heading2 Style={ styles.sectionHeading }>Notifications</Heading2>
-                    <View style={ styles.switchRow }>
-                        <View style={ styles.rowText }>
+                    <Heading2 Style={ Styles.SectionHeading }>Notifications</Heading2>
+                    <View style={ Styles.SwitchRow }>
+                        <View style={ Styles.RowText }>
                             <Body>Notify when back online</Body>
                             <Description>
                                 Notify you if a page was created while offline.
@@ -274,32 +271,32 @@ const SettingsScreen = (): React.JSX.Element =>
                     <SettingsRow
                         Label="Account settings"
                         OnPress={ Router.push("/account-settings") }>
-                        <View style={ styles.rowText }>
+                        <View style={ Styles.RowText }>
                             <Body>Account settings</Body>
                         </View>
                     </SettingsRow>
 
-                    <Heading2 Style={ styles.sectionHeading }>Support Notivex</Heading2>
+                    <Heading2 Style={ Styles.SectionHeading }>Support Notivex</Heading2>
                     <Button
                         Appearance="Cell"
                         OnPress={ () => void HandleLeaveReview() }
-                        Style={ styles.supportButton }>
+                        Style={ Styles.SupportButton }>
                         Leave a review
                     </Button>
                     <Button
                         Appearance="Cell"
                         OnPress={ () => void HandleSubmitFeedback() }
-                        Style={ styles.supportButton }>
+                        Style={ Styles.SupportButton }>
                         Submit feedback
                     </Button>
                     <Button
                         Appearance="Cell"
                         OnPress={ HandleReportBug }
-                        Style={ styles.supportButton }>
+                        Style={ Styles.SupportButton }>
                         Report a bug
                     </Button>
 
-                    <View style={ styles.appInfo }>
+                    <View style={ Styles.AppInfo }>
                         <LabelText>
                             Notivex { Application.nativeApplicationVersion ?? Constants.expoConfig?.version }
                             { " " }(build { Application.nativeBuildVersion ?? "—" })
@@ -311,101 +308,87 @@ const SettingsScreen = (): React.JSX.Element =>
     );
 };
 
-const styles = StyleSheet.create({
-    appInfo:
-    {
+const useStyles = MakeStyles({
+    AppInfo: ViewStyle({
         alignItems: "center",
-        paddingTop: 8
-    },
-    back:
-    {
+        paddingTop: Token.Spacing.S
+    }),
+    Back: ViewStyle({
         alignSelf: "flex-start"
-    },
-    container:
-    {
+    }),
+    Container: ViewStyle({
         flex: 1
-    },
-    list:
-    {
-        gap: 12,
-        paddingVertical: 24
-    },
-    quickActionRow:
-    {
+    }),
+    List: ViewStyle({
+        gap: Token.Spacing.M,
+        paddingVertical: Token.Spacing.Xl
+    }),
+    QuickActionRow: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
-        gap: 12,
+        gap: Token.Spacing.M,
         paddingVertical: 6
-    },
-    row:
-    {
+    }),
+    Row: ViewStyle({
         alignItems: "center",
+        backgroundColor: Token.Semantic.BackgroundModal,
         borderRadius: 14,
         flexDirection: "row",
-        gap: 12,
+        gap: Token.Spacing.M,
         justifyContent: "space-between",
-        paddingHorizontal: 16,
+        paddingHorizontal: Token.Spacing.L,
         paddingVertical: 14
-    },
-    rowLeft:
-    {
+    }),
+    RowLeft: ViewStyle({
         alignItems: "center",
         flex: 1,
         flexDirection: "row",
-        gap: 12
-    },
-    rowPressed:
-    {
+        gap: Token.Spacing.M
+    }),
+    RowPressed: ViewStyle({
         opacity: 0.72
-    },
-    rowText:
-    {
+    }),
+    RowText: ViewStyle({
         flex: 1,
         gap: 2
-    },
-    safeArea:
-    {
+    }),
+    SafeArea: ViewStyle({
         flex: 1,
-        gap: 16,
-        paddingHorizontal: 24,
-        paddingVertical: 24
-    },
-    scroll:
-    {
+        gap: Token.Spacing.L,
+        paddingHorizontal: Token.Spacing.Xl,
+        paddingVertical: Token.Spacing.Xl
+    }),
+    Scroll: ViewStyle({
         alignSelf: "stretch",
         flex: 1
-    },
-    sectionHeading:
-    {
-        marginTop: 12
-    },
-    sectionSubtitle:
-    {
+    }),
+    SectionHeading: TextStyle({
+        marginTop: Token.Spacing.M
+    }),
+    SectionSubtitle: TextStyle({
         marginBottom: 4,
         marginTop: -6
-    },
-    sortableRow:
-    {
+    }),
+    SortableRow: ViewStyle({
         alignItems: "center",
-        borderRadius: 10,
+        backgroundColor: Token.Semantic.BackgroundModal,
+        borderRadius: Token.Radii.Large,
         flexDirection: "row",
         height: SortableItemExtent - 4,
         justifyContent: "space-between",
         marginBottom: 4,
-        paddingHorizontal: 12
-    },
-    supportButton:
-    {
+        paddingHorizontal: Token.Spacing.M
+    }),
+    SupportButton: ViewStyle({
         alignSelf: "stretch"
-    },
-    switchRow:
-    {
+    }),
+    SwitchRow: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
-        gap: 12,
+        gap: Token.Spacing.M,
         justifyContent: "space-between",
-        paddingVertical: 8
-    }
+        paddingVertical: Token.Spacing.S
+    })
 });
 
 export default SettingsScreen;

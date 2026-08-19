@@ -11,12 +11,13 @@
  */
 
 import { Body, Button, Description, Heading1 } from "@notivex/ui/Primitive";
+import { MakeStyles, Token, ViewStyle } from "@notivex/ui";
 import {
     OnboardingMockRegistry,
     OnboardingMockScenarios,
     useDevelopmentOnboarding
 } from "@/features/onboarding/onboarding-development";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import type { OnboardingMockScenario } from
     "@/features/onboarding/onboarding-development";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -25,6 +26,7 @@ import { useEffect } from "react";
 const OnboardingScenariosScreen = (): React.JSX.Element | null =>
 {
     const Development = useDevelopmentOnboarding();
+    const Styles = useStyles();
     const { Pause } = Development;
 
     useEffect(Pause, [ Pause ]);
@@ -35,11 +37,11 @@ const OnboardingScenariosScreen = (): React.JSX.Element | null =>
     }
 
     return (
-        <SafeAreaView style={ styles.safeArea }>
+        <SafeAreaView style={ Styles.SafeArea }>
             <ScrollView
-                contentContainerStyle={ styles.content }
+                contentContainerStyle={ Styles.Content }
                 showsVerticalScrollIndicator={ false }>
-                <View style={ styles.header }>
+                <View style={ Styles.Header }>
                     <Heading1>Onboarding scenarios</Heading1>
                     <Description>
                         These states use deterministic callbacks and never open OAuth,
@@ -54,23 +56,23 @@ const OnboardingScenariosScreen = (): React.JSX.Element | null =>
                         ) }
                 </View>
 
-                <View style={ styles.section }>
+                <View style={ Styles.Section }>
                     <Body>Interactive flow</Body>
                     <Button
                         Appearance="Primary"
                         OnPress={ Development.StartHappyPath }
-                        Style={ styles.button }>
+                        Style={ Styles.Button }>
                         Run happy path
                     </Button>
                 </View>
 
-                <View style={ styles.section }>
+                <View style={ Styles.Section }>
                     <Body>Individual states</Body>
                     { OnboardingMockScenarios.map((Scenario: OnboardingMockScenario) => (
                         <Button
                             Appearance="SoftBlue"
                             OnPress={ () => Development.SelectScenario(Scenario) }
-                            Style={ styles.button }
+                            Style={ Styles.Button }
                             key={ Scenario }>
                             { OnboardingMockRegistry[Scenario].Label }
                         </Button>
@@ -80,7 +82,7 @@ const OnboardingScenariosScreen = (): React.JSX.Element | null =>
                 <Button
                     Appearance="Link"
                     OnPress={ Development.ReturnToLive }
-                    Style={ styles.button }>
+                    Style={ Styles.Button }>
                     Return to live app
                 </Button>
             </ScrollView>
@@ -88,31 +90,26 @@ const OnboardingScenariosScreen = (): React.JSX.Element | null =>
     );
 };
 
-const styles = StyleSheet.create({
-    button:
-    {
+const useStyles = MakeStyles({
+    Button: ViewStyle({
         alignSelf: "stretch",
-        minHeight: 48
-    },
-    content:
-    {
-        gap: 32,
+        minHeight: Token.Size.Control.Large
+    }),
+    Content: ViewStyle({
+        gap: Token.Spacing.Xxl,
         paddingBottom: 48,
-        paddingHorizontal: 32,
-        paddingTop: 24
-    },
-    header:
-    {
-        gap: 12
-    },
-    safeArea:
-    {
+        paddingHorizontal: Token.Spacing.Xxl,
+        paddingTop: Token.Spacing.Xl
+    }),
+    Header: ViewStyle({
+        gap: Token.Spacing.M
+    }),
+    SafeArea: ViewStyle({
         flex: 1
-    },
-    section:
-    {
-        gap: 12
-    }
+    }),
+    Section: ViewStyle({
+        gap: Token.Spacing.M
+    })
 });
 
 export default OnboardingScenariosScreen;

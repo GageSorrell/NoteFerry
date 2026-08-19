@@ -2,8 +2,7 @@
  * The `Pages` group: creating a Notion page from a destination. This is the
  * one place the wire contract accepts a Notivex-shaped
  * {@link Domain.Command.CreatePageCommand} rather than Notion's own request
- * body — only the server-side Notion adapter ever constructs that. See
- * `ArchitectureInitialDraft.md` §20-21.
+ * body — only the server-side Notion adapter ever constructs that.
  *
  * @module @notivex/api/PagesApi
  *
@@ -19,8 +18,7 @@ import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
 export/**
        * Create a page in a destination's data source. The server records the
        * operation before calling Notion so an ambiguous timed-out request can be
-       * distinguished from one that never reached Notion — see
-       * `ArchitectureInitialDraft.md` §20.
+       * distinguished from one that never reached Notion.
        *
        * @category Pages
        * @since 1.0.0

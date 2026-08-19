@@ -14,7 +14,6 @@ import {
     Alert,
     Keyboard,
     type PressableStateCallbackType,
-    StyleSheet,
     View
 } from "react-native";
 import {
@@ -23,10 +22,10 @@ import {
     DateSheet,
     Pressable
 } from "@notivex/ui/Primitive";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PropertyLabel } from "@/features/page-creation/property-label";
 import { format } from "date-fns";
-import { useTheme } from "@notivex/ui";
 
 /** Props for a Notion date property field. */
 export interface DatePropertyFieldProps
@@ -53,6 +52,7 @@ export function DatePropertyField({
 }: DatePropertyFieldProps): React.JSX.Element
 {
     const Theme = useTheme();
+    const Styles = useStyles();
     const SheetRef = useRef<BottomSheet | null>(null);
     const LatestValueRef = useRef(Value);
     const [ IncludeTime, SetIncludeTime ] = useState(false);
@@ -144,7 +144,7 @@ export function DatePropertyField({
     }, [ IncludeTime, Value ]);
 
     return (
-        <View style={ [ styles.field, Inline && styles.inlineField ] }>
+        <View style={ [ Styles.Field, Inline && Styles.InlineField ] }>
             { Inline ? null : <PropertyLabel Property={ Property } /> }
             <Pressable
                 Accessibility={ {
@@ -155,20 +155,16 @@ export function DatePropertyField({
                 Disabled={ Disabled }
                 OnPress={ HandleOpenSheet }
                 style={ ({ pressed }: PressableStateCallbackType) => [
-                    styles.trigger,
-                    {
-                        borderColor: Theme.Semantic.Ring,
-                        borderRadius: Theme.Radii.Medium
-                    },
-                    Inline && styles.inlineTrigger,
-                    pressed && styles.triggerPressed,
-                    Disabled && styles.triggerDisabled
+                    Styles.Trigger,
+                    Inline && Styles.InlineTrigger,
+                    pressed && Styles.TriggerPressed,
+                    Disabled && Styles.TriggerDisabled
                 ] }>
                 <Body
                     Color={ DisplayValue === undefined
                         ? Theme.Semantic.Muted
                         : undefined }
-                    Style={ styles.value }>
+                    Style={ Styles.Value }>
                     { DisplayValue ?? "Empty" }
                 </Body>
             </Pressable>
@@ -188,43 +184,38 @@ export function DatePropertyField({
     );
 }
 
-const styles = StyleSheet.create({
-    field:
-    {
+const useStyles = MakeStyles({
+    Field: ViewStyle({
         gap: 6
-    },
-    inlineField:
-    {
+    }),
+    InlineField: ViewStyle({
         flex: 1,
         minWidth: 0
-    },
-    inlineTrigger:
-    {
+    }),
+    InlineTrigger: ViewStyle({
         borderWidth: 0,
         minHeight: 32,
         paddingHorizontal: 0
-    },
-    trigger:
-    {
+    }),
+    Trigger: ViewStyle({
         alignItems: "center",
+        borderColor: Token.Semantic.Ring,
+        borderRadius: Token.Radii.Medium,
         borderWidth: 1,
         flexDirection: "row",
         minHeight: 36,
         minWidth: 0,
         paddingHorizontal: 8,
         paddingVertical: 4
-    },
-    triggerDisabled:
-    {
+    }),
+    TriggerDisabled: ViewStyle({
         opacity: 0.55
-    },
-    triggerPressed:
-    {
+    }),
+    TriggerPressed: ViewStyle({
         opacity: 0.65
-    },
-    value:
-    {
+    }),
+    Value: TextStyle({
         flex: 1,
         minWidth: 0
-    }
+    })
 });

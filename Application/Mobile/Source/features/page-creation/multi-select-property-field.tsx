@@ -11,14 +11,14 @@
 
 import type * as Domain from "@notivex/domain";
 import { Body, type BottomSheet } from "@notivex/ui/Primitive";
-import { StyleSheet, View } from "react-native";
-import { PropertyLabel } from "@/features/page-creation/property-label";
+import { MakeStyles, Token, ViewStyle } from "@notivex/ui";
 import {
     PropertyOptionPill,
     PropertyOptionSheet,
     PropertyOptionSheetTrigger
 } from "@/features/page-creation/property-option-sheet";
-import { Token } from "@notivex/ui";
+import { PropertyLabel } from "@/features/page-creation/property-label";
+import { View } from "react-native";
 import { useRef } from "react";
 
 const EmptySelectedOptionIds:
@@ -45,6 +45,7 @@ export function MultiSelectPropertyField({
     Value = EmptySelectedOptionIds
 }: MultiSelectPropertyFieldProps): React.JSX.Element
 {
+    const Styles = useStyles();
     const SheetRef = useRef<BottomSheet | null>(null);
     const SelectedIds = new Set(Value);
     const SelectedOptions = Property.Options.filter(
@@ -60,7 +61,7 @@ export function MultiSelectPropertyField({
     };
 
     return (
-        <View style={ [ styles.field, Inline && styles.inlineField ] }>
+        <View style={ [ Styles.Field, Inline && Styles.InlineField ] }>
             { Inline ? null : <PropertyLabel Property={ Property } /> }
             <PropertyOptionSheetTrigger
                 AccessibilityLabel={ Property.Name }
@@ -70,7 +71,8 @@ export function MultiSelectPropertyField({
                 { SelectedOptions.length === 0
                     ? <Body Color={ Token.Semantic.Muted }>Empty</Body>
                     : SelectedOptions.map((Option: Domain.Property.PropertyOption) => (
-                        <PropertyOptionPill Option={ Option } key={ Option.Id } />
+                        <PropertyOptionPill Option={ Option }
+                            key={ Option.Id } />
                     )) }
             </PropertyOptionSheetTrigger>
             <PropertyOptionSheet
@@ -91,14 +93,12 @@ export function MultiSelectPropertyField({
     );
 }
 
-const styles = StyleSheet.create({
-    field:
-    {
+const useStyles = MakeStyles({
+    Field: ViewStyle({
         gap: 6
-    },
-    inlineField:
-    {
+    }),
+    InlineField: ViewStyle({
         flex: 1,
         minWidth: 0
-    }
+    })
 });

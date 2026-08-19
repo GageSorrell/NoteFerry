@@ -21,9 +21,9 @@ import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import * as Spacing from "../Token/Spacing.js";
 import { Description, ModalTitle } from "./Text.js";
+import { MakeStyles, ViewStyle as MakeViewStyle } from "../MakeStyles.js";
 import {
     type StyleProp,
-    StyleSheet,
     type TextStyle,
     type ViewStyle,
     useWindowDimensions
@@ -70,6 +70,7 @@ const BottomSheet = ({
 {
     const MaxWidth = 480 as const;
 
+    const Styles = useStyles();
     const Theme = useTheme();
     const ColorScheme = Theme.Mode;
     const SheetBackgroundColor = BackgroundColor
@@ -188,6 +189,7 @@ export/**
        */
 const BottomSheetFooter = ({ Style, children }: BottomSheetFooterProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const {
         [Spacing.S]: gap,
         [Spacing.SheetHorizontal]: padding
@@ -260,27 +262,23 @@ const BottomSheetScrollView = ({
     );
 };
 
-const Styles = StyleSheet.create({
-    Background:
-    {
+const useStyles = MakeStyles({
+    Background: MakeViewStyle({
         borderTopLeftRadius: 14,
         borderTopRightRadius: 14
-    },
-    Footer:
-    {
+    }),
+    Footer: MakeViewStyle({
         flexDirection: "column",
         marginTop: "auto"
-    },
-    Handle:
-    {
+    }),
+    Handle: MakeViewStyle({
         borderTopLeftRadius: 14,
         borderTopRightRadius: 14,
         paddingBottom: 8,
         paddingTop: 6
-    },
-    HandleIndicator:
-    {
+    }),
+    HandleIndicator: MakeViewStyle({
         height: 4,
         width: 36
-    }
+    })
 });

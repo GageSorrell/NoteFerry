@@ -1,8 +1,7 @@
 /**
  * React context exposing the current Supabase session to the component tree.
- * This is the outer, React-facing edge of auth (ArchitectureInitialDraft.md
- * §34: "React should sit at the outside edge of Effect"); the Effect-facing
- * seam is {@link CurrentUser}.
+ * This is the outer, React-facing edge of auth ("React should sit at the
+ * outside edge of Effect"); the Effect-facing seam is {@link CurrentUser}.
  *
  * @module notivex/Domain/Auth/NotivexAuthProvider
  *

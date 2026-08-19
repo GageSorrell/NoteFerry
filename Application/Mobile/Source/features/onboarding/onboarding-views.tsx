@@ -16,7 +16,6 @@ import * as React from "react";
 import {
     ActivityIndicator,
     ScrollView,
-    StyleSheet,
     View
 } from "react-native";
 import {
@@ -38,7 +37,7 @@ import {
 } from "@notivex/ui/Primitive";
 import { ChevronDown, ChevronUp } from "lucide-react-native";
 import { IconBlock, type LucideIconName } from "@notivex/ui/Block";
-import { Token, useTheme } from "@notivex/ui";
+import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { Boolean } from "effect";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { HeroImage } from "@/Component";
@@ -81,75 +80,80 @@ export/**
        * @category Onboarding
        * @since 1.0.0
        */
-const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element => (
-    <OnboardingScreen
-        Header={
-            <View style={ signInStyles.header }>
-                <Image
-                    source={ require("../../../Resource/NotivexLogoLight.png") }
-                    style={ { height: 52, marginBottom: 16, width: 52 } }
-                />
-                <HeroTitle Style={ signInStyles.headerText }>
-                    Your notes, faster.
-                </HeroTitle>
-                <HeroTitle
-                    Color={ Semantic.Muted }
-                    Style={ [ signInStyles.headerText, { fontFamily: "Roboto", fontWeight: "bold" } ] }
-                    Weight="600">
-                    Log in with your Notion account
-                </HeroTitle>
-            </View>
-        }
-        // Hero={ require("../../../Resource/Onboarding/Welcome.png") }
-        Subtitle="Log in with your Notion account"
-        Title="Your notes, faster.">
-        <View style={ signInStyles.spacer } />
-        <AuthButton
-            Icon={
-                <Image
-                    source={ require("../../../Resource/Onboarding/NotionLogoLight.svg") }
-                    style={ signInStyles.authIcon }
-                />
+const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element =>
+{
+    const Styles = useSignInStyles();
+
+    return (
+        <OnboardingScreen
+            Header={
+                <View style={ Styles.Header }>
+                    <Image
+                        source={ require("../../../Resource/NotivexLogoLight.png") }
+                        style={ { height: 52, marginBottom: 16, width: 52 } }
+                    />
+                    <HeroTitle Style={ Styles.HeaderText }>
+                        Your notes, faster.
+                    </HeroTitle>
+                    <HeroTitle
+                        Color={ Semantic.Muted }
+                        Style={ [ Styles.HeaderText, { fontFamily: "Roboto", fontWeight: "bold" } ] }
+                        Weight="600">
+                        Log in with your Notion account
+                    </HeroTitle>
+                </View>
             }
-            OnPress={ OnContinue }
-            Style={ signInStyles.cta }>
-            Continue with Notion
-        </AuthButton>
-        <View style={ signInStyles.footerSpacer } />
-        <View style={ signInStyles.footer }>
-            <View style={ { gap: 32 } }>
-                <View style={ { flexDirection: "row", justifyContent: "center" } }>
-                    <Description Style={ { fontSize: 14 } }>
-                        Don’t have a Notion account?{"  "}
+            // Hero={ require("../../../Resource/Onboarding/Welcome.png") }
+            Subtitle="Log in with your Notion account"
+            Title="Your notes, faster.">
+            <View style={ Styles.Spacer } />
+            <AuthButton
+                Icon={
+                    <Image
+                        source={ require("../../../Resource/Onboarding/NotionLogoLight.svg") }
+                        style={ Styles.AuthIcon }
+                    />
+                }
+                OnPress={ OnContinue }
+                Style={ Styles.Cta }>
+                Continue with Notion
+            </AuthButton>
+            <View style={ Styles.FooterSpacer } />
+            <View style={ Styles.Footer }>
+                <View style={ { gap: 32 } }>
+                    <View style={ { flexDirection: "row", justifyContent: "center" } }>
+                        <Description Style={ { fontSize: 14 } }>
+                            Don’t have a Notion account?{"  "}
+                        </Description>
+                        <Link Style={ { fontSize: 14 } }>
+                            Sign up
+                        </Link>
+                    </View>
+                    <Caption Style={ Styles.LegalCopy }>
+                        By continuing, you acknowledge that you understand{"\n"}
+                        and agree to the{" "}
+                        <Link Style={ Styles.CaptionLink }>
+                            Terms &amp; Conditions
+                        </Link>
+                        {" "}and{" "}
+                        <Link Style={ Styles.CaptionLink }>
+                            Privacy Policy
+                        </Link>
+                    </Caption>
+                </View>
+                <View style={ Styles.FooterDetails }>
+                    <View style={ Styles.FooterLinks }>
+                        <Link Style={ Styles.FooterLink }>Privacy &amp; terms</Link>
+                        <Link Style={ Styles.FooterLink }>Need help?</Link>
+                    </View>
+                    <Description Style={ Styles.Copyright }>
+                        © 2026 Notivex.
                     </Description>
-                    <Link Style={ { fontSize: 14 } }>
-                        Sign up
-                    </Link>
                 </View>
-                <Caption Style={ signInStyles.legalCopy }>
-                    By continuing, you acknowledge that you understand{"\n"}
-                    and agree to the{" "}
-                    <Link Style={ signInStyles.captionLink }>
-                        Terms &amp; Conditions
-                    </Link>
-                    {" "}and{" "}
-                    <Link Style={ signInStyles.captionLink }>
-                        Privacy Policy
-                    </Link>
-                </Caption>
             </View>
-            <View style={ signInStyles.footerDetails }>
-                <View style={ signInStyles.footerLinks }>
-                    <Link Style={ signInStyles.footerLink }>Privacy &amp; terms</Link>
-                    <Link Style={ signInStyles.footerLink }>Need help?</Link>
-                </View>
-                <Description Style={ signInStyles.copyright }>
-                    © 2026 Notivex.
-                </Description>
-            </View>
-        </View>
-    </OnboardingScreen>
-);
+        </OnboardingScreen>
+    );
+};
 
 /** Props for the first sign-in explanation modal. */
 export interface SignInModalStepOneViewProps
@@ -167,16 +171,16 @@ const SignInModalStepOneView = ({
     OnContinue
 }: SignInModalStepOneViewProps): React.JSX.Element =>
 {
-    const ModalBackground = useTheme().Semantic.BackgroundModal;
+    const Styles = useModalStyles();
 
     return (
-        <View style={ [ modalStyles.container, { backgroundColor: ModalBackground } ] }>
-            <SafeAreaView style={ modalStyles.safeArea }>
+        <View style={ Styles.Container }>
+            <SafeAreaView style={ Styles.SafeArea }>
                 <ScrollView
-                    contentContainerStyle={ modalStyles.scroll }
+                    contentContainerStyle={ Styles.Scroll }
                     showsVerticalScrollIndicator={ false }
-                    style={ modalStyles.safeArea }>
-                    <View style={ modalStyles.header }>
+                    style={ Styles.SafeArea }>
+                    <View style={ Styles.Header }>
                         <ScreenTitle>What’s Ahead: Two Steps</ScreenTitle>
                     </View>
                     <HeroImage Source={ require("../../../Resource/Onboarding/SignInModalStepOne.png") } />
@@ -184,11 +188,11 @@ const SignInModalStepOneView = ({
                         First, you’ll sign into Notion and add the{" "}
                         Notivex integration to your workspace.
                     </Body>
-                    <View style={ modalStyles.spacer } />
+                    <View style={ Styles.Spacer } />
                     <Button
                         Appearance="Primary"
                         OnPress={ OnContinue }
-                        Style={ modalStyles.cta }>
+                        Style={ Styles.Cta }>
                         Got it
                     </Button>
                 </ScrollView>
@@ -217,17 +221,17 @@ const SignInModalStepTwoView = ({
 }: SignInModalStepTwoViewProps): React.JSX.Element =>
 {
     const Theme = useTheme();
-    const ModalBackground = Theme.Semantic.BackgroundModal;
+    const Styles = useModalStyles();
     const TipColor = Theme.Semantic.Secondary;
 
     return (
-        <View style={ [ modalStyles.container, { backgroundColor: ModalBackground } ] }>
-            <SafeAreaView style={ modalStyles.safeArea }>
+        <View style={ Styles.Container }>
+            <SafeAreaView style={ Styles.SafeArea }>
                 <ScrollView
-                    contentContainerStyle={ modalStyles.scroll }
+                    contentContainerStyle={ Styles.Scroll }
                     showsVerticalScrollIndicator={ false }
-                    style={ modalStyles.safeArea }>
-                    <View style={ modalStyles.header }>
+                    style={ Styles.SafeArea }>
+                    <View style={ Styles.Header }>
                         <ScreenTitle>What’s Ahead: Two Steps</ScreenTitle>
                     </View>
                     <HeroImage Source={ require("../../../Resource/Onboarding/SignInModalStepTwo.png") } />
@@ -238,7 +242,7 @@ const SignInModalStepTwoView = ({
                         Tip: Giving Notivex access to a page also gives access to all{" "}
                         databases under that page.
                     </Body>
-                    <View style={ modalStyles.spacer } />
+                    <View style={ Styles.Spacer } />
                     <AuthButton
                         Icon={
                             <Image
@@ -248,7 +252,7 @@ const SignInModalStepTwoView = ({
                         }
                         Loading={ Pending }
                         OnPress={ OnSignIn }
-                        Style={ modalStyles.fullWidthCta }>
+                        Style={ Styles.FullWidthCta }>
                         Log in
                     </AuthButton>
                     <View style={ { flexDirection: "row", justifyContent: "center" } }>
@@ -309,6 +313,8 @@ const OnboardingDatabaseIcon = ({
     readonly Database: Domain.DataSource.OnboardingDatabase;
 }): React.JSX.Element | null =>
 {
+    const Styles = useOnboardingResultStyles();
+
     if (!Database.Icon)
     {
         return null;
@@ -343,13 +349,13 @@ const OnboardingDatabaseIcon = ({
                 cachePolicy="memory-disk"
                 contentFit="contain"
                 source={ { uri: Database.Icon } }
-                style={ onboardingResultStyles.databaseIcon }
+                style={ Styles.DatabaseIcon }
             />
         );
     }
 
     return (
-        <ItemTitle Style={ onboardingResultStyles.databaseEmoji }>
+        <ItemTitle Style={ Styles.DatabaseEmoji }>
             { Database.Icon }
         </ItemTitle>
     );
@@ -367,11 +373,13 @@ const PageAccessDisclosure = ({
     const [ IsExpanded, SetIsExpanded ] = React.useState(false);
     const HelpSheet = React.useRef<BottomSheetModal | null>(null);
     const Theme = useTheme();
+    const Styles = useOnboardingResultStyles();
+    const OnboardingStyles = useOnboardingStyles();
     const NumRemaining = Math.max(0, PageCount - Pages.length);
 
     return (
-        <View style={ onboardingResultStyles.disclosureSection }>
-            <View style={ onboardingResultStyles.disclosureHeader }>
+        <View style={ Styles.DisclosureSection }>
+            <View style={ Styles.DisclosureHeader }>
                 <Pressable
                     Accessibility={ {
                         Label: undefined,
@@ -379,7 +387,7 @@ const PageAccessDisclosure = ({
                         State: { expanded: IsExpanded }
                     } }
                     OnPress={ () => SetIsExpanded(Boolean.not) }
-                    style={ onboardingResultStyles.disclosureTrigger }>
+                    style={ Styles.DisclosureTrigger }>
                     <View style={ { alignItems: "center", flexDirection: "row", gap: 8 } }>
                         <Body Weight="600">
                             { PageCount } { PageCount === 1 ? "page" : "pages" } found
@@ -391,16 +399,13 @@ const PageAccessDisclosure = ({
                             } }
                             OnPress={ () => HelpSheet.current?.present() }
                             hitSlop={ 8 }
-                            style={ [
-                                onboardingResultStyles.helpButton,
-                                { borderColor: Theme.Semantic.Border }
-                            ] }>
+                            style={ Styles.HelpButton }>
                             <Description Weight="600">?</Description>
                         </Pressable>
                     </View>
                     <View
                         accessible={ false }
-                        style={ onboardingResultStyles.disclosureChevron }>
+                        style={ Styles.DisclosureChevron }>
                         { IsExpanded
                             ? <ChevronUp
                                 color={ Theme.Semantic.Muted }
@@ -416,11 +421,7 @@ const PageAccessDisclosure = ({
 
             { IsExpanded
                 ? (
-                    <View
-                        style={ [
-                            onboardingResultStyles.pageList,
-                            { borderColor: Theme.Semantic.Border }
-                        ] }>
+                    <View style={ Styles.PageList }>
                         { Pages.length === 0
                             ? (
                                 <Description Color={ Token.Semantic.Muted }>
@@ -432,7 +433,7 @@ const PageAccessDisclosure = ({
                             ) => (
                                 <View
                                     key={ Page.Id }
-                                    style={ onboardingResultStyles.pageRow }>
+                                    style={ Styles.PageRow }>
                                     <Description NumberOfLines={ 2 }>
                                         { Page.Title }
                                     </Description>
@@ -450,8 +451,8 @@ const PageAccessDisclosure = ({
                 : null }
 
             <BottomSheet Ref={ HelpSheet }>
-                <BottomSheetView style={ onboardingResultStyles.helpSheet }>
-                    <View style={ onboardingResultStyles.helpSheetHeader }>
+                <BottomSheetView style={ Styles.HelpSheet }>
+                    <View style={ Styles.HelpSheetHeader }>
                         <ScreenTitle>Pages and databases are different</ScreenTitle>
                         <Description Color={ Token.Semantic.Muted }>
                             Notivex creates entries in databases, not regular pages.
@@ -463,7 +464,7 @@ const PageAccessDisclosure = ({
                     <Button
                         Appearance="Primary"
                         OnPress={ () => HelpSheet.current?.dismiss() }
-                        Style={ onboardingStyles.cta }>
+                        Style={ OnboardingStyles.Cta }>
                         Got it
                     </Button>
                 </BottomSheetView>
@@ -485,25 +486,30 @@ const AccessOutcomeLayout = ({
     Title,
     Subtitle,
     children
-}: AccessOutcomeLayoutProps): React.JSX.Element => (
-    <SafeAreaView style={ onboardingResultStyles.safeArea }>
-        <ScrollView
-            contentContainerStyle={ onboardingResultStyles.outcomeContent }
-            showsVerticalScrollIndicator={ false }>
-            <View style={ onboardingResultStyles.outcomeHeader }>
-                <Heading1>{ Title }</Heading1>
-                <Description>{ Subtitle }</Description>
-            </View>
-            {
-                HeroImageAsset !== undefined &&
-                <HeroImage Source={ HeroImageAsset } />
-            }
-            <View style={ onboardingResultStyles.outcomeActions }>
-                { children }
-            </View>
-        </ScrollView>
-    </SafeAreaView>
-);
+}: AccessOutcomeLayoutProps): React.JSX.Element =>
+{
+    const Styles = useOnboardingResultStyles();
+
+    return (
+        <SafeAreaView style={ Styles.SafeArea }>
+            <ScrollView
+                contentContainerStyle={ Styles.OutcomeContent }
+                showsVerticalScrollIndicator={ false }>
+                <View style={ Styles.OutcomeHeader }>
+                    <Heading1>{ Title }</Heading1>
+                    <Description>{ Subtitle }</Description>
+                </View>
+                {
+                    HeroImageAsset !== undefined &&
+                    <HeroImage Source={ HeroImageAsset } />
+                }
+                <View style={ Styles.OutcomeActions }>
+                    { children }
+                </View>
+            </ScrollView>
+        </SafeAreaView>
+    );
+};
 
 /** Successful database-selection surface. */
 const DatabaseSelectionView = ({
@@ -519,7 +525,8 @@ const DatabaseSelectionView = ({
 }): React.JSX.Element =>
 {
     const [ Search, SetSearch ] = React.useState("");
-    const Theme = useTheme();
+    const Styles = useOnboardingResultStyles();
+    const OnboardingStyles = useOnboardingStyles();
     const SortedDatabases: ReadonlyArray<Domain.DataSource.OnboardingDatabase> =
         React.useMemo(
             () => [ ...Data.Databases ]
@@ -584,12 +591,12 @@ const DatabaseSelectionView = ({
     }, [ Data.Databases, OnContinue, SelectedIds ]);
 
     return (
-        <SafeAreaView style={ onboardingResultStyles.safeArea }>
+        <SafeAreaView style={ Styles.SafeArea }>
             <ScrollView
-                contentContainerStyle={ onboardingResultStyles.selectionContent }
+                contentContainerStyle={ Styles.SelectionContent }
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={ false }>
-                <View style={ onboardingResultStyles.outcomeHeader }>
+                <View style={ Styles.OutcomeHeader }>
                     <Heading1>Choose your databases</Heading1>
                     <Description>
                         These are the databases that Notivex will display for creating pages.
@@ -610,10 +617,10 @@ const DatabaseSelectionView = ({
                     )
                     : null }
 
-                <View style={ onboardingResultStyles.databaseTableSection }>
+                <View style={ Styles.DatabaseTableSection }>
                     <Description
                         Style={ [
-                            onboardingResultStyles.selectedDatabaseCount,
+                            Styles.SelectedDatabaseCount,
                             SelectedIds.size === 0 ? { opacity: 0 } : null
                         ] }
                         accessibilityElementsHidden={ SelectedIds.size === 0 }
@@ -627,10 +634,7 @@ const DatabaseSelectionView = ({
 
                     <View
                         accessibilityRole="list"
-                        style={ [
-                            onboardingResultStyles.databaseTable,
-                            { borderColor: Theme.Semantic.Border }
-                        ] }>
+                        style={ Styles.DatabaseTable }>
                         { Databases.map((
                             Database: Domain.DataSource.OnboardingDatabase,
                             Index: number
@@ -639,13 +643,8 @@ const DatabaseSelectionView = ({
                                 accessibilityRole="none"
                                 key={ Database.DataSourceId }
                                 style={ [
-                                    onboardingResultStyles.databaseRow,
-                                    Index < Databases.length - 1
-                                        ? {
-                                            borderBottomColor: Theme.Semantic.Border,
-                                            borderBottomWidth: 1
-                                        }
-                                        : null
+                                    Styles.DatabaseRow,
+                                    Index < Databases.length - 1 && Styles.DatabaseRowDivider
                                 ] }>
                                 <Checkbox
                                     AccessibilityLabel={ `Select ${ Database.Title }` }
@@ -657,12 +656,12 @@ const DatabaseSelectionView = ({
                                 <OnboardingDatabaseIcon { ...{ Database } } />
                                 <ItemTitle
                                     NumberOfLines={ 2 }
-                                    Style={ onboardingResultStyles.databaseTitle }>
+                                    Style={ Styles.DatabaseTitle }>
                                     { Database.Title }
                                 </ItemTitle>
                                 <Description
                                     Color={ Token.Semantic.Muted }
-                                    Style={ onboardingResultStyles.databaseCount }>
+                                    Style={ Styles.DatabaseCount }>
                                     { Database.HasMoreThan100Pages
                                         ? ">100 pages"
                                         : `${ Database.PageCount } ${
@@ -678,7 +677,7 @@ const DatabaseSelectionView = ({
                     ? (
                         <Description
                             Color={ Token.Semantic.Muted }
-                            Style={ onboardingResultStyles.noSearchResults }>
+                            Style={ Styles.NoSearchResults }>
                             No databases match “{ Search }”.
                         </Description>
                     )
@@ -694,7 +693,7 @@ const DatabaseSelectionView = ({
                     Disabled={ IsPending || SelectedIds.size === 0 }
                     Loading={ IsPending }
                     OnPress={ Continue }
-                    Style={ onboardingStyles.cta }>
+                    Style={ OnboardingStyles.Cta }>
                     { SelectedIds.size === 0
                         ? "Select at least one database"
                         : `Continue with ${ SelectedIds.size } ${
@@ -710,6 +709,7 @@ const DatabaseSelectionView = ({
 const DelayedSyncLoading = ({ Immediate }: { readonly Immediate: boolean }): React.JSX.Element =>
 {
     const Theme = useTheme();
+    const Styles = useOnboardingResultStyles();
     const [ IsVisible, SetIsVisible ] = React.useState(Immediate);
 
     React.useEffect(() =>
@@ -729,7 +729,7 @@ const DelayedSyncLoading = ({ Immediate }: { readonly Immediate: boolean }): Rea
 
     return IsVisible
         ? (
-            <SafeAreaView style={ onboardingResultStyles.loading }>
+            <SafeAreaView style={ Styles.Loading }>
                 <ActivityIndicator
                     accessibilityLabel="Checking Notion access"
                     color={ Theme.Semantic.Cursor }
@@ -739,7 +739,7 @@ const DelayedSyncLoading = ({ Immediate }: { readonly Immediate: boolean }): Rea
                 </Description>
             </SafeAreaView>
         )
-        : <View style={ onboardingResultStyles.loading } />;
+        : <View style={ Styles.Loading } />;
 };
 
 export/**
@@ -760,6 +760,9 @@ const SyncView = ({
     Status
 }: SyncViewProps): React.JSX.Element =>
 {
+    const OnboardingStyles = useOnboardingStyles();
+    const Styles = useOnboardingResultStyles();
+
     if (Status === "Syncing")
     {
         return <DelayedSyncLoading Immediate={ ShowLoading } />;
@@ -778,12 +781,12 @@ const SyncView = ({
                     Appearance="Primary"
                     Loading={ IsPending }
                     OnPress={ OnStartOver }
-                    Style={ onboardingStyles.cta }>
+                    Style={ OnboardingStyles.Cta }>
                     Go back and start over
                 </Button>
                 <Link
                     Href={ NotionConnectionsHelpUrl }
-                    Style={ onboardingResultStyles.helpLink }>
+                    Style={ Styles.HelpLink }>
                     Learn about third-party connections in Notion
                 </Link>
             </AccessOutcomeLayout>
@@ -800,12 +803,12 @@ const SyncView = ({
                     Appearance="Primary"
                     Loading={ IsPending }
                     OnPress={ OnAuthorize }
-                    Style={ onboardingStyles.cta }>
+                    Style={ OnboardingStyles.Cta }>
                     Choose pages in Notion
                 </Button>
                 <Link
                     Href={ NotionConnectionsHelpUrl }
-                    Style={ onboardingResultStyles.helpLink }>
+                    Style={ Styles.HelpLink }>
                     Learn about third-party connections in Notion
                 </Link>
             </AccessOutcomeLayout>
@@ -830,12 +833,12 @@ const SyncView = ({
                     Appearance="Primary"
                     Loading={ IsPending }
                     OnPress={ OnAuthorize }
-                    Style={ onboardingStyles.cta }>
+                    Style={ OnboardingStyles.Cta }>
                     Change access in Notion
                 </Button>
                 <Link
                     Href={ NotionConnectionsHelpUrl }
-                    Style={ onboardingResultStyles.helpLink }>
+                    Style={ Styles.HelpLink }>
                     Learn about third-party connections in Notion
                 </Link>
             </AccessOutcomeLayout>
@@ -859,7 +862,7 @@ const SyncView = ({
                 Appearance="Primary"
                 Loading={ IsPending }
                 OnPress={ OnRetry }
-                Style={ onboardingStyles.cta }>
+                Style={ OnboardingStyles.Cta }>
                 Try again
             </Button>
         </AccessOutcomeLayout>
@@ -883,323 +886,285 @@ const DoneView = ({
     IsPending: Pending,
     OnCustomize,
     OnStart
-}: DoneViewProps): React.JSX.Element => (
-    <SafeAreaView style={ customizeFormsStyles.safeArea }>
-        <View style={ customizeFormsStyles.header }>
-            <Heading1>Optional: Customize Forms</Heading1>
-            <Description>
-                You&apos;re all set to start using Notivex. If you&apos;d like, you can
-                edit the properties displayed when creating pages, create aliases
-                for databases, and more.
-            </Description>
-        </View>
-        <View style={ customizeFormsStyles.centerAction }>
-            <Button
-                Appearance="SoftBlue"
-                Disabled={ Pending }
-                OnPress={ OnCustomize }>
-                Open database settings
-            </Button>
-        </View>
-        <Button
-            Appearance="Primary"
-            Loading={ Pending }
-            OnPress={ OnStart }
-            Style={ onboardingStyles.cta }>
-            Start using Notivex
-        </Button>
-    </SafeAreaView>
-);
+}: DoneViewProps): React.JSX.Element =>
+{
+    const Styles = useCustomizeFormsStyles();
+    const OnboardingStyles = useOnboardingStyles();
 
-const customizeFormsStyles = StyleSheet.create({
-    centerAction:
-    {
+    return (
+        <SafeAreaView style={ Styles.SafeArea }>
+            <View style={ Styles.Header }>
+                <Heading1>Optional: Customize Forms</Heading1>
+                <Description>
+                    You&apos;re all set to start using Notivex. If you&apos;d like, you can
+                    edit the properties displayed when creating pages, create aliases
+                    for databases, and more.
+                </Description>
+            </View>
+            <View style={ Styles.CenterAction }>
+                <Button
+                    Appearance="SoftBlue"
+                    Disabled={ Pending }
+                    OnPress={ OnCustomize }>
+                    Open database settings
+                </Button>
+            </View>
+            <Button
+                Appearance="Primary"
+                Loading={ Pending }
+                OnPress={ OnStart }
+                Style={ OnboardingStyles.Cta }>
+                Start using Notivex
+            </Button>
+        </SafeAreaView>
+    );
+};
+
+const useCustomizeFormsStyles = MakeStyles({
+    CenterAction: ViewStyle({
         alignItems: "center",
         flex: 1,
         justifyContent: "center"
-    },
-    header:
-    {
+    }),
+    Header: ViewStyle({
         gap: 12
-    },
-    safeArea:
-    {
+    }),
+    SafeArea: ViewStyle({
         flex: 1,
         paddingBottom: 40,
         paddingHorizontal: 32,
         paddingTop: 24
-    }
+    })
 });
 
-const onboardingResultStyles = StyleSheet.create({
-    databaseCount:
-    {
+const useOnboardingResultStyles = MakeStyles({
+    DatabaseCount: TextStyle({
         flexShrink: 0,
         fontSize: 12,
         textAlign: "right"
-    },
-    databaseEmoji:
-    {
+    }),
+    DatabaseEmoji: TextStyle({
         fontSize: 20,
         lineHeight: 24
-    },
-    databaseIcon:
-    {
+    }),
+    DatabaseIcon: ImageStyle({
         borderRadius: 4,
         height: 22,
         width: 22
-    },
-    databaseRow:
-    {
+    }),
+    DatabaseRow: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
         gap: 10,
         minHeight: 56,
         paddingHorizontal: 12,
         paddingVertical: 9
-    },
-    databaseTable:
-    {
+    }),
+    DatabaseRowDivider: ViewStyle({
+        borderBottomColor: Token.Semantic.Border,
+        borderBottomWidth: 1
+    }),
+    DatabaseTable: ViewStyle({
+        borderColor: Token.Semantic.Border,
         borderRadius: 12,
         borderWidth: 1,
         overflow: "hidden"
-    },
-    databaseTableSection:
-    {
+    }),
+    DatabaseTableSection: ViewStyle({
         gap: 8
-    },
-    databaseTitle:
-    {
+    }),
+    DatabaseTitle: TextStyle({
         flex: 1
-    },
-    disclosureChevron:
-    {
+    }),
+    DisclosureChevron: ViewStyle({
         alignItems: "center",
         height: 24,
         justifyContent: "center",
         width: 24
-    },
-    disclosureHeader:
-    {
+    }),
+    DisclosureHeader: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
         gap: 10
-    },
-    disclosureSection:
-    {
+    }),
+    DisclosureSection: ViewStyle({
         gap: 10
-    },
-    disclosureTrigger:
-    {
+    }),
+    DisclosureTrigger: ViewStyle({
         alignItems: "center",
         flex: 1,
         flexDirection: "row",
         justifyContent: "space-between",
         minHeight: 44,
         paddingVertical: 8
-    },
-    helpButton:
-    {
+    }),
+    HelpButton: ViewStyle({
         alignItems: "center",
+        borderColor: Token.Semantic.Border,
         borderRadius: 15,
         borderWidth: 1,
         height: 30,
         justifyContent: "center",
         width: 30
-    },
-    helpLink:
-    {
+    }),
+    HelpLink: TextStyle({
         alignSelf: "center",
         fontSize: 12,
         textAlign: "center"
-    },
-    helpSheet:
-    {
+    }),
+    HelpSheet: ViewStyle({
         flex: 1,
         gap: 24,
         paddingBottom: 32,
         paddingHorizontal: 24,
         paddingTop: 16
-    },
-    helpSheetHeader:
-    {
+    }),
+    HelpSheetHeader: ViewStyle({
         gap: 12
-    },
-    loading:
-    {
+    }),
+    Loading: ViewStyle({
         alignItems: "center",
         flex: 1,
         gap: 16,
         justifyContent: "center",
         padding: 32
-    },
-    noSearchResults:
-    {
+    }),
+    NoSearchResults: TextStyle({
         paddingVertical: 12,
         textAlign: "center"
-    },
-    outcomeActions:
-    {
+    }),
+    OutcomeActions: ViewStyle({
         gap: 20
-    },
-    outcomeContent:
-    {
+    }),
+    OutcomeContent: ViewStyle({
         flexGrow: 1,
         gap: 24,
         paddingBottom: 40,
         paddingHorizontal: 32,
         paddingTop: 24
-    },
-    outcomeHeader:
-    {
+    }),
+    OutcomeHeader: ViewStyle({
         gap: 8
-    },
-    pageList:
-    {
+    }),
+    PageList: ViewStyle({
+        borderLeftColor: Token.Semantic.Border,
         borderLeftWidth: 2,
         gap: 10,
         paddingLeft: 14,
         paddingVertical: 4
-    },
-    pageRow:
-    {
+    }),
+    PageRow: ViewStyle({
         justifyContent: "center",
         minHeight: 24
-    },
-    safeArea:
-    {
+    }),
+    SafeArea: ViewStyle({
         flex: 1
-    },
-    selectedDatabaseCount:
-    {
+    }),
+    SelectedDatabaseCount: TextStyle({
         minHeight: 20
-    },
-    selectionContent:
-    {
+    }),
+    SelectionContent: ViewStyle({
         flexGrow: 1,
         gap: 24,
         paddingBottom: 40,
         paddingHorizontal: 20,
         paddingTop: 24
-    }
+    })
 });
 
-const onboardingStyles = StyleSheet.create({
-    center:
-    {
+const useOnboardingStyles = MakeStyles({
+    Center: ViewStyle({
         alignItems: "center",
         marginTop: 24
-    },
-    cta:
-    {
+    }),
+    Cta: ViewStyle({
         alignSelf: "stretch",
-        minHeight: 48
-    },
-    note:
-    {
+        minHeight: Token.Size.Control.Large
+    }),
+    Note: TextStyle({
         textAlign: "center"
-    },
-    spacer:
-    {
+    }),
+    Spacer: ViewStyle({
         flex: 1
-    }
+    })
 });
 
-const modalStyles = StyleSheet.create({
-    container:
-    {
+const useModalStyles = MakeStyles({
+    Container: ViewStyle({
+        backgroundColor: Token.Semantic.BackgroundModal,
         flex: 1
-    },
-    cta:
-    {
+    }),
+    Cta: ViewStyle({
         flex: 1
-    },
-    fullWidthCta:
-    {
+    }),
+    FullWidthCta: ViewStyle({
         width: "100%"
-    },
-    header:
-    {
+    }),
+    Header: ViewStyle({
         gap: 8
-    },
-    safeArea:
-    {
+    }),
+    SafeArea: ViewStyle({
         flex: 1
-    },
-    scroll:
-    {
+    }),
+    Scroll: ViewStyle({
         flexGrow: 1,
         gap: 32,
         paddingHorizontal: 32,
         paddingVertical: 24
-    },
-    spacer:
-    {
+    }),
+    Spacer: ViewStyle({
         flexGrow: 1,
         minHeight: 24
-    }
+    })
 });
 
-const signInStyles = StyleSheet.create({
-    authIcon:
-    {
+const useSignInStyles = MakeStyles({
+    AuthIcon: ImageStyle({
         height: 24,
         width: 24
-    },
-    captionLink:
-    {
+    }),
+    CaptionLink: TextStyle({
         fontSize: 12,
         lineHeight: 16
-    },
-    copyright:
-    {
+    }),
+    Copyright: TextStyle({
         textAlign: "center"
-    },
-    cta:
-    {
+    }),
+    Cta: ViewStyle({
         marginHorizontal: 18
-    },
-    footer:
-    {
+    }),
+    Footer: ViewStyle({
         alignItems: "center",
         gap: 64
-    },
-    footerDetails:
-    {
+    }),
+    FooterDetails: ViewStyle({
         alignItems: "center",
         gap: 14
-    },
-    footerLink:
-    {
+    }),
+    FooterLink: TextStyle({
         fontSize: 12,
         lineHeight: 16,
         textDecorationLine: "none"
-    },
-    footerLinks:
-    {
+    }),
+    FooterLinks: ViewStyle({
         flexDirection: "row",
         gap: 20,
         justifyContent: "center"
-    },
-    footerSpacer:
-    {
+    }),
+    FooterSpacer: ViewStyle({
         flex: 1.5
-    },
-    header:
-    {
+    }),
+    Header: ViewStyle({
         alignItems: "center",
         gap: 0
-    },
-    headerText:
-    {
+    }),
+    HeaderText: TextStyle({
         textAlign: "center"
-    },
-    legalCopy:
-    {
+    }),
+    LegalCopy: TextStyle({
         textAlign: "center"
-    },
-    spacer:
-    {
+    }),
+    Spacer: ViewStyle({
         flex: 1
-    }
+    })
 });

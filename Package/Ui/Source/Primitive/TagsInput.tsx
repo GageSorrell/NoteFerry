@@ -19,10 +19,10 @@
 import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
+import { MakeStyles, TextStyle as MakeTextStyle, ViewStyle as MakeViewStyle } from "../MakeStyles.js";
 import {
     type NativeSyntheticEvent,
     type StyleProp,
-    StyleSheet,
     TextInput,
     type TextInputKeyPressEventData,
     View,
@@ -59,6 +59,7 @@ const TagsInput = ({
     Style
 }: TagsInputProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const [ InputText, SetInputText ] = React.useState("");
     const {
         [Semantic.Ring]: RingColor,
@@ -177,9 +178,8 @@ const TagsInput = ({
     );
 };
 
-const Styles = StyleSheet.create({
-    Container:
-    {
+const useStyles = MakeStyles({
+    Container: MakeViewStyle({
         alignItems: "center",
         borderWidth: 1,
         flexDirection: "row",
@@ -189,28 +189,25 @@ const Styles = StyleSheet.create({
         paddingHorizontal: 8,
         paddingVertical: 6,
         width: "100%"
-    },
-    Input:
-    {
+    }),
+    Input: MakeTextStyle({
         flexGrow: 1,
         fontSize: 14,
         height: 22,
         margin: 0,
         minWidth: 60,
         padding: 0
-    },
-    Tag:
-    {
+    }),
+    Tag: MakeViewStyle({
         alignItems: "center",
         flexDirection: "row",
         gap: 4,
         height: 22,
         paddingLeft: 8,
         paddingRight: 4
-    },
-    TagRemove:
-    {
+    }),
+    TagRemove: MakeViewStyle({
         alignItems: "center",
         justifyContent: "center"
-    }
+    })
 });

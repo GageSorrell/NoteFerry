@@ -14,8 +14,8 @@
 
 import type * as Domain from "@notivex/domain";
 import { Body, LabelText, RadioGroup, RadioGroupItem } from "@notivex/ui/Primitive";
-import { Platform, ScrollView, StyleSheet, View } from "react-native";
-import { useTheme } from "@notivex/ui";
+import { MakeStyles, Token, ViewStyle, useTheme } from "@notivex/ui";
+import { Platform, ScrollView, View } from "react-native";
 
 /** {@inheritDoc BehaviorPicker} */
 export interface BehaviorPickerProps
@@ -47,10 +47,11 @@ const BehaviorPicker = ({
 }: BehaviorPickerProps): React.JSX.Element =>
 {
     const Theme = useTheme();
+    const Styles = useStyles();
     const CanCloseApp = AllowCloseApp && Platform.OS === "android";
 
     return (
-        <View style={ styles.container }>
+        <View style={ Styles.Container }>
             <RadioGroup
                 OnValueChange={ (Next: string) =>
                 {
@@ -76,17 +77,17 @@ const BehaviorPicker = ({
                     }
                 } }
                 Value={ Value.Type }>
-                <View style={ styles.row }>
+                <View style={ Styles.Row }>
                     <RadioGroupItem Value={ HomeValue } />
                     <Body>Go to the home screen</Body>
                 </View>
-                <View style={ styles.row }>
+                <View style={ Styles.Row }>
                     <RadioGroupItem Value={ SelectedDatabaseValue } />
                     <Body>Open a database</Body>
                 </View>
                 { CanCloseApp
                     ? (
-                        <View style={ styles.row }>
+                        <View style={ Styles.Row }>
                             <RadioGroupItem Value={ CloseAppValue } />
                             <Body>Close the app</Body>
                         </View>
@@ -97,7 +98,7 @@ const BehaviorPicker = ({
             { Value.Type === "SelectedDatabase"
                 ? (
                     <ScrollView
-                        contentContainerStyle={ styles.databaseList }
+                        contentContainerStyle={ Styles.DatabaseList }
                         horizontal
                         showsHorizontalScrollIndicator={ false }>
                         { DataSources.map((Source: Domain.DataSource.CachedDataSourceSchema) =>
@@ -108,8 +109,12 @@ const BehaviorPicker = ({
                             return (
                                 <View
                                     key={ Source.DataSourceId }
+                                    onTouchEnd={ () => OnChange({
+                                        DataSourceId: Source.DataSourceId,
+                                        Type: "SelectedDatabase"
+                                    }) }
                                     style={ [
-                                        styles.databaseChip,
+                                        Styles.DatabaseChip,
                                         {
                                             backgroundColor: Selected
                                                 ? Theme.Semantic.BackgroundModal
@@ -118,12 +123,8 @@ const BehaviorPicker = ({
                                                 ? Theme.Semantic.Primary
                                                 : Theme.Semantic.Border
                                         },
-                                        Selected && styles.databaseChipSelected
-                                    ] }
-                                    onTouchEnd={ () => OnChange({
-                                        DataSourceId: Source.DataSourceId,
-                                        Type: "SelectedDatabase"
-                                    }) }>
+                                        Selected && Styles.DatabaseChipSelected
+                                    ] }>
                                     <LabelText>{ Source.Title }</LabelText>
                                 </View>
                             );
@@ -137,31 +138,26 @@ const BehaviorPicker = ({
 
 BehaviorPicker.displayName = "BehaviorPicker";
 
-const styles = StyleSheet.create({
-    container:
-    {
+const useStyles = MakeStyles({
+    Container: ViewStyle({
         gap: 10
-    },
-    databaseChip:
-    {
+    }),
+    DatabaseChip: ViewStyle({
         borderRadius: 999,
         borderWidth: 1,
         paddingHorizontal: 14,
-        paddingVertical: 8
-    },
-    databaseChipSelected:
-    {
+        paddingVertical: Token.Spacing.S
+    }),
+    DatabaseChipSelected: ViewStyle({
         borderWidth: 2
-    },
-    databaseList:
-    {
-        gap: 8,
+    }),
+    DatabaseList: ViewStyle({
+        gap: Token.Spacing.S,
         paddingVertical: 2
-    },
-    row:
-    {
+    }),
+    Row: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
         gap: 10
-    }
+    })
 });

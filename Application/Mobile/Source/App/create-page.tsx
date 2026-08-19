@@ -19,7 +19,6 @@ import {
     Platform,
     type PressableStateCallbackType,
     ScrollView,
-    StyleSheet,
     TextInput,
     View
 } from "react-native";
@@ -46,6 +45,7 @@ import {
 import type { EventArg, NavigationAction } from "expo-router/build/react-navigation";
 import { FileMediaPropertyField, type FileMediaValue } from
     "@/features/page-creation/file-media-property-field";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
 import { String, pipe } from "effect";
@@ -76,7 +76,6 @@ import { UrlPropertyField } from
     "@/features/page-creation/url-property-field";
 import { randomUUID } from "expo-crypto";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
-import { useTheme } from "@notivex/ui";
 
 const MaxPageBodyLength = 200_000;
 
@@ -136,55 +135,65 @@ const HeaderSettingsButton = ({
     Label,
     OnPress
 }: HeaderSettingsButtonProps): React.JSX.Element =>
-    <Pressable
-        Accessibility={ {
-            Label,
-            Role: "button",
-            State: { disabled: Disabled }
-        } }
-        Disabled={ Disabled }
-        OnPress={ OnPress }
-        hitSlop={ 8 }
-        style={ ({ pressed }: PressableStateCallbackType) => [
-            styles.headerSettingsButton,
-            Disabled && styles.headerSettingsButtonDisabled,
-            pressed && styles.headerSettingsButtonPressed
-        ] }>
-        <Settings
-            color={ Color }
-            size={ 20 }
-            strokeWidth={ 2 }
-        />
-    </Pressable>;
+{
+    const Styles = useStyles();
+
+    return (
+        <Pressable
+            Accessibility={ {
+                Label,
+                Role: "button",
+                State: { disabled: Disabled }
+            } }
+            Disabled={ Disabled }
+            OnPress={ OnPress }
+            hitSlop={ 8 }
+            style={ ({ pressed }: PressableStateCallbackType) => [
+                Styles.HeaderSettingsButton,
+                Disabled && Styles.HeaderSettingsButtonDisabled,
+                pressed && Styles.HeaderSettingsButtonPressed
+            ] }>
+            <Settings
+                color={ Color }
+                size={ 20 }
+                strokeWidth={ 2 }
+            />
+        </Pressable>
+    );
+};
 
 /** Displays the selected database identity in the native stack header. */
 const DatabaseHeaderTitle = ({
     Source,
     Title
 }: DatabaseHeaderTitleProps): React.JSX.Element =>
-    <View style={ styles.navigationTitle }>
-        { Source === null
-            ? (
-                <View
-                    accessible={ false }
-                    style={ styles.navigationIconPlaceholder }
-                />
-            )
-            : <DatabaseIcon Source={ Source } /> }
-        <ItemTitle
-            NumberOfLines={ 1 }
-            Style={ styles.navigationTitleText }
-            Weight="600">
-            { Title }
-        </ItemTitle>
-    </View>;
+{
+    const Styles = useStyles();
+
+    return (
+        <View style={ Styles.NavigationTitle }>
+            { Source === null
+                ? (
+                    <View
+                        accessible={ false }
+                        style={ Styles.NavigationIconPlaceholder }
+                    />
+                )
+                : <DatabaseIcon Source={ Source } /> }
+            <ItemTitle
+                NumberOfLines={ 1 }
+                Style={ Styles.NavigationTitleText }
+                Weight="600">
+                { Title }
+            </ItemTitle>
+        </View>
+    );
+};
 
 const SupportsInput = (Property: Domain.Property.PropertyDefinition): boolean =>
     Domain.Destination.IsQuickEntryProperty(Property);
 
-const IsDateValue = (
-    Value: FieldValue | undefined
-): Value is Domain.Property.DatePropertyInput =>
+const IsDateValue = (Value: FieldValue | undefined): Value is Domain.Property.DatePropertyInput =>
     typeof Value === "object"
     && Value !== null
     && "Type" in Value
@@ -206,6 +215,7 @@ const PageFormField = ({
     Value
 }: PageFormFieldProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const StringValue = typeof Value === "string" ? Value : "";
     const MultiSelectValue = Array.isArray(Value)
         ? Value as ReadonlyArray<Domain.Id.NotionOptionId>
@@ -342,7 +352,7 @@ const PageFormField = ({
                 Disabled={ Disabled }
                 OnChangeText={ OnChange }
                 Placeholder="Empty"
-                Style={ styles.inlineInput }
+                Style={ Styles.InlineInput }
                 Value={ StringValue }
                 Variant="Flat"
             />
@@ -350,14 +360,14 @@ const PageFormField = ({
     }
 
     return (
-        <View style={ styles.propertyRow }>
-            <View style={ styles.propertyLabel }>
+        <View style={ Styles.PropertyRow }>
+            <View style={ Styles.PropertyLabel }>
                 <PropertyLabel
                     Muted
                     Property={ Property }
                 />
             </View>
-            <View style={ styles.propertyValue }>
+            <View style={ Styles.PropertyValue }>
                 { Control }
             </View>
         </View>
@@ -370,6 +380,7 @@ const PageCreateScreen = (): React.JSX.Element =>
     const Navigation = useNavigation();
     const Router = useLazyRouter();
     const Theme = useTheme();
+    const Styles = useStyles();
     const DataSourceId = Params.dataSourceId as Domain.Id.NotionDataSourceId;
     const [ DataSource, SetDataSource ] =
         useState<Domain.DataSource.CachedDataSourceSchema | null>(null);
@@ -856,7 +867,7 @@ const PageCreateScreen = (): React.JSX.Element =>
             <Pressable
                 Accessibility={ { Label: "Change page icon", Role: "button" } }
                 OnPress={ OpenIconMenu }
-                style={ [ styles.iconWrap, HasCover && styles.iconOverlap ] }>
+                style={ [ Styles.IconWrap, HasCover && Styles.IconOverlap ] }>
                 <IconBlock
                     Icon={ PageIcon }
                     Size="ExtraLarge"
@@ -885,7 +896,7 @@ const PageCreateScreen = (): React.JSX.Element =>
     if (!HasCover && !HasIcon)
     {
         MediaHeader = (
-            <View style={ styles.addRow }>
+            <View style={ Styles.AddRow }>
                 { AddIconButton }
                 { AddCoverButton }
             </View>
@@ -912,7 +923,7 @@ const PageCreateScreen = (): React.JSX.Element =>
     return (
         <KeyboardAvoidingView
             behavior={ Platform.OS === "ios" ? "padding" : undefined }
-            style={ styles.container }>
+            style={ Styles.Container }>
             <Stack.Screen options={ {
                 headerRight: RenderHeaderRight,
                 headerShown: !HasCover,
@@ -920,21 +931,21 @@ const PageCreateScreen = (): React.JSX.Element =>
             } } />
             <SafeAreaView
                 edges={ [ "bottom", "left", "right" ] }
-                style={ styles.safeArea }>
+                style={ Styles.SafeArea }>
                 { IsLoading
                     ? <ActivityIndicator
                         color={ Theme.Semantic.Cursor }
-                        style={ styles.loading }
+                        style={ Styles.Loading }
                     />
                     : DataSource === null || Destination === null
                         ? (
-                            <View style={ styles.messageContainer }>
+                            <View style={ Styles.MessageContainer }>
                                 <Description>{ ErrorMessage }</Description>
                             </View>
                         )
                         : (
                             <ScrollView
-                                contentContainerStyle={ styles.scroll }
+                                contentContainerStyle={ Styles.Scroll }
                                 keyboardShouldPersistTaps="handled">
                                 { HasCover && (
                                     <Cover
@@ -943,7 +954,7 @@ const PageCreateScreen = (): React.JSX.Element =>
                                         Url={ CoverUrl }
                                     />
                                 ) }
-                                <View style={ [ styles.body, { paddingTop: BodyTopPadding } ] }>
+                                <View style={ [ Styles.Body, { paddingTop: BodyTopPadding } ] }>
                                     { MediaHeader }
 
                                     { TitleProperty === undefined
@@ -961,15 +972,12 @@ const PageCreateScreen = (): React.JSX.Element =>
                                                 placeholderTextColor={ Theme.Semantic.Muted }
                                                 scrollEnabled={ false }
                                                 selectionColor={ Theme.Semantic.Cursor }
-                                                style={ [
-                                                    styles.pageTitleInput,
-                                                    { color: Theme.Semantic.Primary }
-                                                ] }
+                                                style={ Styles.PageTitleInput }
                                                 value={ PageTitleText }
                                             />
                                         ) }
 
-                                    <View style={ styles.properties }>
+                                    <View style={ Styles.Properties }>
                                         { PropertyRows.map((
                                             Property: Domain.Property.PropertyDefinition
                                         ) => (
@@ -984,7 +992,7 @@ const PageCreateScreen = (): React.JSX.Element =>
                                         )) }
                                     </View>
 
-                                    <Separator Style={ styles.bodyDivider } />
+                                    <Separator Style={ Styles.BodyDivider } />
 
                                     <Textarea
                                         AccessibilityLabel="Page body"
@@ -993,7 +1001,7 @@ const PageCreateScreen = (): React.JSX.Element =>
                                         NumberOfLines={ 8 }
                                         OnChangeText={ SetPageBody }
                                         Placeholder="Type something..."
-                                        Style={ styles.pageBodyInput }
+                                        Style={ Styles.PageBodyInput }
                                         Value={ PageBody }
                                     />
 
@@ -1006,7 +1014,7 @@ const PageCreateScreen = (): React.JSX.Element =>
                                         Disabled={ pipe(PageTitleText, String.trim, String.isEmpty) }
                                         Loading={ IsSaving }
                                         OnPress={ Submit }
-                                        Style={ styles.submit }>
+                                        Style={ Styles.Submit }>
                                         Create page
                                     </Button>
                                 </View>
@@ -1015,12 +1023,12 @@ const PageCreateScreen = (): React.JSX.Element =>
                 { HasCover && (
                     <View
                         pointerEvents="box-none"
-                        style={ [ styles.coverHeader, { paddingTop: Insets.top + 6 } ] }>
+                        style={ [ Styles.CoverHeader, { paddingTop: Insets.top + 6 } ] }>
                         <Pressable
                             Accessibility={ { Label: "Go back", Role: "button" } }
                             OnPress={ GoBack }
                             hitSlop={ 8 }
-                            style={ styles.coverHeaderButton }>
+                            style={ Styles.CoverHeaderButton }>
                             <ChevronLeft
                                 color="#FFFFFF"
                                 size={ 22 }
@@ -1037,8 +1045,8 @@ const PageCreateScreen = (): React.JSX.Element =>
                             OnPress={ OpenDatabaseSettings }
                             hitSlop={ 8 }
                             style={ [
-                                styles.coverHeaderButton,
-                                DataSource === null && styles.coverHeaderButtonDisabled
+                                Styles.CoverHeaderButton,
+                                DataSource === null && Styles.CoverHeaderButtonDisabled
                             ] }>
                             <Settings
                                 color="#FFFFFF"
@@ -1058,108 +1066,89 @@ const PageCreateScreen = (): React.JSX.Element =>
     );
 };
 
-const styles = StyleSheet.create({
-    addRow:
-    {
+const useStyles = MakeStyles({
+    AddRow: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
         flexWrap: "wrap",
-        gap: 16
-    },
-    body:
-    {
-        gap: 16,
-        paddingHorizontal: 24
-    },
-    bodyDivider:
-    {
-        marginVertical: 16
-    },
-    container:
-    {
+        gap: Token.Spacing.L
+    }),
+    Body: ViewStyle({
+        gap: Token.Spacing.L,
+        paddingHorizontal: Token.Spacing.Xl
+    }),
+    BodyDivider: ViewStyle({
+        marginVertical: Token.Spacing.L
+    }),
+    Container: ViewStyle({
         flex: 1
-    },
-    coverHeader:
-    {
+    }),
+    CoverHeader: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
         justifyContent: "space-between",
         left: 0,
-        paddingHorizontal: 12,
+        paddingHorizontal: Token.Spacing.M,
         position: "absolute",
         right: 0,
         top: 0
-    },
-    coverHeaderButton:
-    {
+    }),
+    CoverHeaderButton: ViewStyle({
         alignItems: "center",
         backgroundColor: "rgba(0, 0, 0, 0.35)",
         borderRadius: 18,
         height: 36,
         justifyContent: "center",
         width: 36
-    },
-    coverHeaderButtonDisabled:
-    {
+    }),
+    CoverHeaderButtonDisabled: ViewStyle({
         opacity: 0.35
-    },
-    headerSettingsButton:
-    {
+    }),
+    HeaderSettingsButton: ViewStyle({
         alignItems: "center",
         borderRadius: 18,
         height: 36,
         justifyContent: "center",
         width: 36
-    },
-    headerSettingsButtonDisabled:
-    {
+    }),
+    HeaderSettingsButtonDisabled: ViewStyle({
         opacity: 0.35
-    },
-    headerSettingsButtonPressed:
-    {
+    }),
+    HeaderSettingsButtonPressed: ViewStyle({
         opacity: 0.55
-    },
-    iconOverlap:
-    {
+    }),
+    IconOverlap: ViewStyle({
         marginTop: -39
-    },
-    iconWrap:
-    {
+    }),
+    IconWrap: ViewStyle({
         alignSelf: "flex-start",
-        marginBottom: 8
-    },
-    inlineInput:
-    {
+        marginBottom: Token.Spacing.S
+    }),
+    InlineInput: ViewStyle({
         height: 32,
         paddingHorizontal: 0
-    },
-    loading:
-    {
+    }),
+    Loading: ViewStyle({
         flex: 1
-    },
-    messageContainer:
-    {
+    }),
+    MessageContainer: ViewStyle({
         flex: 1,
-        padding: 24
-    },
-    navigationIconPlaceholder:
-    {
+        padding: Token.Spacing.Xl
+    }),
+    NavigationIconPlaceholder: ViewStyle({
         height: 24,
         width: 24
-    },
-    navigationTitle:
-    {
+    }),
+    NavigationTitle: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
-        gap: 8,
+        gap: Token.Spacing.S,
         maxWidth: 260
-    },
-    navigationTitleText:
-    {
+    }),
+    NavigationTitleText: TextStyle({
         flexShrink: 1
-    },
-    pageBodyInput:
-    {
+    }),
+    PageBodyInput: TextStyle({
         backgroundColor: "transparent",
         borderWidth: 0,
         fontSize: 16,
@@ -1167,9 +1156,9 @@ const styles = StyleSheet.create({
         minHeight: 192,
         paddingHorizontal: 0,
         paddingVertical: 0
-    },
-    pageTitleInput:
-    {
+    }),
+    PageTitleInput: TextStyle({
+        color: Token.Semantic.Primary,
         fontSize: 34,
         fontWeight: "700",
         letterSpacing: -0.6,
@@ -1178,44 +1167,37 @@ const styles = StyleSheet.create({
         minHeight: 48,
         padding: 0,
         textAlignVertical: "top"
-    },
-    properties:
-    {
+    }),
+    Properties: ViewStyle({
         gap: 2
-    },
-    propertyLabel:
-    {
+    }),
+    PropertyLabel: ViewStyle({
         flexBasis: "38%",
         flexGrow: 0,
         flexShrink: 0,
         maxWidth: 128
-    },
-    propertyRow:
-    {
+    }),
+    PropertyRow: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
-        gap: 12,
+        gap: Token.Spacing.M,
         minHeight: 40
-    },
-    propertyValue:
-    {
+    }),
+    PropertyValue: ViewStyle({
         flex: 1,
         minWidth: 0
-    },
-    safeArea:
-    {
+    }),
+    SafeArea: ViewStyle({
         flex: 1
-    },
-    scroll:
-    {
+    }),
+    Scroll: ViewStyle({
         flexGrow: 1,
         paddingBottom: 40
-    },
-    submit:
-    {
+    }),
+    Submit: ViewStyle({
         marginTop: 28,
-        minHeight: 48
-    }
+        minHeight: Token.Size.Control.Large
+    })
 });
 
 export default PageCreateScreen;

@@ -15,6 +15,7 @@
  */
 
 import { Description, ItemTitle } from "@notivex/ui/Primitive";
+import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import {
     NativeAd,
     NativeAdView,
@@ -23,10 +24,9 @@ import {
     NativeMediaView
 } from "react-native-google-mobile-ads";
 import { ResolveAdUnitId, useAdsReady, useIsAdFree } from "@/Domain/Ads";
-import { StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
 import { Image } from "expo-image";
-import { useTheme } from "@notivex/ui";
+import { View } from "react-native";
 
 export/**
        * Renders one native ad in the home database list, or nothing while
@@ -38,6 +38,7 @@ export/**
 const NativeDatabaseAdCard = (): React.JSX.Element | null =>
 {
     const Theme = useTheme();
+    const Styles = useStyles();
     const IsAdFree = useIsAdFree();
     const IsAdsReady = useAdsReady();
     const [ Ad, SetAd ] = useState<NativeAd | null>(null);
@@ -97,10 +98,8 @@ const NativeDatabaseAdCard = (): React.JSX.Element | null =>
         <NativeAdView
             nativeAd={ Ad }
             style={ [
-                styles.card,
+                Styles.Card,
                 {
-                    backgroundColor: Theme.Semantic.BackgroundModal,
-                    borderRadius: Theme.Radii.ExtraLarge,
                     elevation: CardShadow.Elevation,
                     shadowColor: CardShadow.ShadowColor,
                     shadowOffset: CardShadow.ShadowOffset
@@ -113,20 +112,20 @@ const NativeDatabaseAdCard = (): React.JSX.Element | null =>
                     shadowRadius: CardShadow.ShadowRadius
                 }
             ] }>
-            <View style={ [ styles.clippedContent, { borderRadius: Theme.Radii.ExtraLarge } ] }>
-                <NativeMediaView style={ styles.cover } />
+            <View style={ Styles.ClippedContent }>
+                <NativeMediaView style={ Styles.Cover } />
 
                 { /* Required by AdMob policy: ad content must be clearly
                      distinguishable from app content. */ }
-                <View style={ styles.adBadge }>
+                <View style={ Styles.AdBadge }>
                     <Description
-                        Style={ styles.adBadgeText }
+                        Style={ Styles.AdBadgeText }
                         Weight="600">
                         Ad
                     </Description>
                 </View>
 
-                <View style={ styles.titleRow }>
+                <View style={ Styles.TitleRow }>
                     { Ad.icon && (
                         <NativeAsset assetType={ NativeAssetType.ICON }>
                             <Image
@@ -134,14 +133,14 @@ const NativeDatabaseAdCard = (): React.JSX.Element | null =>
                                 cachePolicy="memory-disk"
                                 contentFit="contain"
                                 source={ { uri: Ad.icon.url } }
-                                style={ styles.icon }
+                                style={ Styles.Icon }
                             />
                         </NativeAsset>
                     ) }
                     <NativeAsset assetType={ NativeAssetType.HEADLINE }>
                         <ItemTitle
                             NumberOfLines={ 2 }
-                            Style={ styles.title }
+                            Style={ Styles.Title }
                             Weight="600">
                             { Ad.headline }
                         </ItemTitle>
@@ -149,15 +148,11 @@ const NativeDatabaseAdCard = (): React.JSX.Element | null =>
                 </View>
 
                 { Ad.callToAction && (
-                    <View style={ styles.ctaRow }>
+                    <View style={ Styles.CtaRow }>
                         <NativeAsset assetType={ NativeAssetType.CALL_TO_ACTION }>
-                            <View
-                                style={ [
-                                    styles.ctaButton,
-                                    { backgroundColor: Theme.Semantic.Cursor }
-                                ] }>
+                            <View style={ Styles.CtaButton }>
                                 <Description
-                                    Style={ styles.ctaText }
+                                    Style={ Styles.CtaText }
                                     Weight="600">
                                     { Ad.callToAction }
                                 </Description>
@@ -170,72 +165,65 @@ const NativeDatabaseAdCard = (): React.JSX.Element | null =>
     );
 };
 
-const styles = StyleSheet.create({
-    adBadge:
-    {
+const useStyles = MakeStyles({
+    AdBadge: ViewStyle({
         backgroundColor: "rgba(0, 0, 0, 0.55)",
         borderRadius: 4,
-        left: 8,
+        left: Token.Spacing.S,
         paddingHorizontal: 6,
         paddingVertical: 2,
         position: "absolute",
-        top: 8
-    },
-    adBadgeText:
-    {
+        top: Token.Spacing.S
+    }),
+    AdBadgeText: TextStyle({
         color: "#FFFFFF",
         fontSize: 11,
         lineHeight: 14
-    },
-    card:
-    {
-        alignSelf: "stretch"
-    },
-    clippedContent:
-    {
+    }),
+    Card: ViewStyle({
+        alignSelf: "stretch",
+        backgroundColor: Token.Semantic.BackgroundModal,
+        borderRadius: Token.Radii.ExtraLarge
+    }),
+    ClippedContent: ViewStyle({
+        borderRadius: Token.Radii.ExtraLarge,
         overflow: "hidden"
-    },
-    cover:
-    {
+    }),
+    Cover: ImageStyle({
         height: 96,
         width: "100%"
-    },
-    ctaButton:
-    {
+    }),
+    CtaButton: ViewStyle({
         alignItems: "center",
         alignSelf: "flex-start",
-        borderRadius: 10,
+        backgroundColor: Token.Semantic.Cursor,
+        borderRadius: Token.Radii.Large,
         justifyContent: "center",
         paddingHorizontal: 14,
-        paddingVertical: 8
-    },
-    ctaRow:
-    {
-        paddingBottom: 12,
-        paddingHorizontal: 16
-    },
-    ctaText:
-    {
+        paddingVertical: Token.Spacing.S
+    }),
+    CtaRow: ViewStyle({
+        paddingBottom: Token.Spacing.M,
+        paddingHorizontal: Token.Spacing.L
+    }),
+    CtaText: TextStyle({
         color: "#FFFFFF",
         fontSize: 13
-    },
-    icon:
-    {
+    }),
+    Icon: ImageStyle({
         borderRadius: 4,
         height: 24,
         width: 24
-    },
-    title:
-    {
+    }),
+    Title: TextStyle({
         flex: 1
-    },
-    titleRow:
-    {
+    }),
+    TitleRow: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
         gap: 10,
         minHeight: 60,
-        paddingHorizontal: 16,
-        paddingVertical: 12
-    }
+        paddingHorizontal: Token.Spacing.L,
+        paddingVertical: Token.Spacing.M
+    })
 });

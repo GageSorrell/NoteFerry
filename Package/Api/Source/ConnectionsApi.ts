@@ -1,9 +1,8 @@
 /**
  * The `Connections` group: starting Notion's OAuth authorization flow,
  * listing a user's authorized Notion connections, and disconnecting one.
- * See `ArchitectureInitialDraft.md` §16-17 — the OAuth token exchange itself
- * happens in the separate, unauthenticated `notion-oauth-callback` Edge
- * Function, not here.
+ * The OAuth token exchange itself happens in the separate, unauthenticated
+ * `notion-oauth-callback` Edge Function, not here.
  *
  * @module @notivex/api/ConnectionsApi
  *

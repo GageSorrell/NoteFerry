@@ -1,7 +1,6 @@
 /**
  * The `DataSources` group: reading and refreshing the normalized, cached
- * Notion data-source schemas that drive Notivex's quick-add forms. See
- * `ArchitectureInitialDraft.md` §11-12 and §26-27.
+ * Notion data-source schemas that drive Notivex's quick-add forms.
  *
  * @module @notivex/api/DataSourcesApi
  *
@@ -33,8 +32,7 @@ export/**
        * Discover the data sources a connection can currently see in Notion,
        * without caching them. This is how a user finds a data source to cache
        * (via {@link Refresh}) in the first place — the cache endpoints below all
-       * assume a `DataSourceId` you already have. See
-       * `ArchitectureInitialDraft.md` §32, §36.
+       * assume a `DataSourceId` you already have.
        *
        * @category DataSources
        * @since 1.0.0
@@ -112,8 +110,7 @@ const List = HttpApiEndpoint.get(
 
 export/**
        * Re-fetch a data source's schema from Notion and refresh the cache,
-       * reconciling any affected destinations by property id — see
-       * `ArchitectureInitialDraft.md` §26.
+       * reconciling any affected destinations by property id.
        *
        * @category DataSources
        * @since 1.0.0

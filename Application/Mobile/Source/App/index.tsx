@@ -12,21 +12,20 @@ import {
     ActivityIndicator,
     type PressableStateCallbackType,
     ScrollView,
-    StyleSheet,
     View
 } from "react-native";
 import { Body, Description, Pressable } from "@notivex/ui/Primitive";
+import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { Settings, UserRound } from "lucide-react-native";
+import { useEffect, useState } from "react";
 import { DatabaseCard } from "@/Component/DatabaseCard";
 import { Image } from "expo-image";
 import { Predicate } from "@sorrell/effect";
 import { RegisterQuickActions } from "@/Domain/Runtime/QuickActions";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useConnections } from "@/Domain/Connection";
-import { useEffect, useState } from "react";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSettings } from "@/features/settings/use-settings";
-import { useTheme } from "@notivex/ui";
 
 /* Only the *first* home-screen mount of an app session should honor
  * `LaunchBehavior`; a returning visit from inside the app (e.g. back from
@@ -74,6 +73,7 @@ const NotionAvatar = ({ Name, Uri }: NotionAvatarProps): React.JSX.Element =>
     "use no memo";
 
     const Theme = useTheme();
+    const Styles = useStyles();
     const [ HasImageError, SetHasImageError ] = useState(false);
     const CanDisplayImage = Uri !== undefined
         && (Uri.startsWith("https://") || Uri.startsWith("http://"))
@@ -84,13 +84,7 @@ const NotionAvatar = ({ Name, Uri }: NotionAvatarProps): React.JSX.Element =>
         <View
             accessibilityLabel={ `Notion profile for ${ Name }` }
             accessible
-            style={ [
-                styles.avatar,
-                {
-                    backgroundColor: Theme.Semantic.BackgroundModal,
-                    borderColor: Theme.Semantic.BackgroundModal
-                }
-            ] }>
+            style={ Styles.Avatar }>
             { CanDisplayImage
                 ? (
                     <Image
@@ -99,7 +93,7 @@ const NotionAvatar = ({ Name, Uri }: NotionAvatarProps): React.JSX.Element =>
                         contentFit="cover"
                         onError={ () => SetHasImageError(true) }
                         source={ { uri: Uri } }
-                        style={ styles.avatarImage }
+                        style={ Styles.AvatarImage }
                         transition={ 100 }
                     />
                 )
@@ -126,6 +120,7 @@ const HomeScreen = () =>
     const { IsLoading: IsLoadingSettings, Settings: AppSettings } = useSettings();
     const Router = useLazyRouter();
     const Theme = useTheme();
+    const Styles = useStyles();
     const Connection = Connections.find(Predicate.HasPropertyValue("Status", "Active"))
         ?? Connections[0];
     const AvatarUri = Connection?.NotionOwnerAvatarUrl
@@ -172,9 +167,9 @@ const HomeScreen = () =>
     }, [ AppSettings, DataSources, IsLoading, IsLoadingSettings ]);
 
     return (
-        <View style={ [ styles.container, { backgroundColor: HomeBackground } ] }>
-            <SafeAreaView style={ styles.safeArea }>
-                <View style={ styles.topBar }>
+        <View style={ [ Styles.Container, { backgroundColor: HomeBackground } ] }>
+            <SafeAreaView style={ Styles.SafeArea }>
+                <View style={ Styles.TopBar }>
                     <NotionAvatar
                         Name={ AvatarName }
                         Uri={ AvatarUri }
@@ -187,9 +182,9 @@ const HomeScreen = () =>
                         } }
                         OnPress={ Router.push("/settings") }
                         style={ ({ pressed }: PressableStateCallbackType) => [
-                            styles.settingsButton,
+                            Styles.SettingsButton,
                             { backgroundColor: ControlBackground },
-                            pressed && styles.controlPressed
+                            pressed && Styles.ControlPressed
                         ] }>
                         <Settings
                             color="#8C8786"
@@ -200,10 +195,10 @@ const HomeScreen = () =>
                 </View>
 
                 <ScrollView
-                    contentContainerStyle={ styles.list }
-                    style={ styles.listContainer }>
+                    contentContainerStyle={ Styles.List }
+                    style={ Styles.ListContainer }>
                     <Description
-                        Style={ styles.sectionTitle }
+                        Style={ Styles.SectionTitle }
                         Weight="500">
                         Databases
                     </Description>
@@ -212,7 +207,7 @@ const HomeScreen = () =>
                         : OrderedDataSources.length === 0
                             ? <Body>No databases found yet.</Body>
                             : (
-                                <View style={ styles.databaseCards }>
+                                <View style={ Styles.DatabaseCards }>
                                     { OrderedDataSources.map((
                                         Source: Domain.DataSource.CachedDataSourceSchema
                                     ) => (
@@ -239,77 +234,68 @@ const HomeScreen = () =>
     );
 };
 
-const styles = StyleSheet.create({
-    avatar:
-    {
+const useStyles = MakeStyles({
+    Avatar: ViewStyle({
         alignItems: "center",
+        backgroundColor: Token.Semantic.BackgroundModal,
+        borderColor: Token.Semantic.BackgroundModal,
         borderRadius: 18,
         borderWidth: 2,
         height: 36,
         justifyContent: "center",
         overflow: "hidden",
         width: 36
-    },
-    avatarImage:
-    {
+    }),
+    AvatarImage: ImageStyle({
         height: "100%",
         width: "100%"
-    },
-    container:
-    {
+    }),
+    Container: ViewStyle({
         flex: 1
-    },
-    controlPressed:
-    {
+    }),
+    ControlPressed: ViewStyle({
         opacity: 0.68,
         transform: [ { scale: 0.97 } ]
-    },
-    databaseCards:
-    {
-        gap: 16,
+    }),
+    DatabaseCards: ViewStyle({
+        gap: Token.Spacing.L,
         overflow: "visible",
         paddingHorizontal: 2
-    },
-    list:
-    {
+    }),
+    List: ViewStyle({
         gap: 14,
         paddingBottom: 28,
-        paddingHorizontal: 16,
+        paddingHorizontal: Token.Spacing.L,
         paddingTop: 22
-    },
-    listContainer:
-    {
+    }),
+    ListContainer: ViewStyle({
         alignSelf: "stretch",
         flex: 1,
         marginHorizontal: -16
-    },
-    safeArea:
-    {
+    }),
+    SafeArea: ViewStyle({
         flex: 1,
-        paddingHorizontal: 16,
+        paddingHorizontal: Token.Spacing.L,
         paddingTop: 10
-    },
-    sectionTitle:
-    {
+    }),
+    SectionTitle: TextStyle({
         fontSize: 14,
         lineHeight: 20,
         marginLeft: 2
-    },
-    settingsButton:
-    {
+    }),
+    SettingsButton: ViewStyle({
         alignItems: "center",
         borderRadius: 22,
         height: 42,
         justifyContent: "center",
         width: 82
-    },
-    topBar:
-    {
+    }),
+    TopBar: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
         justifyContent: "space-between",
-        minHeight: 44
-    }
+        minHeight: Token.Size.TouchTarget.Minimum
+    })
 });
 
 export default HomeScreen;

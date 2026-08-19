@@ -11,9 +11,10 @@
  */
 
 import type * as Domain from "@notivex/domain";
-import { StyleSheet, View } from "react-native";
+import { MakeStyles, ViewStyle } from "@notivex/ui";
 import { Input } from "@notivex/ui/Primitive";
 import { PropertyLabel } from "@/features/page-creation/property-label";
+import { View } from "react-native";
 
 /** Props for a Notion Email property field. */
 export interface EmailPropertyFieldProps
@@ -34,15 +35,17 @@ export function EmailPropertyField({
     Value
 }: EmailPropertyFieldProps): React.JSX.Element
 {
+    const Styles = useStyles();
+
     return (
-        <View style={ [ styles.field, Inline && styles.inlineField ] }>
+        <View style={ [ Styles.Field, Inline && Styles.InlineField ] }>
             { Inline ? null : <PropertyLabel Property={ Property } /> }
             <Input
                 Disabled={ Disabled }
                 KeyboardType="email-address"
                 OnChangeText={ OnValueChange }
                 Placeholder="Empty"
-                Style={ styles.input }
+                Style={ Styles.Input }
                 Value={ Value }
                 Variant={ Inline ? "Flat" : "Default" }
             />
@@ -50,19 +53,16 @@ export function EmailPropertyField({
     );
 }
 
-const styles = StyleSheet.create({
-    field:
-    {
+const useStyles = MakeStyles({
+    Field: ViewStyle({
         gap: 6
-    },
-    inlineField:
-    {
+    }),
+    InlineField: ViewStyle({
         flex: 1,
         minWidth: 0
-    },
-    input:
-    {
+    }),
+    Input: ViewStyle({
         flex: 1,
         minWidth: 0
-    }
+    })
 });

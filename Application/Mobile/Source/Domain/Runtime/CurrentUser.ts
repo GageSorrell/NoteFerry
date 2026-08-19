@@ -1,8 +1,7 @@
 /**
- * The Effect-facing seam for "who is the current Notivex user?"
- * (ArchitectureInitialDraft.md §15, §35). Application code depends on this
- * `CurrentUser` service rather than on `supabase-js` directly, so the same use
- * cases can run against a test user in unit tests.
+ * The Effect-facing seam for "who is the current Notivex user?" Application
+ * code depends on this `CurrentUser` service rather than on `supabase-js`
+ * directly, so the same use cases can run against a test user in unit tests.
  *
  * @module notivex/Domain/Runtime/CurrentUser
  *

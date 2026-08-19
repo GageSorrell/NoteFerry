@@ -21,7 +21,8 @@
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { Image as ImageIcon, X } from "lucide-react-native";
-import { type StyleProp, StyleSheet, View, type ViewStyle, useWindowDimensions } from "react-native";
+import { ImageStyle, MakeStyles, ViewStyle as MakeViewStyle, TextStyle } from "../MakeStyles.js";
+import { type StyleProp, View, type ViewStyle, useWindowDimensions } from "react-native";
 import { Body } from "../Primitive/Text.js";
 import { Image as ExpoImage } from "expo-image";
 import { Skeleton } from "../Primitive/Skeleton.js";
@@ -62,6 +63,7 @@ const Cover = ({
     Style
 }: CoverProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const { height: WindowHeight } = useWindowDimensions();
     const {
         [Semantic.BackgroundPopover]: PopoverBackground,
@@ -141,41 +143,35 @@ const CoverSkeleton = (): React.JSX.Element =>
     return <Skeleton Style={ { height: Math.min(WindowHeight * 0.3, MaxHeight), width: "100%" } } />;
 };
 
-const Styles = StyleSheet.create({
-    ActionButton:
-    {
+const useStyles = MakeStyles({
+    ActionButton: MakeViewStyle({
         alignItems: "center",
         flexDirection: "row",
         gap: 6,
         paddingHorizontal: 10,
         paddingVertical: 6
-    },
-    ActionLabel:
-    {
+    }),
+    ActionLabel: TextStyle({
         fontSize: 12
-    },
-    ActionPill:
-    {
+    }),
+    ActionPill: MakeViewStyle({
         borderRadius: 6,
         overflow: "hidden"
-    },
-    Actions:
-    {
+    }),
+    Actions: MakeViewStyle({
         bottom: 12,
         flexDirection: "row",
         gap: 8,
         position: "absolute",
         right: 12
-    },
-    Fill:
-    {
+    }),
+    Fill: ImageStyle({
         height: "100%",
         width: "100%"
-    },
-    Root:
-    {
+    }),
+    Root: MakeViewStyle({
         overflow: "hidden",
         position: "relative",
         width: "100%"
-    }
+    })
 });

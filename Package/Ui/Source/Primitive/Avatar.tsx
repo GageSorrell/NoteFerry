@@ -16,10 +16,11 @@
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { Image, type ImageSource } from "expo-image";
-import { type ImageStyle, type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
+import { type ImageStyle, type StyleProp, View, type ViewStyle } from "react-native";
+import { ImageStyle as MakeImageStyle, MakeStyles, ViewStyle as MakeViewStyle } from "../MakeStyles.js";
 
-import { useToken } from "../ThemeProvider.js";
 import { WithAlpha } from "../Utility/index.js";
+import { useToken } from "../ThemeProvider.js";
 
 type AvatarStatus =
     | "Idle"
@@ -61,6 +62,7 @@ export/**
        */
 const Avatar = ({ Size = 40, Style, children }: AvatarProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const [ Status, SetStatus ] = React.useState<AvatarStatus>("Idle");
     const { [Semantic.Border]: BorderColor } = useToken(Semantic.Border);
 
@@ -100,6 +102,7 @@ export/**
        */
 const AvatarImage = ({ Source, Style }: AvatarImageProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const { SetStatus } = useAvatarContext();
 
     return (
@@ -123,6 +126,7 @@ export/**
        */
 const AvatarFallback = ({ children }: AvatarFallbackProps): React.JSX.Element | null =>
 {
+    const Styles = useStyles();
     const { Status } = useAvatarContext();
     const { [Semantic.Default]: DefaultColor } = useToken(Semantic.Default);
 
@@ -138,20 +142,17 @@ const AvatarFallback = ({ children }: AvatarFallbackProps): React.JSX.Element | 
     );
 };
 
-const Styles = StyleSheet.create({
-    Fallback:
-    {
+const useStyles = MakeStyles({
+    Fallback: MakeViewStyle({
         alignItems: "center",
         justifyContent: "center"
-    },
-    Fill:
-    {
+    }),
+    Fill: MakeImageStyle({
         height: "100%",
         width: "100%"
-    },
-    Root:
-    {
+    }),
+    Root: MakeViewStyle({
         borderWidth: 1,
         overflow: "hidden"
-    }
+    })
 });

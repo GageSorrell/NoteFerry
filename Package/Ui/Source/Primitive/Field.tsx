@@ -15,7 +15,8 @@
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { Description, SectionTitle } from "./Text.js";
-import { type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
+import { MakeStyles, ViewStyle as MakeViewStyle } from "../MakeStyles.js";
+import { type StyleProp, View, type ViewStyle } from "react-native";
 import { Label } from "./Label.js";
 import { useToken } from "../ThemeProvider.js";
 
@@ -42,9 +43,15 @@ export/**
        * @since 1.0.0
        */
 const FieldSet = ({ Style, children }: FieldSetProps): React.JSX.Element =>
-    <View style={ [ Styles.FieldSet, Style ] }>
-        { children }
-    </View>;
+{
+    const Styles = useStyles();
+
+    return (
+        <View style={ [ Styles.FieldSet, Style ] }>
+            { children }
+        </View>
+    );
+};
 
 /** {@inheritDoc FieldLegend} */
 export interface FieldLegendProps extends React.PropsWithChildren
@@ -76,9 +83,15 @@ export/**
        * @since 1.0.0
        */
 const FieldGroup = ({ Style, children }: FieldGroupProps): React.JSX.Element =>
-    <View style={ [ Styles.FieldGroup, Style ] }>
-        { children }
-    </View>;
+{
+    const Styles = useStyles();
+
+    return (
+        <View style={ [ Styles.FieldGroup, Style ] }>
+            { children }
+        </View>
+    );
+};
 
 /** {@inheritDoc Field} */
 export interface FieldProps extends React.PropsWithChildren
@@ -95,9 +108,16 @@ export/**
        * @since 1.0.0
        */
 const Field = ({ Orientation = "Vertical", Style, children }: FieldProps): React.JSX.Element =>
-    <View style={ [ Orientation === "Horizontal" ? Styles.FieldHorizontal : Styles.FieldVertical, Style ] }>
-        { children }
-    </View>;
+{
+    const Styles = useStyles();
+    const OrientationStyle = Orientation === "Horizontal" ? Styles.FieldHorizontal : Styles.FieldVertical;
+
+    return (
+        <View style={ [ OrientationStyle, Style ] }>
+            { children }
+        </View>
+    );
+};
 
 /** {@inheritDoc FieldContent} */
 export interface FieldContentProps extends React.PropsWithChildren
@@ -111,9 +131,12 @@ export/**
        * @category Component
        * @since 1.0.0
        */
-const FieldContent = ({ Style, children }: FieldContentProps): React.JSX.Element => (
-    <View style={ [ Styles.FieldContent, Style ] }>{ children }</View>
-);
+const FieldContent = ({ Style, children }: FieldContentProps): React.JSX.Element =>
+{
+    const Styles = useStyles();
+
+    return <View style={ [ Styles.FieldContent, Style ] }>{ children }</View>;
+};
 
 export/** {@inheritDoc Label} */
 const FieldLabel = Label;
@@ -204,35 +227,30 @@ const FieldError = ({ Errors, children }: FieldErrorProps): React.JSX.Element | 
         : <>{ Content }</>;
 };
 
-const Styles = StyleSheet.create({
-    FieldContent:
-    {
+const useStyles = MakeStyles({
+    FieldContent: MakeViewStyle({
         flex: 1,
         flexDirection: "column",
         gap: 2
-    },
-    FieldGroup:
-    {
+    }),
+    FieldGroup: MakeViewStyle({
         flexDirection: "column",
         gap: 20,
         width: "100%"
-    },
-    FieldHorizontal:
-    {
+    }),
+    FieldHorizontal: MakeViewStyle({
         alignItems: "center",
         flexDirection: "row",
         gap: 8,
         width: "100%"
-    },
-    FieldSet:
-    {
+    }),
+    FieldSet: MakeViewStyle({
         flexDirection: "column",
         gap: 16
-    },
-    FieldVertical:
-    {
+    }),
+    FieldVertical: MakeViewStyle({
         flexDirection: "column",
         gap: 8,
         width: "100%"
-    }
+    })
 });

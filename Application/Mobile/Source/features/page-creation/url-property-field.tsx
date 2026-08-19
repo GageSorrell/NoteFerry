@@ -13,9 +13,10 @@
  */
 
 import type * as Domain from "@notivex/domain";
-import { StyleSheet, View } from "react-native";
+import { MakeStyles, TextStyle, ViewStyle } from "@notivex/ui";
 import { Input } from "@notivex/ui/Primitive";
 import { PropertyLabel } from "@/features/page-creation/property-label";
+import { View } from "react-native";
 
 /** Props for a Notion URL property field. */
 export interface UrlPropertyFieldProps
@@ -36,16 +37,18 @@ export function UrlPropertyField({
     Value
 }: UrlPropertyFieldProps): React.JSX.Element
 {
+    const Styles = useStyles();
+
     return (
-        <View style={ [ styles.field, Inline && styles.inlineField ] }>
+        <View style={ [ Styles.Field, Inline && Styles.InlineField ] }>
             { Inline ? null : <PropertyLabel Property={ Property } /> }
             <Input
                 Disabled={ Disabled }
                 KeyboardType="url"
                 OnChangeText={ OnValueChange }
                 Placeholder="Empty"
-                Style={ [ styles.input, Inline && styles.inlineInput ] }
-                TextStyle={ styles.text }
+                Style={ [ Styles.Input, Inline && Styles.InlineInput ] }
+                TextStyle={ Styles.Text }
                 Value={ Value }
                 Variant={ Inline ? "Flat" : "Default" }
             />
@@ -53,29 +56,24 @@ export function UrlPropertyField({
     );
 }
 
-const styles = StyleSheet.create({
-    field:
-    {
+const useStyles = MakeStyles({
+    Field: ViewStyle({
         gap: 6
-    },
-    inlineField:
-    {
+    }),
+    InlineField: ViewStyle({
         flex: 1,
         minWidth: 0
-    },
-    inlineInput:
-    {
+    }),
+    InlineInput: ViewStyle({
         minHeight: 32,
         paddingHorizontal: 0
-    },
-    input:
-    {
+    }),
+    Input: ViewStyle({
         flex: 1,
         minWidth: 0
-    },
-    text:
-    {
+    }),
+    Text: TextStyle({
         fontSize: 16,
         lineHeight: 24
-    }
+    })
 });

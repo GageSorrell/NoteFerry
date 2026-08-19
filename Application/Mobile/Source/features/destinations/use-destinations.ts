@@ -1,7 +1,7 @@
 /**
  * Hook backing the destination-config screen: the destinations already
  * configured for one cached data source, plus create/delete. Thin wrapper over
- * the typed API client (ArchitectureInitialDraft.md §24-25).
+ * the typed API client.
  *
  * @module notivex/features/destinations/use-destinations
  *

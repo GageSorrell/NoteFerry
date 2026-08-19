@@ -10,9 +10,10 @@
  */
 
 import type * as Domain from "@notivex/domain";
-import { StyleSheet, View } from "react-native";
+import { MakeStyles, TextStyle, ViewStyle } from "@notivex/ui";
 import { PropertyLabel } from "@/features/page-creation/property-label";
 import { Textarea } from "@notivex/ui/Primitive";
+import { View } from "react-native";
 
 /** Props for a Notion Rich text property field. */
 export interface TextPropertyFieldProps
@@ -33,37 +34,36 @@ export function TextPropertyField({
     Value
 }: TextPropertyFieldProps): React.JSX.Element
 {
+    const Styles = useStyles();
+
     return (
-        <View style={ [ styles.field, Inline && styles.inlineField ] }>
+        <View style={ [ Styles.Field, Inline && Styles.InlineField ] }>
             { Inline ? null : <PropertyLabel Property={ Property } /> }
             <Textarea
                 Disabled={ Disabled }
                 NumberOfLines={ 1 }
                 OnChangeText={ OnValueChange }
                 Placeholder="Empty"
-                Style={ Inline ? styles.inlineTextarea : undefined }
+                Style={ Inline ? Styles.InlineTextarea : undefined }
                 Value={ Value }
             />
         </View>
     );
 }
 
-const styles = StyleSheet.create({
-    field:
-    {
+const useStyles = MakeStyles({
+    Field: ViewStyle({
         gap: 6
-    },
-    inlineField:
-    {
+    }),
+    InlineField: ViewStyle({
         flex: 1,
         minWidth: 0
-    },
-    inlineTextarea:
-    {
+    }),
+    InlineTextarea: TextStyle({
         backgroundColor: "transparent",
         borderWidth: 0,
         minHeight: 32,
         paddingHorizontal: 0,
         paddingVertical: 5
-    }
+    })
 });

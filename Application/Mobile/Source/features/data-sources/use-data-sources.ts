@@ -3,7 +3,7 @@
  * Notion search (`Discovered`), the locally cached schemas (`Cached`), and a
  * `Cache` action that fetches + normalizes a data source's schema into the
  * cache. Thin wrapper over the typed API client; the component stays unaware
- * of HTTP (ArchitectureInitialDraft.md §16, §36).
+ * of HTTP.
  *
  * @module notivex/features/data-sources/use-data-sources
  *

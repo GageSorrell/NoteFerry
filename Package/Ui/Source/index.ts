@@ -17,6 +17,25 @@ export * as Token from "./Token/index.js";
 export { NotivexUiError } from "./NotivexUiError.js";
 
 export {
+    ImageStyle,
+    type ImageStyleSlot,
+    MakeStyles,
+    MergeStyles,
+    type ColorToken,
+    type NumberToken,
+    type ResolvedStyles,
+    type Style,
+    type StyleSlot,
+    type StyleToken,
+    type StylesConfig,
+    TextStyle,
+    type TextStyleSlot,
+    type Tokenized,
+    ViewStyle,
+    type ViewStyleSlot
+} from "./MakeStyles.js";
+
+export {
     ThemeProvider,
     type ThemeProviderProps,
     useToken,

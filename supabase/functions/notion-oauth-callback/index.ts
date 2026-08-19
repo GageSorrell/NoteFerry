@@ -1,10 +1,9 @@
 /**
- * The unauthenticated Notion OAuth callback (ArchitectureInitialDraft.md §17).
- * Notion redirects the browser here after the user authorizes. Its authority is
- * the one-time `state`, not a Supabase JWT — so this function is deployed with
- * `verify_jwt = false`.
+ * The unauthenticated Notion OAuth callback. Notion redirects the browser here
+ * after the user authorizes. Its authority is the one-time `state`, not a
+ * Supabase JWT — so this function is deployed with `verify_jwt = false`.
  *
- * Flow (§7): verify state → exchange code (server-side, with the client secret)
+ * Flow: verify state → exchange code (server-side, with the client secret)
  * → persist connection metadata + server-only credentials → redirect back into
  * the app via the `notivex://` deep link.
  *

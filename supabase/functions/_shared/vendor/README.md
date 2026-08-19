@@ -5,8 +5,8 @@
 for `api.js`) left external so they resolve via the function `deno.json` import map.
 
 They exist because the Supabase Edge (Deno) bundler cannot import files outside the
-`supabase/` directory (ArchitectureInitialDraft.md §2). Vendoring keeps the contracts
-inside `supabase/functions/`, resolvable by both `supabase functions serve` and deploy.
+`supabase/` directory. Vendoring keeps the contracts inside `supabase/functions/`,
+resolvable by both `supabase functions serve` and deploy.
 
 ## Regenerate
 

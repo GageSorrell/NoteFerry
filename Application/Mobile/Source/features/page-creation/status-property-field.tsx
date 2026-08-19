@@ -11,15 +11,15 @@
 
 import type * as Domain from "@notivex/domain";
 import { Body, type BottomSheet } from "@notivex/ui/Primitive";
-import { StyleSheet, View } from "react-native";
-import { PropertyLabel } from "@/features/page-creation/property-label";
-import { Predicate } from "@sorrell/effect";
+import { MakeStyles, Token, ViewStyle } from "@notivex/ui";
 import {
     PropertyOptionPill,
     PropertyOptionSheet,
     PropertyOptionSheetTrigger
 } from "@/features/page-creation/property-option-sheet";
-import { Token } from "@notivex/ui";
+import { Predicate } from "@sorrell/effect";
+import { PropertyLabel } from "@/features/page-creation/property-label";
+import { View } from "react-native";
 import { useRef } from "react";
 
 interface DisplayStatusGroup
@@ -62,13 +62,13 @@ const BuildDisplayGroups = (
 {
     if (Property.Groups !== undefined && Property.Groups.length > 0)
     {
-        const OptionById = new Map(Property.Options.map((Option) =>
+        const OptionById = new Map(Property.Options.map((Option: Domain.Property.PropertyOption) =>
             [ Option.Id, Option ] as const));
         const AssignedOptionIds = new Set<Domain.Id.NotionOptionId>();
-        const Groups = Property.Groups.map((Group) => ({
+        const Groups = Property.Groups.map((Group: Domain.Property.StatusGroup) => ({
             Id: Group.Id,
             Name: Group.Name,
-            Options: Group.OptionIds.flatMap((OptionId) =>
+            Options: Group.OptionIds.flatMap((OptionId: Domain.Id.NotionOptionId) =>
             {
                 const Option = OptionById.get(OptionId);
 
@@ -81,7 +81,7 @@ const BuildDisplayGroups = (
                 return [ Option ] as const;
             })
         }));
-        const Unassigned = Property.Options.filter((Option) =>
+        const Unassigned = Property.Options.filter((Option: Domain.Property.PropertyOption) =>
             !AssignedOptionIds.has(Option.Id));
 
         return Unassigned.length === 0
@@ -101,7 +101,7 @@ const BuildDisplayGroups = (
     return Names.map((Name: typeof Names[number]) => ({
         Id: Name,
         Name,
-        Options: Property.Options.filter((Option) =>
+        Options: Property.Options.filter((Option: Domain.Property.PropertyOption) =>
             FallbackGroupFor(Option) === Name)
     }));
 };
@@ -115,13 +115,14 @@ export function StatusPropertyField({
     Value
 }: StatusPropertyFieldProps): React.JSX.Element
 {
+    const Styles = useStyles();
     const SheetRef = useRef<BottomSheet | null>(null);
     const SelectedOption = Property.Options.find(Predicate.HasPropertyValue("Id", Value));
-    const Groups = BuildDisplayGroups(Property).filter((Group) =>
+    const Groups = BuildDisplayGroups(Property).filter((Group: DisplayStatusGroup) =>
         Group.Options.length > 0);
 
     return (
-        <View style={ [ styles.field, Inline && styles.inlineField ] }>
+        <View style={ [ Styles.Field, Inline && Styles.InlineField ] }>
             { Inline ? null : <PropertyLabel Property={ Property } /> }
             <PropertyOptionSheetTrigger
                 AccessibilityLabel={ Property.Name }
@@ -130,7 +131,8 @@ export function StatusPropertyField({
                 OnPress={ () => SheetRef.current?.present() }>
                 { SelectedOption === undefined
                     ? <Body Color={ Token.Semantic.Muted }>Empty</Body>
-                    : <PropertyOptionPill Option={ SelectedOption } Status /> }
+                    : <PropertyOptionPill Option={ SelectedOption }
+                        Status /> }
             </PropertyOptionSheetTrigger>
             <PropertyOptionSheet
                 OnOptionPress={ (Option: Domain.Property.PropertyOption) =>
@@ -155,14 +157,12 @@ export function StatusPropertyField({
     );
 }
 
-const styles = StyleSheet.create({
-    field:
-    {
+const useStyles = MakeStyles({
+    Field: ViewStyle({
         gap: 6
-    },
-    inlineField:
-    {
+    }),
+    InlineField: ViewStyle({
         flex: 1,
         minWidth: 0
-    }
+    })
 });

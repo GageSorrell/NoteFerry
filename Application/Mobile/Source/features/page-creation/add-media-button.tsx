@@ -12,10 +12,10 @@
  * @license   MIT
  */
 
-import { type PressableStateCallbackType, StyleSheet } from "react-native";
-import { Token, useTheme } from "@notivex/ui";
 import { Body, Pressable } from "@notivex/ui/Primitive";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import type { LucideIcon } from "lucide-react-native";
+import { type PressableStateCallbackType } from "react-native";
 import type { Thunk } from "@sorrell/effect/Function";
 
 /** Props for a single "Add icon"/"Add cover" affordance. */
@@ -36,6 +36,7 @@ export function AddMediaButton({
 }: AddMediaButtonProps): React.JSX.Element
 {
     const Theme = useTheme();
+    const Styles = useStyles();
 
     return (
         <Pressable
@@ -48,8 +49,8 @@ export function AddMediaButton({
             OnPress={ OnPress }
             hitSlop={ 6 }
             style={ ({ pressed }: PressableStateCallbackType) => [
-                styles.button,
-                pressed && styles.pressed
+                Styles.Button,
+                pressed && Styles.Pressed
             ] }>
             <Icon
                 color={ Theme.Semantic.Muted }
@@ -58,28 +59,25 @@ export function AddMediaButton({
             />
             <Body
                 Color={ Token.Semantic.Muted }
-                Style={ styles.label }>
+                Style={ Styles.Label }>
                 { Label }
             </Body>
         </Pressable>
     );
 }
 
-const styles = StyleSheet.create({
-    button:
-    {
+const useStyles = MakeStyles({
+    Button: ViewStyle({
         alignItems: "center",
         alignSelf: "flex-start",
         flexDirection: "row",
         gap: 6,
         paddingVertical: 6
-    },
-    label:
-    {
+    }),
+    Label: TextStyle({
         fontSize: 14
-    },
-    pressed:
-    {
+    }),
+    Pressed: ViewStyle({
         opacity: 0.5
-    }
+    })
 });

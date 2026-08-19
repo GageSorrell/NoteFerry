@@ -30,11 +30,11 @@ import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
 import { type DateData, Calendar as RNCalendar } from "react-native-calendars";
+import { MakeStyles, ViewStyle as MakeViewStyle, TextStyle } from "../MakeStyles.js";
 import { Mix, WithAlpha } from "../Utility/index.js";
 import {
     type PressableStateCallbackType,
     type StyleProp,
-    StyleSheet,
     Text,
     View,
     type ViewStyle
@@ -79,10 +79,18 @@ const DateSheetCalendarHeader = ({
     month
 }: DateSheetCalendarHeaderProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const {
         [Semantic.SidebarPrimary]: IconColor,
         [Semantic.Muted]: MutedColor
     } = useToken(Semantic.SidebarPrimary, Semantic.Muted);
+
+    const MonthButtonStyle = ({
+        pressed
+    }: PressableStateCallbackType): StyleProp<ViewStyle> => [
+        Styles.DateSheetMonthButton,
+        pressed && Styles.DateSheetMonthButtonPressed
+    ];
 
     return (
         <View>
@@ -98,7 +106,7 @@ const DateSheetCalendarHeader = ({
                         } }
                         OnPress={ () => addMonth?.(-1) }
                         hitSlop={ 8 }
-                        style={ DateSheetMonthButtonStyle }>
+                        style={ MonthButtonStyle }>
                         <ChevronLeft
                             color={ IconColor }
                             size={ 19 }
@@ -111,7 +119,7 @@ const DateSheetCalendarHeader = ({
                         } }
                         OnPress={ () => addMonth?.(1) }
                         hitSlop={ 8 }
-                        style={ DateSheetMonthButtonStyle }>
+                        style={ MonthButtonStyle }>
                         <ChevronRight
                             color={ IconColor }
                             size={ 19 }
@@ -135,13 +143,6 @@ const DateSheetCalendarHeader = ({
         </View>
     );
 };
-
-const DateSheetMonthButtonStyle = ({
-    pressed
-}: PressableStateCallbackType): StyleProp<ViewStyle> => [
-    Styles.DateSheetMonthButton,
-    pressed && Styles.DateSheetMonthButtonPressed
-];
 
 interface DateSheetCalendarDayMarking
 {
@@ -182,6 +183,7 @@ const DateSheetCalendarDay = ({
     testID
 }: DateSheetCalendarDayProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const {
         [ Semantic.BackgroundModal ]: CardBackground,
         [ Semantic.BlueHover ]: SelectedColor,
@@ -733,9 +735,8 @@ export/**
 const Calendar = (Props: CalendarProps): React.JSX.Element =>
     Props.Mode === "Range" ? <RangeCalendar { ...Props } /> : <SingleCalendar { ...Props } />;
 
-const Styles = StyleSheet.create({
-    DateSheetDayBackground:
-    {
+const useStyles = MakeStyles({
+    DateSheetDayBackground: MakeViewStyle({
         height: 36,
         left: "50%",
         marginLeft: -18,
@@ -743,97 +744,83 @@ const Styles = StyleSheet.create({
         position: "absolute",
         top: "50%",
         width: 36
-    },
-    DateSheetDayCell:
-    {
+    }),
+    DateSheetDayCell: MakeViewStyle({
         alignItems: "center",
         height: 36,
         justifyContent: "center",
         width: "100%"
-    },
-    DateSheetDayIndicator:
-    {
+    }),
+    DateSheetDayIndicator: MakeViewStyle({
         alignItems: "center",
         height: 36,
         justifyContent: "center",
         width: 36
-    },
-    DateSheetDayPressable:
-    {
+    }),
+    DateSheetDayPressable: MakeViewStyle({
         alignItems: "center",
         height: 36,
         justifyContent: "center",
         width: "100%"
-    },
-    DateSheetDayText:
-    {
+    }),
+    DateSheetDayText: TextStyle({
         fontFamily: "Inter_400Regular",
         fontSize: 16
-    },
-    DateSheetMonthActions:
-    {
+    }),
+    DateSheetMonthActions: MakeViewStyle({
         flexDirection: "row",
         gap: 0,
         paddingRight: 5
-    },
-    DateSheetMonthButton:
-    {
+    }),
+    DateSheetMonthButton: MakeViewStyle({
         alignItems: "center",
         borderRadius: 6,
         height: 32,
         justifyContent: "center",
         width: 32
-    },
-    DateSheetMonthButtonPressed:
-    {
+    }),
+    DateSheetMonthButtonPressed: MakeViewStyle({
         backgroundColor: "rgba(55, 53, 47, 0.08)"
-    },
-    DateSheetMonthHeader:
-    {
+    }),
+    DateSheetMonthHeader: MakeViewStyle({
         alignItems: "center",
         flexDirection: "row",
         justifyContent: "space-between",
         paddingLeft: 18,
         paddingRight: 0,
         paddingTop: 10
-    },
-    DateSheetRangeBand:
-    {
+    }),
+    DateSheetRangeBand: MakeViewStyle({
         height: 36,
         left: 0,
         position: "absolute",
         right: 0
-    },
-    DateSheetRangeBandEnd:
-    {
+    }),
+    DateSheetRangeBandEnd: MakeViewStyle({
         left: 0,
         right: "50%"
-    },
-    DateSheetRangeBandStart:
-    {
+    }),
+    DateSheetRangeBandStart: MakeViewStyle({
         left: "50%",
         right: 0
-    },
-    DateSheetTodayBackground:
-    {
+    }),
+    DateSheetTodayBackground: MakeViewStyle({
         borderRadius: 16,
         height: 32,
         marginLeft: -16,
         marginTop: -16,
         width: 32
-    },
-    DateSheetWeekday:
-    {
+    }),
+    DateSheetWeekday: TextStyle({
         fontSize: 16,
         textAlign: "center",
         width: 32
-    },
-    DateSheetWeekdays:
-    {
+    }),
+    DateSheetWeekdays: MakeViewStyle({
         flexDirection: "row",
         justifyContent: "space-around",
         marginBottom: 4,
         marginTop: 5,
         paddingHorizontal: 5
-    }
+    })
 });

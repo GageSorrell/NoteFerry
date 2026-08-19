@@ -13,16 +13,11 @@ import type * as Domain from "@notivex/domain";
 import * as React from "react";
 import { Defs, LinearGradient, Rect, Stop, Svg, SvgXml } from "react-native-svg";
 import { IconBlock, type LucideIconName } from "@notivex/ui/Block";
+import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { ItemTitle, Pressable } from "@notivex/ui/Primitive";
-import {
-    Platform,
-    type PressableStateCallbackType,
-    StyleSheet,
-    View
-} from "react-native";
+import { Platform, type PressableStateCallbackType, View } from "react-native";
 import { Image } from "expo-image";
 import type { Thunk } from "@sorrell/effect/Function";
-import { useTheme } from "@notivex/ui";
 
 /** {@inheritDoc DatabaseCard} */
 export interface DatabaseCardProps
@@ -49,6 +44,11 @@ interface SvgGradient
     readonly EndColor: string;
     readonly StartColor: string;
 }
+
+/* Read by the raw `<Svg>`/`<SvgXml>` `height` number props below, which take
+ * a plain `NumberProp`, not a resolved `DimensionValue` — kept in sync with
+ * `Cover`'s `height` in `useStyles` below by hand. */
+const CoverHeight = 96;
 
 const SvgCache = new Map<string, Promise<string>>();
 
@@ -117,6 +117,7 @@ function GetBlurredSvgGradient(Xml: string): SvgGradient | null
 /** Renders remote SVG covers without losing their large blurred gradients. */
 const DatabaseSvgCover = ({ Uri }: { readonly Uri: string; }): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const [ Xml, SetXml ] = React.useState<string | null | undefined>();
 
     React.useEffect(() =>
@@ -152,7 +153,7 @@ const DatabaseSvgCover = ({ Uri }: { readonly Uri: string; }): React.JSX.Element
         return (
             <Svg
                 accessible={ false }
-                height={ styles.cover.height }
+                height={ CoverHeight }
                 preserveAspectRatio="none"
                 viewBox="0 0 1 1"
                 width="100%">
@@ -187,7 +188,7 @@ const DatabaseSvgCover = ({ Uri }: { readonly Uri: string; }): React.JSX.Element
         return (
             <SvgXml
                 accessible={ false }
-                height={ styles.cover.height }
+                height={ CoverHeight }
                 preserveAspectRatio="xMidYMid slice"
                 width="100%"
                 xml={ Xml }
@@ -202,10 +203,10 @@ const DatabaseSvgCover = ({ Uri }: { readonly Uri: string; }): React.JSX.Element
                 cachePolicy="memory-disk"
                 contentFit="cover"
                 source={ { uri: Uri } }
-                style={ styles.cover }
+                style={ Styles.Cover }
             />
         )
-        : <View style={ styles.cover } />;
+        : <View style={ Styles.Cover } />;
 };
 
 DatabaseSvgCover.displayName = "DatabaseSvgCover";
@@ -217,6 +218,8 @@ const ToLucideIconName = (Value: string): LucideIconName =>
 export/** Renders the emoji, image, or native icon supplied by Notion. */
 const DatabaseIcon = React.memo(({ Source }: DatabaseIconProps): React.JSX.Element | null =>
 {
+    const Styles = useStyles();
+
     if (!Source.Icon)
     {
         return null;
@@ -243,13 +246,13 @@ const DatabaseIcon = React.memo(({ Source }: DatabaseIconProps): React.JSX.Eleme
                 cachePolicy="memory-disk"
                 contentFit="contain"
                 source={ { uri: Source.Icon } }
-                style={ styles.icon }
+                style={ Styles.Icon }
                 transition={ 100 }
             />
         );
     }
 
-    return <ItemTitle Style={ styles.emoji }>{ Source.Icon }</ItemTitle>;
+    return <ItemTitle Style={ Styles.Emoji }>{ Source.Icon }</ItemTitle>;
 });
 
 DatabaseIcon.displayName = "DatabaseIcon";
@@ -264,6 +267,7 @@ export/**
 const DatabaseCard = ({ OnPress, Source }: DatabaseCardProps): React.JSX.Element =>
 {
     const Theme = useTheme();
+    const Styles = useStyles();
     const CardShadow = Theme.Shadow.Card;
     const CoverIsSvg = Source.CoverUrl ? IsSvgUrl(Source.CoverUrl) : false;
     const RippleColor = Theme.Mode === "Dark"
@@ -282,10 +286,8 @@ const DatabaseCard = ({ OnPress, Source }: DatabaseCardProps): React.JSX.Element
                 foreground: true
             } }
             style={ ({ pressed }: PressableStateCallbackType) => [
-                styles.card,
+                Styles.Card,
                 {
-                    backgroundColor: Theme.Semantic.BackgroundModal,
-                    borderRadius: Theme.Radii.ExtraLarge,
                     elevation: CardShadow.Elevation,
                     shadowColor: CardShadow.ShadowColor,
                     shadowOffset: CardShadow.ShadowOffset
@@ -297,13 +299,9 @@ const DatabaseCard = ({ OnPress, Source }: DatabaseCardProps): React.JSX.Element
                     shadowOpacity: CardShadow.ShadowOpacity,
                     shadowRadius: CardShadow.ShadowRadius
                 },
-                Platform.OS !== "android" && pressed && styles.pressed
+                Platform.OS !== "android" && pressed && Styles.Pressed
             ] }>
-            <View
-                style={ [
-                    styles.clippedContent,
-                    { borderRadius: Theme.Radii.ExtraLarge }
-                ] }>
+            <View style={ Styles.ClippedContent }>
                 {Source.CoverUrl
                     ? CoverIsSvg
                         ? (
@@ -315,17 +313,17 @@ const DatabaseCard = ({ OnPress, Source }: DatabaseCardProps): React.JSX.Element
                                 cachePolicy="memory-disk"
                                 contentFit="cover"
                                 source={ { uri: Source.CoverUrl } }
-                                style={ styles.cover }
+                                style={ Styles.Cover }
                                 transition={ 150 }
                             />
                         )
                     : null}
 
-                <View style={ styles.titleRow }>
+                <View style={ Styles.TitleRow }>
                     <DatabaseIcon Source={ Source } />
                     <ItemTitle
                         NumberOfLines={ 2 }
-                        Style={ styles.title }
+                        Style={ Styles.Title }
                         Weight="600">
                         { Source.Title }
                     </ItemTitle>
@@ -337,47 +335,42 @@ const DatabaseCard = ({ OnPress, Source }: DatabaseCardProps): React.JSX.Element
 
 DatabaseCard.displayName = "DatabaseCard";
 
-const styles = StyleSheet.create({
-    card:
-    {
-        alignSelf: "stretch"
-    },
-    clippedContent:
-    {
+const useStyles = MakeStyles({
+    Card: ViewStyle({
+        alignSelf: "stretch",
+        backgroundColor: Token.Semantic.BackgroundModal,
+        borderRadius: Token.Radii.ExtraLarge
+    }),
+    ClippedContent: ViewStyle({
+        borderRadius: Token.Radii.ExtraLarge,
         overflow: "hidden"
-    },
-    cover:
-    {
-        height: 96,
+    }),
+    Cover: ImageStyle({
+        height: CoverHeight,
         width: "100%"
-    },
-    emoji:
-    {
+    }),
+    Emoji: TextStyle({
         fontSize: 22,
         lineHeight: 26
-    },
-    icon:
-    {
+    }),
+    Icon: ImageStyle({
         borderRadius: 4,
         height: 24,
         width: 24
-    },
-    pressed:
-    {
+    }),
+    Pressed: ViewStyle({
         opacity: 0.72,
         transform: [ { scale: 0.99 } ]
-    },
-    title:
-    {
+    }),
+    Title: TextStyle({
         flex: 1
-    },
-    titleRow:
-    {
+    }),
+    TitleRow: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
         gap: 10,
         minHeight: 60,
-        paddingHorizontal: 16,
-        paddingVertical: 12
-    }
+        paddingHorizontal: Token.Spacing.L,
+        paddingVertical: Token.Spacing.M
+    })
 });

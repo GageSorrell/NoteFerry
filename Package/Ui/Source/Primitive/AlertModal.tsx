@@ -13,8 +13,8 @@
 
 import * as React from "react";
 import { DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./Dialog.js";
+import { MakeStyles, TextStyle, ViewStyle } from "../MakeStyles.js";
 import { Button } from "./Button.js";
-import { StyleSheet } from "react-native";
 
 /** {@inheritDoc AlertModel} */
 export interface AlertModalProps
@@ -33,6 +33,7 @@ export/**
        */
 const AlertModal = ({ Title, Primary, Secondary, OnTrigger }: AlertModalProps): React.JSX.Element =>
 {
+    const Styles = useStyles();
     const [ Loading, SetLoading ] = React.useState(false);
 
     const Trigger = React.useCallback(async () =>
@@ -75,26 +76,21 @@ const AlertModal = ({ Title, Primary, Secondary, OnTrigger }: AlertModalProps): 
     );
 };
 
-const Styles = StyleSheet.create({
-    Content:
-    {
+const useStyles = MakeStyles({
+    Content: ViewStyle({
         width: 300
-    },
-    Footer:
-    {
+    }),
+    Footer: ViewStyle({
         alignItems: "stretch",
         paddingVertical: 6
-    },
-    FullWidth:
-    {
+    }),
+    FullWidth: ViewStyle({
         width: "100%"
-    },
-    Header:
-    {
+    }),
+    Header: ViewStyle({
         alignSelf: "flex-start"
-    },
-    Title:
-    {
+    }),
+    Title: TextStyle({
         textAlign: "left"
-    }
+    })
 });
