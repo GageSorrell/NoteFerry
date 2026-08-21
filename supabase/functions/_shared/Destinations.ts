@@ -21,14 +21,16 @@ import * as Domain from "@notivex/domain";
 import { Effect, Schema } from "effect";
 import { AdminClient, PrivateSchema } from "./Database.ts";
 
-/* The schema-versioned blob stored in `destinations.configuration`: the     *
- * `FieldConfiguration` and `DestinationTemplate`, encoded/decoded through   *
- * Effect Schema so a field default's `DatePropertyInput` (wire: ISO string; *
- * domain: `Date`) round-trips correctly.                                    */
+/* The schema-versioned blob stored in `destinations.configuration`: the       *
+ * `FieldConfiguration`, `DestinationTemplate` and `TemplateConfiguration`,    *
+ * encoded/decoded through Effect Schema so a field default's                 *
+ * `DatePropertyInput` (wire: ISO string; domain: `Date`) round-trips         *
+ * correctly.                                                                 */
 const ConfigurationSchema = Schema.Struct({
     FieldConfiguration: Domain.Destination.FieldConfiguration,
     PostCreationBehavior: Schema.optional(Domain.Behavior.PostCreationBehavior),
-    Template: Domain.Destination.DestinationTemplate
+    Template: Domain.Destination.DestinationTemplate,
+    TemplateConfiguration: Schema.optional(Domain.Destination.TemplateConfiguration)
 });
 
 const EncodeConfiguration = Schema.encodeSync(ConfigurationSchema);
@@ -38,6 +40,35 @@ const DecodeConfiguration = Schema.decodeSync(ConfigurationSchema);
  * (encoded) shape so `DecodeConfiguration` — which validates it at runtime —
  * accepts it. */
 type ConfigurationEncoded = (typeof ConfigurationSchema)["Encoded"];
+
+const EmptyTemplateConfiguration: Domain.Destination.TemplateConfiguration =
+    { Hidden: [ ], TemplateOrder: [ ], Version: 1 };
+
+/**
+ * Normalizes a stored `configuration` blob before it's decoded: a destination
+ * saved before Notivex's own default template was decoupled from Notion's may
+ * still carry the legacy `{Type:"Default"}` `Template` value, which no longer
+ * exists in `DestinationTemplate`'s schema. Notivex can't recover which
+ * Notion template a stored "Default" pointed to, so this normalizes it to
+ * `{Type:"None"}` — the same "no explicit selection" state a fresh
+ * destination starts from — before `DecodeConfiguration` ever sees it.
+ */
+/* eslint-disable-next-line jsdoc/require-jsdoc */
+function DecodeStoredConfiguration(Raw: unknown): Schema.Schema.Type<typeof ConfigurationSchema>
+{
+    const IsLegacyDefault = Raw !== null
+        && typeof Raw === "object"
+        && "Template" in Raw
+        && Raw.Template !== null
+        && typeof Raw.Template === "object"
+        && "Type" in Raw.Template
+        && Raw.Template.Type === "Default";
+    const Normalized = IsLegacyDefault
+        ? { ...Raw, Template: { Type: "None" } }
+        : Raw;
+
+    return DecodeConfiguration(Normalized as ConfigurationEncoded);
+}
 
 /**
  * The create/update inputs, typed in `@notivex/domain` identity so the
@@ -56,6 +87,7 @@ export interface DestinationCreateInput
     readonly Position: number;
     readonly PostCreationBehavior?: Domain.Behavior.PostCreationBehavior | undefined;
     readonly Template: Domain.Destination.DestinationTemplate;
+    readonly TemplateConfiguration?: Domain.Destination.TemplateConfiguration | undefined;
 }
 
 /** {@inheritDoc DestinationCreateInput} */
@@ -67,12 +99,13 @@ export interface DestinationUpdateInput
     readonly Position?: number | undefined;
     readonly PostCreationBehavior?: Domain.Behavior.PostCreationBehavior | undefined;
     readonly Template?: Domain.Destination.DestinationTemplate | undefined;
+    readonly TemplateConfiguration?: Domain.Destination.TemplateConfiguration | undefined;
 }
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 function RowToDestination(Row: Record<string, unknown>): Domain.Destination.Destination
 {
-    const Config = DecodeConfiguration(Row.configuration as ConfigurationEncoded);
+    const Config = DecodeStoredConfiguration(Row.configuration);
     const Icon = Row.icon as string | null;
 
     return {
@@ -86,6 +119,7 @@ function RowToDestination(Row: Record<string, unknown>): Domain.Destination.Dest
         Position: Row.position as number,
         ...(Config.PostCreationBehavior ? { PostCreationBehavior: Config.PostCreationBehavior } : { }),
         Template: Config.Template,
+        TemplateConfiguration: Config.TemplateConfiguration ?? EmptyTemplateConfiguration,
         UpdatedAt: new Date(Row.updated_at as string),
         UserId: Row.user_id as Domain.Id.UserId
     };
@@ -115,7 +149,8 @@ function FreeProjection(
         ),
         Name: Source.title,
         PostCreationBehavior: { Type: "Home" },
-        Template: { Type: "None" }
+        Template: { Type: "None" },
+        TemplateConfiguration: EmptyTemplateConfiguration
     };
 }
 
@@ -126,14 +161,18 @@ const DecodeFailed = (DecodeError: unknown): Domain.Error.DatabaseError =>
     });
 
 /**
- * Applies a refreshed Notion property schema to every destination that uses
- * the data source, preserving user settings by stable property ID.
+ * Applies a refreshed Notion property schema and template list to every
+ * destination that uses the data source, preserving user settings by stable
+ * property/template ID. A `Template` selection pointing at a template Notion
+ * no longer returns resets to `{Type:"None"}` — Notivex has nothing sensible
+ * left to point it at.
  */
 export function ReconcileForDataSource(
     UserId: string,
     ConnectionId: string,
     DataSourceId: string,
-    Properties: ReadonlyArray<Domain.Property.PropertyDefinition>
+    Properties: ReadonlyArray<Domain.Property.PropertyDefinition>,
+    Templates: ReadonlyArray<Domain.DataSource.CachedDataSourceTemplate>
 )
 {
     return Effect.gen(function* ()
@@ -151,21 +190,35 @@ export function ReconcileForDataSource(
             return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: error.message }));
         }
 
+        const KnownTemplateIds = new Set(Templates.map((Template) => Template.TemplateId));
+
         for (const Row of data ?? [])
         {
             const Current = yield* Effect.try({
                 catch: DecodeFailed,
-                try: () => DecodeConfiguration(Row.configuration as ConfigurationEncoded)
+                try: () => DecodeStoredConfiguration(Row.configuration)
             });
             const FieldConfiguration = Domain.Destination.ReconcileFieldConfiguration(
                 Current.FieldConfiguration,
                 Properties
             );
+            const TemplateConfiguration = Domain.Destination.ReconcileTemplateConfiguration(
+                Current.TemplateConfiguration ?? EmptyTemplateConfiguration,
+                Templates
+            );
+            const Template = Current.Template.Type === "Specific"
+                && !KnownTemplateIds.has(Current.Template.TemplateId)
+                ? { Type: "None" as const }
+                : Current.Template;
             const Configuration = yield* Effect.try({
                 catch: DecodeFailed,
                 try: () => EncodeConfiguration({
                     FieldConfiguration,
-                    Template: Current.Template
+                    ...(Current.PostCreationBehavior
+                        ? { PostCreationBehavior: Current.PostCreationBehavior }
+                        : {}),
+                    Template,
+                    TemplateConfiguration
                 })
             });
 
@@ -278,7 +331,7 @@ export function CreateForUser(UserId: string, Payload: DestinationCreateInput)
         const { data: DataSource, error: DataSourceError } = yield* Effect.promise(async () =>
             await AdminClient
                 .from("data_sources")
-                .select("notion_data_source_id,title,property_schema,free_active")
+                .select("notion_data_source_id,title,property_schema,templates,free_active")
                 .eq("connection_id", Payload.ConnectionId)
                 .eq("notion_data_source_id", Payload.DataSourceId)
                 .eq("user_id", UserId)
@@ -310,6 +363,24 @@ export function CreateForUser(UserId: string, Payload: DestinationCreateInput)
                 DataSource.property_schema as ReadonlyArray<Domain.Property.PropertyDefinition>
             );
 
+        const Templates = (DataSource.templates ?? [ ]) as
+            ReadonlyArray<Domain.DataSource.CachedDataSourceTemplate>;
+        const NotionDefaultTemplate = Templates.find((Template) => Template.IsNotionDefault);
+
+        /* Being a "default template" in Notivex is decoupled from Notion's own
+         * default: this is the *only* place Notion's default is snapshotted
+         * into Notivex's — once, at creation, and only when the caller didn't
+         * already express an explicit choice. A later change to Notion's
+         * default never reaches an already-created destination. */
+        const EffectiveTemplate = IsPro === true
+            ? (Payload.Template.Type === "None" && NotionDefaultTemplate !== undefined
+                ? { TemplateId: NotionDefaultTemplate.TemplateId, Type: "Specific" as const }
+                : Payload.Template)
+            : { Type: "None" as const };
+        const EffectiveTemplateConfiguration = IsPro === true
+            ? Domain.Destination.ReconcileTemplateConfiguration(EmptyTemplateConfiguration, Templates)
+            : EmptyTemplateConfiguration;
+
         const ConfigurationJson = yield* Effect.try({
             catch: DecodeFailed,
             try: () => EncodeConfiguration({
@@ -317,7 +388,8 @@ export function CreateForUser(UserId: string, Payload: DestinationCreateInput)
                 ...(IsPro === true && Payload.PostCreationBehavior
                     ? { PostCreationBehavior: Payload.PostCreationBehavior }
                     : {}),
-                Template: IsPro === true ? Payload.Template : { Type: "None" }
+                Template: EffectiveTemplate,
+                TemplateConfiguration: EffectiveTemplateConfiguration
             })
         });
 
@@ -394,7 +466,7 @@ export function UpdateForUser(UserId: string, DestinationId: string, Payload: De
 
         const Current = yield* Effect.try({
             catch: DecodeFailed,
-            try: () => DecodeConfiguration(Existing.configuration as ConfigurationEncoded)
+            try: () => DecodeStoredConfiguration(Existing.configuration)
         });
 
         const ResolvedPostCreationBehavior = Payload.PostCreationBehavior
@@ -406,7 +478,10 @@ export function UpdateForUser(UserId: string, DestinationId: string, Payload: De
                 ...(ResolvedPostCreationBehavior
                     ? { PostCreationBehavior: ResolvedPostCreationBehavior }
                     : {}),
-                Template: Payload.Template ?? Current.Template
+                Template: Payload.Template ?? Current.Template,
+                TemplateConfiguration: Payload.TemplateConfiguration
+                    ?? Current.TemplateConfiguration
+                    ?? EmptyTemplateConfiguration
             })
         });
 

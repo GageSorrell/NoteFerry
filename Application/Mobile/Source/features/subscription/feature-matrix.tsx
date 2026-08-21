@@ -13,7 +13,7 @@ const Rows = [
     [ "Page icons and covers", "Locked", "Included" ],
     [ "Database aliases", "Default Notion name only", "Custom aliases" ],
     [ "Form property visibility, required fields, ordering, and defaults", "Automatic form only", "Fully customizable" ],
-    [ "Notion templates (roadmap)", "No template", "Select defaults, hide, restore, and reorder templates" ],
+    [ "Notion templates", "No template", "Select defaults, hide, restore, and reorder templates" ],
     [ "Home-screen quick actions", "1 database", "Up to 6 databases" ],
     [ "Launch behavior", "Home screen", "Home or selected database" ],
     [ "Post-creation behavior", "Return home", "Home, selected database, or close app where supported" ],

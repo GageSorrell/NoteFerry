@@ -22,6 +22,14 @@ export interface UseDataSources
 {
     readonly Discovered: ReadonlyArray<Domain.DataSource.DiscoveredDataSource>;
     readonly Cached: ReadonlyArray<Domain.DataSource.CachedDataSourceSchema>;
+
+    /**
+     * The number of active databases across *every* connection, not just
+     * this one — the free-tier cap is enforced per-user, not per-workspace,
+     * so a paywall check scoped to {@link Cached} alone would miss databases
+     * already active in another workspace.
+     */
+    readonly GlobalActiveCount: number;
     readonly IsSearching: boolean;
     readonly IsLoadingCache: boolean;
     readonly BusyId: Domain.Id.NotionDataSourceId | null;
@@ -42,6 +50,7 @@ export function useDataSources(ConnectionId: Domain.Id.NotionConnectionId): UseD
         useState<ReadonlyArray<Domain.DataSource.DiscoveredDataSource>>([ ]);
     const [ Cached, SetCached ] =
         useState<ReadonlyArray<Domain.DataSource.CachedDataSourceSchema>>([ ]);
+    const [ GlobalActiveCount, SetGlobalActiveCount ] = useState(0);
     const [ IsSearching, SetIsSearching ] = useState(true);
     const [ IsLoadingCache, SetIsLoadingCache ] = useState(true);
     const [ BusyId, SetBusyId ] = useState<Domain.Id.NotionDataSourceId | null>(null);
@@ -56,6 +65,8 @@ export function useDataSources(ConnectionId: Domain.Id.NotionConnectionId): UseD
 
             SetCached(All.filter((Entry: Domain.DataSource.CachedDataSourceSchema) =>
                 Entry.ConnectionId === ConnectionId));
+            SetGlobalActiveCount(All.filter((Entry: Domain.DataSource.CachedDataSourceSchema) =>
+                Entry.Access === "Available").length);
         }
         catch (Error)
         {
@@ -91,15 +102,13 @@ export function useDataSources(ConnectionId: Domain.Id.NotionConnectionId): UseD
     {
         SetBusyId(DataSourceId);
 
+        /* Errors propagate to the caller (rather than being swallowed here)
+         * so the screen can distinguish a free-tier limit rejection from any
+         * other failure and give the user feedback either way. */
         try
         {
             await RefreshDataSource(ConnectionId, DataSourceId);
             await LoadCache();
-        }
-        catch (Error)
-        {
-            /* eslint-disable-next-line no-console */
-            console.error("Failed to cache data source", Error);
         }
         finally
         {
@@ -118,6 +127,7 @@ export function useDataSources(ConnectionId: Domain.Id.NotionConnectionId): UseD
         Cache,
         Cached,
         Discovered,
+        GlobalActiveCount,
         IsLoadingCache,
         IsSearching,
         Search

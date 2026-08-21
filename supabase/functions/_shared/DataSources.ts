@@ -21,7 +21,7 @@
 import * as Domain from "@notivex/domain";
 import * as Destinations from "./Destinations.ts";
 import * as Notion from "./Notion.ts";
-import { CallNotionData, LoadConnectionTokens, RateLimited } from "./NotionAuth.ts";
+import { CallNotionData, type ConnectionTokens, LoadConnectionTokens, RateLimited } from "./NotionAuth.ts";
 import { AdminClient, PrivateSchema } from "./Database.ts";
 import { Effect } from "effect";
 
@@ -128,6 +128,118 @@ function MapProperty(Property: Notion.NotionProperty): Domain.Property.PropertyD
         default:
             return null;
     }
+}
+
+/**
+ * Maps one Notion page property *value* back to a Notivex `PropertyInput`,
+ * the inverse of `Pages.ts`'s `MapValueToNotion`. Used only to snapshot a
+ * template page's own values for `CachedDataSourceTemplate.Properties` — not
+ * part of the normal page-creation path, which only ever writes to Notion.
+ * Returns `null` for an unset value, or a type Notivex can't safely
+ * reproduce from a snapshot (`Files`, `Relation`, `People` — Notion-hosted
+ * file URLs aren't stable external links, and relation/people values are
+ * already excluded from quick-entry forms).
+ */
+/* eslint-disable-next-line jsdoc/require-jsdoc */
+function MapPropertyValue(
+    Value: Notion.NotionPagePropertyValue,
+    Definition: Domain.Property.PropertyDefinition
+): Domain.Property.PropertyInput | null
+{
+    switch (Definition.Type)
+    {
+        case "Title":
+            return TitleToString(Value.title) === "Untitled" && (Value.title ?? []).length === 0
+                ? null
+                : { Type: "Title", Value: TitleToString(Value.title) };
+        case "RichText":
+        {
+            const Text = (Value.rich_text ?? []).map((Item) => Item.plain_text ?? "").join("");
+
+            return Text === "" ? null : { Type: "RichText", Value: Text };
+        }
+        case "Number":
+            return Value.number === null || Value.number === undefined
+                ? null
+                : { Type: "Number", Value: Value.number };
+        case "Checkbox":
+            return typeof Value.checkbox === "boolean"
+                ? { Type: "Checkbox", Value: Value.checkbox }
+                : null;
+        case "Date":
+            return Value.date
+                ? {
+                    End: Value.date.end ? new Date(Value.date.end) : undefined,
+                    Start: new Date(Value.date.start),
+                    Type: "Date"
+                }
+                : null;
+        case "Select":
+            return Value.select
+                ? { OptionId: Value.select.id as Domain.Id.NotionOptionId, Type: "Select" }
+                : null;
+        case "MultiSelect":
+            return (Value.multi_select ?? []).length > 0
+                ? {
+                    OptionIds: (Value.multi_select ?? []).map((Option) => Option.id as Domain.Id.NotionOptionId),
+                    Type: "MultiSelect"
+                }
+                : null;
+        case "Status":
+            return Value.status
+                ? { OptionId: Value.status.id as Domain.Id.NotionOptionId, Type: "Status" }
+                : null;
+        case "Url":
+            return Value.url ? { Type: "Url", Value: Value.url } : null;
+        case "Email":
+            return Value.email ? { Type: "Email", Value: Value.email } : null;
+        case "PhoneNumber":
+            return Value.phone_number ? { Type: "PhoneNumber", Value: Value.phone_number } : null;
+        default:
+            return null;
+    }
+}
+
+/**
+ * Snapshots a template page's own property values into the ordered
+ * `PropertyInputValue[]` `CachedDataSourceTemplate.Properties` stores,
+ * excluding the Title property (Notion doesn't carry a template's own title
+ * into a page created from it — see `CachedDataSourceTemplate`'s doc comment)
+ * and dropping any property with no value or an unsupported type.
+ *
+ * @category DataSources
+ * @since 1.0.0
+ */
+export function MapTemplateProperties(
+    Page: Notion.NotionPageObject,
+    Properties: ReadonlyArray<Domain.Property.PropertyDefinition>
+): ReadonlyArray<Domain.PageDraft.PropertyInputValue>
+{
+    const Values: Array<Domain.PageDraft.PropertyInputValue> = [];
+
+    for (const Property of Properties)
+    {
+        if (Property.Type === "Title")
+        {
+            continue;
+        }
+
+        const RawValue = (Page.properties ?? {})[Property.Id as string];
+
+        if (!RawValue)
+        {
+            continue;
+        }
+
+        const Mapped = MapPropertyValue(RawValue, Property);
+
+        if (Mapped)
+        {
+            Values.push({ PropertyId: Property.Id, Value: Mapped });
+        }
+    }
+
+    return Values;
 }
 
 /**
@@ -332,8 +444,9 @@ function RowToCached(
         Properties: Row.property_schema as readonly Domain.Property.PropertyDefinition[],
         RefreshedAt: new Date(Row.refreshed_at as string),
         SchemaHash: Row.schema_hash as string,
+        Templates: (Row.templates ?? []) as readonly Domain.DataSource.CachedDataSourceTemplate[],
         Title: Row.title as string,
-        Version: 1
+        Version: 2
     };
 }
 
@@ -378,6 +491,98 @@ function MapRetrieveError(
     }
 
     return MapReadError(Error_);
+}
+
+/**
+ * Fetches and normalizes a data source's Notion templates: the template list
+ * (id/name/is_default), enriched with each template's own icon and property
+ * values (a template is a page, so this needs one `RetrievePage` per
+ * template, capped at Notion's own 100-per-list-page maximum). Best-effort —
+ * a failure here degrades to no templates rather than failing the whole
+ * data-source refresh, matching this file's `ParentPage` fallback posture.
+ * Enrichment runs in small concurrent batches, pausing between batches, to
+ * stay within Notion's documented ~3-requests-per-second guidance.
+ */
+/* eslint-disable-next-line jsdoc/require-jsdoc */
+function FetchTemplatesForDataSource(
+    Tokens: ConnectionTokens,
+    ConnectionId: string,
+    DataSourceId: string,
+    Properties: ReadonlyArray<Domain.Property.PropertyDefinition>
+): Effect.Effect<ReadonlyArray<Domain.DataSource.CachedDataSourceTemplate>>
+{
+    return Effect.promise(async () =>
+    {
+        try
+        {
+            const Summaries = await CallNotionData(
+                Tokens,
+                ConnectionId,
+                (AccessToken) => Notion.ListDataSourceTemplates(AccessToken, DataSourceId)
+            );
+            const Capped = Summaries.slice(0, 100);
+            const BatchSize = 3;
+            const Templates: Array<Domain.DataSource.CachedDataSourceTemplate> = [];
+
+            for (let Index = 0; Index < Capped.length; Index += BatchSize)
+            {
+                const Batch = Capped.slice(Index, Index + BatchSize);
+                const Enriched = await Promise.all(Batch.map(async (Summary) =>
+                {
+                    try
+                    {
+                        const Page = await CallNotionData(
+                            Tokens,
+                            ConnectionId,
+                            (AccessToken) => Notion.RetrievePage(AccessToken, Summary.id)
+                        );
+
+                        return { Page, Summary };
+                    }
+                    catch
+                    {
+                        // A single unreadable template (e.g. deleted mid-refresh)
+                        // must not drop every other template.
+                        return undefined;
+                    }
+                }));
+
+                for (const Entry of Enriched)
+                {
+                    if (!Entry)
+                    {
+                        continue;
+                    }
+
+                    const Icon = NormalizeIcon(Entry.Page.icon);
+
+                    Templates.push({
+                        ...(Icon ?? {}),
+                        IsNotionDefault: Entry.Summary.is_default,
+                        Name: Entry.Summary.name,
+                        NotionLastEditedTime: Entry.Page.last_edited_time
+                            ? new Date(Entry.Page.last_edited_time)
+                            : new Date(),
+                        Properties: MapTemplateProperties(Entry.Page, Properties),
+                        TemplateId: Entry.Summary.id as Domain.Id.NotionTemplateId
+                    });
+                }
+
+                if (Index + BatchSize < Capped.length)
+                {
+                    await new Promise((Resolve) => setTimeout(Resolve, 350));
+                }
+            }
+
+            return Templates;
+        }
+        catch
+        {
+            // Templates are supplementary; their failure must not make an
+            // otherwise-refreshable data source unusable.
+            return [];
+        }
+    });
 }
 
 /* --- Operations ------------------------------------------------------- */
@@ -631,6 +836,7 @@ export function RefreshForUser(UserId: string, ConnectionId: string, DataSourceI
 
         const Properties = MapProperties(Object_.properties ?? {});
         const SchemaHash = ComputeSchemaHash(Properties);
+        const Templates = yield* FetchTemplatesForDataSource(Tokens, ConnectionId, DataSourceId, Properties);
         const DatabaseId = Object_.parent?.database_id ?? DataSourceId;
         const Database = yield* Effect.tryPromise({
             catch: MapReadError,
@@ -714,6 +920,7 @@ export function RefreshForUser(UserId: string, ConnectionId: string, DataSourceI
                         refreshed_at: RefreshedAt.toISOString(),
                         schema_hash: SchemaHash,
                         selected: true,
+                        templates: Templates,
                         title: Title,
                         user_id: UserId
                     },
@@ -729,7 +936,8 @@ export function RefreshForUser(UserId: string, ConnectionId: string, DataSourceI
             UserId,
             ConnectionId,
             DataSourceId,
-            Properties
+            Properties,
+            Templates
         );
 
         return {
@@ -743,8 +951,9 @@ export function RefreshForUser(UserId: string, ConnectionId: string, DataSourceI
             Properties,
             RefreshedAt,
             SchemaHash,
+            Templates,
             Title,
-            Version: 1
+            Version: 2
         } satisfies Domain.DataSource.CachedDataSourceSchema;
     });
 }

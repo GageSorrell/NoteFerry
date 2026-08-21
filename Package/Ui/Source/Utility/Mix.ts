@@ -78,3 +78,48 @@ const Mix = (ColorA: string, ColorB: string, Ratio: number): string =>
 
     return `rgb(${ Blend(0) }, ${ Blend(1) }, ${ Blend(2) })`;
 };
+
+export/**
+       * {@link Mix}'s inverse: given a starting color, a target color, and a
+       * result presumed to be `Mix(ColorA, ColorTarget, ratio)` for some
+       * `ratio`, solves for that `ratio` (averaged across channels, clamped
+       * to ${0..1}$). Useful for deriving a blend strength from two design
+       * tokens that already encode it — e.g. how far a theme's muted text
+       * color sits from its primary text color, toward gray — rather than
+       * hardcoding the number.
+       *
+       * @category Theme
+       * @since 1.0.0
+       */
+const Unmix = (ColorA: string, ColorTarget: string, Result: string): number =>
+{
+    const A = ParseColor(ColorA);
+    const Target = ParseColor(ColorTarget);
+    const R = ParseColor(Result);
+
+    if (!A || !Target || !R)
+    {
+        return 0;
+    }
+
+    const Ratios: Array<number> = [];
+
+    for (let Index = 0; Index < 3; Index += 1)
+    {
+        const Span = (Target[ Index ] ?? 0) - (A[ Index ] ?? 0);
+
+        if (Span !== 0)
+        {
+            Ratios.push(((R[ Index ] ?? 0) - (A[ Index ] ?? 0)) / Span);
+        }
+    }
+
+    if (Ratios.length === 0)
+    {
+        return 0;
+    }
+
+    const Average = Ratios.reduce((Sum: number, Value: number) => Sum + Value, 0) / Ratios.length;
+
+    return Math.min(1, Math.max(0, Average));
+};

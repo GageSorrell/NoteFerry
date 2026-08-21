@@ -190,7 +190,8 @@ var CreateDestinationPayload = Schema3.Struct({
   Name: Schema3.String,
   Position: Schema3.Number,
   PostCreationBehavior: Schema3.optional(Domain4.Behavior.PostCreationBehavior),
-  Template: Domain4.Destination.DestinationTemplate
+  Template: Domain4.Destination.DestinationTemplate,
+  TemplateConfiguration: Schema3.optional(Domain4.Destination.TemplateConfiguration)
 });
 var UpdateDestinationPayload = Schema3.Struct({
   FieldConfiguration: Schema3.optional(Domain4.Destination.FieldConfiguration),
@@ -198,7 +199,8 @@ var UpdateDestinationPayload = Schema3.Struct({
   Name: Schema3.optional(Schema3.String),
   Position: Schema3.optional(Schema3.Number),
   PostCreationBehavior: Schema3.optional(Domain4.Behavior.PostCreationBehavior),
-  Template: Schema3.optional(Domain4.Destination.DestinationTemplate)
+  Template: Schema3.optional(Domain4.Destination.DestinationTemplate),
+  TemplateConfiguration: Schema3.optional(Domain4.Destination.TemplateConfiguration)
 });
 var List3 = HttpApiEndpoint4.get("List", "/", {
   error: [
@@ -260,37 +262,64 @@ var Create2 = HttpApiEndpoint5.post("Create", "/", {
 });
 var ExportRequestsApi = HttpApiGroup5.make("ExportRequests").add(Create2);
 
+// Package/Api/Distribution/FeedbackApi.js
+var FeedbackApi_exports = {};
+__export(FeedbackApi_exports, {
+  Create: () => Create3,
+  CreateFeedbackPayload: () => CreateFeedbackPayload,
+  FeedbackApi: () => FeedbackApi,
+  FeedbackKind: () => FeedbackKind
+});
+import * as Domain6 from "@notivex/domain";
+import { HttpApiEndpoint as HttpApiEndpoint6, HttpApiGroup as HttpApiGroup6 } from "effect/unstable/httpapi";
+import { Schema as Schema4 } from "effect";
+var FeedbackKind = Schema4.Literals(["Feedback", "BugReport"]);
+var CreateFeedbackPayload = Schema4.Struct({
+  Kind: FeedbackKind,
+  Message: Schema4.String,
+  ShareContact: Schema4.Boolean
+});
+var Create3 = HttpApiEndpoint6.post("Create", "/", {
+  error: [
+    Domain6.Error.AuthenticationRequired,
+    Domain6.Error.RateLimitExceeded,
+    Domain6.Error.DatabaseError
+  ],
+  payload: CreateFeedbackPayload
+});
+var FeedbackApi = HttpApiGroup6.make("Feedback").add(Create3);
+
 // Package/Api/Distribution/Api.js
 import { HttpApi } from "effect/unstable/httpapi";
 
 // Package/Api/Distribution/PagesApi.js
 var PagesApi_exports = {};
 __export(PagesApi_exports, {
-  Create: () => Create3,
+  Create: () => Create4,
   PagesApi: () => PagesApi
 });
-import * as Domain6 from "@notivex/domain";
-import { HttpApiEndpoint as HttpApiEndpoint6, HttpApiGroup as HttpApiGroup6 } from "effect/unstable/httpapi";
-var Create3 = HttpApiEndpoint6.post("Create", "/", {
+import * as Domain7 from "@notivex/domain";
+import { HttpApiEndpoint as HttpApiEndpoint7, HttpApiGroup as HttpApiGroup7 } from "effect/unstable/httpapi";
+var Create4 = HttpApiEndpoint7.post("Create", "/", {
   error: [
-    Domain6.Error.AuthenticationRequired,
-    Domain6.Error.NotionConnectionNotFound,
-    Domain6.Error.NotionConnectionRevoked,
-    Domain6.Error.DataSourceNotFound,
-    Domain6.Error.DataSourceSchemaChanged,
-    Domain6.Error.InvalidPageDraft,
-    Domain6.Error.NotionUnauthorized,
-    Domain6.Error.NotionRateLimited,
-    Domain6.Error.NotionValidationError,
-    Domain6.Error.NotionUnavailable,
-    Domain6.Error.FreeCreationWindowExceeded,
-    Domain6.Error.FeatureGateError,
-    Domain6.Error.DatabaseError
+    Domain7.Error.AuthenticationRequired,
+    Domain7.Error.NotionConnectionNotFound,
+    Domain7.Error.NotionConnectionRevoked,
+    Domain7.Error.DataSourceNotFound,
+    Domain7.Error.DataSourceSchemaChanged,
+    Domain7.Error.InvalidPageDraft,
+    Domain7.Error.NotionUnauthorized,
+    Domain7.Error.NotionRateLimited,
+    Domain7.Error.NotionValidationError,
+    Domain7.Error.NotionUnavailable,
+    Domain7.Error.FreeCreationWindowExceeded,
+    Domain7.Error.FeatureGateError,
+    Domain7.Error.DatabaseError
   ],
-  payload: Domain6.Command.CreatePageCommand,
-  success: Domain6.Command.CreatePageResult
+  payload: Domain7.Command.CreatePageCommand,
+  success: Domain7.Command.CreatePageResult
 });
-var PagesApi = HttpApiGroup6.make("Pages").add(Create3);
+var PagesApi = HttpApiGroup7.make("Pages").add(Create4);
 
 // Package/Api/Distribution/ProfileApi.js
 var ProfileApi_exports = {};
@@ -299,24 +328,24 @@ __export(ProfileApi_exports, {
   ProfileApi: () => ProfileApi,
   UpdateSettings: () => UpdateSettings
 });
-import * as Domain7 from "@notivex/domain";
-import { HttpApiEndpoint as HttpApiEndpoint7, HttpApiGroup as HttpApiGroup7 } from "effect/unstable/httpapi";
-var Get2 = HttpApiEndpoint7.get("Get", "/", {
+import * as Domain8 from "@notivex/domain";
+import { HttpApiEndpoint as HttpApiEndpoint8, HttpApiGroup as HttpApiGroup8 } from "effect/unstable/httpapi";
+var Get2 = HttpApiEndpoint8.get("Get", "/", {
   error: [
-    Domain7.Error.AuthenticationRequired,
-    Domain7.Error.DatabaseError
+    Domain8.Error.AuthenticationRequired,
+    Domain8.Error.DatabaseError
   ],
-  success: Domain7.Profile.Profile
+  success: Domain8.Profile.Profile
 });
-var UpdateSettings = HttpApiEndpoint7.patch("UpdateSettings", "/Settings", {
+var UpdateSettings = HttpApiEndpoint8.patch("UpdateSettings", "/Settings", {
   error: [
-    Domain7.Error.AuthenticationRequired,
-    Domain7.Error.DatabaseError
+    Domain8.Error.AuthenticationRequired,
+    Domain8.Error.DatabaseError
   ],
-  payload: Domain7.Settings.AppSettings,
-  success: Domain7.Profile.Profile
+  payload: Domain8.Settings.AppSettings,
+  success: Domain8.Profile.Profile
 });
-var ProfileApi = HttpApiGroup7.make("Profile").add(Get2, UpdateSettings);
+var ProfileApi = HttpApiGroup8.make("Profile").add(Get2, UpdateSettings);
 
 // Package/Api/Distribution/SubscriptionsApi.js
 var SubscriptionsApi_exports = {};
@@ -325,56 +354,57 @@ __export(SubscriptionsApi_exports, {
   RemoveDevicePayload: () => RemoveDevicePayload,
   SubscriptionsApi: () => SubscriptionsApi
 });
-import * as Domain8 from "@notivex/domain";
-import { HttpApiEndpoint as HttpApiEndpoint8, HttpApiGroup as HttpApiGroup8 } from "effect/unstable/httpapi";
-import { Schema as Schema4 } from "effect";
-var RegisterDevicePayload = Schema4.Struct({
-  DeviceId: Schema4.String,
-  Platform: Domain8.Subscription.DevicePlatform,
-  PushToken: Schema4.String
+import * as Domain9 from "@notivex/domain";
+import { HttpApiEndpoint as HttpApiEndpoint9, HttpApiGroup as HttpApiGroup9 } from "effect/unstable/httpapi";
+import { Schema as Schema5 } from "effect";
+var RegisterDevicePayload = Schema5.Struct({
+  DeviceId: Schema5.String,
+  Platform: Domain9.Subscription.DevicePlatform,
+  PushToken: Schema5.String
 });
-var RemoveDevicePayload = Schema4.Struct({ DeviceId: Schema4.String });
+var RemoveDevicePayload = Schema5.Struct({ DeviceId: Schema5.String });
 var CommonErrors = [
-  Domain8.Error.AuthenticationRequired,
-  Domain8.Error.DatabaseError,
-  Domain8.Error.NetworkError
+  Domain9.Error.AuthenticationRequired,
+  Domain9.Error.DatabaseError,
+  Domain9.Error.NetworkError
 ];
-var Status = HttpApiEndpoint8.get("Status", "/Status", {
+var Status = HttpApiEndpoint9.get("Status", "/Status", {
   error: CommonErrors,
-  success: Domain8.Subscription.SubscriptionStatus
+  success: Domain9.Subscription.SubscriptionStatus
 });
-var Allowance = HttpApiEndpoint8.get("Allowance", "/Allowance", {
+var Allowance = HttpApiEndpoint9.get("Allowance", "/Allowance", {
   error: CommonErrors,
-  success: Domain8.Subscription.CreationAllowance
+  success: Domain9.Subscription.CreationAllowance
 });
-var Refresh2 = HttpApiEndpoint8.post("Refresh", "/Refresh", {
+var Refresh2 = HttpApiEndpoint9.post("Refresh", "/Refresh", {
   error: CommonErrors,
-  success: Domain8.Subscription.SubscriptionStatus
+  success: Domain9.Subscription.SubscriptionStatus
 });
-var Sale = HttpApiEndpoint8.get("Sale", "/Sale", {
+var Sale = HttpApiEndpoint9.get("Sale", "/Sale", {
   error: CommonErrors,
-  success: Domain8.Subscription.ActiveSaleResponse
+  success: Domain9.Subscription.ActiveSaleResponse
 });
-var RegisterDevice = HttpApiEndpoint8.post("RegisterDevice", "/Devices", {
+var RegisterDevice = HttpApiEndpoint9.post("RegisterDevice", "/Devices", {
   error: CommonErrors,
   payload: RegisterDevicePayload,
-  success: Schema4.Void
+  success: Schema5.Void
 });
-var RemoveDevice = HttpApiEndpoint8.post("RemoveDevice", "/Devices/Remove", {
+var RemoveDevice = HttpApiEndpoint9.post("RemoveDevice", "/Devices/Remove", {
   error: CommonErrors,
   payload: RemoveDevicePayload,
-  success: Schema4.Void
+  success: Schema5.Void
 });
-var SubscriptionsApi = HttpApiGroup8.make("Subscriptions").add(Status, Allowance, Refresh2, Sale, RegisterDevice, RemoveDevice);
+var SubscriptionsApi = HttpApiGroup9.make("Subscriptions").add(Status, Allowance, Refresh2, Sale, RegisterDevice, RemoveDevice);
 
 // Package/Api/Distribution/Api.js
-var NotivexApi = HttpApi.make("NotivexApi").add(ConnectionsApi.prefix("/Connections"), DataSourcesApi.prefix("/DataSources"), DestinationsApi.prefix("/Destinations"), PagesApi.prefix("/Pages"), ProfileApi.prefix("/Profile"), AccountApi.prefix("/Account"), ExportRequestsApi.prefix("/ExportRequests"), SubscriptionsApi.prefix("/Subscriptions"));
+var NotivexApi = HttpApi.make("NotivexApi").add(ConnectionsApi.prefix("/Connections"), DataSourcesApi.prefix("/DataSources"), DestinationsApi.prefix("/Destinations"), PagesApi.prefix("/Pages"), ProfileApi.prefix("/Profile"), AccountApi.prefix("/Account"), ExportRequestsApi.prefix("/ExportRequests"), SubscriptionsApi.prefix("/Subscriptions"), FeedbackApi.prefix("/Feedback"));
 export {
   AccountApi_exports as AccountApi,
   ConnectionsApi_exports as ConnectionsApi,
   DataSourcesApi_exports as DataSourcesApi,
   DestinationsApi_exports as DestinationsApi,
   ExportRequestsApi_exports as ExportRequestsApi,
+  FeedbackApi_exports as FeedbackApi,
   NotivexApi,
   PagesApi_exports as PagesApi,
   ProfileApi_exports as ProfileApi,
@@ -433,6 +463,21 @@ export {
  * @module @notivex/api/ExportRequestsApi
  *
  * @file      ExportRequestsApi.ts
+ * @author    Gage Sorrell <gage@sorrell.sh>
+ * @copyright (c) 2026 Gage Sorrell
+ * @license   MIT
+ */
+/**
+ * The `Feedback` group: submitting in-app feedback or a bug report. Both
+ * share this single endpoint, distinguished by `Kind` — the mobile app's
+ * `feedback` screen is one component reused for both, with only its
+ * expo-router header text differing. Creating a row emails Notivex via
+ * Resend (`supabase/schemas/11_notifications.sql`) and is rate-limited
+ * server-side (`supabase/schemas/13_app_feedback_submissions.sql`).
+ *
+ * @module @notivex/api/FeedbackApi
+ *
+ * @file      FeedbackApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
  * @copyright (c) 2026 Gage Sorrell
  * @license   MIT

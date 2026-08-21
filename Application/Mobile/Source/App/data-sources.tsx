@@ -28,6 +28,35 @@ function IsEmoji(Icon: string | undefined): Icon is string
     return Icon !== undefined && !Icon.startsWith("http");
 }
 
+/** Walks an Effect failure's `cause`/`error`/`failure` chain for a tagged error, matching `feedback.tsx`. */
+function FindTaggedError(Error_: unknown): Record<string, unknown> | null
+{
+    const Seen = new Set<unknown>();
+    const Queue: unknown[] = [ Error_ ];
+
+    while (Queue.length > 0)
+    {
+        const Current = Queue.shift();
+
+        if (!Current || typeof Current !== "object" || Seen.has(Current))
+        {
+            continue;
+        }
+
+        Seen.add(Current);
+        const Record_ = Current as Record<string, unknown>;
+
+        if (typeof Record_._tag === "string")
+        {
+            return Record_;
+        }
+
+        Queue.push(Record_.cause, Record_.error, Record_.failure);
+    }
+
+    return null;
+}
+
 const DataSourcesScreen = () =>
 {
     const Router = useLazyRouter();
@@ -37,32 +66,61 @@ const DataSourcesScreen = () =>
     const ConnectionId = Params.connectionId as Domain.Id.NotionConnectionId;
     const { HasProAccess } = useSubscription();
 
-    const { Discovered, Cached, IsSearching, BusyId, Search, Cache } = useDataSources(ConnectionId);
+    const { Discovered, Cached, GlobalActiveCount, IsSearching, BusyId, Search, Cache } =
+        useDataSources(ConnectionId);
 
     type CachedDataSourceMap = ReadonlyMap<Domain.Id.NotionDataSourceId, Domain.DataSource.CachedDataSourceSchema>;
     const CachedById: CachedDataSourceMap = new Map(
         Cached.map((Entry: Domain.DataSource.CachedDataSourceSchema) =>
             [ Entry.DataSourceId, Entry ] as const)
     );
-    const Save = (DataSourceId: Domain.Id.NotionDataSourceId): void =>
+
+    const ShowProUpsell = (): void =>
+    {
+        Alert.alert(
+            "Add unlimited databases with Pro",
+            "Free includes three active databases. You can replace one from Database settings.",
+            [
+                { style: "cancel", text: "Not now" },
+                { onPress: Router.push("/plans"), text: "Compare plans" },
+                { onPress: Router.push("/subscribe"), text: "Upgrade" }
+            ]
+        );
+    };
+
+    const Save = async (DataSourceId: Domain.Id.NotionDataSourceId): Promise<void> =>
     {
         const Existing = CachedById.get(DataSourceId);
-        if (!Existing && !HasProAccess
-            && Cached.filter((Source) => Source.Access === "Available").length >= 3)
+
+        /* The free-tier cap is global across every workspace, not just this
+         * connection's own `Cached` list — a free user already at the limit
+         * in another workspace must see the paywall here too, rather than a
+         * silent server rejection. */
+        if (!Existing && !HasProAccess && GlobalActiveCount >= 3)
         {
-            Alert.alert(
-                "Add unlimited databases with Pro",
-                "Free includes three active databases. You can replace one from Database settings.",
-                [
-                    { style: "cancel", text: "Not now" },
-                    { onPress: Router.push("/plans"), text: "Compare plans" },
-                    { onPress: Router.push("/subscribe"), text: "Upgrade" }
-                ]
-            );
+            ShowProUpsell();
             return;
         }
 
-        void Cache(DataSourceId);
+        try
+        {
+            await Cache(DataSourceId);
+        }
+        catch (Error_)
+        {
+            const Tagged = FindTaggedError(Error_);
+
+            if (Tagged?._tag === "FreeDatabaseLimitReached")
+            {
+                ShowProUpsell();
+            }
+            else
+            {
+                /* eslint-disable-next-line no-console */
+                console.error("Failed to cache data source", Error_);
+                Alert.alert("Something went wrong", "Please try again.");
+            }
+        }
     };
     const Configure = (Source: Domain.DataSource.DiscoveredDataSource): void =>
     {
@@ -168,7 +226,7 @@ const DataSourcesScreen = () =>
                                             <Button
                                                 Appearance={ Entry ? "Cell" : "Primary" }
                                                 Disabled={ Busy }
-                                                OnPress={ () => Save(Source.DataSourceId) }>
+                                                OnPress={ () => void Save(Source.DataSourceId) }>
                                                 { Busy ? "Saving…" : Entry ? "Update" : "Save" }
                                             </Button>
                                         </View>

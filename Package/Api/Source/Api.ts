@@ -2,7 +2,7 @@
  * The complete Notivex API contract: every group, endpoint, payload, success and
  * error schema the Expo app and the `api` Supabase Edge Function agree on.
  *
- * This module only *describes* the API. Implementing each group's handlers
+ * This module only *describes* the API.  Implementing each group's handlers
  * (`HttpApiBuilder.group`) and deriving a client (`HttpApiClient.make`) both
  * happen elsewhere, against this same value.
  *
@@ -20,6 +20,7 @@ import { ConnectionsApi } from "./ConnectionsApi.js";
 import { DataSourcesApi } from "./DataSourcesApi.js";
 import { DestinationsApi } from "./DestinationsApi.js";
 import { ExportRequestsApi } from "./ExportRequestsApi.js";
+import { FeedbackApi } from "./FeedbackApi.js";
 import { HttpApi } from "effect/unstable/httpapi";
 import { PagesApi } from "./PagesApi.js";
 import { ProfileApi } from "./ProfileApi.js";
@@ -39,8 +40,8 @@ export type NotivexApiError = Domain.Error.DomainError;
 
 export/**
        * The complete Notivex HTTP API: `Connections`, `DataSources`,
-       * `Destinations`, `Pages`, `Profile`, `Account` and `ExportRequests`,
-       * each prefixed under its own resource path.
+       * `Destinations`, `Pages`, `Profile`, `Account`, `ExportRequests` and
+       * `Feedback`, each prefixed under its own resource path.
        *
        * @category Api
        * @since 1.0.0
@@ -53,5 +54,6 @@ const NotivexApi = HttpApi.make("NotivexApi").add(
     ProfileApi.prefix("/Profile"),
     AccountApi.prefix("/Account"),
     ExportRequestsApi.prefix("/ExportRequests"),
-    SubscriptionsApi.prefix("/Subscriptions")
+    SubscriptionsApi.prefix("/Subscriptions"),
+    FeedbackApi.prefix("/Feedback")
 );

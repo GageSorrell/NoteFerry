@@ -19,6 +19,7 @@ import * as DataSources from "../_shared/DataSources.ts";
 import * as Destinations from "../_shared/Destinations.ts";
 import * as Domain from "@notivex/domain";
 import * as ExportRequests from "../_shared/ExportRequests.ts";
+import * as Feedback from "../_shared/Feedback.ts";
 import * as FileSystem from "effect/FileSystem";
 import * as Pages from "../_shared/Pages.ts";
 import * as Path from "effect/Path";
@@ -272,6 +273,15 @@ const ExportRequestsLive = HttpApiBuilder.group(NotivexApi, "ExportRequests", (H
             yield* ExportRequests.CreateForUser(UserId);
         })));
 
+const FeedbackLive = HttpApiBuilder.group(NotivexApi, "Feedback", (Handlers) =>
+    Handlers.handle("Create", (Input) =>
+        Effect.gen(function* ()
+        {
+            const UserId = yield* RequireUser;
+
+            yield* Feedback.CreateForUser(UserId, Input.payload);
+        })));
+
 const SubscriptionsLive = HttpApiBuilder.group(NotivexApi, "Subscriptions", (Handlers) =>
     Handlers
         .handle("Status", () =>
@@ -338,6 +348,7 @@ const AppLayer = HttpApiBuilder.layer(NotivexApi).pipe(
     Layer.provide(ProfileLive),
     Layer.provide(AccountLive),
     Layer.provide(ExportRequestsLive),
+    Layer.provide(FeedbackLive),
     Layer.provide(SubscriptionsLive),
     Layer.provide(PlatformLayer)
 );

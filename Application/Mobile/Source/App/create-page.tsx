@@ -33,7 +33,7 @@ import {
     Separator,
     Textarea
 } from "@notivex/ui/Primitive";
-import { ChevronLeft, ImagePlus, Settings, Smile, Wand2 } from "lucide-react-native";
+import { ChevronLeft, ImagePlus, LayoutTemplate, Settings, Smile, Wand2 } from "lucide-react-native";
 import type { LucideIcon } from "lucide-react-native";
 import { Cover, IconBlock, type IconData, IconMenu } from "@notivex/ui/Block";
 import {
@@ -68,6 +68,8 @@ import { EmailPropertyField } from
     "@/features/page-creation/email-property-field";
 import { MultiSelectPropertyField } from
     "@/features/page-creation/multi-select-property-field";
+import { ResolveTemplateFieldValues } from "@/features/templates/template-values";
+import { TemplatePickerSheet } from "@/features/templates/template-picker-sheet";
 import { NumberPropertyField } from
     "@/features/page-creation/number-property-field";
 import { PhoneNumberPropertyField } from
@@ -426,6 +428,7 @@ const PageCreateScreen = (): React.JSX.Element =>
     const [ PageIcon, SetPageIcon ] = useState<IconData | undefined>(undefined);
     const [ CoverUrl, SetCoverUrl ] = useState<string | undefined>(undefined);
     const IconMenuRef = useRef<BottomSheet>(null);
+    const TemplatePickerSheetRef = useRef<BottomSheet>(null);
     const Insets = useSafeAreaInsets();
     const AllowNavigation = useRef(false);
     const OperationId = useRef(randomUUID() as Domain.Id.OperationId);
@@ -603,6 +606,40 @@ const PageCreateScreen = (): React.JSX.Element =>
                 {
                     SetDataSource(Source);
                     SetDestination(Form);
+
+                    /* The form is guaranteed empty on first load, so the
+                     * default template's own values can populate it outright
+                     * — no collision to reconcile against (unlike the header
+                     * switcher, which may run against an already-edited
+                     * form). */
+                    const SelectedTemplate = Form.Template;
+
+                    if (SelectedTemplate.Type === "Specific")
+                    {
+                        const DefaultTemplate = Source.Templates.find(
+                            (Entry: Domain.DataSource.CachedDataSourceTemplate) =>
+                                Entry.TemplateId === SelectedTemplate.TemplateId);
+
+                        if (DefaultTemplate)
+                        {
+                            const Assignments = ResolveTemplateFieldValues(DefaultTemplate);
+
+                            if (Assignments.length > 0)
+                            {
+                                SetValues((Current: Readonly<Record<string, FieldValue>>) =>
+                                {
+                                    const Next = { ...Current };
+
+                                    for (const Assignment of Assignments)
+                                    {
+                                        Next[Assignment.PropertyId] = Assignment.Value;
+                                    }
+
+                                    return Next;
+                                });
+                            }
+                        }
+                    }
                 }
             }
             catch (Error: unknown)
@@ -653,6 +690,26 @@ const PageCreateScreen = (): React.JSX.Element =>
             ): Property is Domain.Property.PropertyDefinition =>
                 Property !== undefined && SupportsInput(Property));
     }, [ DataSource, Destination ]);
+    const VisibleTemplates = useMemo(() =>
+    {
+        if (DataSource === null || Destination === null)
+        {
+            return [ ];
+        }
+
+        const TemplateConfiguration = Domain.Destination.ResolveTemplateConfiguration(Destination);
+        const TemplateById = new Map(DataSource.Templates.map(
+            (Entry: Domain.DataSource.CachedDataSourceTemplate) => [ Entry.TemplateId, Entry ] as const));
+
+        return TemplateConfiguration.TemplateOrder
+            .filter((TemplateId: Domain.Id.NotionTemplateId) =>
+                !TemplateConfiguration.Hidden.includes(TemplateId) && TemplateById.has(TemplateId))
+            .map((TemplateId: Domain.Id.NotionTemplateId) => TemplateById.get(TemplateId)!);
+    }, [ DataSource, Destination ]);
+    const SelectedTemplate = Destination?.Template;
+    const HasSwitchableTemplate = VisibleTemplates.some(
+        (Entry: Domain.DataSource.CachedDataSourceTemplate) =>
+            !(SelectedTemplate?.Type === "Specific" && SelectedTemplate.TemplateId === Entry.TemplateId));
     const TitleProperty = DataSource?.Properties.find(
         (Property: Domain.Property.PropertyDefinition) => Property.Type === "Title"
     );
@@ -687,6 +744,68 @@ const PageCreateScreen = (): React.JSX.Element =>
             };
         });
     }, [ ]);
+
+    const OpenTemplateSwitcher = useCallback((): void =>
+    {
+        TemplatePickerSheetRef.current?.present();
+    }, [ ]);
+
+    /**
+     * Applies a template's own property values to the current form for this
+     * page only — never persisted as the destination's default (that's a
+     * `destination-config.tsx` action). When the template has a value for a
+     * property the user already filled in, asks whether to keep the current
+     * entry or overwrite it with the template's.
+     */
+    const HandleTemplateSelect = useCallback((Selected: Domain.Destination.DestinationTemplate): void =>
+    {
+        if (Selected.Type !== "Specific")
+        {
+            return;
+        }
+
+        const SelectedTemplateId = Selected.TemplateId;
+        const Template = VisibleTemplates.find(
+            (Entry: Domain.DataSource.CachedDataSourceTemplate) => Entry.TemplateId === SelectedTemplateId);
+
+        if (!Template)
+        {
+            return;
+        }
+
+        const Assignments = ResolveTemplateFieldValues(Template);
+        const Apply = (SkipCollisions: boolean): void =>
+        {
+            for (const Assignment of Assignments)
+            {
+                if (SkipCollisions && !IsFieldEmpty(Values[Assignment.PropertyId]))
+                {
+                    continue;
+                }
+
+                SetFieldValue(Assignment.PropertyId, Assignment.Value);
+            }
+        };
+        const Collisions = Assignments.filter((Assignment) =>
+            !IsFieldEmpty(Values[Assignment.PropertyId]));
+
+        if (Collisions.length === 0)
+        {
+            Apply(false);
+
+            return;
+        }
+
+        Alert.alert(
+            `Apply “${ Template.Name }”?`,
+            "Some properties you've already filled in also have a value in this template.",
+            [
+                { style: "cancel", text: "Cancel" },
+                { onPress: () => Apply(true), text: "Keep mine" },
+                { onPress: () => Apply(false), style: "destructive", text: "Overwrite" }
+            ]
+        );
+    }, [ SetFieldValue, Values, VisibleTemplates ]);
 
     /**
      * Dev-only: fills every empty property (including the title, via its own
@@ -748,13 +867,27 @@ const PageCreateScreen = (): React.JSX.Element =>
                 Label={ `Settings for ${ DatabaseTitle }` }
                 OnPress={ OpenDatabaseSettings }
             />
+            { HasProAccess && HasSwitchableTemplate
+                ? (
+                    <HeaderIconButton
+                        Color={ Theme.Semantic.IconPrimary }
+                        Disabled={ DataSource === null }
+                        Icon={ LayoutTemplate }
+                        Label="Use a template"
+                        OnPress={ OpenTemplateSwitcher }
+                    />
+                )
+                : null }
         </View>
     ), [
         DataSource,
         DatabaseTitle,
         FillDummyData,
+        HasProAccess,
+        HasSwitchableTemplate,
         IsSaving,
         OpenDatabaseSettings,
+        OpenTemplateSwitcher,
         Styles.HeaderRight,
         Theme.Semantic.IconPrimary
     ]);
@@ -1284,6 +1417,16 @@ const PageCreateScreen = (): React.JSX.Element =>
                     OnSelect={ SelectIcon }
                     Ref={ IconMenuRef }
                 />
+                { Destination === null
+                    ? null
+                    : (
+                        <TemplatePickerSheet
+                            CurrentTemplate={ Destination.Template }
+                            OnSelect={ HandleTemplateSelect }
+                            Ref={ TemplatePickerSheetRef }
+                            Templates={ VisibleTemplates }
+                        />
+                    ) }
             </SafeAreaView>
         </KeyboardAvoidingView>
     );

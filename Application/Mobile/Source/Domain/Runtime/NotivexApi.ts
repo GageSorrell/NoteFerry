@@ -23,6 +23,24 @@ import { Supabase } from "./Supabase";
 
 const baseUrl = `${ process.env.EXPO_PUBLIC_SUPABASE_URL }/functions/v1/api`;
 
+/**
+ * Thrown by authenticated calls when there is no active Supabase session,
+ * instead of making a request that the server can only reject. Distinct from
+ * a real request failure so callers (e.g. `useSettings`) can treat "not
+ * signed in yet" as expected state rather than an error to log.
+ *
+ * @category Api
+ * @since 1.0.0
+ */
+export class NoSessionError extends Error
+{
+    constructor()
+    {
+        super("No active Supabase session.");
+        this.name = "NoSessionError";
+    }
+}
+
 const GetAccessToken = async (): Promise<string> =>
 {
     const { data } = await Supabase.auth.getSession();
@@ -221,7 +239,9 @@ const GetDataSource = async (
         {
             const Client = yield* MakeClient(Token);
 
-            return yield* Client.DataSources.Get({ params: { DataSourceId } });
+            return yield* Client.DataSources.Get({
+                params: { DataSourceId }
+            });
         }),
         Effect.provide(FetchHttpClient.layer)
     ));
@@ -296,6 +316,7 @@ export interface CreateDestinationInput
     readonly Position: number;
     readonly PostCreationBehavior?: Domain.Behavior.PostCreationBehavior | undefined;
     readonly Template: Domain.Destination.DestinationTemplate;
+    readonly TemplateConfiguration?: Domain.Destination.TemplateConfiguration | undefined;
 }
 
 /** The fields the client may change on an existing destination. */
@@ -307,6 +328,7 @@ export interface UpdateDestinationInput
     readonly Position?: number | undefined;
     readonly PostCreationBehavior?: Domain.Behavior.PostCreationBehavior | undefined;
     readonly Template?: Domain.Destination.DestinationTemplate | undefined;
+    readonly TemplateConfiguration?: Domain.Destination.TemplateConfiguration | undefined;
 }
 
 export/**
@@ -405,6 +427,10 @@ const CreatePage = async (
 
 export/**
        * The current user's profile, including their resolved app-wide settings.
+       * Throws {@link NoSessionError} without making a request when there is no
+       * active session (some callers, e.g. `useSettings`, run before auth is
+       * known and shouldn't send an unauthenticated request only to have the
+       * server reject it).
        *
        * @category Api
        * @since 1.0.0
@@ -412,6 +438,11 @@ export/**
 const GetProfile = async (): Promise<Domain.Profile.Profile> =>
 {
     const Token = await GetAccessToken();
+
+    if (Token === "")
+    {
+        throw new NoSessionError();
+    }
 
     return Effect.runPromise(pipe(
         Effect.gen(function* ()
@@ -490,6 +521,37 @@ const RequestAccountData = async (): Promise<void> =>
     ));
 };
 
+/** The fields the client supplies to submit feedback or a bug report. */
+export interface SubmitFeedbackInput
+{
+    readonly Kind: "BugReport" | "Feedback";
+    readonly Message: string;
+    readonly ShareContact: boolean;
+}
+
+export/**
+       * Submits feedback or a bug report for the current user. Emails Notivex —
+       * see `supabase/schemas/11_notifications.sql` — and is rate-limited
+       * server-side.
+       *
+       * @category Api
+       * @since 1.0.0
+       */
+const SubmitFeedback = async (Input: SubmitFeedbackInput): Promise<void> =>
+{
+    const Token = await GetAccessToken();
+
+    await Effect.runPromise(pipe(
+        Effect.gen(function* ()
+        {
+            const Client = yield* MakeClient(Token);
+
+            yield* Client.Feedback.Create({ payload: Input });
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
+};
+
 export const GetSubscriptionStatus = async ():
 Promise<Domain.Subscription.SubscriptionStatus> =>
 {
@@ -538,8 +600,7 @@ Promise<Domain.Subscription.SubscriptionStatus> =>
     ));
 };
 
-export const GetActiveSubscriptionSale = async ():
-Promise<Domain.Subscription.ActiveSale | null> =>
+export const GetActiveSubscriptionSale = async (): Promise<Domain.Subscription.ActiveSale | null> =>
 {
     const Token = await GetAccessToken();
 

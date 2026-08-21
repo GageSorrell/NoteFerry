@@ -219,9 +219,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "../Primitive/Avatar.js";
 import { MakeStyles, ViewStyle as MakeViewStyle, TextStyle } from "../MakeStyles.js";
 import { type StyleProp, View, type ViewStyle } from "react-native";
 import { Body } from "../Primitive/Text.js";
+import * as ColorToken from "../Token/Color.js";
 import type { ReadonlyRecord } from "effect/Record";
 import { Spinner } from "../Primitive/Spinner.js";
-import { WithAlpha } from "../Utility/index.js";
+import { Mix, Unmix, WithAlpha } from "../Utility/index.js";
 import { useToken } from "../ThemeProvider.js";
 
 /**
@@ -481,6 +482,16 @@ export interface IconBlockProps
     readonly Icon: IconData;
     readonly Size?: IconBlockSize;
     readonly Fallback?: string;
+    /**
+     * Renders a desaturated, "hidden from the main list" treatment. The
+     * blend strength is derived from how far the theme's own muted text
+     * color already sits from its primary text color (toward gray), via
+     * `Unmix`/`Mix`, rather than a hardcoded ratio — so a `Lucide` icon's
+     * color is mixed toward gray by that ratio, and an `Emoji`/`Url` icon
+     * (which can't be RGB-mixed without pixel-level filtering) gets an
+     * opacity reduction of the same strength instead.
+     */
+    readonly Muted?: boolean;
     readonly Style?: StyleProp<ViewStyle>;
 }
 
@@ -492,19 +503,26 @@ export/**
        * @category Component
        * @since 1.0.0
        */
-const IconBlock = ({ Icon, Size = "Small", Fallback = " ", Style }: IconBlockProps): React.JSX.Element =>
+const IconBlock = ({ Icon, Size = "Small", Fallback = " ", Muted = false, Style }: IconBlockProps): React.JSX.Element =>
 {
     const Styles = useStyles();
     const Config = SizeConfigs[ Size ];
     const {
         [Semantic.Secondary]: SecondaryColor,
         [Semantic.Default]: DefaultColor,
+        [Semantic.Primary]: PrimaryColor,
+        [Semantic.Muted]: MutedColor,
         [Config.Radii]: MediumRadius
     } = useToken(
         Semantic.Secondary,
         Semantic.Default,
+        Semantic.Primary,
+        Semantic.Muted,
         Config.Radii
     );
+    const GrayColor = ColorToken.Resolve(ColorToken.Gray) ?? MutedColor;
+    const MutedRatio = Muted ? Unmix(PrimaryColor, GrayColor, MutedColor) : 0;
+    const MutedOpacityStyle: ViewStyle = Muted ? { opacity: 1 - MutedRatio } : { };
 
     const ContainerStyle: ViewStyle =
         {
@@ -519,7 +537,7 @@ const IconBlock = ({ Icon, Size = "Small", Fallback = " ", Style }: IconBlockPro
         return (
             <Avatar
                 Size={ Config.Container }
-                Style={ [ Styles.NoBorder, Style ] }>
+                Style={ [ Styles.NoBorder, MutedOpacityStyle, Style ] }>
                 <AvatarFallback>
                     <Spinner Size={ Config.IconSize } />
                 </AvatarFallback>
@@ -531,11 +549,12 @@ const IconBlock = ({ Icon, Size = "Small", Fallback = " ", Style }: IconBlockPro
     if (IsLucideIcon(Icon))
     {
         const LucideComponent = LucideIconMap[ Icon.Src ];
+        const IconColor = Icon.Color ?? SecondaryColor;
 
         return (
             <View style={ [ Styles.Center, ContainerStyle, Style ] }>
                 <LucideComponent
-                    color={ Icon.Color ?? SecondaryColor }
+                    color={ Muted ? Mix(IconColor, GrayColor, MutedRatio) : IconColor }
                     size={ Config.IconSize }
                 />
             </View>
@@ -545,7 +564,7 @@ const IconBlock = ({ Icon, Size = "Small", Fallback = " ", Style }: IconBlockPro
     if (Icon.Type === "Emoji")
     {
         return (
-            <View style={ [ Styles.Center, ContainerStyle, Style ] }>
+            <View style={ [ Styles.Center, ContainerStyle, MutedOpacityStyle, Style ] }>
                 <Body Style={ [ Styles.Glyph, { fontSize: Config.FontSize, lineHeight: Config.FontSize } ] }>
                     { Icon.Src }
                 </Body>
@@ -560,6 +579,7 @@ const IconBlock = ({ Icon, Size = "Small", Fallback = " ", Style }: IconBlockPro
                 backgroundColor: WithAlpha(DefaultColor, 0.05)
             },
             ContainerStyle,
+            MutedOpacityStyle,
             Style
         ] }>
             <Body

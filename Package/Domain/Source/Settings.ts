@@ -70,7 +70,9 @@ const AppSettings = Schema.Struct({
     LaunchBehavior: Schema.optional(Behavior.LaunchBehavior),
     NotifyOnOfflineSubmit: Schema.optional(Schema.Boolean),
     NotifyOnSubscriptionSales: Schema.optional(Schema.Boolean),
-    QuickActionDataSourceIds: Schema.optional(Schema.Array(Id.NotionDataSourceId))
+    QuickActionDataSourceIds: Schema.optional(Schema.Array(Id.NotionDataSourceId)),
+    SelectedConnectionId: Schema.optional(Id.NotionConnectionId),
+    ShowAllWorkspaceDatabases: Schema.optional(Schema.Boolean)
 });
 
 /** {@inheritDoc AppSettings} */
@@ -92,6 +94,8 @@ export interface ResolvedAppSettings
     readonly NotifyOnOfflineSubmit: boolean;
     readonly NotifyOnSubscriptionSales: boolean;
     readonly QuickActionDataSourceIds: ReadonlyArray<Id.NotionDataSourceId>;
+    readonly SelectedConnectionId: Id.NotionConnectionId | undefined;
+    readonly ShowAllWorkspaceDatabases: boolean;
 }
 
 /**
@@ -107,7 +111,9 @@ export const DefaultAppSettings: ResolvedAppSettings = {
     LaunchBehavior: { Type: "Home" },
     NotifyOnOfflineSubmit: true,
     NotifyOnSubscriptionSales: false,
-    QuickActionDataSourceIds: [ ]
+    QuickActionDataSourceIds: [ ],
+    SelectedConnectionId: undefined,
+    ShowAllWorkspaceDatabases: false
 };
 
 /**
@@ -130,6 +136,9 @@ export function WithDefaults(Stored: AppSettings): ResolvedAppSettings
         NotifyOnSubscriptionSales: Stored.NotifyOnSubscriptionSales
             ?? DefaultAppSettings.NotifyOnSubscriptionSales,
         QuickActionDataSourceIds: (Stored.QuickActionDataSourceIds
-            ?? DefaultAppSettings.QuickActionDataSourceIds).slice(0, MaxQuickActionCount)
+            ?? DefaultAppSettings.QuickActionDataSourceIds).slice(0, MaxQuickActionCount),
+        SelectedConnectionId: Stored.SelectedConnectionId,
+        ShowAllWorkspaceDatabases: Stored.ShowAllWorkspaceDatabases
+            ?? DefaultAppSettings.ShowAllWorkspaceDatabases
     };
 }

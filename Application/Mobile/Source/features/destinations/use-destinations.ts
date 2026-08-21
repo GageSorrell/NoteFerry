@@ -16,7 +16,9 @@ import {
     CreateDestination,
     type CreateDestinationInput,
     DeleteDestination,
-    ListDestinations
+    ListDestinations,
+    UpdateDestination,
+    type UpdateDestinationInput
 } from "@/Domain/Runtime/NotivexApi";
 import { useCallback, useEffect, useState } from "react";
 
@@ -27,6 +29,7 @@ export interface UseDestinations
     readonly IsLoading: boolean;
     readonly Refetch: () => Promise<void>;
     readonly Create: (Input: CreateDestinationInput) => Promise<void>;
+    readonly Update: (DestinationId: Domain.Id.DestinationId, Input: UpdateDestinationInput) => Promise<void>;
     readonly Remove: (DestinationId: Domain.Id.DestinationId) => Promise<void>;
 }
 
@@ -71,6 +74,15 @@ export function useDestinations(DataSourceId: Domain.Id.NotionDataSourceId): Use
         await Refetch();
     }, [ Refetch ]);
 
+    const Update = useCallback(async (
+        DestinationId: Domain.Id.DestinationId,
+        Input: UpdateDestinationInput
+    ) =>
+    {
+        await UpdateDestination(DestinationId, Input);
+        await Refetch();
+    }, [ Refetch ]);
+
     const Remove = useCallback(async (DestinationId: Domain.Id.DestinationId) =>
     {
         await DeleteDestination(DestinationId);
@@ -82,5 +94,5 @@ export function useDestinations(DataSourceId: Domain.Id.NotionDataSourceId): Use
         void Refetch();
     }, [ Refetch ]);
 
-    return { Create, Destinations, IsLoading, Refetch, Remove };
+    return { Create, Destinations, IsLoading, Refetch, Remove, Update };
 }

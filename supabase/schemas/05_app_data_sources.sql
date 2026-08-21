@@ -19,6 +19,11 @@ create table app.data_sources (
     icon_type text check (icon_type in ('Emoji', 'Image', 'Native')),
     selected boolean not null default false,
     property_schema jsonb not null,
+    -- normalized Notion page templates for this data source (name, icon,
+    -- Notion's own is_default flag, and a snapshot of each template's own
+    -- property values), mirroring @notivex/domain DataSource.ts
+    -- `CachedDataSourceTemplate[]`. Refreshed alongside `property_schema`.
+    templates jsonb not null default '[]'::jsonb,
     schema_hash text not null,
     notion_last_edited_time timestamptz not null,
     refreshed_at timestamptz not null default now(),

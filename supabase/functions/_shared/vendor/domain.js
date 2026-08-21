@@ -297,57 +297,89 @@ var DataSource_exports = {};
 __export(DataSource_exports, {
   CachedDataSourceSchema: () => CachedDataSourceSchema,
   CachedDataSourceSchemaVersion: () => CachedDataSourceSchemaVersion,
+  CachedDataSourceTemplate: () => CachedDataSourceTemplate,
   DiscoveredDataSource: () => DiscoveredDataSource,
   OnboardingDatabase: () => OnboardingDatabase,
   OnboardingDiscovery: () => OnboardingDiscovery,
   OnboardingPage: () => OnboardingPage
 });
+
+// Package/Domain/Distribution/PageDraft.js
+var PageDraft_exports = {};
+__export(PageDraft_exports, {
+  PageDraft: () => PageDraft,
+  PropertyInputValue: () => PropertyInputValue
+});
 import { Schema as Schema6 } from "effect";
-var CachedDataSourceSchemaVersion = Schema6.Literal(1);
-var DiscoveredDataSource = Schema6.Struct({
+var PropertyInputValue = Schema6.Struct({
+  PropertyId: NotionPropertyId,
+  Value: PropertyInput
+});
+var PageDraft = Schema6.Struct({
+  Body: Schema6.optional(Schema6.String),
+  DestinationId,
+  Title: Schema6.optional(Schema6.String),
+  UpdatedAt: Schema6.DateFromString,
+  Values: Schema6.Array(PropertyInputValue)
+});
+
+// Package/Domain/Distribution/DataSource.js
+import { Schema as Schema7 } from "effect";
+var CachedDataSourceSchemaVersion = Schema7.Literal(2);
+var DiscoveredDataSource = Schema7.Struct({
   ConnectionId: NotionConnectionId,
-  CoverUrl: Schema6.optional(Schema6.String),
+  CoverUrl: Schema7.optional(Schema7.String),
   DataSourceId: NotionDataSourceId,
   DatabaseId: NotionDatabaseId,
-  Icon: Schema6.optional(Schema6.String),
-  IconType: Schema6.optional(Schema6.Literals(["Emoji", "Image", "Native"])),
-  Title: Schema6.String
+  Icon: Schema7.optional(Schema7.String),
+  IconType: Schema7.optional(Schema7.Literals(["Emoji", "Image", "Native"])),
+  Title: Schema7.String
 });
-var OnboardingPage = Schema6.Struct({
-  Icon: Schema6.optional(Schema6.String),
-  IconType: Schema6.optional(Schema6.Literals(["Emoji", "Image", "Native"])),
+var OnboardingPage = Schema7.Struct({
+  Icon: Schema7.optional(Schema7.String),
+  IconType: Schema7.optional(Schema7.Literals(["Emoji", "Image", "Native"])),
   Id: NotionPageId,
-  Title: Schema6.String
+  Title: Schema7.String
 });
-var OnboardingDatabase = Schema6.Struct({
+var OnboardingDatabase = Schema7.Struct({
   ConnectionId: NotionConnectionId,
   DataSourceId: NotionDataSourceId,
   DatabaseId: NotionDatabaseId,
-  HasMoreThan100Pages: Schema6.Boolean,
-  Icon: Schema6.optional(Schema6.String),
-  IconType: Schema6.optional(Schema6.Literals(["Emoji", "Image", "Native"])),
-  PageCount: Schema6.Number,
-  Title: Schema6.String
+  HasMoreThan100Pages: Schema7.Boolean,
+  Icon: Schema7.optional(Schema7.String),
+  IconType: Schema7.optional(Schema7.Literals(["Emoji", "Image", "Native"])),
+  PageCount: Schema7.Number,
+  Title: Schema7.String
 });
-var OnboardingDiscovery = Schema6.Struct({
-  DatabaseCount: Schema6.Number,
-  Databases: Schema6.Array(OnboardingDatabase),
-  PageCount: Schema6.Number,
-  Pages: Schema6.Array(OnboardingPage)
+var OnboardingDiscovery = Schema7.Struct({
+  DatabaseCount: Schema7.Number,
+  Databases: Schema7.Array(OnboardingDatabase),
+  PageCount: Schema7.Number,
+  Pages: Schema7.Array(OnboardingPage)
 });
-var CachedDataSourceSchema = Schema6.Struct({
-  Access: Schema6.Literals(["Available", "Locked"]),
+var CachedDataSourceTemplate = Schema7.Struct({
+  Icon: Schema7.optional(Schema7.String),
+  IconType: Schema7.optional(Schema7.Literals(["Emoji", "Image", "Native"])),
+  IsNotionDefault: Schema7.Boolean,
+  Name: Schema7.String,
+  NotionLastEditedTime: Schema7.DateFromString,
+  Properties: Schema7.Array(PropertyInputValue),
+  TemplateId: NotionTemplateId
+});
+var CachedDataSourceSchema = Schema7.Struct({
+  Access: Schema7.Literals(["Available", "Locked"]),
   ConnectionId: NotionConnectionId,
-  CoverUrl: Schema6.optional(Schema6.String),
+  CoverUrl: Schema7.optional(Schema7.String),
   DataSourceId: NotionDataSourceId,
   DatabaseId: NotionDatabaseId,
-  Icon: Schema6.optional(Schema6.String),
-  IconType: Schema6.optional(Schema6.Literals(["Emoji", "Image", "Native"])),
-  NotionLastEditedTime: Schema6.DateFromString,
-  Properties: Schema6.Array(PropertyDefinition),
-  RefreshedAt: Schema6.DateFromString,
-  SchemaHash: Schema6.String,
-  Title: Schema6.String,
+  Icon: Schema7.optional(Schema7.String),
+  IconType: Schema7.optional(Schema7.Literals(["Emoji", "Image", "Native"])),
+  NotionLastEditedTime: Schema7.DateFromString,
+  Properties: Schema7.Array(PropertyDefinition),
+  RefreshedAt: Schema7.DateFromString,
+  SchemaHash: Schema7.String,
+  Templates: Schema7.Array(CachedDataSourceTemplate),
+  Title: Schema7.String,
   Version: CachedDataSourceSchemaVersion
 });
 
@@ -357,21 +389,21 @@ __export(NotionConnection_exports, {
   NotionConnection: () => NotionConnection,
   NotionConnectionStatus: () => NotionConnectionStatus
 });
-import { Schema as Schema7 } from "effect";
-var NotionConnectionStatus = Schema7.Literals(["Active", "Revoked"]);
-var NotionConnection = Schema7.Struct({
-  BotId: Schema7.String,
-  ConnectedAt: Schema7.DateFromString,
+import { Schema as Schema8 } from "effect";
+var NotionConnectionStatus = Schema8.Literals(["Active", "Revoked"]);
+var NotionConnection = Schema8.Struct({
+  BotId: Schema8.String,
+  ConnectedAt: Schema8.DateFromString,
   Id: NotionConnectionId,
-  LastUsedAt: Schema7.optional(Schema7.DateFromString),
-  NotionOwnerAvatarUrl: Schema7.optional(Schema7.String),
-  NotionOwnerUserId: Schema7.optional(Schema7.String),
-  RevokedAt: Schema7.optional(Schema7.DateFromString),
+  LastUsedAt: Schema8.optional(Schema8.DateFromString),
+  NotionOwnerAvatarUrl: Schema8.optional(Schema8.String),
+  NotionOwnerUserId: Schema8.optional(Schema8.String),
+  RevokedAt: Schema8.optional(Schema8.DateFromString),
   Status: NotionConnectionStatus,
   UserId,
-  WorkspaceIconUrl: Schema7.optional(Schema7.String),
+  WorkspaceIconUrl: Schema8.optional(Schema8.String),
   WorkspaceId: NotionWorkspaceId,
-  WorkspaceName: Schema7.String
+  WorkspaceName: Schema8.String
 });
 
 // Package/Domain/Distribution/Destination.js
@@ -384,27 +416,31 @@ __export(Destination_exports, {
   FieldSetting: () => FieldSetting,
   IsQuickEntryProperty: () => IsQuickEntryProperty,
   ReconcileFieldConfiguration: () => ReconcileFieldConfiguration,
-  ResolvePostCreationBehavior: () => ResolvePostCreationBehavior
+  ReconcileTemplateConfiguration: () => ReconcileTemplateConfiguration,
+  ResolvePostCreationBehavior: () => ResolvePostCreationBehavior,
+  ResolveSelectedTemplate: () => ResolveSelectedTemplate,
+  ResolveTemplateConfiguration: () => ResolveTemplateConfiguration,
+  TemplateConfiguration: () => TemplateConfiguration,
+  TemplateConfigurationVersion: () => TemplateConfigurationVersion
 });
-import { Schema as Schema8 } from "effect";
-var DestinationTemplate = Schema8.Union([
-  Schema8.Struct({ Type: Schema8.tag("None") }),
-  Schema8.Struct({ Type: Schema8.tag("Default") }),
-  Schema8.Struct({
+import { Schema as Schema9 } from "effect";
+var DestinationTemplate = Schema9.Union([
+  Schema9.Struct({ Type: Schema9.tag("None") }),
+  Schema9.Struct({
     TemplateId: NotionTemplateId,
-    Type: Schema8.tag("Specific")
+    Type: Schema9.tag("Specific")
   })
 ]);
-var FieldSetting = Schema8.Struct({
-  Default: Schema8.optional(PropertyInput),
+var FieldSetting = Schema9.Struct({
+  Default: Schema9.optional(PropertyInput),
   PropertyId: NotionPropertyId,
-  Required: Schema8.Boolean,
-  Visible: Schema8.Boolean
+  Required: Schema9.Boolean,
+  Visible: Schema9.Boolean
 });
-var FieldConfigurationVersion = Schema8.Literal(1);
-var FieldConfiguration = Schema8.Struct({
-  FieldOrder: Schema8.Array(NotionPropertyId),
-  Fields: Schema8.Array(FieldSetting),
+var FieldConfigurationVersion = Schema9.Literal(1);
+var FieldConfiguration = Schema9.Struct({
+  FieldOrder: Schema9.Array(NotionPropertyId),
+  Fields: Schema9.Array(FieldSetting),
   Version: FieldConfigurationVersion
 });
 function IsQuickEntryProperty(Property) {
@@ -447,22 +483,59 @@ function ReconcileFieldConfiguration(Current, Properties) {
   });
   return { FieldOrder, Fields, Version: 1 };
 }
-var Destination = Schema8.Struct({
+var TemplateConfigurationVersion = Schema9.Literal(1);
+var TemplateConfiguration = Schema9.Struct({
+  Hidden: Schema9.Array(NotionTemplateId),
+  TemplateOrder: Schema9.Array(NotionTemplateId),
+  Version: TemplateConfigurationVersion
+});
+var EmptyTemplateConfiguration = { Hidden: [], TemplateOrder: [], Version: 1 };
+function ReconcileTemplateConfiguration(Current, Templates) {
+  const KnownIds = new Set(Templates.map((Template) => Template.TemplateId));
+  const SeenIds = /* @__PURE__ */ new Set();
+  const TemplateOrder = [];
+  for (const TemplateId of Current.TemplateOrder) {
+    if (KnownIds.has(TemplateId) && !SeenIds.has(TemplateId)) {
+      SeenIds.add(TemplateId);
+      TemplateOrder.push(TemplateId);
+    }
+  }
+  for (const Template of Templates) {
+    if (!SeenIds.has(Template.TemplateId)) {
+      SeenIds.add(Template.TemplateId);
+      TemplateOrder.push(Template.TemplateId);
+    }
+  }
+  const Hidden = Current.Hidden.filter((TemplateId) => KnownIds.has(TemplateId));
+  return { Hidden, TemplateOrder, Version: 1 };
+}
+var Destination = Schema9.Struct({
   ConnectionId: NotionConnectionId,
-  CreatedAt: Schema8.DateFromString,
+  CreatedAt: Schema9.DateFromString,
   DataSourceId: NotionDataSourceId,
   FieldConfiguration,
-  Icon: Schema8.optional(Schema8.String),
+  Icon: Schema9.optional(Schema9.String),
   Id: DestinationId,
-  Name: Schema8.String,
-  Position: Schema8.Number,
-  PostCreationBehavior: Schema8.optional(PostCreationBehavior),
+  Name: Schema9.String,
+  Position: Schema9.Number,
+  PostCreationBehavior: Schema9.optional(PostCreationBehavior),
   Template: DestinationTemplate,
-  UpdatedAt: Schema8.DateFromString,
+  TemplateConfiguration: Schema9.optional(TemplateConfiguration),
+  UpdatedAt: Schema9.DateFromString,
   UserId
 });
 function ResolvePostCreationBehavior(Destination2) {
   return Destination2.PostCreationBehavior ?? { Type: "Home" };
+}
+function ResolveTemplateConfiguration(Destination2) {
+  return Destination2.TemplateConfiguration ?? EmptyTemplateConfiguration;
+}
+function ResolveSelectedTemplate(Destination2, Templates) {
+  const Selection = Destination2.Template;
+  if (Selection.Type !== "Specific") {
+    return void 0;
+  }
+  return Templates.find((Template) => Template.TemplateId === Selection.TemplateId);
 }
 
 // Package/Domain/Distribution/Profile.js
@@ -481,18 +554,20 @@ __export(Settings_exports, {
   MaxQuickActionCount: () => MaxQuickActionCount,
   WithDefaults: () => WithDefaults
 });
-import { Schema as Schema9 } from "effect";
+import { Schema as Schema10 } from "effect";
 var MaxQuickActionCount = 6;
-var HomeScreenLayout = Schema9.Literals(["1", "2"]);
-var Contrast = Schema9.Literals(["System", "Standard", "High"]);
-var AppSettings = Schema9.Struct({
-  Contrast: Schema9.optional(Contrast),
-  DatabaseOrder: Schema9.optional(Schema9.Array(NotionDataSourceId)),
-  HomeScreenLayout: Schema9.optional(HomeScreenLayout),
-  LaunchBehavior: Schema9.optional(LaunchBehavior),
-  NotifyOnOfflineSubmit: Schema9.optional(Schema9.Boolean),
-  NotifyOnSubscriptionSales: Schema9.optional(Schema9.Boolean),
-  QuickActionDataSourceIds: Schema9.optional(Schema9.Array(NotionDataSourceId))
+var HomeScreenLayout = Schema10.Literals(["1", "2"]);
+var Contrast = Schema10.Literals(["System", "Standard", "High"]);
+var AppSettings = Schema10.Struct({
+  Contrast: Schema10.optional(Contrast),
+  DatabaseOrder: Schema10.optional(Schema10.Array(NotionDataSourceId)),
+  HomeScreenLayout: Schema10.optional(HomeScreenLayout),
+  LaunchBehavior: Schema10.optional(LaunchBehavior),
+  NotifyOnOfflineSubmit: Schema10.optional(Schema10.Boolean),
+  NotifyOnSubscriptionSales: Schema10.optional(Schema10.Boolean),
+  QuickActionDataSourceIds: Schema10.optional(Schema10.Array(NotionDataSourceId)),
+  SelectedConnectionId: Schema10.optional(NotionConnectionId),
+  ShowAllWorkspaceDatabases: Schema10.optional(Schema10.Boolean)
 });
 var DefaultAppSettings = {
   Contrast: "System",
@@ -501,7 +576,9 @@ var DefaultAppSettings = {
   LaunchBehavior: { Type: "Home" },
   NotifyOnOfflineSubmit: true,
   NotifyOnSubscriptionSales: false,
-  QuickActionDataSourceIds: []
+  QuickActionDataSourceIds: [],
+  SelectedConnectionId: void 0,
+  ShowAllWorkspaceDatabases: false
 };
 function WithDefaults(Stored) {
   return {
@@ -511,37 +588,20 @@ function WithDefaults(Stored) {
     LaunchBehavior: Stored.LaunchBehavior ?? DefaultAppSettings.LaunchBehavior,
     NotifyOnOfflineSubmit: Stored.NotifyOnOfflineSubmit ?? DefaultAppSettings.NotifyOnOfflineSubmit,
     NotifyOnSubscriptionSales: Stored.NotifyOnSubscriptionSales ?? DefaultAppSettings.NotifyOnSubscriptionSales,
-    QuickActionDataSourceIds: (Stored.QuickActionDataSourceIds ?? DefaultAppSettings.QuickActionDataSourceIds).slice(0, MaxQuickActionCount)
+    QuickActionDataSourceIds: (Stored.QuickActionDataSourceIds ?? DefaultAppSettings.QuickActionDataSourceIds).slice(0, MaxQuickActionCount),
+    SelectedConnectionId: Stored.SelectedConnectionId,
+    ShowAllWorkspaceDatabases: Stored.ShowAllWorkspaceDatabases ?? DefaultAppSettings.ShowAllWorkspaceDatabases
   };
 }
 
 // Package/Domain/Distribution/Profile.js
-import { Schema as Schema10 } from "effect";
-var Profile = Schema10.Struct({
-  CreatedAt: Schema10.DateFromString,
-  DisplayName: Schema10.optional(Schema10.String),
-  Settings: AppSettings,
-  UpdatedAt: Schema10.DateFromString,
-  UserId
-});
-
-// Package/Domain/Distribution/PageDraft.js
-var PageDraft_exports = {};
-__export(PageDraft_exports, {
-  PageDraft: () => PageDraft,
-  PropertyInputValue: () => PropertyInputValue
-});
 import { Schema as Schema11 } from "effect";
-var PropertyInputValue = Schema11.Struct({
-  PropertyId: NotionPropertyId,
-  Value: PropertyInput
-});
-var PageDraft = Schema11.Struct({
-  Body: Schema11.optional(Schema11.String),
-  DestinationId,
-  Title: Schema11.optional(Schema11.String),
+var Profile = Schema11.Struct({
+  CreatedAt: Schema11.DateFromString,
+  DisplayName: Schema11.optional(Schema11.String),
+  Settings: AppSettings,
   UpdatedAt: Schema11.DateFromString,
-  Values: Schema11.Array(PropertyInputValue)
+  UserId
 });
 
 // Package/Domain/Distribution/Command.js
@@ -606,7 +666,8 @@ __export(Error_exports, {
   NotionResourceNotShared: () => NotionResourceNotShared,
   NotionUnauthorized: () => NotionUnauthorized,
   NotionUnavailable: () => NotionUnavailable,
-  NotionValidationError: () => NotionValidationError
+  NotionValidationError: () => NotionValidationError,
+  RateLimitExceeded: () => RateLimitExceeded
 });
 import { Schema as Schema13 } from "effect";
 var AuthenticationRequired = class extends Schema13.TaggedError()("AuthenticationRequired", {}, { httpApiStatus: 401 }) {
@@ -643,6 +704,8 @@ var FreeCreationWindowExceeded = class extends Schema13.TaggedError()("FreeCreat
 };
 var FreeDatabaseLimitReached = class extends Schema13.TaggedError()("FreeDatabaseLimitReached", { Limit: Schema13.Number }, { httpApiStatus: 409 }) {
 };
+var RateLimitExceeded = class extends Schema13.TaggedError()("RateLimitExceeded", {}, { httpApiStatus: 429 }) {
+};
 var DomainError = Schema13.Union([
   AuthenticationRequired,
   NotionConnectionNotFound,
@@ -660,7 +723,8 @@ var DomainError = Schema13.Union([
   NetworkError,
   FeatureGateError,
   FreeCreationWindowExceeded,
-  FreeDatabaseLimitReached
+  FreeDatabaseLimitReached,
+  RateLimitExceeded
 ]);
 
 // Package/Domain/Distribution/Subscription.js
@@ -820,6 +884,18 @@ export {
  * @license   MIT
  */
 /**
+ * `PageDraft` — local, unsaved quick-entry state: what the user has typed
+ * into a destination's form before it becomes a command sent to the
+ * Notivex API. This is a Notivex-shaped value, never Notion-shaped JSON.
+ *
+ * @module @notivex/domain/PageDraft
+ *
+ * @file      PageDraft.ts
+ * @author    Gage Sorrell <gage@sorrell.sh>
+ * @copyright (c) 2026 Gage Sorrell
+ * @license   MIT
+ */
+/**
  * `CachedDataSourceSchema` — the versioned, normalized representation of a
  * Notion data source's schema that Notivex caches locally so its quick-add
  * UI can render without a round trip to Notion on every launch.
@@ -895,18 +971,6 @@ export {
  * @module @notivex/domain/Profile
  *
  * @file      Profile.ts
- * @author    Gage Sorrell <gage@sorrell.sh>
- * @copyright (c) 2026 Gage Sorrell
- * @license   MIT
- */
-/**
- * `PageDraft` — local, unsaved quick-entry state: what the user has typed
- * into a destination's form before it becomes a command sent to the
- * Notivex API. This is a Notivex-shaped value, never Notion-shaped JSON.
- *
- * @module @notivex/domain/PageDraft
- *
- * @file      PageDraft.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
  * @copyright (c) 2026 Gage Sorrell
  * @license   MIT

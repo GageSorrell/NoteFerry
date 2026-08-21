@@ -16,20 +16,21 @@ import {
     ScrollView,
     View
 } from "react-native";
+import { AddWorkspace, ResolveCurrentConnection, useConnections } from "@/Domain/Connection";
 import { Body, Button, Description, MeterBar, Pressable } from "@notivex/ui/Primitive";
 import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { HelpCircle, Settings, UserRound } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
 import { DatabaseCard } from "@/Component/DatabaseCard";
 import { Image } from "expo-image";
-import { Predicate } from "@sorrell/effect";
 import { RegisterQuickActions } from "@/Domain/Runtime/QuickActions";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useConnections } from "@/Domain/Connection";
+import { useAuth } from "@/Domain/Auth";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSettings } from "@/features/settings/use-settings";
 import { useFocusEffect } from "expo-router";
 import { useSubscription } from "@/Domain/Subscription";
+import { WorkspaceMenu } from "@/Component/WorkspaceMenu";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 /* Only the *first* home-screen mount of an app session should honor
@@ -134,23 +135,74 @@ const HomeScreen = () =>
 {
     "use no memo";
 
-    const { Connections, DataSources, IsLoading } = useConnections();
-    const { IsLoading: IsLoadingSettings, Settings: AppSettings } = useSettings();
+    const { Connections, DataSources, IsLoading, Refetch: RefetchConnections } = useConnections();
+    const {
+        IsLoading: IsLoadingSettings,
+        Refetch: RefetchSettings,
+        Settings: AppSettings,
+        Update: UpdateSettings
+    } = useSettings();
     const { Allowance, Refresh: RefreshSubscription, Sale, Status } = useSubscription();
+    const { SignOut } = useAuth();
     const [ DismissedSaleId, SetDismissedSaleId ] = useState<string | null>(null);
+    const [ IsAddingWorkspace, SetIsAddingWorkspace ] = useState(false);
     const Router = useLazyRouter();
     const Theme = useTheme();
     const Styles = useStyles();
-    const Connection = Connections.find(Predicate.HasPropertyValue("Status", "Active"))
-        ?? Connections[0];
-    const AvatarUri = Connection?.NotionOwnerAvatarUrl
-        ?? Connection?.WorkspaceIconUrl;
-    const AvatarName = Connection?.WorkspaceName ?? "Notion";
+    const CurrentConnection = ResolveCurrentConnection(Connections, AppSettings.SelectedConnectionId);
+    const AvatarUri = CurrentConnection?.NotionOwnerAvatarUrl
+        ?? CurrentConnection?.WorkspaceIconUrl;
+    const AvatarName = CurrentConnection?.WorkspaceName ?? "Notion";
     const ControlBackground = Theme.Mode === "Dark"
         ? "#2F2F2F"
         : "#EBEAE8";
-    const OrderedDataSources = OrderDataSources(DataSources, AppSettings.DatabaseOrder);
+    const VisibleDataSources = AppSettings.ShowAllWorkspaceDatabases || CurrentConnection === undefined
+        ? DataSources
+        : DataSources.filter((Source: Domain.DataSource.CachedDataSourceSchema) =>
+            Source.ConnectionId === CurrentConnection.Id);
+    const OrderedDataSources = OrderDataSources(VisibleDataSources, AppSettings.DatabaseOrder);
     const IsFree = Status !== null && !Status.Active && Status.EnforcementEnabled;
+
+    const HandleSelectWorkspace = useCallback((ConnectionId: Domain.Id.NotionConnectionId): void =>
+    {
+        void UpdateSettings({ SelectedConnectionId: ConnectionId });
+    }, [ UpdateSettings ]);
+
+    const HandleAddWorkspace = useCallback(async (): Promise<void> =>
+    {
+        if (IsAddingWorkspace)
+        {
+            return;
+        }
+
+        SetIsAddingWorkspace(true);
+
+        try
+        {
+            const NewConnection = await AddWorkspace(Connections);
+
+            if (NewConnection !== null)
+            {
+                await RefetchConnections();
+                Router.push({
+                    params: {
+                        connectionId: NewConnection.Id,
+                        workspaceName: NewConnection.WorkspaceName
+                    },
+                    pathname: "/data-sources"
+                })();
+            }
+        }
+        catch (Error)
+        {
+            /* eslint-disable-next-line no-console */
+            console.error("Failed to add workspace", Error);
+        }
+        finally
+        {
+            SetIsAddingWorkspace(false);
+        }
+    }, [ Connections, IsAddingWorkspace, RefetchConnections, Router ]);
 
     const OpenSource = useCallback((Source: Domain.DataSource.CachedDataSourceSchema): void =>
     {
@@ -174,7 +226,9 @@ const HomeScreen = () =>
     useFocusEffect(useCallback(() =>
     {
         void RefreshSubscription();
-    }, [ RefreshSubscription ]));
+        void RefetchConnections();
+        void RefetchSettings();
+    }, [ RefetchConnections, RefetchSettings, RefreshSubscription ]));
 
     useEffect(() =>
     {
@@ -243,11 +297,20 @@ const HomeScreen = () =>
         <View style={ Styles.Container }>
             <SafeAreaView style={ Styles.SafeArea }>
                 <View style={ Styles.TopBar }>
-                    <NotionAvatar
-                        Name={ AvatarName }
-                        Uri={ AvatarUri }
-                        key={ AvatarUri ?? AvatarName }
-                    />
+                    <WorkspaceMenu
+                        Connections={ Connections }
+                        CurrentConnectionId={ CurrentConnection?.Id }
+                        OnAddWorkspace={ () => void HandleAddWorkspace() }
+                        OnLogOut={ () => void SignOut() }
+                        OnOpenWorkspaceSettings={ Router.push("/workspace-settings") }
+                        OnSelectWorkspace={ HandleSelectWorkspace }
+                        ShowAllWorkspaceDatabases={ AppSettings.ShowAllWorkspaceDatabases }>
+                        <NotionAvatar
+                            Name={ AvatarName }
+                            Uri={ AvatarUri }
+                            key={ AvatarUri ?? AvatarName }
+                        />
+                    </WorkspaceMenu>
                     <Pressable
                         Accessibility={ {
                             Label: "Settings",

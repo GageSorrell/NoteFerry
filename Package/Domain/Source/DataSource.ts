@@ -18,6 +18,7 @@
 
 import * as Id from "./Id.js";
 import { PropertyDefinition } from "./Property/Definition.js";
+import { PropertyInputValue } from "./PageDraft.js";
 import { Schema } from "effect";
 
 export/**
@@ -29,7 +30,7 @@ export/**
        * @category DataSource
        * @since 1.0.0
        */
-const CachedDataSourceSchemaVersion = Schema.Literal(1);
+const CachedDataSourceSchemaVersion = Schema.Literal(2);
 
 export/**
        * A data source surfaced by discovery (Notion search) but not yet cached:
@@ -113,6 +114,32 @@ const OnboardingDiscovery = Schema.Struct({
 export type OnboardingDiscovery = Schema.Schema.Type<typeof OnboardingDiscovery>;
 
 export/**
+       * A Notion page template belonging to a data source, as cached by
+       * Notivex: enough to list it (name, icon), tell whether Notion itself
+       * currently marks it default, and pre-populate a create-page form from
+       * its own property values. `Properties` deliberately omits the Title
+       * property (Notion doesn't carry a template's own title into a page
+       * created from it) and any `Files`/`Relation`/`People` value (not
+       * safely reproducible from a snapshot — see `DataSources.ts`'s
+       * `MapPropertyValue`).
+       *
+       * @category DataSource
+       * @since 1.0.0
+       */
+const CachedDataSourceTemplate = Schema.Struct({
+    Icon: Schema.optional(Schema.String),
+    IconType: Schema.optional(Schema.Literals([ "Emoji", "Image", "Native" ])),
+    IsNotionDefault: Schema.Boolean,
+    Name: Schema.String,
+    NotionLastEditedTime: Schema.DateFromString,
+    Properties: Schema.Array(PropertyInputValue),
+    TemplateId: Id.NotionTemplateId
+});
+
+/** {@inheritDoc CachedDataSourceTemplate} */
+export type CachedDataSourceTemplate = Schema.Schema.Type<typeof CachedDataSourceTemplate>;
+
+export/**
        * The versioned, normalized cache of a Notion data source's schema.
        *
        * @category DataSource
@@ -130,6 +157,7 @@ const CachedDataSourceSchema = Schema.Struct({
     Properties: Schema.Array(PropertyDefinition),
     RefreshedAt: Schema.DateFromString,
     SchemaHash: Schema.String,
+    Templates: Schema.Array(CachedDataSourceTemplate),
     Title: Schema.String,
     Version: CachedDataSourceSchemaVersion
 });

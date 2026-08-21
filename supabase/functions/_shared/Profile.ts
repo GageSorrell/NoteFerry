@@ -62,7 +62,9 @@ function ApplyEffectiveSettings(
             LaunchBehavior: { Type: "Home" },
             NotifyOnOfflineSubmit: Profile.Settings.NotifyOnOfflineSubmit,
             NotifyOnSubscriptionSales: Profile.Settings.NotifyOnSubscriptionSales,
-            QuickActionDataSourceIds: Profile.Settings.QuickActionDataSourceIds?.slice(0, 1)
+            QuickActionDataSourceIds: Profile.Settings.QuickActionDataSourceIds?.slice(0, 1),
+            SelectedConnectionId: Profile.Settings.SelectedConnectionId,
+            ShowAllWorkspaceDatabases: Profile.Settings.ShowAllWorkspaceDatabases
         }
     };
 }
@@ -160,7 +162,10 @@ export function UpdateSettingsForUser(UserId: string, Patch: Domain.Settings.App
                         ...(Current.QuickActionDataSourceIds ?? []).filter((Id) =>
                             Id !== Patch.QuickActionDataSourceIds?.[0])
                     ]
-                    : Current.QuickActionDataSourceIds
+                    : Current.QuickActionDataSourceIds,
+            SelectedConnectionId: Patch.SelectedConnectionId ?? Current.SelectedConnectionId,
+            ShowAllWorkspaceDatabases: Patch.ShowAllWorkspaceDatabases
+                ?? Current.ShowAllWorkspaceDatabases
         };
 
         const SettingsJson = yield* Effect.try({

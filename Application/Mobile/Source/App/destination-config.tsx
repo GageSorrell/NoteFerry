@@ -1,9 +1,14 @@
 /**
  * Destination-config screen: turn a cached data source's schema into a
  * quick-entry destination; name it, pick a template, and choose which fields
- * are visible and required, then save.  Also lists and deletes the
+ * are visible and required, then save. Also lists and deletes the
  * destinations already configured for this data source. Reached from a
  * cached row on the data-sources screen.
+ *
+ * If a destination already exists for this data source (the lowest-`Position`
+ * one, same rule `create-page.tsx` uses to pick which destination it opens),
+ * the form loads and edits that one instead of always creating a new one —
+ * needed so template hide/reorder/default-select persist against a real row.
  *
  * @module notivex/app/destination-config
  *
@@ -13,7 +18,7 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import * as Domain from "@notivex/domain";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 import {
     Body,
@@ -28,8 +33,9 @@ import {
 import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { useCallback, useEffect, useState } from "react";
 import { BehaviorPicker } from "@/Component/BehaviorPicker";
-import { GetDataSource } from "@/Domain/Runtime/NotivexApi";
+import { GetDataSource, RefreshDataSource } from "@/Domain/Runtime/NotivexApi";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { TemplateSection } from "@/features/templates/template-section";
 import { useConnections } from "@/Domain/Connection";
 import { useDestinations } from "@/features/destinations/use-destinations";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
@@ -41,6 +47,9 @@ interface FieldSetting
     readonly Visible: boolean;
     readonly Required: boolean;
 }
+
+const EmptyTemplateConfiguration: Domain.Destination.TemplateConfiguration =
+    { Hidden: [ ], TemplateOrder: [ ], Version: 1 };
 
 const DestinationConfigScreen = () =>
 {
@@ -55,17 +64,57 @@ const DestinationConfigScreen = () =>
     const ConnectionId = Params.connectionId as Domain.Id.NotionConnectionId;
     const DataSourceId = Params.dataSourceId as Domain.Id.NotionDataSourceId;
 
-    const { Destinations, Create, Remove } = useDestinations(DataSourceId);
+    const { Destinations, IsLoading: DestinationsLoading, Create, Update, Remove } = useDestinations(DataSourceId);
     const { DataSources } = useConnections();
 
     const [ DataSource, SetDataSource ] =
         useState<Domain.DataSource.CachedDataSourceSchema | null>(null);
     const [ Name, SetName ] = useState(Params.title ?? "");
-    const [ UseDefaultTemplate, SetUseDefaultTemplate ] = useState(false);
+    const [ Template, SetTemplate ] =
+        useState<Domain.Destination.DestinationTemplate>({ Type: "None" });
+    const [ TemplateConfig, SetTemplateConfig ] =
+        useState<Domain.Destination.TemplateConfiguration>(EmptyTemplateConfiguration);
     const [ Settings, SetSettings ] = useState<Record<string, FieldSetting>>({});
     const [ PostCreationBehavior, SetPostCreationBehavior ] =
         useState<Domain.Behavior.PostCreationBehavior>({ Type: "Home" });
     const [ Saving, SetSaving ] = useState(false);
+    const [ HasSeeded, SetHasSeeded ] = useState(false);
+
+    const ExistingDestination = Destinations
+        .filter((Entry: Domain.Destination.Destination) => Entry.DataSourceId === DataSourceId)
+        .sort((Left: Domain.Destination.Destination, Right: Domain.Destination.Destination) =>
+            Left.Position - Right.Position)[0];
+
+    /* Seeds the form from an already-existing destination exactly once, the
+     * moment both loads settle — done here (during render, not inside a
+     * `useEffect`) per React's guidance for adjusting state from data that's
+     * already available synchronously: a `useEffect` calling several setters
+     * back-to-back for already-rendered data is the anti-pattern that
+     * guidance warns against, since nothing here is subscribing to an
+     * external system or awaiting a new fetch. */
+    if (!HasSeeded && DataSource !== null && !DestinationsLoading)
+    {
+        SetHasSeeded(true);
+
+        if (ExistingDestination !== undefined)
+        {
+            SetName(ExistingDestination.Name);
+            SetSettings(Object.fromEntries(DataSource.Properties.map(
+                (Property: Domain.Property.PropertyDefinition) =>
+                {
+                    const Field = ExistingDestination.FieldConfiguration.Fields.find(
+                        (Entry: Domain.Destination.FieldSetting) => Entry.PropertyId === Property.Id);
+
+                    return [ Property.Id, {
+                        Required: Field?.Required ?? Property.Type === "Title",
+                        Visible: Field?.Visible ?? true
+                    } ];
+                })));
+            SetPostCreationBehavior(Domain.Destination.ResolvePostCreationBehavior(ExistingDestination));
+            SetTemplate(ExistingDestination.Template);
+            SetTemplateConfig(Domain.Destination.ResolveTemplateConfiguration(ExistingDestination));
+        }
+    }
 
     useEffect(() =>
     {
@@ -75,7 +124,21 @@ const DestinationConfigScreen = () =>
         {
             try
             {
-                const Loaded = await GetDataSource(DataSourceId);
+                const Cached = await GetDataSource(DataSourceId);
+
+                let Loaded = Cached;
+
+                try
+                {
+                    Loaded = await RefreshDataSource(Cached.ConnectionId, DataSourceId);
+                }
+                catch (RefreshError)
+                {
+                    // A transient Notion failure should not make an otherwise
+                    // usable cached schema/template list unavailable here.
+                    /* eslint-disable-next-line no-console */
+                    console.warn("Failed to refresh data source schema", RefreshError);
+                }
 
                 if (!Active)
                 {
@@ -83,9 +146,12 @@ const DestinationConfigScreen = () =>
                 }
 
                 SetDataSource(Loaded);
-                SetSettings(Object.fromEntries(Loaded.Properties.map(
-                    (Property: Domain.Property.PropertyDefinition) =>
-                        [ Property.Id, { Required: Property.Type === "Title", Visible: true } ])));
+                SetSettings((Current: Record<string, FieldSetting>) =>
+                    Object.keys(Current).length > 0
+                        ? Current
+                        : Object.fromEntries(Loaded.Properties.map(
+                            (Property: Domain.Property.PropertyDefinition) =>
+                                [ Property.Id, { Required: Property.Type === "Title", Visible: true } ])));
             }
             catch (Error)
             {
@@ -127,22 +193,36 @@ const DestinationConfigScreen = () =>
                     Required: Settings[Property.Id]?.Required ?? false,
                     Visible: Settings[Property.Id]?.Visible ?? true
                 }));
+            const FieldConfiguration: Domain.Destination.FieldConfiguration = {
+                FieldOrder: DataSource.Properties.map(
+                    (Property: Domain.Property.PropertyDefinition) => Property.Id),
+                Fields,
+                Version: 1
+            };
 
-            await Create({
-                ConnectionId,
-                DataSourceId,
-                FieldConfiguration:
-                {
-                    FieldOrder: DataSource.Properties.map(
-                        (Property: Domain.Property.PropertyDefinition) => Property.Id),
-                    Fields,
-                    Version: 1
-                },
-                Name: Name.trim(),
-                Position: Destinations.length,
-                PostCreationBehavior,
-                Template: UseDefaultTemplate ? { Type: "Default" } : { Type: "None" }
-            });
+            if (ExistingDestination)
+            {
+                await Update(ExistingDestination.Id, {
+                    FieldConfiguration,
+                    Name: Name.trim(),
+                    PostCreationBehavior,
+                    Template,
+                    TemplateConfiguration: TemplateConfig
+                });
+            }
+            else
+            {
+                await Create({
+                    ConnectionId,
+                    DataSourceId,
+                    FieldConfiguration,
+                    Name: Name.trim(),
+                    Position: Destinations.length,
+                    PostCreationBehavior,
+                    Template,
+                    TemplateConfiguration: TemplateConfig
+                });
+            }
         }
         catch (Error)
         {
@@ -159,10 +239,13 @@ const DestinationConfigScreen = () =>
         DataSource,
         DataSourceId,
         Destinations.length,
+        ExistingDestination,
         Name,
         PostCreationBehavior,
         Settings,
-        UseDefaultTemplate
+        Template,
+        TemplateConfig,
+        Update
     ]);
 
     return (
@@ -195,13 +278,13 @@ const DestinationConfigScreen = () =>
                                 Value={ Name }
                             />
 
-                            <View style={ Styles.TemplateRow }>
-                                <Checkbox
-                                    Checked={ UseDefaultTemplate }
-                                    OnCheckedChange={ SetUseDefaultTemplate }
-                                />
-                                <Body>Use the data source's default template</Body>
-                            </View>
+                            <TemplateSection
+                                OnTemplateChange={ SetTemplate }
+                                OnTemplateConfigurationChange={ SetTemplateConfig }
+                                Template={ Template }
+                                TemplateConfiguration={ TemplateConfig }
+                                Templates={ DataSource.Templates }
+                            />
 
                             <Heading2 Style={ Styles.SectionHeading }>Fields</Heading2>
                             <View style={ Styles.FieldHeaderRow }>
@@ -258,7 +341,11 @@ const DestinationConfigScreen = () =>
                                 Disabled={ Saving || Name.trim().length === 0 }
                                 OnPress={ HandleSave }
                                 Style={ Styles.Save }>
-                                { Saving ? "Saving…" : "Save destination" }
+                                { Saving
+                                    ? "Saving…"
+                                    : ExistingDestination
+                                        ? "Save changes"
+                                        : "Save destination" }
                             </Button>
 
                             { Destinations.length > 0
@@ -339,12 +426,6 @@ const useStyles = MakeStyles({
     }),
     Subtitle: TextStyle({
         marginTop: Token.Spacing.Xs
-    }),
-    TemplateRow: ViewStyle({
-        alignItems: "center",
-        flexDirection: "row",
-        gap: Token.Spacing.M,
-        marginTop: Token.Spacing.S
     }),
     ToggleCol: ViewStyle({
         alignItems: "center",

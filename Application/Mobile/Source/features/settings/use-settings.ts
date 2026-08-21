@@ -12,7 +12,7 @@
  */
 
 import * as Domain from "@notivex/domain";
-import { GetProfile, UpdateProfileSettings } from "@/Domain/Runtime/NotivexApi";
+import { GetProfile, NoSessionError, UpdateProfileSettings } from "@/Domain/Runtime/NotivexApi";
 import { useCallback, useEffect, useState } from "react";
 
 /** The state returned by {@link useSettings}. */
@@ -36,6 +36,7 @@ export function useSettings(): UseSettings
 {
     const [ Settings, SetSettings ] =
         useState<Domain.Settings.ResolvedAppSettings>(Domain.Settings.DefaultAppSettings);
+
     const [ IsLoading, SetIsLoading ] = useState(true);
 
     const Refetch = useCallback(async () =>
@@ -50,8 +51,17 @@ export function useSettings(): UseSettings
         }
         catch (Error)
         {
-            /* eslint-disable-next-line no-console */
-            console.error("Failed to load settings", Error);
+            if (Error instanceof NoSessionError)
+            {
+                /* Not signed in yet (e.g. `useHighContrast` runs above the auth
+                 * provider, before a session exists) — expected, not a bug. */
+                SetSettings(Domain.Settings.DefaultAppSettings);
+            }
+            else
+            {
+                /* eslint-disable-next-line no-console */
+                console.error("Failed to load settings", Error);
+            }
         }
         finally
         {

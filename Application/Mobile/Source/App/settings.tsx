@@ -1,8 +1,8 @@
 /**
  * App-level settings, reached from the gear button on the home screen: a
  * table of entry points into General/Databases/Notifications/Quick
- * Actions/Account settings sub-screens, then in-line launch behavior,
- * home-screen database order, review/feedback/bug links, and app info.
+ * Actions/Account settings sub-screens, then review/feedback/bug links and
+ * app info.
  *
  * @module notivex/app/settings
  *
@@ -13,25 +13,27 @@
  */
 
 import * as Application from "expo-application";
-import type * as Domain from "@notivex/domain";
-import * as MailComposer from "expo-mail-composer";
 import * as StoreReview from "expo-store-review";
-import { Alert, Linking, ScrollView, View } from "react-native";
-import { Bell, Crown, Database, ExternalLink, GripVertical, Settings, UserRound, Zap } from "lucide-react-native";
-import { Body, Button, ButtonLabel, Description, Heading2, LabelText, Sortable } from "@notivex/ui/Primitive";
+import { Linking, ScrollView, View } from "react-native";
+import {
+    Bell,
+    Building2,
+    Crown,
+    Database,
+    ExternalLink,
+    Settings,
+    UserRound,
+    Zap
+} from "lucide-react-native";
+import { Button, ButtonLabel, Heading2, LabelText } from "@notivex/ui/Primitive";
 import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
-import { BehaviorPicker } from "@/Component/BehaviorPicker";
 import Constants from "expo-constants";
 import { SettingsTable, SettingsTableRow } from "@/Component";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useCallback } from "react";
-import { useConnections } from "@/Domain/Connection";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
-import { useSettings } from "@/features/settings/use-settings";
 import { useSubscription } from "@/Domain/Subscription";
 import Purchases from "react-native-purchases";
-
-const SortableItemExtent = 44;
 
 const SettingsScreen = (): React.JSX.Element =>
 {
@@ -40,42 +42,7 @@ const SettingsScreen = (): React.JSX.Element =>
     const Router = useLazyRouter();
     const Theme = useTheme();
     const Styles = useStyles();
-    const { DataSources } = useConnections();
-    const { Settings: AppSettings, Update } = useSettings();
-    const { HasProAccess, Status } = useSubscription();
-
-    const DatabaseOrder = AppSettings.DatabaseOrder.length > 0
-        ? AppSettings.DatabaseOrder
-        : DataSources.map((Source: Domain.DataSource.CachedDataSourceSchema) => Source.DataSourceId);
-    const DataSourceById = new Map(DataSources.map((
-        Source: Domain.DataSource.CachedDataSourceSchema
-    ) => [ Source.DataSourceId, Source ] as const));
-
-    const ShowSettingsGate = useCallback((Message: string): void =>
-    {
-        Alert.alert(
-            "Available with Notivex Pro",
-            Message,
-            [
-                { style: "cancel", text: "Not now" },
-                { onPress: Router.push("/plans"), text: "Compare plans" },
-                { onPress: Router.push("/subscribe"), text: "Upgrade" }
-            ]
-        );
-    }, [ Router ]);
-
-    const HandleReorder = useCallback((NextOrder: ReadonlyArray<string>) =>
-    {
-        if (!HasProAccess)
-        {
-            ShowSettingsGate("Pro lets you set a custom home-screen database order.");
-            return;
-        }
-
-        void Update({
-            DatabaseOrder: NextOrder as ReadonlyArray<Domain.Id.NotionDataSourceId>
-        });
-    }, [ HasProAccess, ShowSettingsGate, Update ]);
+    const { Status } = useSubscription();
 
     const HandleLeaveReview = useCallback(async () =>
     {
@@ -85,32 +52,15 @@ const SettingsScreen = (): React.JSX.Element =>
         }
     }, [ ]);
 
-    const HandleSubmitFeedback = useCallback(async () =>
+    const HandleSubmitFeedback = useCallback((): void =>
     {
-        const Available = await MailComposer.isAvailableAsync();
+        Router.push({ params: { mode: "feedback" }, pathname: "/feedback" })();
+    }, [ Router ]);
 
-        if (!Available)
-        {
-            Alert.alert(
-                "No mail app available",
-                "Set up a mail account on this device to send feedback."
-            );
-
-            return;
-        }
-
-        await MailComposer.composeAsync({
-            body: `\n\n—\nNotivex ${ Application.nativeApplicationVersion ?? "?" } `
-                + `(${ Application.nativeBuildVersion ?? "?" })`,
-            recipients: [ "gage@sorrell.sh" ],
-            subject: "Notivex feedback"
-        });
-    }, [ ]);
-
-    const HandleReportBug = useCallback(() =>
+    const HandleReportBug = useCallback((): void =>
     {
-        Alert.alert("Coming soon", "Bug reporting isn't wired up yet — TODO.");
-    }, [ ]);
+        Router.push({ params: { mode: "bug" }, pathname: "/feedback" })();
+    }, [ Router ]);
 
     const SubscriptionLabel = Status?.Active
         ? Status.Term === "Lifetime"
@@ -186,6 +136,18 @@ const SettingsScreen = (): React.JSX.Element =>
                     <SettingsTableRow
                         Divider
                         Icon={
+                            <Building2
+                                color={ Theme.Semantic.IconSecondary }
+                                size={ 20 }
+                                strokeWidth={ 1.8 }
+                            />
+                        }
+                        Label="Workspaces"
+                        OnPress={ Router.push("/workspace-settings") }
+                    />
+                    <SettingsTableRow
+                        Divider
+                        Icon={
                             <Bell
                                 color={ Theme.Semantic.IconSecondary }
                                 size={ 20 }
@@ -223,72 +185,14 @@ const SettingsScreen = (): React.JSX.Element =>
                 <ScrollView
                     contentContainerStyle={ Styles.List }
                     style={ Styles.Scroll }>
-                    <Heading2 Style={ Styles.SectionHeading }>On launch</Heading2>
-                    <Description Style={ Styles.SectionSubtitle }>
-                        What Notivex shows when it opens.
-                    </Description>
-                    <BehaviorPicker
-                        DataSources={ DataSources }
-                        OnChange={ (Value: Domain.Behavior.PostCreationBehavior) =>
-                        {
-                            if (Value.Type !== "CloseApp")
-                            {
-                                if (Value.Type !== "Home" && !HasProAccess)
-                                {
-                                    ShowSettingsGate("Pro can launch directly into a selected database.");
-                                    return;
-                                }
-
-                                void Update({ LaunchBehavior: Value });
-                            }
-                        } }
-                        Value={ AppSettings.LaunchBehavior }
-                    />
-
-                    <Heading2 Style={ Styles.SectionHeading }>Home screen order</Heading2>
-                    <Description Style={ Styles.SectionSubtitle }>
-                        Drag to reorder the databases shown on the home screen.
-                    </Description>
-                    { DatabaseOrder.length === 0
-                        ? <Body>No databases yet.</Body>
-                        : (
-                            <Sortable.Root
-                                ItemExtent={ SortableItemExtent }
-                                OnValueChange={ HandleReorder }
-                                Value={ DatabaseOrder }>
-                                <Sortable.List>
-                                    { DatabaseOrder.map((Id: Domain.Id.NotionDataSourceId) =>
-                                    {
-                                        const Source = DataSourceById.get(Id);
-
-                                        return (
-                                            <Sortable.Item
-                                                Id={ Id }
-                                                key={ Id }>
-                                                <View style={ Styles.SortableRow }>
-                                                    <Body NumberOfLines={ 1 }>
-                                                        { Source?.Title ?? Id }
-                                                    </Body>
-                                                    <Sortable.Handle>
-                                                        <GripVertical
-                                                            color={ Theme.Semantic.IconSecondary }
-                                                            size={ 16 }
-                                                        />
-                                                    </Sortable.Handle>
-                                                </View>
-                                            </Sortable.Item>
-                                        );
-                                    }) }
-                                </Sortable.List>
-                            </Sortable.Root>
-                        ) }
-
                     <Heading2 Style={ Styles.SectionHeading }>Support Notivex</Heading2>
                     <Button
                         Appearance="Primary"
                         OnPress={ () => void HandleLeaveReview() }
                         Style={ Styles.SupportButton }>
-                        <ButtonLabel Color={ Token.Semantic.Primary }>
+                        <ButtonLabel
+                            Color={ Token.Semantic.Primary }
+                            Style={ Styles.SupportButtonLabel }>
                             Leave a review
                         </ButtonLabel>
                         <ExternalLink
@@ -299,7 +203,7 @@ const SettingsScreen = (): React.JSX.Element =>
                     </Button>
                     <Button
                         Appearance="Primary"
-                        OnPress={ () => void HandleSubmitFeedback() }
+                        OnPress={ HandleSubmitFeedback }
                         Style={ Styles.SupportButton }>
                         Submit feedback
                     </Button>
@@ -311,7 +215,7 @@ const SettingsScreen = (): React.JSX.Element =>
                     </Button>
 
                     <View style={ Styles.AppInfo }>
-                        <LabelText>
+                        <LabelText Color={ Token.Semantic.Muted }>
                             Notivex { Application.nativeApplicationVersion ?? Constants.expoConfig?.version }
                             { " " }(build { Application.nativeBuildVersion ?? "—" })
                         </LabelText>
@@ -348,22 +252,15 @@ const useStyles = MakeStyles({
     SectionHeading: TextStyle({
         marginTop: Token.Spacing.M
     }),
-    SectionSubtitle: TextStyle({
-        marginBottom: 4,
-        marginTop: -6
-    }),
-    SortableRow: ViewStyle({
-        alignItems: "center",
-        backgroundColor: Token.Semantic.BackgroundModal,
-        borderRadius: Token.Radii.Large,
-        flexDirection: "row",
-        height: SortableItemExtent - 4,
-        justifyContent: "space-between",
-        marginBottom: 4,
-        paddingHorizontal: Token.Spacing.M
-    }),
     SupportButton: ViewStyle({
         alignSelf: "stretch"
+    }),
+    /* Matches `Button`'s own label size for a plain-string child — the
+     * "Leave a review" label is rendered by hand (to sit beside the
+     * external-link glyph) so it needs the same size applied explicitly. */
+    SupportButtonLabel: TextStyle({
+        fontSize: 12,
+        lineHeight: 22
     })
 });
 

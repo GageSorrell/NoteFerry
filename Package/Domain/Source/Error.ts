@@ -227,6 +227,19 @@ export class FreeDatabaseLimitReached extends Schema.TaggedError<FreeDatabaseLim
     { httpApiStatus: 409 }
 ) { }
 
+/**
+ * The current user has submitted too many feedback/bug reports recently
+ * (`private.enforce_feedback_rate_limit`, `supabase/schemas/13_app_feedback_submissions.sql`).
+ *
+ * @category Error
+ * @since 1.0.0
+ */
+export class RateLimitExceeded extends Schema.TaggedError<RateLimitExceeded>()(
+    "RateLimitExceeded",
+    { },
+    { httpApiStatus: 429 }
+) { }
+
 export/**
        * The union of every domain error, for callers that want a single type to
        * match against.
@@ -251,7 +264,8 @@ const DomainError = Schema.Union([
     NetworkError,
     FeatureGateError,
     FreeCreationWindowExceeded,
-    FreeDatabaseLimitReached
+    FreeDatabaseLimitReached,
+    RateLimitExceeded
 ]);
 
 /** {@inheritDoc DomainError} */

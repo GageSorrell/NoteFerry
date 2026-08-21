@@ -7,25 +7,31 @@
  * @license   MIT
  */
 
+import * as Notifications from "expo-notifications";
 import { Function } from "@sorrell/effect";
 import { RegisterDevelopmentMenu } from "@/Domain/Runtime/DevelopmentMenu";
-import { useEffect } from "react";
-import * as Notifications from "expo-notifications";
 import { router } from "expo-router";
+import { useEffect } from "react";
 
 const HandledNotificationIds = new Set<string>();
 
-function HandleNotificationResponse(Response: Notifications.NotificationResponse): void
+const HandleNotificationResponse = (Response: Notifications.NotificationResponse): void =>
 {
     const Identifier = Response.notification.request.identifier;
-    if (HandledNotificationIds.has(Identifier)) return;
+    if (HandledNotificationIds.has(Identifier))
+    {
+        return;
+    }
 
     const CampaignId = Response.notification.request.content.data?.campaignId;
-    if (typeof CampaignId !== "string") return;
+    if (typeof CampaignId !== "string")
+    {
+        return;
+    }
 
     HandledNotificationIds.add(Identifier);
     router.push({ params: { campaignId: CampaignId }, pathname: "/subscribe" });
-}
+};
 
 export/**
        * Run application-scope registration functions. Quick actions are *not*
@@ -43,7 +49,14 @@ const useRootRegistration = () =>
     useEffect(() =>
     {
         void Notifications.getLastNotificationResponseAsync()
-            .then((Response) => { if (Response) HandleNotificationResponse(Response); })
+            .then((Response: Notifications.NotificationResponse | null
+            ) =>
+            {
+                if (Response)
+                {
+                    HandleNotificationResponse(Response);
+                }
+            })
             .catch(() => undefined);
         const Subscription = Notifications.addNotificationResponseReceivedListener(
             HandleNotificationResponse

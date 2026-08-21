@@ -9,5 +9,7 @@
  * @license   MIT
  */
 
+export * from "./AddWorkspace";
 export * from "./Connect";
+export * from "./CurrentConnection";
 export * from "./UseConnections";

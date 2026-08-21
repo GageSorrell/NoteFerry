@@ -19,6 +19,7 @@ import { useCallback } from "react";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useOnboarding } from "@/features/onboarding/onboarding-context";
 import { useQuickActionCallback } from "expo-quick-actions/hooks";
+import { useTheme } from "@notivex/ui";
 
 /**
  * The navigator, split out so it can read the auth and onboarding contexts
@@ -44,6 +45,7 @@ export function RootNavigator()
     } = useOnboarding();
     const Development = useDevelopmentOnboarding();
     const Router = useLazyRouter();
+    const Theme = useTheme();
 
     const IsAuthenticated = Session !== null;
 
@@ -113,6 +115,7 @@ export function RootNavigator()
                     name="sign-in-modal"
                     options={ {
                         headerShown: true,
+                        headerStyle: { backgroundColor: Theme.Semantic.BackgroundModal },
                         presentation: "modal",
                         title: "What’s Ahead: Two Steps"
                     } }
@@ -130,6 +133,7 @@ export function RootNavigator()
                     name="settings"
                     options={ {
                         headerShown: true,
+                        headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
                         title: "Settings"
                     } }
                 />
@@ -137,6 +141,7 @@ export function RootNavigator()
                     name="general-settings"
                     options={ {
                         headerShown: true,
+                        headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
                         title: "General"
                     } }
                 />
@@ -144,6 +149,7 @@ export function RootNavigator()
                     name="notification-settings"
                     options={ {
                         headerShown: true,
+                        headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
                         title: "Notifications"
                     } }
                 />
@@ -151,10 +157,27 @@ export function RootNavigator()
                     name="quick-action-settings"
                     options={ {
                         headerShown: true,
+                        headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
                         title: "Quick Actions"
                     } }
                 />
+                <Stack.Screen
+                    name="workspace-settings"
+                    options={ {
+                        headerShown: true,
+                        headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
+                        title: "Workspaces"
+                    } }
+                />
                 <Stack.Screen name="account-settings" />
+                <Stack.Screen
+                    name="feedback"
+                    options={ {
+                        headerShown: true,
+                        headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
+                        title: ""
+                    } }
+                />
                 <Stack.Screen
                     name="create-page"
                     options={ {
@@ -168,16 +191,25 @@ export function RootNavigator()
             <Stack.Protected guard={ CanAccessDatabaseConfiguration }>
                 <Stack.Screen
                     name="plans"
-                    options={ { headerShown: true, title: "Compare plans" } }
+                    options={ {
+                        headerShown: true,
+                        headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
+                        title: "Compare plans"
+                    } }
                 />
                 <Stack.Screen
                     name="subscribe"
-                    options={ { headerShown: true, title: "Notivex Pro" } }
+                    options={ {
+                        headerShown: true,
+                        headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
+                        title: "Notivex Pro"
+                    } }
                 />
                 <Stack.Screen
                     name="database-settings"
                     options={ {
                         headerShown: true,
+                        headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
                         title: "Database settings"
                     } }
                 />

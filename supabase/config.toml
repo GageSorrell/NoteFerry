@@ -411,6 +411,11 @@ verify_jwt = false
 [functions.notify-account-data-request]
 verify_jwt = false
 
+# Server-to-server webhook from the `feedback_submissions_notify` trigger
+# (11_notifications.sql) — same shape as notify-account-data-request above.
+[functions.notify-feedback-submission]
+verify_jwt = false
+
 [functions.revenuecat-webhook]
 verify_jwt = false
 

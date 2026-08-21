@@ -13,3 +13,4 @@ export * from "./HeroImage";
 export * from "./ResourceIcon";
 export * from "./Screen";
 export * from "./SettingsTable";
+export * from "./WorkspaceMenu";

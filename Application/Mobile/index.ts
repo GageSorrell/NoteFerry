@@ -29,5 +29,22 @@ polyfillWebCrypto();
  * that imports the Supabase client. */
 import "react-native-url-polyfill/auto";
 
+/* `effect`'s HTTP client reads `Headers.getSetCookie()` — a newer Fetch-spec
+ * addition — while inspecting *any* non-2xx response (it lazily hashes the
+ * whole response object, which touches every getter, `cookies` included).
+ * React Native's `fetch`/`Headers` polyfill doesn't implement it, so it's
+ * `undefined`, and calling it throws `TypeError: undefined is not a
+ * function` before the intended typed error (e.g. `AuthenticationRequired`)
+ * ever reaches calling code. Stub it in before any module touches `effect`'s
+ * HTTP client. An empty list is honest, not just a workaround — RN's `fetch`
+ * has no way to read `Set-Cookie` headers regardless. */
+if (typeof Headers !== "undefined" && typeof Headers.prototype.getSetCookie !== "function")
+{
+    Headers.prototype.getSetCookie = function getSetCookie(): Array<string>
+    {
+        return [ ];
+    };
+}
+
 /* Defers to Expo Router's default entrypoint to actually render the app. */
 import "expo-router/entry";

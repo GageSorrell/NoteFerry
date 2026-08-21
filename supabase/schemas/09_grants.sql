@@ -23,6 +23,11 @@ grant select, insert, update, delete on app.destinations to authenticated;
 -- fulfillment is a manual, out-of-band process.
 grant select, insert on app.account_data_requests to authenticated;
 
+-- Feedback & bug reports: create and read your own; never update or delete.
+-- Rate-limited by `private.enforce_feedback_rate_limit` (§13) regardless of
+-- which grant/path is used to insert.
+grant select, insert on app.feedback_submissions to authenticated;
+
 -- Backend role for the edge functions. `service_role` is NOT a client role — its
 -- key lives only in the edge-function environment and never reaches the app — so
 -- granting it access to `private` does not contradict the "no client-role grants

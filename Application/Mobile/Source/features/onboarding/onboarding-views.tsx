@@ -41,10 +41,10 @@ import {
     ScreenTitle
 } from "@notivex/ui/Primitive";
 import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react-native";
+import { HeroImage, ResourceIcon } from "@/Component";
 import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { Boolean } from "effect";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { HeroImage, ResourceIcon } from "@/Component";
 import { Image } from "expo-image";
 import type { ImageAsset } from "@/Domain/Utility";
 import type { NotionSyncStatus } from "@/features/onboarding/use-notion-sync";
@@ -139,18 +139,7 @@ const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element =>
             Hero={ undefined }
             Subtitle="Log in with your Notion account"
             Title="Your notes, faster.">
-            { /* A narrow/short viewport (e.g. a Z Fold's outer screen) can wrap
-                 the copy below enough that the footer no longer fits — this
-                 was a fixed, non-scrolling layout, so it just clipped off the
-                 bottom of the screen with no way to reach it. Scrollable now;
-                 `flexGrow: 1` on the content container keeps `Spacer`/
-                 `FooterSpacer` filling any leftover room (today's look) when
-                 everything already fits. */ }
-            <ScrollView
-                contentContainerStyle={ Styles.ScrollContent }
-                showsVerticalScrollIndicator={ false }
-                style={ Styles.Scroll }>
-                <View style={ Styles.Spacer } />
+            <View style={ Styles.BottomContent }>
                 <AuthButton
                     Icon={
                         <Image
@@ -162,9 +151,9 @@ const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element =>
                     Style={ Styles.Cta }>
                     Continue with Notion
                 </AuthButton>
-                <View style={ Styles.FooterSpacer } />
+                {/* <View style={ Styles.FooterSpacer } /> */}
                 <View style={ Styles.Footer }>
-                    <View style={ { gap: 32 } }>
+                    <View style={ { gap: 32, marginTop: 16 } }>
                         <View style={ { flexDirection: "row", justifyContent: "center" } }>
                             <Description Style={ { fontSize: 14 } }>
                                 Don’t have a Notion account?{"  "}
@@ -206,7 +195,7 @@ const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element =>
                         </Description>
                     </View>
                 </View>
-            </ScrollView>
+            </View>
         </OnboardingScreen>
     );
 };
@@ -741,18 +730,20 @@ const SyncView = ({
                     + "integration to your workspace."
                 }
                 Title="Notivex wasn’t added">
-                <Button
-                    Appearance="Primary"
-                    Loading={ IsPending }
-                    OnPress={ OnStartOver }
-                    Style={ OnboardingStyles.Cta }>
+                <View style={ { flex: 1, gap: 24, justifyContent: "flex-end" } }>
+                    <Button
+                        Appearance="Primary"
+                        Loading={ IsPending }
+                        OnPress={ OnStartOver }
+                        Style={ { alignSelf: "stretch" } }>
                     Go back and start over
-                </Button>
-                <Link
-                    Href={ NotionConnectionsHelpUrl }
-                    Style={ Styles.HelpLink }>
+                    </Button>
+                    <Link
+                        Href={ NotionConnectionsHelpUrl }
+                        Style={ Styles.HelpLink }>
                     Learn about third-party connections in Notion
-                </Link>
+                    </Link>
+                </View>
             </AccessOutcomeLayout>
         );
     }
@@ -882,6 +873,8 @@ const EnableNotificationsView = ({
 /** Props for the final onboarding screen. */
 export interface DoneViewProps extends PendingOnboardingActionProps
 {
+    readonly IsAddingWorkspace: boolean;
+    readonly OnAddWorkspace: Thunk;
     readonly OnCustomize: Thunk;
     readonly OnStart: Thunk;
 }
@@ -893,18 +886,21 @@ export/**
        * @since 1.0.0
        */
 const DoneView = ({
+    IsAddingWorkspace,
     IsPending: Pending,
+    OnAddWorkspace,
     OnCustomize,
     OnStart
 }: DoneViewProps): React.JSX.Element =>
 {
     const Styles = useCustomizeFormsStyles();
+    const AnyPending = Pending || IsAddingWorkspace;
 
     return (
         <SafeAreaView style={ Styles.SafeArea }>
             <View style={ Styles.Header }>
                 <Heading1>
-                    Optional: Customize Forms
+                    You&apos;re all set!
                 </Heading1>
                 <HeroImage Source={ require("../../../Resource/Onboarding/Grant.png") } />
                 <Description>
@@ -916,12 +912,19 @@ const DoneView = ({
             <View style={ { flex: 1 } } />
             <View style={ Styles.CenterAction }>
                 <Button
-                    Disabled={ Pending }
+                    Disabled={ AnyPending }
                     OnPress={ OnCustomize }>
                     View database settings
                 </Button>
                 <Button
+                    Disabled={ AnyPending }
+                    Loading={ IsAddingWorkspace }
+                    OnPress={ OnAddWorkspace }>
+                    Add another workspace
+                </Button>
+                <Button
                     Appearance="Blue"
+                    Disabled={ AnyPending }
                     Loading={ Pending }
                     OnPress={ OnStart }>
                     Start using Notivex
@@ -1037,6 +1040,7 @@ const useOnboardingResultStyles = MakeStyles({
         textAlign: "center"
     }),
     OutcomeActions: ViewStyle({
+        flex: 1,
         gap: 20
     }),
     OutcomeContent: ViewStyle({
@@ -1133,6 +1137,11 @@ const useSignInStyles = MakeStyles({
         height: 24,
         width: 24
     }),
+    BottomContent: ViewStyle({
+        alignSelf: "stretch",
+        flex: 1,
+        justifyContent: "flex-end"
+    }),
     CaptionLink: TextStyle({
         fontSize: 12,
         lineHeight: 16
@@ -1173,15 +1182,5 @@ const useSignInStyles = MakeStyles({
     }),
     LegalCopy: TextStyle({
         textAlign: "center"
-    }),
-    Scroll: ViewStyle({
-        alignSelf: "stretch",
-        flex: 1
-    }),
-    ScrollContent: ViewStyle({
-        flexGrow: 1
-    }),
-    Spacer: ViewStyle({
-        flex: 1
     })
 });

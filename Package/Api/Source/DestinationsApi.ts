@@ -29,7 +29,8 @@ const CreateDestinationPayload = Schema.Struct({
     Name: Schema.String,
     Position: Schema.Number,
     PostCreationBehavior: Schema.optional(Domain.Behavior.PostCreationBehavior),
-    Template: Domain.Destination.DestinationTemplate
+    Template: Domain.Destination.DestinationTemplate,
+    TemplateConfiguration: Schema.optional(Domain.Destination.TemplateConfiguration)
 });
 
 /** {@inheritDoc CreateDestinationPayload} */
@@ -49,7 +50,8 @@ const UpdateDestinationPayload = Schema.Struct({
     Name: Schema.optional(Schema.String),
     Position: Schema.optional(Schema.Number),
     PostCreationBehavior: Schema.optional(Domain.Behavior.PostCreationBehavior),
-    Template: Schema.optional(Domain.Destination.DestinationTemplate)
+    Template: Schema.optional(Domain.Destination.DestinationTemplate),
+    TemplateConfiguration: Schema.optional(Domain.Destination.TemplateConfiguration)
 });
 
 /** {@inheritDoc UpdateDestinationPayload} */

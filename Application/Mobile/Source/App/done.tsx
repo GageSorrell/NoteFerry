@@ -9,6 +9,8 @@
  * @license   MIT
  */
 
+import { AddWorkspace } from "@/Domain/Connection";
+import { ListConnections } from "@/Domain/Runtime/NotivexApi";
 import { OnboardingMockTiming, useDevelopmentOnboarding } from "@/features/onboarding/onboarding-development";
 import { DoneView } from "@/features/onboarding/onboarding-views";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
@@ -21,6 +23,7 @@ const DoneScreen = () =>
     const { Complete, RefetchConnection } = useOnboarding();
     const Development = useDevelopmentOnboarding();
     const [ Pending, SetPending ] = useState(false);
+    const [ IsAddingWorkspace, SetIsAddingWorkspace ] = useState(false);
 
     const IsPending = Development.Active
         ? Development.Scenario === "DonePending"
@@ -46,9 +49,50 @@ const DoneScreen = () =>
         await Complete();
     };
 
+    const OnAddWorkspace = async (): Promise<void> =>
+    {
+        if (IsPending || IsAddingWorkspace)
+        {
+            return;
+        }
+
+        if (Development.Active)
+        {
+            return;
+        }
+
+        SetIsAddingWorkspace(true);
+
+        try
+        {
+            const Existing = await ListConnections();
+            const NewConnection = await AddWorkspace(Existing);
+
+            if (NewConnection !== null)
+            {
+                Router.push({
+                    params: {
+                        connectionId: NewConnection.Id,
+                        workspaceName: NewConnection.WorkspaceName
+                    },
+                    pathname: "/data-sources"
+                })();
+            }
+        }
+        catch (Error)
+        {
+            /* eslint-disable-next-line no-console */
+            console.error("Failed to add workspace", Error);
+        }
+        finally
+        {
+            SetIsAddingWorkspace(false);
+        }
+    };
+
     return (
         <DoneView
-            { ...{ IsPending, OnStart } }
+            { ...{ IsAddingWorkspace, IsPending, OnAddWorkspace, OnStart } }
             OnCustomize={ Router.push("/database-settings") }
         />
     );

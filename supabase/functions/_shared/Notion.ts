@@ -244,6 +244,28 @@ export type NotionParent =
     readonly page_id?: string;
 };
 
+/**
+ * One property *value* on a Notion page, as opposed to {@link NotionProperty}
+ * (a data source's property *definition*). Only the value shapes Notivex
+ * reads back from a template page are typed; the rest of Notion's per-type
+ * payloads are ignored.
+ */
+export type NotionPagePropertyValue =
+{
+    readonly type?: string;
+    readonly title?: readonly NotionRichTextItem[];
+    readonly rich_text?: readonly NotionRichTextItem[];
+    readonly number?: number | null;
+    readonly checkbox?: boolean;
+    readonly date?: { readonly start: string; readonly end?: string | null } | null;
+    readonly select?: { readonly id: string } | null;
+    readonly multi_select?: readonly { readonly id: string }[];
+    readonly status?: { readonly id: string } | null;
+    readonly url?: string | null;
+    readonly email?: string | null;
+    readonly phone_number?: string | null;
+};
+
 /** A Notion database object containing the visual metadata shown on Home. */
 export type NotionDatabaseObject =
 {
@@ -260,11 +282,9 @@ export type NotionPageObject =
     readonly id: string;
     readonly cover?: NotionFile;
     readonly icon?: NotionIcon;
+    readonly last_edited_time?: string;
     readonly parent?: NotionParent;
-    readonly properties?: Readonly<Record<string, {
-        readonly type?: string;
-        readonly title?: readonly NotionRichTextItem[];
-    }>>;
+    readonly properties?: Readonly<Record<string, NotionPagePropertyValue>>;
 };
 
 /** The first page of a data-source query, sufficient for a capped row count. */
@@ -543,6 +563,66 @@ export async function RetrievePage(
     }
 
     return await Response.json() as NotionPageObject;
+}
+
+/** One template entry as returned by `GET /data_sources/{id}/templates`. */
+export type NotionTemplateSummary =
+{
+    readonly id: string;
+    readonly name: string;
+    readonly is_default: boolean;
+};
+
+/**
+ * Lists every template belonging to a data source, following Notion's cursor
+ * pagination to completion. A template's icon and property values are not
+ * included here — retrieve the template itself via {@link RetrievePage}, since
+ * a template is a page. Throws {@link NotionApiError} on failure.
+ *
+ * @category Notion
+ * @since 1.0.0
+ */
+export async function ListDataSourceTemplates(
+    AccessToken: string,
+    DataSourceId: string
+): Promise<readonly NotionTemplateSummary[]>
+{
+    const Results: NotionTemplateSummary[] = [];
+    let Cursor: string | undefined;
+
+    do
+    {
+        const Url = new URL(`${ApiBase}/data_sources/${DataSourceId}/templates`);
+
+        Url.searchParams.set("page_size", "100");
+
+        if (Cursor)
+        {
+            Url.searchParams.set("start_cursor", Cursor);
+        }
+
+        const Response = await fetch(Url, {
+            headers: DataApiHeaders(AccessToken),
+            method: "GET"
+        });
+
+        if (!Response.ok)
+        {
+            return await ThrowNotionApiError(Response);
+        }
+
+        const Page = await Response.json() as {
+            readonly templates?: readonly NotionTemplateSummary[];
+            readonly next_cursor?: string | null;
+            readonly has_more?: boolean;
+        };
+
+        Results.push(...(Page.templates ?? []));
+        Cursor = Page.has_more && Page.next_cursor ? Page.next_cursor : undefined;
+    }
+    while (Cursor);
+
+    return Results;
 }
 
 /** A Notion File Upload object, as returned by `POST /file_uploads`. */

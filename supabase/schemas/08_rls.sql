@@ -72,6 +72,17 @@ create policy account_data_requests_insert_own on app.account_data_requests
     for insert to authenticated
     with check ((select auth.uid()) = user_id);
 
+-- app.feedback_submissions --------------------------------------------------
+alter table app.feedback_submissions enable row level security;
+
+create policy feedback_submissions_select_own on app.feedback_submissions
+    for select to authenticated
+    using ((select auth.uid()) = user_id);
+
+create policy feedback_submissions_insert_own on app.feedback_submissions
+    for insert to authenticated
+    with check ((select auth.uid()) = user_id);
+
 -- private.* ----------------------------------------------------------------
 -- Enable RLS with no policies: client roles can never read these rows, and the
 -- service role (edge functions) bypasses RLS. Belt-and-braces with the schema
