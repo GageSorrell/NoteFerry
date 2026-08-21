@@ -119,7 +119,7 @@ const SyncScreen = () =>
         if (Development.Active)
         {
             Development.Transition("ReadyPending");
-            Development.Schedule("Done", OnboardingMockTiming.PendingMs);
+            Development.Schedule("Notifications", OnboardingMockTiming.PendingMs);
 
             return;
         }
@@ -147,7 +147,7 @@ const SyncScreen = () =>
 
         if (CachedCount > 0)
         {
-            Router.replace("/done")();
+            Router.replace("/enable-notifications")();
         }
     };
 

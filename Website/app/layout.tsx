@@ -26,6 +26,25 @@ const inter = Inter({
 export/** Site-wide default metadata, inherited by every route. */
 const metadata: Metadata = {
     description: siteConfig.description,
+    /* No file-based `app/icon.png`/`app/apple-icon.png` — Next resolves
+     * file-based icons and this `icons` config independently, and once any
+     * `icons` is set here it fully replaces file-based resolution rather
+     * than merging with it, so the apple-touch icon needs listing here too
+     * or it silently drops out of `<head>`. `apple-icon.png` now lives as a
+     * plain `/public` asset for that reason.
+     *
+     * The `icon` array is what actually needs to be here, since a static
+     * file can't carry a `media` query and so can't swap by theme: the light
+     * mark is the unconditional default, and the dark-mode `link` only wins
+     * when the OS prefers dark, mirroring the navbar `Logo` component's
+     * `dark:` swap. */
+    icons: {
+        apple: "/apple-icon.png",
+        icon: [
+            { type: "image/svg+xml", url: "/NotivexLogoLight.svg" },
+            { media: "(prefers-color-scheme: dark)", type: "image/svg+xml", url: "/NotivexLogoDark.svg" }
+        ]
+    },
     metadataBase: new URL(siteConfig.canonicalUrl),
     openGraph: {
         description: siteConfig.description,

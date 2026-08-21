@@ -11,10 +11,13 @@
  * @license   MIT
  */
 
+import * as Application from "expo-application";
 import type * as Domain from "@notivex/domain";
+import * as MailComposer from "expo-mail-composer";
 import * as React from "react";
 import {
     ActivityIndicator,
+    Alert,
     ScrollView,
     View
 } from "react-native";
@@ -36,18 +39,15 @@ import {
     ScreenTitle
 } from "@notivex/ui/Primitive";
 import { ChevronDown, ChevronUp } from "lucide-react-native";
-import { IconBlock, type LucideIconName } from "@notivex/ui/Block";
 import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { Boolean } from "effect";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { HeroImage } from "@/Component";
+import { HeroImage, ResourceIcon } from "@/Component";
 import { Image } from "expo-image";
 import type { ImageAsset } from "@/Domain/Utility";
 import type { NotionSyncStatus } from "@/features/onboarding/use-notion-sync";
 import { OnboardingScreen } from "@/features/onboarding/onboarding-screen";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Semantic } from "@notivex/ui/Token";
-import { SvgUri } from "react-native-svg";
 import type { Thunk } from "@sorrell/effect/Function";
 
 /** Props shared by views with a single primary action. */
@@ -82,143 +82,149 @@ export/**
        */
 const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element =>
 {
+    const Theme = useTheme();
     const Styles = useSignInStyles();
+
+    const HandleNeedHelp = React.useCallback(async () =>
+    {
+        const IsAvailable = await MailComposer.isAvailableAsync();
+
+        if (!IsAvailable)
+        {
+            Alert.alert(
+                "No mail app available",
+                "Set up a mail account on this device to send feedback."
+            );
+
+            return;
+        }
+
+        const body = Application.nativeApplicationVersion !== null && Application.nativeBuildVersion !== null
+            ? `\n\n—\nNotivex ${ Application.nativeApplicationVersion } `
+                + `(${ Application.nativeBuildVersion })`
+            : undefined;
+
+        await MailComposer.composeAsync({
+            body,
+            recipients: [ "gage@sorrell.sh" ],
+            subject: "Notivex Question"
+        });
+    }, [ ]);
 
     return (
         <OnboardingScreen
             Header={
-                <View style={ Styles.Header }>
+                <View style={ [ Styles.Header, { paddingTop: 64 } ] }>
                     <Image
-                        source={ require("../../../Resource/NotivexLogoLight.png") }
-                        style={ { height: 52, marginBottom: 16, width: 52 } }
+                        source={ Theme.Mode === "Dark"
+                            ? require("../../../Resource/Logo/NotivexLogoDark.png")
+                            : require("../../../Resource/Logo/NotivexLogoLight.png") }
+                        style={ { height: 44, marginBottom: 16, width: 44 } }
                     />
                     <HeroTitle Style={ Styles.HeaderText }>
                         Your notes, faster.
                     </HeroTitle>
                     <HeroTitle
-                        Color={ Semantic.Muted }
+                        Color="#9D9A99"
                         Style={ [ Styles.HeaderText, { fontFamily: "Roboto", fontWeight: "bold" } ] }
                         Weight="600">
                         Log in with your Notion account
                     </HeroTitle>
                 </View>
             }
-            // Hero={ require("../../../Resource/Onboarding/Welcome.png") }
+            Hero={ undefined }
             Subtitle="Log in with your Notion account"
             Title="Your notes, faster.">
-            <View style={ Styles.Spacer } />
-            <AuthButton
-                Icon={
-                    <Image
-                        source={ require("../../../Resource/Onboarding/NotionLogoLight.svg") }
-                        style={ Styles.AuthIcon }
-                    />
-                }
-                OnPress={ OnContinue }
-                Style={ Styles.Cta }>
-                Continue with Notion
-            </AuthButton>
-            <View style={ Styles.FooterSpacer } />
-            <View style={ Styles.Footer }>
-                <View style={ { gap: 32 } }>
-                    <View style={ { flexDirection: "row", justifyContent: "center" } }>
-                        <Description Style={ { fontSize: 14 } }>
-                            Don’t have a Notion account?{"  "}
+            { /* A narrow/short viewport (e.g. a Z Fold's outer screen) can wrap
+                 the copy below enough that the footer no longer fits — this
+                 was a fixed, non-scrolling layout, so it just clipped off the
+                 bottom of the screen with no way to reach it. Scrollable now;
+                 `flexGrow: 1` on the content container keeps `Spacer`/
+                 `FooterSpacer` filling any leftover room (today's look) when
+                 everything already fits. */ }
+            <ScrollView
+                contentContainerStyle={ Styles.ScrollContent }
+                showsVerticalScrollIndicator={ false }
+                style={ Styles.Scroll }>
+                <View style={ Styles.Spacer } />
+                <AuthButton
+                    Icon={
+                        <Image
+                            source={ require("../../../Resource/Onboarding/NotionLogoLight.svg") }
+                            style={ Styles.AuthIcon }
+                        />
+                    }
+                    OnPress={ OnContinue }
+                    Style={ Styles.Cta }>
+                    Continue with Notion
+                </AuthButton>
+                <View style={ Styles.FooterSpacer } />
+                <View style={ Styles.Footer }>
+                    <View style={ { gap: 32 } }>
+                        <View style={ { flexDirection: "row", justifyContent: "center" } }>
+                            <Description Style={ { fontSize: 14 } }>
+                                Don’t have a Notion account?{"  "}
+                            </Description>
+                            <Link
+                                Appearance="Subtle"
+                                Href="https://app.notion.com/signup"
+                                Style={ { fontSize: 14, textDecorationLine: "underline" } }>
+                                Sign up
+                            </Link>
+                        </View>
+                        <Caption Style={ Styles.LegalCopy }>
+                            By continuing, you acknowledge that you understand{"\n"}
+                            and agree to the{" "}
+                            <Link
+                                Href="https://notivex.sorrell.sh/terms"
+                                Style={ Styles.CaptionLink }>
+                                Terms &amp; Conditions
+                            </Link>
+                            {" "}and{" "}
+                            <Link
+                                Href="https://notivex.sorrell.sh/privacy"
+                                Style={ Styles.CaptionLink }>
+                                Privacy Policy
+                            </Link>
+                        </Caption>
+                    </View>
+                    <View style={ Styles.FooterDetails }>
+                        <View style={ Styles.FooterLinks }>
+                            <Link
+                                Href="https://notivex.sorrell.sh"
+                                Style={ Styles.FooterLink }>Learn more</Link>
+                            <Link
+                                OnPress={ HandleNeedHelp }
+                                Style={ Styles.FooterLink }>Need help?</Link>
+                        </View>
+                        <Description Style={ Styles.Copyright }>
+                            © 2026 Gage Sorrell.  All Rights Reserved.
                         </Description>
-                        <Link Style={ { fontSize: 14 } }>
-                            Sign up
-                        </Link>
                     </View>
-                    <Caption Style={ Styles.LegalCopy }>
-                        By continuing, you acknowledge that you understand{"\n"}
-                        and agree to the{" "}
-                        <Link Style={ Styles.CaptionLink }>
-                            Terms &amp; Conditions
-                        </Link>
-                        {" "}and{" "}
-                        <Link Style={ Styles.CaptionLink }>
-                            Privacy Policy
-                        </Link>
-                    </Caption>
                 </View>
-                <View style={ Styles.FooterDetails }>
-                    <View style={ Styles.FooterLinks }>
-                        <Link Style={ Styles.FooterLink }>Privacy &amp; terms</Link>
-                        <Link Style={ Styles.FooterLink }>Need help?</Link>
-                    </View>
-                    <Description Style={ Styles.Copyright }>
-                        © 2026 Notivex.
-                    </Description>
-                </View>
-            </View>
+            </ScrollView>
         </OnboardingScreen>
     );
 };
 
-/** Props for the first sign-in explanation modal. */
-export interface SignInModalStepOneViewProps
+/** Props for the sign-in explanation modal. */
+export interface SignInModalViewProps extends PendingOnboardingActionProps
 {
-    readonly OnContinue: Thunk;
-}
-
-export/**
-       * Renders the first sign-in explanation modal.
-       *
-       * @category Onboarding
-       * @since 1.0.0
-       */
-const SignInModalStepOneView = ({
-    OnContinue
-}: SignInModalStepOneViewProps): React.JSX.Element =>
-{
-    const Styles = useModalStyles();
-
-    return (
-        <View style={ Styles.Container }>
-            <SafeAreaView style={ Styles.SafeArea }>
-                <ScrollView
-                    contentContainerStyle={ Styles.Scroll }
-                    showsVerticalScrollIndicator={ false }
-                    style={ Styles.SafeArea }>
-                    <View style={ Styles.Header }>
-                        <ScreenTitle>What’s Ahead: Two Steps</ScreenTitle>
-                    </View>
-                    <HeroImage Source={ require("../../../Resource/Onboarding/SignInModalStepOne.png") } />
-                    <Body>
-                        First, you’ll sign into Notion and add the{" "}
-                        Notivex integration to your workspace.
-                    </Body>
-                    <View style={ Styles.Spacer } />
-                    <Button
-                        Appearance="Primary"
-                        OnPress={ OnContinue }
-                        Style={ Styles.Cta }>
-                        Got it
-                    </Button>
-                </ScrollView>
-            </SafeAreaView>
-        </View>
-    );
-};
-
-/** Props for the second sign-in explanation modal. */
-export interface SignInModalStepTwoViewProps extends PendingOnboardingActionProps
-{
-    readonly OnBack: Thunk;
     readonly OnSignIn: Thunk;
 }
 
 export/**
-       * Renders the second sign-in explanation modal and its pending state.
+       * Renders the sign-in explanation modal, walking the user through the
+       * two-step process (Notion sign-in, then database selection) before
+       * they authenticate.
        *
        * @category Onboarding
        * @since 1.0.0
        */
-const SignInModalStepTwoView = ({
-    OnBack,
+const SignInModalView = ({
     OnSignIn,
     IsPending: Pending
-}: SignInModalStepTwoViewProps): React.JSX.Element =>
+}: SignInModalViewProps): React.JSX.Element =>
 {
     const Theme = useTheme();
     const Styles = useModalStyles();
@@ -231,10 +237,11 @@ const SignInModalStepTwoView = ({
                     contentContainerStyle={ Styles.Scroll }
                     showsVerticalScrollIndicator={ false }
                     style={ Styles.SafeArea }>
-                    <View style={ Styles.Header }>
-                        <ScreenTitle>What’s Ahead: Two Steps</ScreenTitle>
-                    </View>
                     <HeroImage Source={ require("../../../Resource/Onboarding/SignInModalStepTwo.png") } />
+                    <Body>
+                        First, you’ll sign into Notion and add the Notivex integration to
+                        your workspace.
+                    </Body>
                     <Body>
                         Then, you’ll choose which databases Notivex can see.
                     </Body>
@@ -253,18 +260,8 @@ const SignInModalStepTwoView = ({
                         Loading={ Pending }
                         OnPress={ OnSignIn }
                         Style={ Styles.FullWidthCta }>
-                        Log in
+                        Log in with Notion
                     </AuthButton>
-                    <View style={ { flexDirection: "row", justifyContent: "center" } }>
-                        <Description Style={ { fontSize: 14 } }>
-                            Not ready yet?{"  "}
-                        </Description>
-                        <Link
-                            OnPress={ OnBack }
-                            Style={ { fontSize: 14 } }>
-                            Go back
-                        </Link>
-                    </View>
                 </ScrollView>
             </SafeAreaView>
         </View>
@@ -294,72 +291,6 @@ export interface SyncViewProps
     readonly ShowLoading: boolean;
     readonly Status: NotionSyncStatus;
 }
-
-/** Whether a Notion icon string can be rendered by `expo-image`. */
-const IsImageUrl = (Value: string): boolean =>
-    Value.startsWith("https://") || Value.startsWith("http://");
-
-/** Whether a Notion image URL points to SVG artwork. */
-const IsSvgUrl = (Value: string): boolean => /\.svg(?:$|[?#])/iu.test(Value);
-
-/** Converts Notion's native icon names to the local Lucide key format. */
-const ToLucideIconName = (Value: string): LucideIconName =>
-    Value.trim().toLowerCase().replaceAll("_", "-").replaceAll(" ", "-") as LucideIconName;
-
-/** Renders one optional database icon using the same normalization as Home. */
-const OnboardingDatabaseIcon = ({
-    Database
-}: {
-    readonly Database: Domain.DataSource.OnboardingDatabase;
-}): React.JSX.Element | null =>
-{
-    const Styles = useOnboardingResultStyles();
-
-    if (!Database.Icon)
-    {
-        return null;
-    }
-
-    if (Database.IconType === "Native")
-    {
-        return (
-            <IconBlock
-                Icon={ { Src: ToLucideIconName(Database.Icon), Type: "Lucide" } }
-                Size="Small"
-            />
-        );
-    }
-
-    if (Database.IconType === "Image" || IsImageUrl(Database.Icon))
-    {
-        if (IsSvgUrl(Database.Icon))
-        {
-            return (
-                <SvgUri
-                    height={ 22 }
-                    uri={ Database.Icon }
-                    width={ 22 }
-                />
-            );
-        }
-
-        return (
-            <Image
-                accessibilityIgnoresInvertColors
-                cachePolicy="memory-disk"
-                contentFit="contain"
-                source={ { uri: Database.Icon } }
-                style={ Styles.DatabaseIcon }
-            />
-        );
-    }
-
-    return (
-        <ItemTitle Style={ Styles.DatabaseEmoji }>
-            { Database.Icon }
-        </ItemTitle>
-    );
-};
 
 /** Expandable summary of the regular pages visible to Notivex. */
 const PageAccessDisclosure = ({
@@ -434,7 +365,10 @@ const PageAccessDisclosure = ({
                                 <View
                                     key={ Page.Id }
                                     style={ Styles.PageRow }>
-                                    <Description NumberOfLines={ 2 }>
+                                    <ResourceIcon Resource={ Page } />
+                                    <Description
+                                        NumberOfLines={ 2 }
+                                        Style={ Styles.PageTitle }>
                                         { Page.Title }
                                     </Description>
                                 </View>
@@ -526,7 +460,6 @@ const DatabaseSelectionView = ({
 {
     const [ Search, SetSearch ] = React.useState("");
     const Styles = useOnboardingResultStyles();
-    const OnboardingStyles = useOnboardingStyles();
     const SortedDatabases: ReadonlyArray<Domain.DataSource.OnboardingDatabase> =
         React.useMemo(
             () => [ ...Data.Databases ]
@@ -597,7 +530,9 @@ const DatabaseSelectionView = ({
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={ false }>
                 <View style={ Styles.OutcomeHeader }>
-                    <Heading1>Choose your databases</Heading1>
+                    <Heading1>
+                        Choose your databases
+                    </Heading1>
                     <Description>
                         These are the databases that Notivex will display for creating pages.
                     </Description>
@@ -653,7 +588,7 @@ const DatabaseSelectionView = ({
                                     OnCheckedChange={ () =>
                                         ToggleDatabase(Database.DataSourceId) }
                                 />
-                                <OnboardingDatabaseIcon { ...{ Database } } />
+                                <ResourceIcon Resource={ Database } />
                                 <ItemTitle
                                     NumberOfLines={ 2 }
                                     Style={ Styles.DatabaseTitle }>
@@ -692,8 +627,7 @@ const DatabaseSelectionView = ({
                     Appearance={ SelectedIds.size === 0 ? "Primary" : "Blue" }
                     Disabled={ IsPending || SelectedIds.size === 0 }
                     Loading={ IsPending }
-                    OnPress={ Continue }
-                    Style={ OnboardingStyles.Cta }>
+                    OnPress={ Continue }>
                     { SelectedIds.size === 0
                         ? "Select at least one database"
                         : `Continue with ${ SelectedIds.size } ${
@@ -869,6 +803,52 @@ const SyncView = ({
     );
 };
 
+/** Props for the notification preference onboarding screen. */
+export interface EnableNotificationsViewProps extends PendingOnboardingActionProps
+{
+    readonly OnEnable: Thunk;
+    readonly OnSkip: Thunk;
+}
+
+export/**
+       * Offers the existing offline-submit notification preference before the
+       * final onboarding screen. The hero is intentionally left empty until
+       * its artwork is available.
+       *
+       * @category Onboarding
+       * @since 1.0.0
+       */
+const EnableNotificationsView = ({
+    IsPending: Pending,
+    OnEnable,
+    OnSkip
+}: EnableNotificationsViewProps): React.JSX.Element =>
+{
+    const Styles = useOnboardingStyles();
+
+    return (
+        <OnboardingScreen
+            Hero={ undefined }
+            Subtitle="Get notified when Notivex finishes creating pages you submitted while offline."
+            Title="Enable Notifications">
+            <View style={ Styles.Spacer } />
+            <Button
+                Appearance="Blue"
+                Loading={ Pending }
+                OnPress={ OnEnable }
+                Style={ Styles.Cta }>
+                Enable notifications
+            </Button>
+            <Button
+                Disabled={ Pending }
+                OnPress={ OnSkip }
+                Style={ Styles.Cta }>
+                Not now
+            </Button>
+        </OnboardingScreen>
+    );
+};
+
 /** Props for the final onboarding screen. */
 export interface DoneViewProps extends PendingOnboardingActionProps
 {
@@ -889,45 +869,47 @@ const DoneView = ({
 }: DoneViewProps): React.JSX.Element =>
 {
     const Styles = useCustomizeFormsStyles();
-    const OnboardingStyles = useOnboardingStyles();
 
     return (
         <SafeAreaView style={ Styles.SafeArea }>
             <View style={ Styles.Header }>
-                <Heading1>Optional: Customize Forms</Heading1>
+                <Heading1>
+                    Optional: Customize Forms
+                </Heading1>
+                <HeroImage Source={ require("../../../Resource/Onboarding/Grant.png") } />
                 <Description>
                     You&apos;re all set to start using Notivex. If you&apos;d like, you can
                     edit the properties displayed when creating pages, create aliases
                     for databases, and more.
                 </Description>
             </View>
+            <View style={ { flex: 1 } } />
             <View style={ Styles.CenterAction }>
                 <Button
-                    Appearance="SoftBlue"
                     Disabled={ Pending }
                     OnPress={ OnCustomize }>
-                    Open database settings
+                    View database settings
+                </Button>
+                <Button
+                    Appearance="Blue"
+                    Loading={ Pending }
+                    OnPress={ OnStart }>
+                    Start using Notivex
                 </Button>
             </View>
-            <Button
-                Appearance="Primary"
-                Loading={ Pending }
-                OnPress={ OnStart }
-                Style={ OnboardingStyles.Cta }>
-                Start using Notivex
-            </Button>
         </SafeAreaView>
     );
 };
 
 const useCustomizeFormsStyles = MakeStyles({
     CenterAction: ViewStyle({
-        alignItems: "center",
+        alignItems: "stretch",
         flex: 1,
+        gap: 8,
         justifyContent: "center"
     }),
     Header: ViewStyle({
-        gap: 12
+        gap: 24
     }),
     SafeArea: ViewStyle({
         flex: 1,
@@ -942,15 +924,6 @@ const useOnboardingResultStyles = MakeStyles({
         flexShrink: 0,
         fontSize: 12,
         textAlign: "right"
-    }),
-    DatabaseEmoji: TextStyle({
-        fontSize: 20,
-        lineHeight: 24
-    }),
-    DatabaseIcon: ImageStyle({
-        borderRadius: 4,
-        height: 22,
-        width: 22
     }),
     DatabaseRow: ViewStyle({
         alignItems: "center",
@@ -1054,11 +1027,17 @@ const useOnboardingResultStyles = MakeStyles({
         paddingVertical: 4
     }),
     PageRow: ViewStyle({
-        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "row",
+        gap: 10,
         minHeight: 24
     }),
-    SafeArea: ViewStyle({
+    PageTitle: TextStyle({
         flex: 1
+    }),
+    SafeArea: ViewStyle({
+        flex: 1,
+        paddingHorizontal: 20
     }),
     SelectedDatabaseCount: TextStyle({
         minHeight: 20
@@ -1109,8 +1088,9 @@ const useModalStyles = MakeStyles({
     Scroll: ViewStyle({
         flexGrow: 1,
         gap: 32,
-        paddingHorizontal: 32,
-        paddingVertical: 24
+        marginTop: -24,
+        paddingBottom: 24,
+        paddingHorizontal: 32
     }),
     Spacer: ViewStyle({
         flexGrow: 1,
@@ -1163,6 +1143,13 @@ const useSignInStyles = MakeStyles({
     }),
     LegalCopy: TextStyle({
         textAlign: "center"
+    }),
+    Scroll: ViewStyle({
+        alignSelf: "stretch",
+        flex: 1
+    }),
+    ScrollContent: ViewStyle({
+        flexGrow: 1
     }),
     Spacer: ViewStyle({
         flex: 1

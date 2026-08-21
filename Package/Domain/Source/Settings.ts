@@ -28,6 +28,33 @@ import { Schema } from "effect";
 export const MaxQuickActionCount = 6;
 
 export/**
+       * How the home screen arranges database cards: `"1"` is the default
+       * full-width row per database; `"2"` is a two-column grid of square
+       * cards (a lone card on the final row sits in the left column).
+       *
+       * @category Settings
+       * @since 1.0.0
+       */
+const HomeScreenLayout = Schema.Literals([ "1", "2" ]);
+
+/** {@inheritDoc HomeScreenLayout} */
+export type HomeScreenLayout = Schema.Schema.Type<typeof HomeScreenLayout>;
+
+export/**
+       * The app's contrast setting: `"System"` (the default) follows the
+       * OS's own increase-contrast accessibility setting; `"Standard"` and
+       * `"High"` pin `@notivex/ui`'s `ThemeProvider`'s `HighContrast` prop
+       * regardless of the OS setting.
+       *
+       * @category Settings
+       * @since 1.0.0
+       */
+const Contrast = Schema.Literals([ "System", "Standard", "High" ]);
+
+/** {@inheritDoc Contrast} */
+export type Contrast = Schema.Schema.Type<typeof Contrast>;
+
+export/**
        * The settings blob as it is actually stored: every field optional, so a
        * profile row with an empty or partial `settings` JSONB value decodes
        * cleanly. Resolve it to {@link ResolvedAppSettings} with
@@ -37,7 +64,9 @@ export/**
        * @since 1.0.0
        */
 const AppSettings = Schema.Struct({
+    Contrast: Schema.optional(Contrast),
     DatabaseOrder: Schema.optional(Schema.Array(Id.NotionDataSourceId)),
+    HomeScreenLayout: Schema.optional(HomeScreenLayout),
     LaunchBehavior: Schema.optional(Behavior.LaunchBehavior),
     NotifyOnOfflineSubmit: Schema.optional(Schema.Boolean),
     QuickActionDataSourceIds: Schema.optional(Schema.Array(Id.NotionDataSourceId))
@@ -55,7 +84,9 @@ export type AppSettings = Schema.Schema.Type<typeof AppSettings>;
  */
 export interface ResolvedAppSettings
 {
+    readonly Contrast: Contrast;
     readonly DatabaseOrder: ReadonlyArray<Id.NotionDataSourceId>;
+    readonly HomeScreenLayout: HomeScreenLayout;
     readonly LaunchBehavior: Behavior.LaunchBehavior;
     readonly NotifyOnOfflineSubmit: boolean;
     readonly QuickActionDataSourceIds: ReadonlyArray<Id.NotionDataSourceId>;
@@ -68,7 +99,9 @@ export interface ResolvedAppSettings
  * @since 1.0.0
  */
 export const DefaultAppSettings: ResolvedAppSettings = {
+    Contrast: "System",
     DatabaseOrder: [ ],
+    HomeScreenLayout: "1",
     LaunchBehavior: { Type: "Home" },
     NotifyOnOfflineSubmit: true,
     QuickActionDataSourceIds: [ ]
@@ -85,7 +118,9 @@ export const DefaultAppSettings: ResolvedAppSettings = {
 export function WithDefaults(Stored: AppSettings): ResolvedAppSettings
 {
     return {
+        Contrast: Stored.Contrast ?? DefaultAppSettings.Contrast,
         DatabaseOrder: Stored.DatabaseOrder ?? DefaultAppSettings.DatabaseOrder,
+        HomeScreenLayout: Stored.HomeScreenLayout ?? DefaultAppSettings.HomeScreenLayout,
         LaunchBehavior: Stored.LaunchBehavior ?? DefaultAppSettings.LaunchBehavior,
         NotifyOnOfflineSubmit: Stored.NotifyOnOfflineSubmit
             ?? DefaultAppSettings.NotifyOnOfflineSubmit,

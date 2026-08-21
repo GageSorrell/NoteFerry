@@ -1,8 +1,8 @@
 /**
- * App-level settings, reached from the gear button on the home screen:
- * per-database entry points, app-wide preferences (launch behavior,
- * home-screen database order, quick actions, offline notifications), app
- * info, and links into review/feedback/account-settings.
+ * App-level settings, reached from the gear button on the home screen: a
+ * table of entry points into General/Databases/Notifications/Quick
+ * Actions/Account settings sub-screens, then in-line launch behavior,
+ * home-screen database order, review/feedback/bug links, and app info.
  *
  * @module notivex/app/settings
  *
@@ -17,22 +17,12 @@ import type * as Domain from "@notivex/domain";
 import * as MailComposer from "expo-mail-composer";
 import * as StoreReview from "expo-store-review";
 import { Alert, ScrollView, View } from "react-native";
-import {
-    Body,
-    Button,
-    Checkbox,
-    Description,
-    Heading2,
-    LabelText,
-    Pressable,
-    Sortable,
-    Switch
-} from "@notivex/ui/Primitive";
-import { ChevronRight, Database, GripVertical } from "lucide-react-native";
+import { Bell, Database, ExternalLink, GripVertical, Settings, UserRound, Zap } from "lucide-react-native";
+import { Body, Button, ButtonLabel, Description, Heading2, LabelText, Sortable } from "@notivex/ui/Primitive";
 import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { BehaviorPicker } from "@/Component/BehaviorPicker";
 import Constants from "expo-constants";
-import type { PressableStateCallbackType } from "react-native";
+import { SettingsTable, SettingsTableRow } from "@/Component";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useCallback } from "react";
 import { useConnections } from "@/Domain/Connection";
@@ -40,37 +30,6 @@ import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSettings } from "@/features/settings/use-settings";
 
 const SortableItemExtent = 44;
-
-/** A plain, tappable row matching the existing "Databases" row's chrome. */
-interface SettingsRowProps extends React.PropsWithChildren
-{
-    readonly Label: string;
-    readonly OnPress: () => void;
-}
-
-/* eslint-disable-next-line jsdoc/require-jsdoc */
-function SettingsRow({ Label, OnPress, children }: SettingsRowProps): React.JSX.Element
-{
-    const Theme = useTheme();
-    const Styles = useStyles();
-
-    return (
-        <Pressable
-            Accessibility={ { Label, Role: "button" } }
-            OnPress={ OnPress }
-            style={ ({ pressed }: PressableStateCallbackType) => [
-                Styles.Row,
-                pressed && Styles.RowPressed
-            ] }>
-            { children }
-            <ChevronRight
-                color={ Theme.Semantic.IconSecondary }
-                size={ 18 }
-                strokeWidth={ 1.8 }
-            />
-        </Pressable>
-    );
-}
 
 const SettingsScreen = (): React.JSX.Element =>
 {
@@ -95,16 +54,6 @@ const SettingsScreen = (): React.JSX.Element =>
             DatabaseOrder: NextOrder as ReadonlyArray<Domain.Id.NotionDataSourceId>
         });
     }, [ Update ]);
-
-    const ToggleQuickAction = useCallback((DataSourceId: Domain.Id.NotionDataSourceId) =>
-    {
-        const Current = AppSettings.QuickActionDataSourceIds;
-        const Next = Current.includes(DataSourceId)
-            ? Current.filter((Id: Domain.Id.NotionDataSourceId) => Id !== DataSourceId)
-            : [ ...Current, DataSourceId ];
-
-        void Update({ QuickActionDataSourceIds: Next });
-    }, [ AppSettings.QuickActionDataSourceIds, Update ]);
 
     const HandleLeaveReview = useCallback(async () =>
     {
@@ -144,35 +93,71 @@ const SettingsScreen = (): React.JSX.Element =>
     return (
         <View style={ Styles.Container }>
             <SafeAreaView style={ Styles.SafeArea }>
-                <Button
-                    AccessibilityLabel="Back"
-                    Appearance="Link"
-                    OnPress={ Router.back }
-                    Style={ Styles.Back }>
-                    Back
-                </Button>
-
-                <ScrollView
-                    contentContainerStyle={ Styles.List }
-                    style={ Styles.Scroll }>
-                    <SettingsRow
-                        Label="Database settings"
-                        OnPress={ Router.push("/database-settings") }>
-                        <View style={ Styles.RowLeft }>
+                <SettingsTable>
+                    <SettingsTableRow
+                        Divider
+                        Icon={
+                            <Settings
+                                color={ Theme.Semantic.IconSecondary }
+                                size={ 20 }
+                                strokeWidth={ 1.8 }
+                            />
+                        }
+                        Label="General"
+                        OnPress={ Router.push("/general-settings") }
+                    />
+                    <SettingsTableRow
+                        Divider
+                        Icon={
                             <Database
                                 color={ Theme.Semantic.IconSecondary }
                                 size={ 20 }
                                 strokeWidth={ 1.8 }
                             />
-                            <View style={ Styles.RowText }>
-                                <Body>Databases</Body>
-                                <Description>
-                                    Manage the databases available for quick entry.
-                                </Description>
-                            </View>
-                        </View>
-                    </SettingsRow>
+                        }
+                        Label="Databases"
+                        OnPress={ Router.push("/database-settings") }
+                    />
+                    <SettingsTableRow
+                        Divider
+                        Icon={
+                            <Bell
+                                color={ Theme.Semantic.IconSecondary }
+                                size={ 20 }
+                                strokeWidth={ 1.8 }
+                            />
+                        }
+                        Label="Notifications"
+                        OnPress={ Router.push("/notification-settings") }
+                    />
+                    <SettingsTableRow
+                        Divider
+                        Icon={
+                            <Zap
+                                color={ Theme.Semantic.IconSecondary }
+                                size={ 20 }
+                                strokeWidth={ 1.8 }
+                            />
+                        }
+                        Label="Quick Actions"
+                        OnPress={ Router.push("/quick-action-settings") }
+                    />
+                    <SettingsTableRow
+                        Icon={
+                            <UserRound
+                                color={ Theme.Semantic.IconSecondary }
+                                size={ 20 }
+                                strokeWidth={ 1.8 }
+                            />
+                        }
+                        Label="Account settings"
+                        OnPress={ Router.push("/account-settings") }
+                    />
+                </SettingsTable>
 
+                <ScrollView
+                    contentContainerStyle={ Styles.List }
+                    style={ Styles.Scroll }>
                     <Heading2 Style={ Styles.SectionHeading }>On launch</Heading2>
                     <Description Style={ Styles.SectionSubtitle }>
                         What Notivex shows when it opens.
@@ -227,70 +212,28 @@ const SettingsScreen = (): React.JSX.Element =>
                             </Sortable.Root>
                         ) }
 
-                    <Heading2 Style={ Styles.SectionHeading }>Quick actions</Heading2>
-                    <Description Style={ Styles.SectionSubtitle }>
-                        Choose up to six databases to show as home-screen shortcuts
-                        (long-press the app icon). Leave all unchecked to use the first
-                        six databases automatically.
-                    </Description>
-                    { DataSources.map((Source: Domain.DataSource.CachedDataSourceSchema) =>
-                    {
-                        const Checked = AppSettings.QuickActionDataSourceIds
-                            .includes(Source.DataSourceId);
-                        const AtLimit = AppSettings.QuickActionDataSourceIds.length >= 6;
-
-                        return (
-                            <View
-                                key={ Source.DataSourceId }
-                                style={ Styles.QuickActionRow }>
-                                <Checkbox
-                                    Checked={ Checked }
-                                    Disabled={ !Checked && AtLimit }
-                                    OnCheckedChange={ () => ToggleQuickAction(Source.DataSourceId) }
-                                />
-                                <Body NumberOfLines={ 1 }>{ Source.Title }</Body>
-                            </View>
-                        );
-                    }) }
-
-                    <Heading2 Style={ Styles.SectionHeading }>Notifications</Heading2>
-                    <View style={ Styles.SwitchRow }>
-                        <View style={ Styles.RowText }>
-                            <Body>Notify when back online</Body>
-                            <Description>
-                                Notify you if a page was created while offline.
-                            </Description>
-                        </View>
-                        <Switch
-                            OnValueChange={ (Value: boolean) =>
-                                void Update({ NotifyOnOfflineSubmit: Value }) }
-                            Value={ AppSettings.NotifyOnOfflineSubmit }
-                        />
-                    </View>
-
-                    <SettingsRow
-                        Label="Account settings"
-                        OnPress={ Router.push("/account-settings") }>
-                        <View style={ Styles.RowText }>
-                            <Body>Account settings</Body>
-                        </View>
-                    </SettingsRow>
-
                     <Heading2 Style={ Styles.SectionHeading }>Support Notivex</Heading2>
                     <Button
-                        Appearance="Cell"
+                        Appearance="Primary"
                         OnPress={ () => void HandleLeaveReview() }
                         Style={ Styles.SupportButton }>
-                        Leave a review
+                        <ButtonLabel Color={ Token.Semantic.Primary }>
+                            Leave a review
+                        </ButtonLabel>
+                        <ExternalLink
+                            color={ Theme.Semantic.Primary }
+                            size={ 16 }
+                            strokeWidth={ 1.8 }
+                        />
                     </Button>
                     <Button
-                        Appearance="Cell"
+                        Appearance="Primary"
                         OnPress={ () => void HandleSubmitFeedback() }
                         Style={ Styles.SupportButton }>
                         Submit feedback
                     </Button>
                     <Button
-                        Appearance="Cell"
+                        Appearance="Primary"
                         OnPress={ HandleReportBug }
                         Style={ Styles.SupportButton }>
                         Report a bug
@@ -313,44 +256,13 @@ const useStyles = MakeStyles({
         alignItems: "center",
         paddingTop: Token.Spacing.S
     }),
-    Back: ViewStyle({
-        alignSelf: "flex-start"
-    }),
     Container: ViewStyle({
+        backgroundColor: Token.Semantic.BackgroundSidebar,
         flex: 1
     }),
     List: ViewStyle({
         gap: Token.Spacing.M,
         paddingVertical: Token.Spacing.Xl
-    }),
-    QuickActionRow: ViewStyle({
-        alignItems: "center",
-        flexDirection: "row",
-        gap: Token.Spacing.M,
-        paddingVertical: 6
-    }),
-    Row: ViewStyle({
-        alignItems: "center",
-        backgroundColor: Token.Semantic.BackgroundModal,
-        borderRadius: 14,
-        flexDirection: "row",
-        gap: Token.Spacing.M,
-        justifyContent: "space-between",
-        paddingHorizontal: Token.Spacing.L,
-        paddingVertical: 14
-    }),
-    RowLeft: ViewStyle({
-        alignItems: "center",
-        flex: 1,
-        flexDirection: "row",
-        gap: Token.Spacing.M
-    }),
-    RowPressed: ViewStyle({
-        opacity: 0.72
-    }),
-    RowText: ViewStyle({
-        flex: 1,
-        gap: 2
     }),
     SafeArea: ViewStyle({
         flex: 1,
@@ -381,13 +293,6 @@ const useStyles = MakeStyles({
     }),
     SupportButton: ViewStyle({
         alignSelf: "stretch"
-    }),
-    SwitchRow: ViewStyle({
-        alignItems: "center",
-        flexDirection: "row",
-        gap: Token.Spacing.M,
-        justifyContent: "space-between",
-        paddingVertical: Token.Spacing.S
     })
 });
 

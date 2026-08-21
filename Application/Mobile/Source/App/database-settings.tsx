@@ -11,10 +11,11 @@
 
 import type * as Domain from "@notivex/domain";
 import { ActivityIndicator, ScrollView, View } from "react-native";
-import { Body, Button, Description, Heading1 } from "@notivex/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
+import { Description } from "@notivex/ui/Primitive";
+import { MakeStyles, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { useEffect, useState } from "react";
 import { ListDataSources } from "@/Domain/Runtime/NotivexApi";
+import { ResourceIcon, SettingsTable, SettingsTableRow } from "@/Component";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDevelopmentOnboarding } from
     "@/features/onboarding/onboarding-development";
@@ -73,21 +74,10 @@ const DatabaseSettingsScreen = (): React.JSX.Element =>
     return (
         <View style={ Styles.Container }>
             <SafeAreaView style={ Styles.SafeArea }>
-                <Button
-                    AccessibilityLabel="Back"
-                    Appearance="Link"
-                    OnPress={ Router.back }
-                    Style={ Styles.Back }>
-                    Back
-                </Button>
-
-                <View style={ Styles.Header }>
-                    <Heading1>Database settings</Heading1>
-                    <Description>
-                        Choose a database to customize its alias and the properties
-                        shown when you create a page.
-                    </Description>
-                </View>
+                <Description>
+                    Choose a database to customize its alias and the properties
+                    shown when you create a page.
+                </Description>
 
                 <ScrollView
                     contentContainerStyle={ Styles.List }
@@ -100,35 +90,31 @@ const DatabaseSettingsScreen = (): React.JSX.Element =>
                                     Your selected databases will appear here.
                                 </Description>
                             )
-                            : DataSources.map((
-                                Source: Domain.DataSource.CachedDataSourceSchema
-                            ) => (
-                                <View
-                                    key={ Source.DataSourceId }
-                                    style={ Styles.Row }>
-                                    <Body
-                                        NumberOfLines={ 2 }
-                                        Style={ Styles.DatabaseTitle }>
-                                        { Source.Title }
-                                    </Body>
-                                    <Button
-                                        AccessibilityLabel={
-                                            `Customize ${ Source.Title }`
-                                        }
-                                        Appearance="SoftBlue"
-                                        OnPress={ Router.push({
-                                            params:
-                                            {
-                                                connectionId: Source.ConnectionId,
-                                                dataSourceId: Source.DataSourceId,
-                                                title: Source.Title
-                                            },
-                                            pathname: "/destination-config"
-                                        }) }>
-                                        Customize
-                                    </Button>
-                                </View>
-                            )) }
+                            : (
+                                <SettingsTable>
+                                    { DataSources.map((
+                                        Source: Domain.DataSource.CachedDataSourceSchema,
+                                        Index: number
+                                    ) => (
+                                        <SettingsTableRow
+                                            AccessibilityLabel={ `Customize ${ Source.Title }` }
+                                            Divider={ Index < DataSources.length - 1 }
+                                            Icon={ <ResourceIcon Resource={ Source } /> }
+                                            Label={ Source.Title }
+                                            OnPress={ Router.push({
+                                                params:
+                                                {
+                                                    connectionId: Source.ConnectionId,
+                                                    dataSourceId: Source.DataSourceId,
+                                                    title: Source.Title
+                                                },
+                                                pathname: "/destination-config"
+                                            }) }
+                                            key={ Source.DataSourceId }
+                                        />
+                                    )) }
+                                </SettingsTable>
+                            ) }
                 </ScrollView>
             </SafeAreaView>
         </View>
@@ -136,28 +122,13 @@ const DatabaseSettingsScreen = (): React.JSX.Element =>
 };
 
 const useStyles = MakeStyles({
-    Back: ViewStyle({
-        alignSelf: "flex-start"
-    }),
     Container: ViewStyle({
+        backgroundColor: Token.Semantic.BackgroundSidebar,
         flex: 1
-    }),
-    DatabaseTitle: TextStyle({
-        flex: 1
-    }),
-    Header: ViewStyle({
-        gap: Token.Spacing.S
     }),
     List: ViewStyle({
         gap: Token.Spacing.M,
         paddingVertical: Token.Spacing.Xl
-    }),
-    Row: ViewStyle({
-        alignItems: "center",
-        flexDirection: "row",
-        gap: Token.Spacing.L,
-        justifyContent: "space-between",
-        minHeight: Token.Size.Control.Large
     }),
     SafeArea: ViewStyle({
         flex: 1,

@@ -314,6 +314,8 @@ var DiscoveredDataSource = Schema6.Struct({
   Title: Schema6.String
 });
 var OnboardingPage = Schema6.Struct({
+  Icon: Schema6.optional(Schema6.String),
+  IconType: Schema6.optional(Schema6.Literals(["Emoji", "Image", "Native"])),
   Id: NotionPageId,
   Title: Schema6.String
 });
@@ -472,27 +474,37 @@ __export(Profile_exports, {
 var Settings_exports = {};
 __export(Settings_exports, {
   AppSettings: () => AppSettings,
+  Contrast: () => Contrast,
   DefaultAppSettings: () => DefaultAppSettings,
+  HomeScreenLayout: () => HomeScreenLayout,
   MaxQuickActionCount: () => MaxQuickActionCount,
   WithDefaults: () => WithDefaults
 });
 import { Schema as Schema9 } from "effect";
 var MaxQuickActionCount = 6;
+var HomeScreenLayout = Schema9.Literals(["1", "2"]);
+var Contrast = Schema9.Literals(["System", "Standard", "High"]);
 var AppSettings = Schema9.Struct({
+  Contrast: Schema9.optional(Contrast),
   DatabaseOrder: Schema9.optional(Schema9.Array(NotionDataSourceId)),
+  HomeScreenLayout: Schema9.optional(HomeScreenLayout),
   LaunchBehavior: Schema9.optional(LaunchBehavior),
   NotifyOnOfflineSubmit: Schema9.optional(Schema9.Boolean),
   QuickActionDataSourceIds: Schema9.optional(Schema9.Array(NotionDataSourceId))
 });
 var DefaultAppSettings = {
+  Contrast: "System",
   DatabaseOrder: [],
+  HomeScreenLayout: "1",
   LaunchBehavior: { Type: "Home" },
   NotifyOnOfflineSubmit: true,
   QuickActionDataSourceIds: []
 };
 function WithDefaults(Stored) {
   return {
+    Contrast: Stored.Contrast ?? DefaultAppSettings.Contrast,
     DatabaseOrder: Stored.DatabaseOrder ?? DefaultAppSettings.DatabaseOrder,
+    HomeScreenLayout: Stored.HomeScreenLayout ?? DefaultAppSettings.HomeScreenLayout,
     LaunchBehavior: Stored.LaunchBehavior ?? DefaultAppSettings.LaunchBehavior,
     NotifyOnOfflineSubmit: Stored.NotifyOnOfflineSubmit ?? DefaultAppSettings.NotifyOnOfflineSubmit,
     QuickActionDataSourceIds: (Stored.QuickActionDataSourceIds ?? DefaultAppSettings.QuickActionDataSourceIds).slice(0, MaxQuickActionCount)

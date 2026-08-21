@@ -17,13 +17,15 @@ import {
     Animated,
     type StyleProp,
     StyleSheet,
+    View as RNView,
     type ViewStyle
 } from "react-native";
 import { MakeStyles, ViewStyle as MakeViewStyle } from "../MakeStyles.js";
+import { Body } from "./Text.js";
 import { Pressable } from "./Pressable.js";
 import type { ReadonlyRecord } from "effect/Record";
 import { WithAlpha } from "../Utility/index.js";
-import { useToken } from "../ThemeProvider.js";
+import { useTheme, useToken } from "../ThemeProvider.js";
 
 /**
  * The size of a `Switch` component.
@@ -41,12 +43,16 @@ interface SwitchDimensions
     readonly Height: number;
     readonly Thumb: number;
     readonly Travel: number;
+
+    /** Font size of the high-contrast "0"/"1" state label at this size. */
+    readonly ContrastFontSize: number;
 }
 
 const DimensionsBySize: ReadonlyRecord<SwitchSize, SwitchDimensions> =
     Object.freeze({
         Medium:
         {
+            ContrastFontSize: 10,
             Height: 34,
             Thumb: 30,
             Travel: 20,
@@ -54,6 +60,7 @@ const DimensionsBySize: ReadonlyRecord<SwitchSize, SwitchDimensions> =
         },
         Small:
         {
+            ContrastFontSize: 8,
             Height: 22,
             Thumb: 18,
             Travel: 14,
@@ -88,6 +95,7 @@ const Switch = ({
 }: SwitchProps): React.JSX.Element =>
 {
     const Styles = useStyles();
+    const { HighContrast } = useTheme();
     const {
         [Semantic.Blue]: BlueColor,
         [Semantic.Default]: DefaultColor
@@ -129,6 +137,30 @@ const Switch = ({
                 Style
             ] }
         >
+            { /* Notion's high-contrast accessibility mode labels a switch's
+                 state with a digit — "1" when on, "0" when off — sitting in
+                 the track space the thumb has vacated, so the state reads
+                 without relying on the track color alone. */ }
+            { HighContrast
+                ? (
+                    <RNView
+                        pointerEvents="none"
+                        style={ [
+                            Styles.ContrastLabel,
+                            { left: Value ? 0 : Dimensions.Thumb, width: Dimensions.Travel }
+                        ] }>
+                        <Body
+                            Color={ Value ? "#FFFFFF" : DefaultColor }
+                            Style={ {
+                                fontSize: Dimensions.ContrastFontSize,
+                                lineHeight: Dimensions.ContrastFontSize + 2
+                            } }
+                            Weight="700">
+                            { Value ? "1" : "0" }
+                        </Body>
+                    </RNView>
+                )
+                : null }
             <Animated.View
                 style={ [
                     Styles.Thumb,
@@ -151,6 +183,13 @@ const Switch = ({
 };
 
 const useStyles = MakeStyles({
+    ContrastLabel: MakeViewStyle({
+        alignItems: "center",
+        bottom: 0,
+        justifyContent: "center",
+        position: "absolute",
+        top: 0
+    }),
     Thumb: MakeViewStyle({
         borderColor: "rgba(15, 15, 15, 0.10)",
         borderWidth: StyleSheet.hairlineWidth,

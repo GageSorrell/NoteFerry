@@ -12,17 +12,18 @@
 
 import { Image } from "expo-image";
 import type { ImageAsset } from "@/Domain/Utility/Asset";
-import { useTheme } from "@notivex/ui";
 import { View } from "react-native";
+import { useTheme } from "@notivex/ui";
 
 /** {@inheritDoc HeroImage} */
 export interface HeroImageProps
 {
-    readonly Source: ImageAsset;
+    readonly Source: ImageAsset | undefined;
 }
 
 export/**
        * A full-width image, which is inverted when the theme is dark.
+       * When no image is specified, an empty View of the same size is returned.
        *
        * @category Component
        * @since 1.0.0
@@ -30,6 +31,16 @@ export/**
 const HeroImage = ({ Source }: HeroImageProps) =>
 {
     const { Mode } = useTheme();
+
+    if (Source === undefined)
+    {
+        return <View style={ {
+            alignSelf: "center",
+            aspectRatio: 1,
+            maxHeight: "67%",
+            width: "100%"
+        } } />;
+    }
 
     const Base =
         <Image
@@ -45,7 +56,12 @@ const HeroImage = ({ Source }: HeroImageProps) =>
     return Mode === "Light"
         ? Base
         : (
-            <View style={ { filter: [ { invert: 1 } ] } }>
+            /* A grayscale graphic's dark strokes/fills invert to pure white,
+             * which reads as too stark against the dark background —
+             * `brightness` dims that inverted white down to a softer light
+             * gray afterward. The (already-dark) inverted background is
+             * unaffected: dimming near-zero stays near-zero. */
+            <View style={ { filter: [ { invert: 1 }, { brightness: 0.85 } ] } }>
                 { Base }
             </View>
         );

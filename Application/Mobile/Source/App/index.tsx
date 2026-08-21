@@ -33,6 +33,19 @@ import { useSettings } from "@/features/settings/use-settings";
  * so it survives remounts but resets on a fresh JS bundle (app restart). */
 let HasAppliedLaunchBehavior = false;
 
+/** The `create-page` destination for tapping a given database's card. */
+function CreatePageHref(Source: Domain.DataSource.CachedDataSourceSchema)
+{
+    return {
+        params:
+        {
+            dataSourceId: Source.DataSourceId,
+            title: Source.Title
+        },
+        pathname: "/create-page" as const
+    };
+}
+
 /** Applies `DatabaseOrder`, keeping unlisted sources in their existing order. */
 function OrderDataSources(
     DataSources: ReadonlyArray<Domain.DataSource.CachedDataSourceSchema>,
@@ -126,9 +139,6 @@ const HomeScreen = () =>
     const AvatarUri = Connection?.NotionOwnerAvatarUrl
         ?? Connection?.WorkspaceIconUrl;
     const AvatarName = Connection?.WorkspaceName ?? "Notion";
-    const HomeBackground = Theme.Mode === "Dark"
-        ? Theme.Semantic.BackgroundMain
-        : "#F7F7F5";
     const ControlBackground = Theme.Mode === "Dark"
         ? "#2F2F2F"
         : "#EBEAE8";
@@ -167,7 +177,7 @@ const HomeScreen = () =>
     }, [ AppSettings, DataSources, IsLoading, IsLoadingSettings ]);
 
     return (
-        <View style={ [ Styles.Container, { backgroundColor: HomeBackground } ] }>
+        <View style={ Styles.Container }>
             <SafeAreaView style={ Styles.SafeArea }>
                 <View style={ Styles.TopBar }>
                     <NotionAvatar
@@ -206,28 +216,44 @@ const HomeScreen = () =>
                         ? <ActivityIndicator color={ Theme.Semantic.Cursor } />
                         : OrderedDataSources.length === 0
                             ? <Body>No databases found yet.</Body>
-                            : (
-                                <View style={ Styles.DatabaseCards }>
-                                    { OrderedDataSources.map((
-                                        Source: Domain.DataSource.CachedDataSourceSchema
-                                    ) => (
-                                        <DatabaseCard
-                                            OnPress={ Router.push({
-                                                params:
-                                                {
-                                                    dataSourceId: Source.DataSourceId,
-                                                    title: Source.Title
-                                                },
-                                                pathname: "/create-page"
-                                            }) }
-                                            Source={ Source }
-                                            key={
-                                                `${ Source.ConnectionId }:${ Source.DataSourceId }`
-                                            }
-                                        />
-                                    )) }
-                                </View>
-                            ) }
+                            : AppSettings.HomeScreenLayout === "2"
+                                ? (
+                                    /* `flexWrap` + `justifyContent: "flex-start"` (the
+                                       default) already left-aligns a lone last card
+                                       instead of centering or spacing it out. */
+                                    <View style={ Styles.DatabaseCardsGrid }>
+                                        { OrderedDataSources.map((
+                                            Source: Domain.DataSource.CachedDataSourceSchema
+                                        ) => (
+                                            <View
+                                                key={
+                                                    `${ Source.ConnectionId }:${ Source.DataSourceId }`
+                                                }
+                                                style={ Styles.GridCell }>
+                                                <DatabaseCard
+                                                    OnPress={ Router.push(CreatePageHref(Source)) }
+                                                    Source={ Source }
+                                                    Square
+                                                />
+                                            </View>
+                                        )) }
+                                    </View>
+                                )
+                                : (
+                                    <View style={ Styles.DatabaseCards }>
+                                        { OrderedDataSources.map((
+                                            Source: Domain.DataSource.CachedDataSourceSchema
+                                        ) => (
+                                            <DatabaseCard
+                                                OnPress={ Router.push(CreatePageHref(Source)) }
+                                                Source={ Source }
+                                                key={
+                                                    `${ Source.ConnectionId }:${ Source.DataSourceId }`
+                                                }
+                                            />
+                                        )) }
+                                    </View>
+                                ) }
                 </ScrollView>
             </SafeAreaView>
         </View>
@@ -251,6 +277,7 @@ const useStyles = MakeStyles({
         width: "100%"
     }),
     Container: ViewStyle({
+        backgroundColor: Token.Semantic.BackgroundSidebar,
         flex: 1
     }),
     ControlPressed: ViewStyle({
@@ -261,6 +288,18 @@ const useStyles = MakeStyles({
         gap: Token.Spacing.L,
         overflow: "visible",
         paddingHorizontal: 2
+    }),
+    DatabaseCardsGrid: ViewStyle({
+        columnGap: Token.Spacing.M,
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "flex-start",
+        overflow: "visible",
+        paddingHorizontal: 2,
+        rowGap: Token.Spacing.L
+    }),
+    GridCell: ViewStyle({
+        width: "48%"
     }),
     List: ViewStyle({
         gap: 14,

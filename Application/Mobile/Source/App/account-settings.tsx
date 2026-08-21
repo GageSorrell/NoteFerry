@@ -148,6 +148,7 @@ const useStyles = MakeStyles({
         alignSelf: "flex-start"
     }),
     Container: ViewStyle({
+        backgroundColor: Token.Semantic.BackgroundSidebar,
         flex: 1
     }),
     DangerDescription: TextStyle({

@@ -18,6 +18,12 @@ import { StartNotionAuthorization } from "@/Domain/Runtime/NotivexApi";
 
 const ConnectedReturnUrl = "notivex://notion/connected" as const;
 
+/* See the matching comment in Domain/Auth/OAuth.ts: without `createTask:
+ * false`, Android launches this Custom Tab through a separate-task
+ * trampoline that the `notivex://` redirect never resumes, leaking an
+ * orphaned browser task per attempt. */
+const BrowserOptions = { createTask: false } as const;
+
 /**
  * Runs the Notion connect flow to completion (or until the user dismisses the
  * browser).  Callers should refetch connections afterward.
@@ -30,7 +36,8 @@ export async function ConnectNotion(): Promise<boolean>
     const AuthorizationUrl = await StartNotionAuthorization();
     const Result = await WebBrowser.openAuthSessionAsync(
         AuthorizationUrl,
-        ConnectedReturnUrl
+        ConnectedReturnUrl,
+        BrowserOptions
     );
 
     if (Result.type !== "success")

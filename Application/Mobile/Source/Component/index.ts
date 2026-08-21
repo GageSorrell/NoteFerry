@@ -10,4 +10,6 @@
 export * from "./BehaviorPicker";
 export * from "./DatabaseCard";
 export * from "./HeroImage";
+export * from "./ResourceIcon";
 export * from "./Screen";
+export * from "./SettingsTable";

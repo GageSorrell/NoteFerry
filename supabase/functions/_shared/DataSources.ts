@@ -590,6 +590,7 @@ export function DiscoverOnboardingForUser(UserId: string, ConnectionId: string)
             .filter((Page) => Page.parent?.type !== "data_source_id"
                 && Page.parent?.type !== "database_id")
             .map((Page): Domain.DataSource.OnboardingPage => ({
+                ...(NormalizeIcon(Page.icon) ?? {}),
                 Id: Page.id as Domain.Id.NotionPageId,
                 Title: PageTitleToString(Page)
             }))

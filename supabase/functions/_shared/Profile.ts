@@ -110,7 +110,9 @@ export function UpdateSettingsForUser(UserId: string, Patch: Domain.Settings.App
         });
 
         const Merged: Domain.Settings.AppSettings = {
+            Contrast: Patch.Contrast ?? Current.Contrast,
             DatabaseOrder: Patch.DatabaseOrder ?? Current.DatabaseOrder,
+            HomeScreenLayout: Patch.HomeScreenLayout ?? Current.HomeScreenLayout,
             LaunchBehavior: Patch.LaunchBehavior ?? Current.LaunchBehavior,
             NotifyOnOfflineSubmit: Patch.NotifyOnOfflineSubmit ?? Current.NotifyOnOfflineSubmit,
             QuickActionDataSourceIds: Patch.QuickActionDataSourceIds

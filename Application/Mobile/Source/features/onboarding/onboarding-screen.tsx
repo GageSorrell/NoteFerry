@@ -27,7 +27,7 @@ export interface OnboardingScreenProps
     readonly Subtitle?: string | undefined;
     readonly Header?: ReactNode;
 
-    readonly Hero: ImageAsset;
+    readonly Hero: ImageAsset | undefined;
 
     readonly children?: ReactNode;
 }
@@ -98,6 +98,6 @@ const useStyles = MakeStyles({
     SafeArea: ViewStyle({
         flex: 1,
         paddingHorizontal: 8,
-        paddingVertical: 24
+        paddingVertical: 48
     })
 });

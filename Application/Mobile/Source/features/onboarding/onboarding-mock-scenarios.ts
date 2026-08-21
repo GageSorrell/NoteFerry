@@ -21,8 +21,7 @@ export type OnboardingMockStage = "SignedOut" | "Onboarding";
 /** Every user-visible onboarding state that can be selected in development. */
 export type OnboardingMockScenario =
     | "SignIn"
-    | "SignInModalStepOne"
-    | "SignInModalStepTwo"
+    | "SignInModal"
     | "SignInPending"
     | "Syncing"
     | "NoIntegration"
@@ -34,6 +33,8 @@ export type OnboardingMockScenario =
     | "Ready"
     | "ReadyPending"
     | "SyncError"
+    | "Notifications"
+    | "NotificationsPending"
     | "Done"
     | "DonePending";
 
@@ -48,17 +49,28 @@ export interface OnboardingMockDefinition
     readonly SyncStatus?: NotionSyncStatus | undefined;
 }
 
-const MockPages = Array.from({ length: 25 }, (_: unknown, Index: number) => ({
-    Id: `mock-page-${ Index + 1 }`,
-    Title:
-    [
-        "Product planning",
-        "Weekly notes",
-        "Team handbook",
-        "Research",
-        "Meeting notes"
-    ][Index] ?? `Shared page ${ Index + 1 }`
-})) as unknown as ReadonlyArray<Domain.DataSource.OnboardingPage>;
+/* Only the first few carry an icon, so the mock also exercises the
+ * no-icon/placeholder path the same real data hits for pages Notion never
+ * gave an icon. */
+const MockPageIcons: ReadonlyArray<[ Title: string, Icon: string ]> =
+[
+    [ "Product planning", "🗺️" ],
+    [ "Weekly notes", "📝" ],
+    [ "Team handbook", "📘" ],
+    [ "Research", "🔬" ],
+    [ "Meeting notes", "🗒️" ]
+];
+
+const MockPages = Array.from({ length: 25 }, (_: unknown, Index: number) =>
+{
+    const Named = MockPageIcons[ Index ];
+
+    return {
+        Id: `mock-page-${ Index + 1 }`,
+        Title: Named?.[0] ?? `Shared page ${ Index + 1 }`,
+        ...(Named ? { Icon: Named[1], IconType: "Emoji" } : { })
+    };
+}) as unknown as ReadonlyArray<Domain.DataSource.OnboardingPage>;
 
 const MockDatabases = ([
     [ "Tasks", 101, "✅" ],
@@ -165,6 +177,19 @@ const OnboardingMockRegistry = Object.freeze({
         SyncData: EmptyData,
         SyncStatus: "NoIntegration"
     },
+    Notifications:
+    {
+        Label: "Enable notifications",
+        Route: "/enable-notifications",
+        Stage: "Onboarding"
+    },
+    NotificationsPending:
+    {
+        IsPending: true,
+        Label: "Enable notifications · pending",
+        Route: "/enable-notifications",
+        Stage: "Onboarding"
+    },
     PagesOnly:
     {
         Label: "Pages only",
@@ -205,23 +230,17 @@ const OnboardingMockRegistry = Object.freeze({
         Route: "/sign-in",
         Stage: "SignedOut"
     },
-    SignInModalStepOne:
+    SignInModal:
     {
-        Label: "Sign-in intro · step one",
-        Route: "/sign-in-modal-step-one",
-        Stage: "SignedOut"
-    },
-    SignInModalStepTwo:
-    {
-        Label: "Sign-in intro · step two",
-        Route: "/sign-in-modal-step-two",
+        Label: "Sign-in intro",
+        Route: "/sign-in-modal",
         Stage: "SignedOut"
     },
     SignInPending:
     {
         IsPending: true,
         Label: "Sign in · pending",
-        Route: "/sign-in-modal-step-two",
+        Route: "/sign-in-modal",
         Stage: "SignedOut"
     },
     SyncError:
@@ -248,8 +267,7 @@ export/**
        */
 const OnboardingMockScenarios = Object.freeze([
     "SignIn",
-    "SignInModalStepOne",
-    "SignInModalStepTwo",
+    "SignInModal",
     "SignInPending",
     "Syncing",
     "NoIntegration",
@@ -261,6 +279,8 @@ const OnboardingMockScenarios = Object.freeze([
     "Ready",
     "ReadyPending",
     "SyncError",
+    "Notifications",
+    "NotificationsPending",
     "Done",
     "DonePending"
 ] as const);

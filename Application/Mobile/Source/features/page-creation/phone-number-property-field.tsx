@@ -1,6 +1,9 @@
 /**
  * Text input for Notion Phone number properties. Requests the OS's phone
- * keyboard via the shared `Input` primitive.
+ * keyboard via the shared `Input` primitive, with its value text explicitly
+ * pinned to the same size/line-height Text (`Textarea`) and Number
+ * (`Input`'s own default) render at, rather than leaving it to that
+ * default implicitly.
  *
  * @module notivex/features/page-creation/phone-number-property-field
  *
@@ -11,7 +14,7 @@
  */
 
 import type * as Domain from "@notivex/domain";
-import { MakeStyles, ViewStyle } from "@notivex/ui";
+import { MakeStyles, TextStyle, ViewStyle } from "@notivex/ui";
 import { Input } from "@notivex/ui/Primitive";
 import { PropertyLabel } from "@/features/page-creation/property-label";
 import { View } from "react-native";
@@ -46,6 +49,7 @@ export function PhoneNumberPropertyField({
                 OnChangeText={ OnValueChange }
                 Placeholder="Empty"
                 Style={ Styles.Input }
+                TextStyle={ Styles.Text }
                 Value={ Value }
                 Variant={ Inline ? "Flat" : "Default" }
             />
@@ -64,5 +68,12 @@ const useStyles = MakeStyles({
     Input: ViewStyle({
         flex: 1,
         minWidth: 0
+    }),
+    /* Matches `TextPropertyField`'s `Textarea` (Text) and `Input`'s own
+     * default (Number) exactly, rather than relying on that default holding
+     * without an explicit line-height alongside it. */
+    Text: TextStyle({
+        fontSize: 14,
+        lineHeight: 20
     })
 });

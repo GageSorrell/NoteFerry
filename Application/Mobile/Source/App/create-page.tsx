@@ -32,7 +32,8 @@ import {
     Separator,
     Textarea
 } from "@notivex/ui/Primitive";
-import { ChevronLeft, ImagePlus, Settings, Smile } from "lucide-react-native";
+import { ChevronLeft, ImagePlus, Settings, Smile, Wand2 } from "lucide-react-native";
+import type { LucideIcon } from "lucide-react-native";
 import { Cover, IconBlock, type IconData, IconMenu } from "@notivex/ui/Block";
 import {
     CreateDestination,
@@ -56,6 +57,12 @@ import { CheckboxPropertyField } from
 import { DatabaseIcon } from "@/Component/DatabaseCard";
 import { DatePropertyField } from
     "@/features/page-creation/date-property-field";
+import {
+    GenerateDummyValue,
+    GenerateLoremIpsumParagraph,
+    GetStockPhotoFileValue,
+    IsFieldEmpty
+} from "@/features/page-creation/dummy-page-data";
 import { EmailPropertyField } from
     "@/features/page-creation/email-property-field";
 import { MultiSelectPropertyField } from
@@ -100,10 +107,11 @@ interface DatabaseHeaderTitleProps
     readonly Title: string;
 }
 
-interface HeaderSettingsButtonProps
+interface HeaderIconButtonProps
 {
     readonly Color: string;
     readonly Disabled: boolean;
+    readonly Icon: LucideIcon;
     readonly Label: string;
     readonly OnPress: Thunk;
 }
@@ -128,13 +136,14 @@ const ShowDiscardConfirmation = (OnDiscard: () => void): void =>
     );
 };
 
-/** Accessible native-stack header action for the current database's settings. */
-const HeaderSettingsButton = ({
+/** Accessible native-stack header action — the current database's settings, and (dev-only) populating the form. */
+const HeaderIconButton = ({
     Color,
     Disabled,
+    Icon,
     Label,
     OnPress
-}: HeaderSettingsButtonProps): React.JSX.Element =>
+}: HeaderIconButtonProps): React.JSX.Element =>
 {
     const Styles = useStyles();
 
@@ -149,11 +158,11 @@ const HeaderSettingsButton = ({
             OnPress={ OnPress }
             hitSlop={ 8 }
             style={ ({ pressed }: PressableStateCallbackType) => [
-                Styles.HeaderSettingsButton,
-                Disabled && Styles.HeaderSettingsButtonDisabled,
-                pressed && Styles.HeaderSettingsButtonPressed
+                Styles.HeaderIconButton,
+                Disabled && Styles.HeaderIconButtonDisabled,
+                pressed && Styles.HeaderIconButtonPressed
             ] }>
-            <Settings
+            <Icon
                 color={ Color }
                 size={ 20 }
                 strokeWidth={ 2 }
@@ -443,20 +452,6 @@ const PageCreateScreen = (): React.JSX.Element =>
             NavigateToDatabaseSettings();
         }
     }, [ DataSource, IsDirty, NavigateToDatabaseSettings ]);
-    const RenderHeaderRight = useCallback(() => (
-        <HeaderSettingsButton
-            Color={ Theme.Semantic.IconPrimary }
-            Disabled={ DataSource === null }
-            Label={ `Settings for ${ DatabaseTitle }` }
-            OnPress={ OpenDatabaseSettings }
-        />
-    ), [
-        DataSource,
-        DatabaseTitle,
-        OpenDatabaseSettings,
-        Theme.Semantic.IconPrimary
-    ]);
-
     type BeforeRemoveEvent = EventArg<"beforeRemove", true, { action: NavigationAction; }>;
     useEffect(() => Navigation.addListener("beforeRemove", (Event: BeforeRemoveEvent) =>
     {
@@ -654,6 +649,77 @@ const PageCreateScreen = (): React.JSX.Element =>
             };
         });
     }, [ ]);
+
+    /**
+     * Dev-only: fills every empty property (including the title, via its own
+     * `Type: "Title"` property definition) with type-appropriate dummy data,
+     * and the page body if it's empty too. Never touches a property that
+     * already has a value, or the icon/cover. Wired to the "Populate form"
+     * header button below, which only renders when `__DEV__`.
+     */
+    const FillDummyData = useCallback(async (): Promise<void> =>
+    {
+        if (DataSource === null)
+        {
+            return;
+        }
+
+        const NeedsStockPhoto = DataSource.Properties.some((
+            Property: Domain.Property.PropertyDefinition
+        ) => Property.Type === "Files" && IsFieldEmpty(Values[Property.Id]));
+        const StockPhoto = NeedsStockPhoto ? await GetStockPhotoFileValue() : undefined;
+
+        for (const Property of DataSource.Properties)
+        {
+            if (!IsFieldEmpty(Values[Property.Id]))
+            {
+                continue;
+            }
+
+            const DummyValue = GenerateDummyValue(Property, StockPhoto);
+
+            if (DummyValue !== undefined)
+            {
+                SetFieldValue(Property.Id, DummyValue);
+            }
+        }
+
+        if (PageBody.trim() === "")
+        {
+            SetPageBody(GenerateLoremIpsumParagraph(3));
+        }
+    }, [ DataSource, PageBody, SetFieldValue, Values ]);
+
+    const RenderHeaderRight = useCallback(() => (
+        <View style={ Styles.HeaderRight }>
+            { __DEV__
+                ? (
+                    <HeaderIconButton
+                        Color={ Theme.Semantic.IconPrimary }
+                        Disabled={ DataSource === null || IsSaving }
+                        Icon={ Wand2 }
+                        Label="Populate form with dummy data"
+                        OnPress={ () => void FillDummyData() }
+                    />
+                )
+                : null }
+            <HeaderIconButton
+                Color={ Theme.Semantic.IconPrimary }
+                Disabled={ DataSource === null }
+                Icon={ Settings }
+                Label={ `Settings for ${ DatabaseTitle }` }
+                OnPress={ OpenDatabaseSettings }
+            />
+        </View>
+    ), [
+        DataSource,
+        DatabaseTitle,
+        FillDummyData,
+        IsSaving,
+        OpenDatabaseSettings,
+        Styles.HeaderRight,
+        Theme.Semantic.IconPrimary
+    ]);
 
     const OpenIconMenu = useCallback((): void =>
     {
@@ -1104,18 +1170,23 @@ const useStyles = MakeStyles({
     CoverHeaderButtonDisabled: ViewStyle({
         opacity: 0.35
     }),
-    HeaderSettingsButton: ViewStyle({
+    HeaderIconButton: ViewStyle({
         alignItems: "center",
         borderRadius: 18,
         height: 36,
         justifyContent: "center",
         width: 36
     }),
-    HeaderSettingsButtonDisabled: ViewStyle({
+    HeaderIconButtonDisabled: ViewStyle({
         opacity: 0.35
     }),
-    HeaderSettingsButtonPressed: ViewStyle({
+    HeaderIconButtonPressed: ViewStyle({
         opacity: 0.55
+    }),
+    HeaderRight: ViewStyle({
+        alignItems: "center",
+        flexDirection: "row",
+        gap: 4
     }),
     IconOverlap: ViewStyle({
         marginTop: -39

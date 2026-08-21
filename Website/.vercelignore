@@ -1,0 +1,16 @@
+node_modules
+.git
+.expo
+dist
+build
+coverage
+*.zip
+*.tar
+*.tgz
+*.log
+.vercel
+
+.vercel
+.env*
+
+*.tsbuildinfo

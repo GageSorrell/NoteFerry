@@ -12,8 +12,8 @@
 
 import {
     DoneView,
-    SignInModalStepOneView,
-    SignInModalStepTwoView,
+    EnableNotificationsView,
+    SignInModalView,
     SignInView,
     SyncView
 } from "../../Source/features/onboarding/onboarding-views";
@@ -33,7 +33,8 @@ interface OnboardingScenarioStoryProps
 const Authorize = action("Open Notion authorization");
 const Continue = action("Continue");
 const Customize = action("Open database settings");
-const GoBack = action("Go back");
+const EnableNotifications = action("Enable notifications");
+const SkipNotifications = action("Skip notifications");
 const Retry = action("Retry");
 const SignIn = action("Sign in");
 const Start = action("Start using Notivex");
@@ -51,14 +52,11 @@ const OnboardingScenarioStory = ({
     {
         case "SignIn":
             return <SignInView OnContinue={ Continue } />;
-        case "SignInModalStepOne":
-            return <SignInModalStepOneView OnContinue={ Continue } />;
-        case "SignInModalStepTwo":
+        case "SignInModal":
         case "SignInPending":
             return (
-                <SignInModalStepTwoView
+                <SignInModalView
                     IsPending={ IsPending }
-                    OnBack={ GoBack }
                     OnSignIn={ SignIn }
                 />
             );
@@ -95,6 +93,15 @@ const OnboardingScenarioStory = ({
                     OnStart={ Start }
                 />
             );
+        case "Notifications":
+        case "NotificationsPending":
+            return (
+                <EnableNotificationsView
+                    IsPending={ IsPending }
+                    OnEnable={ EnableNotifications }
+                    OnSkip={ SkipNotifications }
+                />
+            );
     }
 
     return undefined;
@@ -120,8 +127,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const SignInScreen: Story = { args: { Scenario: "SignIn" } };
-export const SignInIntroStepOne: Story = { args: { Scenario: "SignInModalStepOne" } };
-export const SignInIntroStepTwo: Story = { args: { Scenario: "SignInModalStepTwo" } };
+export const SignInIntro: Story = { args: { Scenario: "SignInModal" } };
 export const SignInPending: Story = { args: { Scenario: "SignInPending" } };
 export const CheckingNotionAccess: Story = { args: { Scenario: "Syncing" } };
 export const IntegrationNotAdded: Story = { args: { Scenario: "NoIntegration" } };
@@ -133,5 +139,7 @@ export const PagesOnlyPending: Story = { args: { Scenario: "PagesOnlyPending" } 
 export const DatabasesFound: Story = { args: { Scenario: "Ready" } };
 export const DatabasesFoundPending: Story = { args: { Scenario: "ReadyPending" } };
 export const DiscoveryError: Story = { args: { Scenario: "SyncError" } };
+export const Notifications: Story = { args: { Scenario: "Notifications" } };
+export const NotificationsPending: Story = { args: { Scenario: "NotificationsPending" } };
 export const Done: Story = { args: { Scenario: "Done" } };
 export const DonePending: Story = { args: { Scenario: "DonePending" } };

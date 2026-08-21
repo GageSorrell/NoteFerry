@@ -1,4 +1,4 @@
-# Notivex — Website
+# `notivex.sorrell.sh`
 
 The marketing website for [Notivex](https://notivex.sorrell.sh): a landing
 page plus placeholder `/terms` and `/privacy` pages, built with Next.js

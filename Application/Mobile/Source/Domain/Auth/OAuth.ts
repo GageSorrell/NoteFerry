@@ -3,8 +3,8 @@
  * account (Notion is enabled as a Supabase Auth provider): the app asks Supabase
  * for the Notion authorization URL, opens it in an in-app browser session, and
  * turns the redirected-back URL into a session — no provider secret ever lives
- * in the app. Granting the Notivex integration access to content is a
- * *separate* step (the content integration).
+ * in the app. Granting the Notivex integration access to content is
+ * a *separate* step (the content integration).
  *
  * @module notivex/Domain/Auth/OAuth
  *
@@ -22,14 +22,25 @@ import { Supabase } from "@/Domain/Runtime/Supabase";
 /* Required so a dangling web auth session can complete (web/dev only). */
 WebBrowser.maybeCompleteAuthSession();
 
-/* The deep link Supabase redirects back to after authorization. Must be added *
- * to the project's Auth "Redirect URLs" allow-list. In a dev/standalone      *
- * build this is `notivex://`; in Expo Go it is an `exp://...` URL. The log   *
- * makes the exact value visible in the Metro terminal.                       */
-const redirectTo = "notivex://";
+const redirectTo = "notivex://" as const;
+
+/* expo-web-browser's Android default (`createTask: true`) launches the Custom
+ * Tab through a trampoline activity in a *separate* task so the tab survives
+ * the app being backgrounded. That trampoline only closes itself when the
+ * user dismisses the tab and its own activity resumes — but the OAuth
+ * redirect back to `notivex://` targets the app's MainActivity directly, so
+ * the trampoline's task is never resumed and is abandoned instead, leaving
+ * the Custom Tab running underneath. Repeated sign-in attempts pile these up
+ * as orphaned browser tasks, and once enough accumulate Chrome stops
+ * rendering new launches as a Custom Tab at all and falls back to a full,
+ * ordinary browser window/tab — which is what made this look like it was
+ * "escaping" to the default browser. Opting out of the trampoline keeps the
+ * Custom Tab in the app's own task, so returning via the deep link finishes
+ * it the normal way. */
+const BrowserOptions = { createTask: false } as const;
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-async function CreateSessionFromUrl(Url: string): Promise<Session | null>
+const CreateSessionFromUrl = async (Url: string): Promise<Session | null> =>
 {
     const { params, errorCode } = QueryParams.getQueryParams(Url);
 
@@ -54,7 +65,7 @@ async function CreateSessionFromUrl(Url: string): Promise<Session | null>
     }
 
     return data.session;
-}
+};
 
 export/**
        * Runs the full OAuth flow for `Provider` and returns the resulting session
@@ -80,7 +91,7 @@ const SignInWithOAuth = async (): Promise<Session | null> =>
         throw error;
     }
 
-    const Result = await WebBrowser.openAuthSessionAsync(data?.url ?? "", redirectTo);
+    const Result = await WebBrowser.openAuthSessionAsync(data?.url ?? "", redirectTo, BrowserOptions);
 
     if (Result.type === "success")
     {

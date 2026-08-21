@@ -16,6 +16,7 @@ import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { Body, ButtonLabel } from "./Text.js";
+import { Defs, LinearGradient, Rect, Stop, Svg } from "react-native-svg";
 import {
     type GestureResponderEvent,
     View as RNView,
@@ -24,10 +25,10 @@ import {
     type ViewStyle
 } from "react-native";
 import { MakeStyles, ViewStyle as MakeViewStyle, TextStyle } from "../MakeStyles.js";
+import { Mix, WithAlpha } from "../Utility/index.js";
 import type { ReadonlyRecord } from "effect/Record";
 import { Spinner } from "./Spinner.js";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
-import { WithAlpha } from "../Utility/index.js";
 import { useToken } from "../ThemeProvider.js";
 
 /**
@@ -67,10 +68,10 @@ export type ButtonSize =
 const SizeStyle: ReadonlyRecord<ButtonSize, ViewStyle> =
     Object.freeze({
         Circle: { },
-        ExtraSmall: { height: 24, paddingHorizontal: 6 },
-        Large: { height: 40, paddingHorizontal: 32 },
-        Medium: { height: 36, paddingHorizontal: 16 },
-        Small: { height: 32, paddingHorizontal: 12 }
+        ExtraSmall: { height: 28, paddingHorizontal: 6 },
+        Large: { height: 44, paddingHorizontal: 32 },
+        Medium: { height: 40, paddingHorizontal: 16 },
+        Small: { height: 36, paddingHorizontal: 12 }
     } as const);
 
 /** {@inheritDoc Button} */
@@ -84,6 +85,63 @@ export interface ButtonProps extends React.PropsWithChildren
     readonly Style?: StyleProp<ViewStyle>;
     readonly Appearance?: ButtonAppearance;
 }
+
+/** {@inheritDoc ButtonGradientFill} */
+interface ButtonGradientFillProps
+{
+    readonly BorderRadius: number;
+    readonly Colors: readonly [ Top: string, Bottom: string ];
+    readonly Style: ViewStyle;
+}
+
+/**
+ * Paints a top-to-bottom, two-stop gradient behind a solid-fill `Button`'s
+ * content. React Native's `backgroundColor` has no CSS-gradient equivalent,
+ * so — following the same `react-native-svg` approach `DatabaseCard`'s cover
+ * gradient already uses — an absolutely-positioned, corner-matched `Svg`
+ * renders as the first child of the `Button`, behind its label/icon.
+ *
+ * @category Component
+ * @since 1.0.0
+ */
+const ButtonGradientFill = ({
+    BorderRadius,
+    Colors: [ Top, Bottom ],
+    Style
+}: ButtonGradientFillProps): React.JSX.Element => (
+    <RNView
+        pointerEvents="none"
+        style={ [ Style, { borderRadius: BorderRadius } ] }>
+        <Svg
+            height="100%"
+            width="100%">
+            <Defs>
+                <LinearGradient
+                    id="Fill"
+                    x1="0%"
+                    x2="0%"
+                    y1="0%"
+                    y2="100%">
+                    <Stop
+                        offset="0%"
+                        stopColor={ Top }
+                    />
+                    <Stop
+                        offset="100%"
+                        stopColor={ Bottom }
+                    />
+                </LinearGradient>
+            </Defs>
+            <Rect
+                fill="url(#Fill)"
+                height="100%"
+                width="100%"
+            />
+        </Svg>
+    </RNView>
+);
+
+ButtonGradientFill.displayName = "ButtonGradientFill";
 
 export/**
        * Forwards its ref to the underlying `Pressable` — needed so `Button` can
@@ -112,12 +170,13 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
         [Semantic.BorderButton]: BorderButtonColor,
         [Semantic.Border]: BorderColor,
         [Semantic.Blue]: BlueColor,
+        [Semantic.BlueHover]: BlueHoverColor,
         [Semantic.Red]: RedColor,
         [Semantic.Muted]: MutedColor,
         [Semantic.Default]: DefaultColor,
         [Semantic.BackgroundMain]: BackgroundMainColor,
         [Radii.Medium]: MediumRadius,
-        [Radii.Small]: SmallRadius,
+        [Radii.Large]: LargeRadius,
         [Radii.Full]: FullRadius
     } = useToken(
         Semantic.Primary,
@@ -125,12 +184,13 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
         Semantic.BorderButton,
         Semantic.Border,
         Semantic.Blue,
+        Semantic.BlueHover,
         Semantic.Red,
         Semantic.Muted,
         Semantic.Default,
         Semantic.BackgroundMain,
         Radii.Medium,
-        Radii.Small,
+        Radii.Large,
         Radii.Full
     );
 
@@ -138,6 +198,11 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
 
     const VariantStyle = React.useMemo<{
         Container: ViewStyle;
+        /* Two-stop, top-to-bottom fill for solid, colorful appearances — a
+         * flat `backgroundColor` alone reads noticeably flatter than
+         * Notion's own filled buttons, which render this same subtle
+         * lighter-top/darker-bottom gradient. */
+        Gradient?: readonly [ Top: string, Bottom: string ];
         PressedContainer?: ViewStyle;
         TextColor: string;
     }>(() =>
@@ -195,10 +260,14 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
                 return {
                     Container:
                     {
-                        backgroundColor: BlueColor,
                         borderColor: BorderColor,
                         borderWidth: 1
                     },
+                    /* `BlueHover` is Notion's own darker companion to `Blue`
+                     * (already used elsewhere as a "deeper blue", e.g.
+                     * `Calendar`'s selected-day fill) — exactly the pair
+                     * their blue buttons gradient between. */
+                    Gradient: [ BlueColor, BlueHoverColor ] as const,
                     TextColor: "#FFFFFF"
                 } as const;
             case "SoftBlue":
@@ -225,10 +294,8 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
                 } as const;
             case "RedFill":
                 return {
-                    Container:
-                    {
-                        backgroundColor: RedColor
-                    },
+                    Container: { },
+                    Gradient: [ RedColor, Mix(RedColor, "#000000", 0.17) ] as const,
                     TextColor: "#FFFFFF"
                 } as const;
             case "White":
@@ -276,6 +343,7 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
         BorderButtonColor,
         BorderColor,
         BlueColor,
+        BlueHoverColor,
         IconColor,
         PrimaryColor,
         RedColor,
@@ -291,6 +359,11 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
     const onPressIn = () => SetIsPressed(true);
 
     const onPressOut = () => SetIsPressed(false);
+
+    /* One step back down the same `Radii` scale from `Large`/`ExtraLarge`
+       (10px/12px) to `Medium`/`Large` (8px/10px) — Notion's actual buttons
+       round slightly less than that first pass landed on. */
+    const ContainerRadius = Size === "Large" ? LargeRadius : MediumRadius;
 
     return (
         <TouchableOpacity
@@ -311,7 +384,7 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
             style={ [
                 Styles.Base,
                 Size !== "Circle" ? SizeStyle[ Size ] : undefined,
-                { borderRadius: Size === "Large" ? MediumRadius : SmallRadius },
+                { borderRadius: ContainerRadius },
                 VariantStyle.Container,
                 pressed && !Disabled
                     ? VariantStyle.PressedContainer ?? { backgroundColor: WithAlpha(DefaultColor, 0.05) }
@@ -319,6 +392,13 @@ const Button = React.forwardRef<React.ComponentRef<typeof TouchableOpacity>, But
                 (Disabled || Loading) && Styles.Disabled,
                 Style
             ] }>
+            { VariantStyle.Gradient
+                ? <ButtonGradientFill
+                    BorderRadius={ ContainerRadius }
+                    Colors={ VariantStyle.Gradient }
+                    Style={ Styles.GradientFill }
+                />
+                : null }
             { Loading
                 ? <Spinner
                     Color={ VariantStyle.TextColor }
@@ -433,8 +513,8 @@ const useStyles = MakeStyles({
     AuthButton: MakeViewStyle({
         alignSelf: "stretch",
         borderRadius: 12,
-        height: 52
-        // paddingHorizontal: 12
+        height: 52,
+        paddingHorizontal: 12
     }),
     AuthButtonContent: MakeViewStyle({
         alignItems: "center",
@@ -466,10 +546,20 @@ const useStyles = MakeStyles({
     Disabled: MakeViewStyle({
         opacity: 0.4
     }),
+    GradientFill: MakeViewStyle({
+        bottom: 0,
+        left: 0,
+        overflow: "hidden",
+        position: "absolute",
+        right: 0,
+        top: 0
+    }),
     Label: TextStyle({
         /* Fill the row so `textAlign` positions the glyph. `justifyContent`
          * alone does not center a single child through the gesture-handler
          * touchable's inner wrapper on Android. */
-        flexGrow: 1
+        flexGrow: 1,
+        fontSize: 12,
+        lineHeight: 22
     })
 });

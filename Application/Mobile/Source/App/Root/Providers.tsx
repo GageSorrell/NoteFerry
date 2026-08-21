@@ -18,6 +18,7 @@ import { NotivexAuthProvider } from "@/Domain/Auth/NotivexAuthProvider";
 import { ThemeProvider as NotivexThemeProvider } from "@notivex/ui";
 import { OnboardingProvider } from "@/features/onboarding/onboarding-context";
 import { StatusBar } from "@/Domain/Miscellaneous/StatusBar";
+import { useHighContrast } from "@/features/settings/use-high-contrast";
 
 export/**
        * The various providers used across the application.
@@ -28,9 +29,10 @@ export/**
 const Providers = ({ children }: React.PropsWithChildren): React.JSX.Element =>
 {
     const Development = useDevelopmentOnboarding();
+    const HighContrast = useHighContrast();
 
     return (
-        <NotivexThemeProvider>
+        <NotivexThemeProvider HighContrast={ HighContrast }>
             <StatusBar />
             <GestureHandlerRootView style={ { flex: 1 } }>
                 <BottomSheetModalProvider>

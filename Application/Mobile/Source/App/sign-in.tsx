@@ -21,8 +21,8 @@ const SignInScreen = () =>
     const Development = useDevelopmentOnboarding();
 
     const OnContinue = Development.Active
-        ? () => Development.Transition("SignInModalStepOne")
-        : Router.push("/sign-in-modal-step-one");
+        ? () => Development.Transition("SignInModal")
+        : Router.push("/sign-in-modal");
 
     return <SignInView { ...{ OnContinue } } />;
 };

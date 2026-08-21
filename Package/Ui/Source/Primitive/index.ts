@@ -38,6 +38,7 @@ export * from "./Meter.js";
 export * from "./Pressable.js";
 export * from "./RadioGroup.js";
 export * from "./Separator.js";
+export * from "./Setting.js";
 export * from "./Skeleton.js";
 export * from "./Spinner.js";
 export * from "./Switch.js";

@@ -5,13 +5,14 @@
     "owner": "gagesorrell",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./Resource/NotivexLogoLight.png",
+    "icon": "./Resource/Logo/NotivexLogoLight.png",
     "scheme": "notivex",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": {
-        "light": "./Resource/NotivexLogoLight.png",
-        "dark": "./Resource/NotivexLogoDark.png"
+        "light": "./Resource/Logo/NotivexLogoLight.png",
+        "dark": "./Resource/Logo/NotivexLogoDark.png",
+        "tinted": "./Resource/Logo/NotivexLogoLight.png"
       },
       "config": {
         "usesNonExemptEncryption": false
@@ -21,14 +22,14 @@
       "package": "com.sorrell.notivex",
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF",
-        "foregroundImage": "./Resource/NotivexAdaptiveForeground.png",
-        "monochromeImage": "./Resource/NotivexAdaptiveMono.png"
+        "foregroundImage": "./Resource/Logo/NotivexAdaptiveForeground.png",
+        "monochromeImage": "./Resource/Logo/NotivexAdaptiveMono.png"
       },
       "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
-      "favicon": "./Resource/NotivexLogoLight.png"
+      "favicon": "./Resource/Logo/NotivexLogoLight.png"
     },
     "plugins": [
       "expo-router",
@@ -36,11 +37,11 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#FFFFFF",
-          "image": "./Resource/NotivexLogoLight.png",
+          "image": "./Resource/Logo/NotivexLogoLight.png",
           "imageWidth": 76,
           "dark": {
             "backgroundColor": "#000000",
-            "image": "./Resource/NotivexLogoDark.png"
+            "image": "./Resource/Logo/NotivexLogoDark.png"
           }
         }
       ],
@@ -113,7 +114,17 @@
           "userTrackingPermission": "This identifier will be used to deliver personalized ads and measure their effectiveness."
         }
       ],
-      "expo-quick-actions",
+      [
+        "expo-quick-actions",
+        {
+          "androidIcons": {
+            "notivex_quick_action": {
+              "foregroundImage": "./Resource/Logo/NotivexAdaptiveMono.png",
+              "backgroundColor": "#FFFFFF"
+            }
+          }
+        }
+      ],
       "expo-mail-composer"
     ],
     "experiments": {

@@ -11,11 +11,13 @@
 
 import type * as Domain from "@notivex/domain";
 import * as React from "react";
+import { ChevronRight } from "lucide-react-native";
 import { Defs, LinearGradient, Rect, Stop, Svg, SvgXml } from "react-native-svg";
-import { IconBlock, type LucideIconName } from "@notivex/ui/Block";
+import { IconBlock } from "@notivex/ui/Block";
+import { ToLucideIconName } from "@/Domain/Utility/DatabaseIcon";
 import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { ItemTitle, Pressable } from "@notivex/ui/Primitive";
-import { Platform, type PressableStateCallbackType, View } from "react-native";
+import { Platform, type PressableStateCallbackType, StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
 import type { Thunk } from "@sorrell/effect/Function";
 
@@ -24,6 +26,9 @@ export interface DatabaseCardProps
 {
     readonly OnPress: Thunk;
     readonly Source: Domain.DataSource.CachedDataSourceSchema;
+
+    /** Renders as a 1:1 square (home-screen grid layout) instead of the default full-width row. */
+    readonly Square?: boolean;
 }
 
 /** Props shared by compact database icon presentations. */
@@ -49,6 +54,13 @@ interface SvgGradient
  * a plain `NumberProp`, not a resolved `DimensionValue` — kept in sync with
  * `Cover`'s `height` in `useStyles` below by hand. */
 const CoverHeight = 96;
+
+/* The reference box `Styles.IconOverlay` centers a database's icon within
+ * before scaling it up — chosen to match `Styles.Icon`'s own footprint, so
+ * every icon kind (Lucide, image, emoji) centers on the same point
+ * regardless of its own natural size. Kept in sync with `Styles.IconOverlay`
+ * below by hand, the same way `CoverHeight` is. */
+const IconOverlaySize = 24;
 
 const SvgCache = new Map<string, Promise<string>>();
 
@@ -211,10 +223,6 @@ const DatabaseSvgCover = ({ Uri }: { readonly Uri: string; }): React.JSX.Element
 
 DatabaseSvgCover.displayName = "DatabaseSvgCover";
 
-/** Converts Notion's native icon name format to the local Lucide key format. */
-const ToLucideIconName = (Value: string): LucideIconName =>
-    Value.trim().toLowerCase().replaceAll("_", "-").replaceAll(" ", "-") as LucideIconName;
-
 export/** Renders the emoji, image, or native icon supplied by Notion. */
 const DatabaseIcon = React.memo(({ Source }: DatabaseIconProps): React.JSX.Element | null =>
 {
@@ -264,15 +272,17 @@ export/**
        * @category Component
        * @since 1.0.0
        */
-const DatabaseCard = ({ OnPress, Source }: DatabaseCardProps): React.JSX.Element =>
+const DatabaseCard = ({ OnPress, Source, Square = false }: DatabaseCardProps): React.JSX.Element =>
 {
     const Theme = useTheme();
     const Styles = useStyles();
-    const CardShadow = Theme.Shadow.Card;
     const CoverIsSvg = Source.CoverUrl ? IsSvgUrl(Source.CoverUrl) : false;
     const RippleColor = Theme.Mode === "Dark"
         ? "rgba(255, 255, 255, 0.16)"
         : "rgba(0, 0, 0, 0.16)";
+    /* Only a square (home-layout "2") card with a cover has room to float the
+     * icon over the cover's bottom edge instead of leading the title row. */
+    const ShowOverlayIcon = Square && Boolean(Source.CoverUrl);
 
     return (
         <Pressable
@@ -287,21 +297,10 @@ const DatabaseCard = ({ OnPress, Source }: DatabaseCardProps): React.JSX.Element
             } }
             style={ ({ pressed }: PressableStateCallbackType) => [
                 Styles.Card,
-                {
-                    elevation: CardShadow.Elevation,
-                    shadowColor: CardShadow.ShadowColor,
-                    shadowOffset: CardShadow.ShadowOffset
-                        ? {
-                            height: CardShadow.ShadowOffset.Height,
-                            width: CardShadow.ShadowOffset.Width
-                        }
-                        : undefined,
-                    shadowOpacity: CardShadow.ShadowOpacity,
-                    shadowRadius: CardShadow.ShadowRadius
-                },
+                Square && Styles.SquareCard,
                 Platform.OS !== "android" && pressed && Styles.Pressed
             ] }>
-            <View style={ Styles.ClippedContent }>
+            <View style={ [ Styles.ClippedContent, Square && Styles.SquareClippedContent ] }>
                 {Source.CoverUrl
                     ? CoverIsSvg
                         ? (
@@ -319,14 +318,27 @@ const DatabaseCard = ({ OnPress, Source }: DatabaseCardProps): React.JSX.Element
                         )
                     : null}
 
-                <View style={ Styles.TitleRow }>
-                    <DatabaseIcon Source={ Source } />
+                { ShowOverlayIcon
+                    ? (
+                        <View style={ [ Styles.IconOverlay, { left: 2 * Theme.Spacing.L } ] }>
+                            <DatabaseIcon Source={ Source } />
+                        </View>
+                    )
+                    : null }
+
+                <View style={ [ Styles.TitleRow, Square && Styles.SquareTitleRow ] }>
+                    { ShowOverlayIcon ? null : <DatabaseIcon Source={ Source } /> }
                     <ItemTitle
                         NumberOfLines={ 2 }
                         Style={ Styles.Title }
                         Weight="600">
                         { Source.Title }
                     </ItemTitle>
+                    <ChevronRight
+                        color={ Theme.Semantic.IconSecondary }
+                        size={ 18 }
+                        strokeWidth={ 1.8 }
+                    />
                 </View>
             </View>
         </Pressable>
@@ -339,7 +351,13 @@ const useStyles = MakeStyles({
     Card: ViewStyle({
         alignSelf: "stretch",
         backgroundColor: Token.Semantic.BackgroundModal,
-        borderRadius: Token.Radii.ExtraLarge
+        /* `BorderCell` — Notion's own table/database-cell border role — reads
+         * as the same light, solid gray line their card/template UI (see the
+         * reference screenshot) uses, unlike the near-invisible translucent
+         * `Border`/`BorderButton` tokens this card sat on before. */
+        borderColor: Token.Semantic.BorderCell,
+        borderRadius: Token.Radii.ExtraLarge,
+        borderWidth: StyleSheet.hairlineWidth
     }),
     ClippedContent: ViewStyle({
         borderRadius: Token.Radii.ExtraLarge,
@@ -358,9 +376,40 @@ const useStyles = MakeStyles({
         height: 24,
         width: 24
     }),
+    /* Straddles the seam between the cover and the title row below it:
+     * vertically centered on `CoverHeight`, then scaled up x1.5 around that
+     * same center point so every icon kind ends up 1.5x its own normal
+     * size without needing per-kind size math. `left` is set inline (needs
+     * `Theme.Spacing.L` resolved to a number, not the raw token symbol). */
+    IconOverlay: ViewStyle({
+        alignItems: "center",
+        height: IconOverlaySize,
+        justifyContent: "center",
+        position: "absolute",
+        top: CoverHeight - (IconOverlaySize / 2),
+        transform: [ { scale: 1.5 } ],
+        width: IconOverlaySize
+    }),
     Pressed: ViewStyle({
         opacity: 0.72,
         transform: [ { scale: 0.99 } ]
+    }),
+    /* `aspectRatio: 1` derives the height from whatever width the grid
+     * wrapper (`Styles.GridCell` in `index.tsx`) gives the card — the card
+     * itself stays width-driven via the inherited `alignSelf: "stretch"`. */
+    SquareCard: ViewStyle({
+        aspectRatio: 1
+    }),
+    /* Stretches to fill the now-square `Card` exactly, rather than sitting
+     * at its organic (cover + `minHeight` title row) height. */
+    SquareClippedContent: ViewStyle({
+        flex: 1
+    }),
+    /* Absorbs whatever space `SquareClippedContent` has left below a cover
+     * (or the whole square, sans cover) instead of just `minHeight: 60`. */
+    SquareTitleRow: ViewStyle({
+        flex: 1,
+        justifyContent: "center"
     }),
     Title: TextStyle({
         flex: 1

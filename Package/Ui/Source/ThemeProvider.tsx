@@ -126,6 +126,14 @@ export interface Theme extends ResolvedTheme
 
     /** Pins a color scheme or returns color-scheme selection to the system. */
     readonly SetMode: (Mode: ThemeMode | "System") => void;
+
+    /**
+     * Whether `ThemeProvider`'s `HighContrast` prop is currently enabled.
+     * `Semantic` tokens with a high-contrast entry (dividers, button
+     * borders, ...) resolve to that entry instead of their ordinary
+     * `Light`/`Dark` value while this is `true`.
+     */
+    readonly HighContrast: boolean;
 }
 
 /** Any design-token symbol that can be resolved by `useToken`. */
@@ -169,6 +177,10 @@ export type ResolvedTokenRecord<Token extends ResolvableToken> =
 class ThemeModeTag extends
     Context.Service<ThemeModeTag, ThemeMode>()("@notivex/ui/ThemeProvider/ThemeMode") { }
 
+/** The live high-contrast flag, threaded through the resolution program via `Context.Service`. */
+class HighContrastTag extends
+    Context.Service<HighContrastTag, boolean>()("@notivex/ui/ThemeProvider/HighContrast") { }
+
 interface TokenResolver
 {
     readonly ResolveColor: (Token: Color.Color | Semantic.Semantic) => string | undefined;
@@ -179,25 +191,31 @@ interface TokenResolver
     readonly ResolveShadow: (Token: Shadow.Shadow) => Shadow.ShadowValue | undefined;
 }
 
-const BuildResolver: Effect.Effect<TokenResolver, never, ThemeModeTag> = Effect.gen(function* ()
-{
-    const Mode = yield* ThemeModeTag;
+const BuildResolver: Effect.Effect<TokenResolver, never, ThemeModeTag | HighContrastTag> =
+    Effect.gen(function* ()
+    {
+        const Mode = yield* ThemeModeTag;
+        const HighContrast = yield* HighContrastTag;
 
-    const ResolveColor: TokenResolver["ResolveColor"] = (Token: Color.Color | Semantic.Semantic) =>
-        Color.Resolve(Token as Color.Color) ?? Semantic.Resolve(Token as Semantic.Semantic, Mode);
+        const ResolveColor: TokenResolver["ResolveColor"] = (Token: Color.Color | Semantic.Semantic) =>
+            Color.Resolve(Token as Color.Color) ?? Semantic.Resolve(Token as Semantic.Semantic, Mode, HighContrast);
 
-    return {
-        ResolveColor,
-        ResolveRadii: Radii.Resolve,
-        ResolveShadow: Shadow.Resolve,
-        ResolveSize: Size.Resolve,
-        ResolveSpacing: Spacing.Resolve,
-        ResolveTypography: Typography.Resolve
-    } as const;
-});
+        return {
+            ResolveColor,
+            ResolveRadii: Radii.Resolve,
+            ResolveShadow: Shadow.Resolve,
+            ResolveSize: Size.Resolve,
+            ResolveSpacing: Spacing.Resolve,
+            ResolveTypography: Typography.Resolve
+        } as const;
+    });
 
-const ResolveTokensForMode = (Mode: ThemeMode): TokenResolver =>
-    Effect.runSync(Effect.provideService(BuildResolver, ThemeModeTag, Mode));
+const ResolveTokensForMode = (Mode: ThemeMode, HighContrast: boolean): TokenResolver =>
+    Effect.runSync(Effect.provideService(
+        Effect.provideService(BuildResolver, ThemeModeTag, Mode),
+        HighContrastTag,
+        HighContrast
+    ));
 
 type ResolvedCategoryRecord<Tokens extends object, Value> =
     Readonly<{ [Name in SymbolTokenKeys<Tokens>]: Value }>;
@@ -270,6 +288,16 @@ export interface ThemeProviderProps extends React.PropsWithChildren
      * runtime via `useTheme().SetMode`.
      */
     readonly ColorScheme?: ColorScheme;
+
+    /**
+     * Enables Notion-style high-contrast styling — more opaque dividers and
+     * button borders, plus a "0"/"1" state label on `Switch` — for every
+     * `Semantic` token that defines a high-contrast entry. Defaults to
+     * `false`. Resolving "follow the system's high-contrast setting" (e.g.
+     * via React Native's `AccessibilityInfo`) is the caller's
+     * responsibility; `ThemeProvider` only consumes the resolved boolean.
+     */
+    readonly HighContrast?: boolean;
 }
 
 export/**
@@ -283,7 +311,11 @@ export/**
        * @category Provider
        * @since 1.0.0
        */
-const ThemeProvider = ({ ColorScheme = "System", children }: ThemeProviderProps): React.JSX.Element =>
+const ThemeProvider = ({
+    ColorScheme = "System",
+    HighContrast = false,
+    children
+}: ThemeProviderProps): React.JSX.Element =>
 {
     const SystemColorScheme = useColorScheme();
     const [ Override, SetOverride ] = React.useState<ThemeMode | undefined>(
@@ -300,7 +332,10 @@ const ThemeProvider = ({ ColorScheme = "System", children }: ThemeProviderProps)
 
     const Mode: ThemeMode = Override ?? (SystemColorScheme === "dark" ? "Dark" : "Light");
 
-    const Resolver = React.useMemo(() => ResolveTokensForMode(Mode), [ Mode ]);
+    const Resolver = React.useMemo(
+        () => ResolveTokensForMode(Mode, HighContrast),
+        [ Mode, HighContrast ]
+    );
     const ResolvedTheme = React.useMemo(() => BuildResolvedTheme(Resolver), [ Resolver ]);
 
     /* The embedded React Navigation theme (see the wrapper below). We derive its
@@ -328,9 +363,10 @@ const ThemeProvider = ({ ColorScheme = "System", children }: ThemeProviderProps)
 
     const ThemeValue = React.useMemo<Theme>(() => ({
         ...ResolvedTheme,
+        HighContrast,
         Mode,
         SetMode
-    }), [ Mode, ResolvedTheme, SetMode ]);
+    }), [ HighContrast, Mode, ResolvedTheme, SetMode ]);
 
     /* This provider embeds React Navigation's `ThemeProvider` so that the
      * app-wide navigation background is driven by our `Semantic.BackgroundMain`

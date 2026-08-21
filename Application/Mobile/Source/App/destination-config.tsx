@@ -206,8 +206,16 @@ const DestinationConfigScreen = () =>
                             <Heading2 Style={ Styles.SectionHeading }>Fields</Heading2>
                             <View style={ Styles.FieldHeaderRow }>
                                 <View style={ Styles.FieldNameCol } />
-                                <LabelText Style={ Styles.ToggleLabel }>Visible</LabelText>
-                                <LabelText Style={ Styles.ToggleLabel }>Required</LabelText>
+                                <LabelText
+                                    NumberOfLines={ 1 }
+                                    Style={ Styles.ToggleLabel }>
+                                    Visible
+                                </LabelText>
+                                <LabelText
+                                    NumberOfLines={ 1 }
+                                    Style={ Styles.ToggleLabel }>
+                                    Required
+                                </LabelText>
                             </View>
                             { DataSource.Properties.map(
                                 (Property: Domain.Property.PropertyDefinition) => (

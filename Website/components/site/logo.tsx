@@ -35,16 +35,18 @@ export function Logo({ showWordmark = true, className }: LogoProps)
             <span className="relative block size-7 overflow-hidden rounded-lg">
                 <Image
                     alt="Notivex"
-                    className="object-cover dark:hidden"
+                    className="object-contain dark:hidden"
                     fill
                     priority
-                    src="/NotivexLogoLight.png" />
+                    src="/NotivexLogoLight.svg"
+                    unoptimized />
                 <Image
                     alt="Notivex"
-                    className="hidden object-cover dark:block"
+                    className="hidden object-contain dark:block"
                     fill
                     priority
-                    src="/NotivexLogoDark.png" />
+                    src="/NotivexLogoDark.svg"
+                    unoptimized />
             </span>
             { showWordmark
                 ? <span className="text-sm font-semibold tracking-tight text-foreground">Notivex</span>

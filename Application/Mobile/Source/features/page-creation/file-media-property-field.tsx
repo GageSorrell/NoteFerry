@@ -32,7 +32,7 @@ import { PropertyLabel } from "@/features/page-creation/property-label";
 import { PropertyOptionSheetTrigger } from "@/features/page-creation/property-option-sheet";
 import { View } from "react-native";
 
-const VideoExtensions = new Set([
+const VideoExtensions: ReadonlySet<string> = new Set([
     "3gp",
     "avi",
     "m4v",
@@ -112,6 +112,7 @@ const MediaPlaceholder = ({ Video = false }: MediaPlaceholderProps): React.JSX.E
     );
 };
 
+/** {@inheritDoc FileMediaThumbnail} */
 interface FileMediaThumbnailProps
 {
     readonly Value: FileMediaValue;

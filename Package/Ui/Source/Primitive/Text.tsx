@@ -69,6 +69,25 @@ export type TextFamily =
     | "Serif"
     | "Mono";
 
+/**
+ * Tracks whether the current render is nested inside a `@notivex/ui` `Text`
+ * (or one of its fixed-`Variant` wrappers below) rather than React Native's
+ * own `Text`. `Link` reads this via {@link useIsInsideText} to switch its
+ * `Subtle` appearance to underlined when used inline within prose.
+ */
+const InsideTextContext = React.createContext(false);
+
+export/**
+       * Whether the calling component is rendered as a descendant of
+       * `@notivex/ui`'s `Text` component (including any of its fixed-`Variant`
+       * wrappers, such as `Description` or `Caption`) — as opposed to being
+       * unwrapped, or nested only inside React Native's own `Text`.
+       *
+       * @category Hook
+       * @since 1.0.0
+       */
+const useIsInsideText = (): boolean => React.useContext(InsideTextContext);
+
 const VariantToken: ReadonlyRecord<TextVariant, Typography.Typography> =
     {
         Body: Typography.Body,
@@ -188,9 +207,9 @@ const Text = ({
     ...RestProps
 }: TextProps): React.ReactNode =>
 {
-    const { [VariantToken[Variant]]: ResolvedTypography } = useToken(VariantToken[Variant]);
+    const { [ VariantToken[Variant] ]: ResolvedTypography } = useToken(VariantToken[Variant]);
     const TokenColorArgument = typeof ColorProp === "symbol" ? ColorProp : Semantic.Primary;
-    const { [TokenColorArgument]: ResolvedTokenColor } = useToken(TokenColorArgument);
+    const { [ TokenColorArgument ]: ResolvedTokenColor } = useToken(TokenColorArgument);
     const FinalColor = typeof ColorProp === "string" ? ColorProp : ResolvedTokenColor;
     const EffectiveWeight = Weight ?? ResolvedTypography.FontWeight;
 
@@ -220,7 +239,9 @@ const Text = ({
                 Style
             ] }
             { ...RestProps }>
-            { children }
+            <InsideTextContext.Provider value={ true }>
+                { children }
+            </InsideTextContext.Provider>
         </RNText>
     );
 };

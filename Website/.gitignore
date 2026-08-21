@@ -1,1 +1,10 @@
 .vercel
+
+.vercel
+.env*
+
+*.tsbuildinfo
+node_modules
+
+.vercel
+.env*

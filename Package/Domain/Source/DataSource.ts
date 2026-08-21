@@ -63,6 +63,8 @@ export/**
        * @since 1.0.0
        */
 const OnboardingPage = Schema.Struct({
+    Icon: Schema.optional(Schema.String),
+    IconType: Schema.optional(Schema.Literals([ "Emoji", "Image", "Native" ])),
     Id: Id.NotionPageId,
     Title: Schema.String
 });

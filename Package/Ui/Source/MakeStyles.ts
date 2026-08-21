@@ -19,11 +19,12 @@
  * a token there, it's just meaningless in practice.
  *
  * `MakeStyles` returns a hook. Calling it resolves every token against the
- * live theme and memoizes the result on `Theme.Mode` — the returned styles
- * object keeps its identity across re-renders until the color scheme
- * actually changes, the same referential-stability property `StyleSheet
- * .create`'s output has, while still reacting to light/dark mode without a
- * second, separately-allocated inline style object.
+ * live theme and memoizes the result on `Theme.Mode` and `Theme.HighContrast`
+ * — the returned styles object keeps its identity across re-renders until
+ * the color scheme or contrast level actually changes, the same
+ * referential-stability property `StyleSheet.create`'s output has, while
+ * still reacting to light/dark mode and high contrast without a second,
+ * separately-allocated inline style object.
  *
  * `MergeStyles` is the `mergeClasses` counterpart: React Native's `style`
  * prop already accepts arrays (and RN flattens them, falsy entries and all),
@@ -239,19 +240,24 @@ const KnownStyleTokens: ReadonlySet<symbol> = new Set([
 const IsStyleToken = (Value: unknown): Value is StyleToken =>
     typeof Value === "symbol" && KnownStyleTokens.has(Value);
 
-const ResolveStyleToken = (Token: StyleToken, Mode: ThemeMode): string | number | undefined =>
+const ResolveStyleToken = (
+    Token: StyleToken,
+    Mode: ThemeMode,
+    HighContrast: boolean
+): string | number | undefined =>
     Color.Resolve(Token as Color.Color)
-        ?? Semantic.Resolve(Token as Semantic.Semantic, Mode)
+        ?? Semantic.Resolve(Token as Semantic.Semantic, Mode, HighContrast)
         ?? Radii.Resolve(Token as Radii.Radii)
         ?? Size.Resolve(Token as Size.Size)
         ?? Spacing.Resolve(Token as Spacing.Spacing);
 
 const ResolveSlot = (
     Slot: Readonly<Record<string, unknown>>,
-    Mode: ThemeMode
+    Mode: ThemeMode,
+    HighContrast: boolean
 ): Record<string, unknown> =>
     Object.fromEntries(Object.entries(Slot).map(([ Key, Value ]: [ string, unknown ]) =>
-        [ Key, IsStyleToken(Value) ? ResolveStyleToken(Value, Mode) : Value ]));
+        [ Key, IsStyleToken(Value) ? ResolveStyleToken(Value, Mode, HighContrast) : Value ]));
 
 export/**
        * `StyleSheet.create`-equivalent for `@notivex/ui`. Converts a record of
@@ -292,18 +298,18 @@ const MakeStyles = <Config extends StylesConfig>(Config: Config): () => Resolved
 
     return function useStyles(): ResolvedStyles<Config>
     {
-        const { Mode } = useTheme();
+        const { HighContrast, Mode } = useTheme();
 
         return React.useMemo(
             () =>
             {
                 const Resolved = Entries.map((
                     [ Key, Slot ]: [ string, Readonly<Record<string, unknown>> ]
-                ) => [ Key, ResolveSlot(Slot, Mode) ]);
+                ) => [ Key, ResolveSlot(Slot, Mode, HighContrast) ]);
 
                 return Object.fromEntries(Resolved) as unknown as ResolvedStyles<Config>;
             },
-            [ Mode ]
+            [ HighContrast, Mode ]
         );
     };
 };

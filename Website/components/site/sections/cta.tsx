@@ -17,10 +17,10 @@ export function Cta()
         <section className="border-t border-border">
             <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 py-24 text-center">
                 <h2 className="text-3xl font-semibold tracking-tight text-foreground">
-                    Notivex is launching soon.
+                    Notivex is here.
                 </h2>
                 <p className="max-w-md text-base text-muted-foreground">
-                    Be ready to capture your first Notion page in seconds the moment it ships.
+                    Download it now and capture your first Notion page in seconds.
                 </p>
                 <StoreBadges className="flex flex-wrap items-center justify-center gap-3" />
             </div>

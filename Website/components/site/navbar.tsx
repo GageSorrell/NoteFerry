@@ -24,7 +24,8 @@ export function Navbar()
                     <a
                         className={ "text-xs text-muted-foreground no-underline "
                             + "transition-colors hover:text-foreground" }
-                        href="https://sorrell.sh">
+                        href="https://sorrell.sh"
+                        style={ { marginBottom: -3 } }>
                         a Sorrell application
                     </a>
                 </div>

@@ -35,6 +35,7 @@
 			"WHATWG",
 			"worklets"
 		],
-		"sorrellWmCodeExtension.headers.insertOnAnyFileCreation": false
+		"sorrellWmCodeExtension.headers.insertOnAnyFileCreation": false,
+		"dotnet.defaultSolution": "disable"
 	}
 }

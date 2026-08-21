@@ -349,6 +349,14 @@ interface LightDark
 {
     readonly Light: string;
     readonly Dark: string;
+
+    /**
+     * Overrides for `Light`/`Dark` used instead when `ThemeProvider`'s
+     * `HighContrast` prop is enabled. A token with no high-contrast entry
+     * falls back to its ordinary `Light`/`Dark` value.
+     */
+    readonly HighContrastLight?: string;
+    readonly HighContrastDark?: string;
 }
 
 /* Group values by their semantic role instead of alphabetically. */
@@ -470,36 +478,67 @@ const Value: ReadonlyRecord<Semantic, LightDark> = Object.freeze({
         Light: "rgba(242, 241, 238, 0.6)"
     },
 
-    /* Border colors. */
+    /* Border colors. High-contrast entries push these notably more opaque
+     * (translucent tokens) or further from the surrounding background
+     * (solid `BorderCell`) — Notion's own "increase contrast" behavior for
+     * dividers and button outlines. */
     [ Border ]:
     {
         Dark: "rgba(255, 255, 255, 0.1)",
+        HighContrastDark: "rgba(255, 255, 255, 0.3)",
+        HighContrastLight: "rgba(50, 48, 44, 0.35)",
         Light: "rgba(50, 48, 44, 0.1)"
     },
     [ BorderButton ]:
     {
         Dark: "rgba(255, 255, 255, 0.15)",
+        HighContrastDark: "rgba(255, 255, 255, 0.4)",
+        HighContrastLight: "rgba(50, 48, 44, 0.45)",
         Light: "rgba(50, 48, 44, 0.15)"
     },
     [ BorderCell ]:
     {
         Dark: "rgb(47, 47, 47)",
+        HighContrastDark: "rgb(90, 90, 90)",
+        HighContrastLight: "rgb(200, 199, 196)",
         Light: "rgb(233, 233, 231)"
     },
     [ Ring ]:
     {
         Dark: "rgba(255, 255, 255, 0.075)",
+        HighContrastDark: "rgba(255, 255, 255, 0.25)",
+        HighContrastLight: "rgba(15, 15, 15, 0.3)",
         Light: "rgba(15, 15, 15, 0.1)"
     }
 } as const);
 /* eslint-enable sort-keys */
 
 export/**
-       * Resolve a `Semantic` token.
+       * Resolve a `Semantic` token. When `HighContrast` is `true` and the
+       * token has a high-contrast entry for `Mode`, that value is returned
+       * instead of the ordinary `Light`/`Dark` one.
        *
        * @internal
        * @category Token
        * @since 1.0.0
        */
-const Resolve = (Token: Semantic, Mode: "Light" | "Dark"): string | undefined =>
-    Value[Token]?.[Mode];
+const Resolve = (
+    Token: Semantic,
+    Mode: "Light" | "Dark",
+    HighContrast: boolean = false
+): string | undefined =>
+{
+    const Entry = Value[ Token ];
+
+    if (HighContrast)
+    {
+        const ContrastValue = Mode === "Dark" ? Entry?.HighContrastDark : Entry?.HighContrastLight;
+
+        if (ContrastValue !== undefined)
+        {
+            return ContrastValue;
+        }
+    }
+
+    return Entry?.[ Mode ];
+};

@@ -102,22 +102,50 @@ export function RootNavigator()
             <Stack.Protected guard={ IsSignedOut }>
                 <Stack.Screen name="sign-in" />
                 <Stack.Screen
-                    name="sign-in-modal-step-one"
-                    options={ { presentation: "modal" } }
-                />
-                <Stack.Screen
-                    name="sign-in-modal-step-two"
-                    options={ { presentation: "modal" } }
+                    name="sign-in-modal"
+                    options={ {
+                        headerShown: true,
+                        presentation: "modal",
+                        title: "What’s Ahead: Two Steps"
+                    } }
                 />
             </Stack.Protected>
             <Stack.Protected guard={ IsInOnboarding }>
                 <Stack.Screen name="sync" />
+                <Stack.Screen name="enable-notifications" />
                 <Stack.Screen name="done" />
             </Stack.Protected>
             <Stack.Protected guard={ IsInApp }>
                 <Stack.Screen name="index" />
                 <Stack.Screen name="data-sources" />
-                <Stack.Screen name="settings" />
+                <Stack.Screen
+                    name="settings"
+                    options={ {
+                        headerShown: true,
+                        title: "Settings"
+                    } }
+                />
+                <Stack.Screen
+                    name="general-settings"
+                    options={ {
+                        headerShown: true,
+                        title: "General"
+                    } }
+                />
+                <Stack.Screen
+                    name="notification-settings"
+                    options={ {
+                        headerShown: true,
+                        title: "Notifications"
+                    } }
+                />
+                <Stack.Screen
+                    name="quick-action-settings"
+                    options={ {
+                        headerShown: true,
+                        title: "Quick Actions"
+                    } }
+                />
                 <Stack.Screen name="account-settings" />
                 <Stack.Screen
                     name="create-page"
@@ -130,7 +158,13 @@ export function RootNavigator()
                 />
             </Stack.Protected>
             <Stack.Protected guard={ CanAccessDatabaseConfiguration }>
-                <Stack.Screen name="database-settings" />
+                <Stack.Screen
+                    name="database-settings"
+                    options={ {
+                        headerShown: true,
+                        title: "Database settings"
+                    } }
+                />
                 <Stack.Screen name="destination-config" />
             </Stack.Protected>
             <Stack.Protected guard={ __DEV__ }>
