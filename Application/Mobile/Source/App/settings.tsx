@@ -16,8 +16,8 @@ import * as Application from "expo-application";
 import type * as Domain from "@notivex/domain";
 import * as MailComposer from "expo-mail-composer";
 import * as StoreReview from "expo-store-review";
-import { Alert, ScrollView, View } from "react-native";
-import { Bell, Database, ExternalLink, GripVertical, Settings, UserRound, Zap } from "lucide-react-native";
+import { Alert, Linking, ScrollView, View } from "react-native";
+import { Bell, Crown, Database, ExternalLink, GripVertical, Settings, UserRound, Zap } from "lucide-react-native";
 import { Body, Button, ButtonLabel, Description, Heading2, LabelText, Sortable } from "@notivex/ui/Primitive";
 import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { BehaviorPicker } from "@/Component/BehaviorPicker";
@@ -28,6 +28,8 @@ import { useCallback } from "react";
 import { useConnections } from "@/Domain/Connection";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSettings } from "@/features/settings/use-settings";
+import { useSubscription } from "@/Domain/Subscription";
+import Purchases from "react-native-purchases";
 
 const SortableItemExtent = 44;
 
@@ -40,6 +42,7 @@ const SettingsScreen = (): React.JSX.Element =>
     const Styles = useStyles();
     const { DataSources } = useConnections();
     const { Settings: AppSettings, Update } = useSettings();
+    const { HasProAccess, Status } = useSubscription();
 
     const DatabaseOrder = AppSettings.DatabaseOrder.length > 0
         ? AppSettings.DatabaseOrder
@@ -48,12 +51,31 @@ const SettingsScreen = (): React.JSX.Element =>
         Source: Domain.DataSource.CachedDataSourceSchema
     ) => [ Source.DataSourceId, Source ] as const));
 
+    const ShowSettingsGate = useCallback((Message: string): void =>
+    {
+        Alert.alert(
+            "Available with Notivex Pro",
+            Message,
+            [
+                { style: "cancel", text: "Not now" },
+                { onPress: Router.push("/plans"), text: "Compare plans" },
+                { onPress: Router.push("/subscribe"), text: "Upgrade" }
+            ]
+        );
+    }, [ Router ]);
+
     const HandleReorder = useCallback((NextOrder: ReadonlyArray<string>) =>
     {
+        if (!HasProAccess)
+        {
+            ShowSettingsGate("Pro lets you set a custom home-screen database order.");
+            return;
+        }
+
         void Update({
             DatabaseOrder: NextOrder as ReadonlyArray<Domain.Id.NotionDataSourceId>
         });
-    }, [ Update ]);
+    }, [ HasProAccess, ShowSettingsGate, Update ]);
 
     const HandleLeaveReview = useCallback(async () =>
     {
@@ -90,10 +112,53 @@ const SettingsScreen = (): React.JSX.Element =>
         Alert.alert("Coming soon", "Bug reporting isn't wired up yet — TODO.");
     }, [ ]);
 
+    const SubscriptionLabel = Status?.Active
+        ? Status.Term === "Lifetime"
+            ? "Notivex Pro · Lifetime access"
+            : `Notivex Pro · ${Status.Term ?? "Active"}${Status.Renews ? " · Renews" : " · Expires"}`
+        : "Upgrade to Notivex Pro";
+
+    const OpenSubscription = useCallback((): void =>
+    {
+        if (!Status?.Active)
+        {
+            Router.push("/subscribe")();
+            return;
+        }
+
+        if (Status.Term === "Lifetime")
+        {
+            Router.push("/plans")();
+            return;
+        }
+
+        if (Status.ManagementUrl)
+        {
+            void Linking.openURL(Status.ManagementUrl);
+        }
+        else
+        {
+            void Purchases.showManageSubscriptions();
+        }
+    }, [ Router, Status ]);
+
     return (
         <View style={ Styles.Container }>
             <SafeAreaView style={ Styles.SafeArea }>
                 <SettingsTable>
+                    <SettingsTableRow
+                        Divider
+                        AccessibilityLabel={ SubscriptionLabel }
+                        Icon={
+                            <Crown
+                                color={ Theme.Semantic.IconSecondary }
+                                size={ 20 }
+                                strokeWidth={ 1.8 }
+                            />
+                        }
+                        Label={ SubscriptionLabel }
+                        OnPress={ OpenSubscription }
+                    />
                     <SettingsTableRow
                         Divider
                         Icon={
@@ -168,6 +233,12 @@ const SettingsScreen = (): React.JSX.Element =>
                         {
                             if (Value.Type !== "CloseApp")
                             {
+                                if (Value.Type !== "Home" && !HasProAccess)
+                                {
+                                    ShowSettingsGate("Pro can launch directly into a selected database.");
+                                    return;
+                                }
+
                                 void Update({ LaunchBehavior: Value });
                             }
                         } }

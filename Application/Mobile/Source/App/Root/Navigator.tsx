@@ -98,7 +98,15 @@ export function RootNavigator()
     }
 
     return (
-        <Stack screenOptions={ { headerShown: false } }>
+        <Stack screenOptions={ {
+            headerShown: false,
+            headerTitleAlign: "center",
+            headerTitleStyle: {
+                fontFamily: "Inter_600SemiBold",
+                fontSize: 16,
+                fontWeight: "600"
+            }
+        } }>
             <Stack.Protected guard={ IsSignedOut }>
                 <Stack.Screen name="sign-in" />
                 <Stack.Screen
@@ -158,6 +166,14 @@ export function RootNavigator()
                 />
             </Stack.Protected>
             <Stack.Protected guard={ CanAccessDatabaseConfiguration }>
+                <Stack.Screen
+                    name="plans"
+                    options={ { headerShown: true, title: "Compare plans" } }
+                />
+                <Stack.Screen
+                    name="subscribe"
+                    options={ { headerShown: true, title: "Notivex Pro" } }
+                />
                 <Stack.Screen
                     name="database-settings"
                     options={ {

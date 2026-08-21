@@ -10,14 +10,16 @@
 import type * as Domain from "@notivex/domain";
 import {
     ActivityIndicator,
+    Alert,
+    AppState,
     type PressableStateCallbackType,
     ScrollView,
     View
 } from "react-native";
-import { Body, Description, Pressable } from "@notivex/ui/Primitive";
+import { Body, Button, Description, MeterBar, Pressable } from "@notivex/ui/Primitive";
 import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
-import { Settings, UserRound } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { HelpCircle, Settings, UserRound } from "lucide-react-native";
+import { useCallback, useEffect, useState } from "react";
 import { DatabaseCard } from "@/Component/DatabaseCard";
 import { Image } from "expo-image";
 import { Predicate } from "@sorrell/effect";
@@ -26,6 +28,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useConnections } from "@/Domain/Connection";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSettings } from "@/features/settings/use-settings";
+import { useFocusEffect } from "expo-router";
+import { useSubscription } from "@/Domain/Subscription";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 /* Only the *first* home-screen mount of an app session should honor
  * `LaunchBehavior`; a returning visit from inside the app (e.g. back from
@@ -131,6 +136,8 @@ const HomeScreen = () =>
 
     const { Connections, DataSources, IsLoading } = useConnections();
     const { IsLoading: IsLoadingSettings, Settings: AppSettings } = useSettings();
+    const { Allowance, Refresh: RefreshSubscription, Sale, Status } = useSubscription();
+    const [ DismissedSaleId, SetDismissedSaleId ] = useState<string | null>(null);
     const Router = useLazyRouter();
     const Theme = useTheme();
     const Styles = useStyles();
@@ -143,6 +150,62 @@ const HomeScreen = () =>
         ? "#2F2F2F"
         : "#EBEAE8";
     const OrderedDataSources = OrderDataSources(DataSources, AppSettings.DatabaseOrder);
+    const IsFree = Status !== null && !Status.Active && Status.EnforcementEnabled;
+
+    const OpenSource = useCallback((Source: Domain.DataSource.CachedDataSourceSchema): void =>
+    {
+        if (Source.Access === "Locked")
+        {
+            Alert.alert(
+                "Unlock this database with Pro",
+                "Free includes three active databases. Upgrade for unlimited databases, or replace an active database in Database settings.",
+                [
+                    { style: "cancel", text: "Not now" },
+                    { onPress: Router.push("/plans"), text: "Compare plans" },
+                    { onPress: Router.push("/subscribe"), text: "Upgrade" }
+                ]
+            );
+            return;
+        }
+
+        Router.push(CreatePageHref(Source))();
+    }, [ Router ]);
+
+    useFocusEffect(useCallback(() =>
+    {
+        void RefreshSubscription();
+    }, [ RefreshSubscription ]));
+
+    useEffect(() =>
+    {
+        const Subscription = AppState.addEventListener("change", (State) =>
+        {
+            if (State === "active") void RefreshSubscription();
+        });
+
+        return Subscription.remove;
+    }, [ RefreshSubscription ]);
+
+    useEffect(() =>
+    {
+        if (!Allowance?.NextAvailableAt) return;
+        const Timer = setInterval(() => void RefreshSubscription(), 15000);
+        return () => clearInterval(Timer);
+    }, [ Allowance?.NextAvailableAt, RefreshSubscription ]);
+
+    useEffect(() =>
+    {
+        if (!Sale) return;
+        void AsyncStorage.getItem(`subscription-sale-dismissed:${Sale.CampaignId}`)
+            .then((Value) => SetDismissedSaleId(Value === "true" ? Sale.CampaignId : null));
+    }, [ Sale ]);
+
+    const DismissSale = useCallback((): void =>
+    {
+        if (!Sale) return;
+        SetDismissedSaleId(Sale.CampaignId);
+        void AsyncStorage.setItem(`subscription-sale-dismissed:${Sale.CampaignId}`, "true");
+    }, [ Sale ]);
 
     /* Launch behavior: hand off to `create-page` for the chosen database on
      * the very first mount of the session only. */
@@ -231,7 +294,7 @@ const HomeScreen = () =>
                                                 }
                                                 style={ Styles.GridCell }>
                                                 <DatabaseCard
-                                                    OnPress={ Router.push(CreatePageHref(Source)) }
+                                                    OnPress={ () => OpenSource(Source) }
                                                     Source={ Source }
                                                     Square
                                                 />
@@ -245,7 +308,7 @@ const HomeScreen = () =>
                                             Source: Domain.DataSource.CachedDataSourceSchema
                                         ) => (
                                             <DatabaseCard
-                                                OnPress={ Router.push(CreatePageHref(Source)) }
+                                                OnPress={ () => OpenSource(Source) }
                                                 Source={ Source }
                                                 key={
                                                     `${ Source.ConnectionId }:${ Source.DataSourceId }`
@@ -254,6 +317,58 @@ const HomeScreen = () =>
                                         )) }
                                     </View>
                                 ) }
+
+                    { IsFree && Sale && DismissedSaleId !== Sale.CampaignId
+                        ? (
+                            <View style={ Styles.SaleBanner }>
+                                <Pressable
+                                    Accessibility={ { Label: Sale.Copy, Role: "button" } }
+                                    OnPress={ Router.push({
+                                        params: { campaignId: Sale.CampaignId },
+                                        pathname: "/subscribe"
+                                    }) }
+                                    style={ Styles.SaleCopy }>
+                                    <Body Weight="600">{ Sale.Copy }</Body>
+                                    <Description>View the limited-time offer</Description>
+                                </Pressable>
+                                <Button Appearance="Link" OnPress={ DismissSale }>Dismiss</Button>
+                            </View>
+                        )
+                        : null }
+
+                    { IsFree && Allowance
+                        ? (
+                            <View style={ Styles.UsagePanel }>
+                                <View style={ Styles.UsageHeading }>
+                                    <Body Weight="600">Free page allowance</Body>
+                                    <Pressable
+                                        Accessibility={ { Label: "Compare Free and Pro", Role: "button" } }
+                                        OnPress={ Router.push("/plans") }>
+                                        <HelpCircle
+                                            color={ Theme.Semantic.IconSecondary }
+                                            size={ 19 }
+                                        />
+                                    </Pressable>
+                                </View>
+                                <MeterBar Max={ Allowance.Limit } Value={ Allowance.Used } />
+                                <Description>
+                                    { Allowance.Used } of { Allowance.Limit } pages used in the last
+                                    { ` ${Allowance.WindowMinutes} minutes.` }
+                                </Description>
+                                { Allowance.NextAvailableAt
+                                    ? (
+                                        <Description>
+                                            Next slot at { Allowance.NextAvailableAt.toLocaleTimeString([], {
+                                                hour: "numeric",
+                                                minute: "2-digit"
+                                            }) }.
+                                        </Description>
+                                    )
+                                    : null }
+                                <Button OnPress={ Router.push("/subscribe") }>Upgrade</Button>
+                            </View>
+                        )
+                        : null }
                 </ScrollView>
             </SafeAreaView>
         </View>
@@ -312,6 +427,15 @@ const useStyles = MakeStyles({
         flex: 1,
         marginHorizontal: -16
     }),
+    SaleBanner: ViewStyle({
+        alignItems: "center",
+        backgroundColor: Token.Semantic.BackgroundModal,
+        borderRadius: 12,
+        flexDirection: "row",
+        gap: Token.Spacing.M,
+        padding: Token.Spacing.L
+    }),
+    SaleCopy: ViewStyle({ flex: 1, gap: 2 }),
     SafeArea: ViewStyle({
         flex: 1,
         paddingHorizontal: Token.Spacing.L,
@@ -328,6 +452,17 @@ const useStyles = MakeStyles({
         height: 42,
         justifyContent: "center",
         width: 82
+    }),
+    UsageHeading: ViewStyle({
+        alignItems: "center",
+        flexDirection: "row",
+        justifyContent: "space-between"
+    }),
+    UsagePanel: ViewStyle({
+        backgroundColor: Token.Semantic.BackgroundModal,
+        borderRadius: 12,
+        gap: Token.Spacing.M,
+        padding: Token.Spacing.L
     }),
     TopBar: ViewStyle({
         alignItems: "center",

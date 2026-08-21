@@ -10,6 +10,22 @@
 import { Function } from "@sorrell/effect";
 import { RegisterDevelopmentMenu } from "@/Domain/Runtime/DevelopmentMenu";
 import { useEffect } from "react";
+import * as Notifications from "expo-notifications";
+import { router } from "expo-router";
+
+const HandledNotificationIds = new Set<string>();
+
+function HandleNotificationResponse(Response: Notifications.NotificationResponse): void
+{
+    const Identifier = Response.notification.request.identifier;
+    if (HandledNotificationIds.has(Identifier)) return;
+
+    const CampaignId = Response.notification.request.content.data?.campaignId;
+    if (typeof CampaignId !== "string") return;
+
+    HandledNotificationIds.add(Identifier);
+    router.push({ params: { campaignId: CampaignId }, pathname: "/subscribe" });
+}
 
 export/**
        * Run application-scope registration functions. Quick actions are *not*
@@ -24,4 +40,15 @@ const useRootRegistration = () =>
 {
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
     useEffect(Function.AsVoid(RegisterDevelopmentMenu), [ ]);
+    useEffect(() =>
+    {
+        void Notifications.getLastNotificationResponseAsync()
+            .then((Response) => { if (Response) HandleNotificationResponse(Response); })
+            .catch(() => undefined);
+        const Subscription = Notifications.addNotificationResponseReceivedListener(
+            HandleNotificationResponse
+        );
+
+        return Subscription.remove;
+    }, [ ]);
 };

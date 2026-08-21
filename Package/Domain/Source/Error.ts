@@ -206,6 +206,27 @@ export class NetworkError extends Schema.TaggedError<NetworkError>()(
     { httpApiStatus: 502 }
 ) { }
 
+/** A client attempted to use a feature that requires Notivex Pro. */
+export class FeatureGateError extends Schema.TaggedError<FeatureGateError>()(
+    "FeatureGateError",
+    { Feature: Schema.String },
+    { httpApiStatus: 403 }
+) { }
+
+/** The free rolling page-creation allowance is currently exhausted. */
+export class FreeCreationWindowExceeded extends Schema.TaggedError<FreeCreationWindowExceeded>()(
+    "FreeCreationWindowExceeded",
+    { NextAvailableAt: Schema.DateFromString },
+    { httpApiStatus: 429 }
+) { }
+
+/** A free account attempted to activate more than three databases. */
+export class FreeDatabaseLimitReached extends Schema.TaggedError<FreeDatabaseLimitReached>()(
+    "FreeDatabaseLimitReached",
+    { Limit: Schema.Number },
+    { httpApiStatus: 409 }
+) { }
+
 export/**
        * The union of every domain error, for callers that want a single type to
        * match against.
@@ -227,7 +248,10 @@ const DomainError = Schema.Union([
     DestinationNotFound,
     InvalidPageDraft,
     DatabaseError,
-    NetworkError
+    NetworkError,
+    FeatureGateError,
+    FreeCreationWindowExceeded,
+    FreeDatabaseLimitReached
 ]);
 
 /** {@inheritDoc DomainError} */

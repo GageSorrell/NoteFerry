@@ -227,6 +227,43 @@ const GetDataSource = async (
     ));
 };
 
+export const SwapFreeActiveDataSource = async (
+    ActivateDataSourceId: Domain.Id.NotionDataSourceId,
+    LockDataSourceId: Domain.Id.NotionDataSourceId
+): Promise<ReadonlyArray<Domain.DataSource.CachedDataSourceSchema>> =>
+{
+    const Token = await GetAccessToken();
+
+    return Effect.runPromise(pipe(
+        Effect.gen(function* ()
+        {
+            const Client = yield* MakeClient(Token);
+
+            return yield* Client.DataSources.SwapFreeActive({
+                payload: { ActivateDataSourceId, LockDataSourceId }
+            });
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
+};
+
+export const RemoveDataSourceFromNotivex = async (
+    DataSourceId: Domain.Id.NotionDataSourceId
+): Promise<void> =>
+{
+    const Token = await GetAccessToken();
+
+    await Effect.runPromise(pipe(
+        Effect.gen(function* ()
+        {
+            const Client = yield* MakeClient(Token);
+
+            yield* Client.DataSources.Remove({ params: { DataSourceId } });
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
+};
+
 export/**
        * Every quick-entry destination the current user has configured.
        *
@@ -448,6 +485,105 @@ const RequestAccountData = async (): Promise<void> =>
             const Client = yield* MakeClient(Token);
 
             yield* Client.ExportRequests.Create();
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
+};
+
+export const GetSubscriptionStatus = async ():
+Promise<Domain.Subscription.SubscriptionStatus> =>
+{
+    const Token = await GetAccessToken();
+
+    return Effect.runPromise(pipe(
+        Effect.gen(function* ()
+        {
+            const Client = yield* MakeClient(Token);
+
+            return yield* Client.Subscriptions.Status();
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
+};
+
+export const GetCreationAllowance = async ():
+Promise<Domain.Subscription.CreationAllowance> =>
+{
+    const Token = await GetAccessToken();
+
+    return Effect.runPromise(pipe(
+        Effect.gen(function* ()
+        {
+            const Client = yield* MakeClient(Token);
+
+            return yield* Client.Subscriptions.Allowance();
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
+};
+
+export const RefreshSubscriptionStatus = async ():
+Promise<Domain.Subscription.SubscriptionStatus> =>
+{
+    const Token = await GetAccessToken();
+
+    return Effect.runPromise(pipe(
+        Effect.gen(function* ()
+        {
+            const Client = yield* MakeClient(Token);
+
+            return yield* Client.Subscriptions.Refresh();
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
+};
+
+export const GetActiveSubscriptionSale = async ():
+Promise<Domain.Subscription.ActiveSale | null> =>
+{
+    const Token = await GetAccessToken();
+
+    return Effect.runPromise(pipe(
+        Effect.gen(function* ()
+        {
+            const Client = yield* MakeClient(Token);
+            const Result = yield* Client.Subscriptions.Sale();
+
+            return Result.Sale;
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
+};
+
+export const RegisterSubscriptionSaleDevice = async (Input: {
+    readonly DeviceId: string;
+    readonly Platform: Domain.Subscription.DevicePlatform;
+    readonly PushToken: string;
+}): Promise<void> =>
+{
+    const Token = await GetAccessToken();
+
+    await Effect.runPromise(pipe(
+        Effect.gen(function* ()
+        {
+            const Client = yield* MakeClient(Token);
+
+            yield* Client.Subscriptions.RegisterDevice({ payload: Input });
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
+};
+
+export const RemoveSubscriptionSaleDevice = async (DeviceId: string): Promise<void> =>
+{
+    const Token = await GetAccessToken();
+
+    await Effect.runPromise(pipe(
+        Effect.gen(function* ()
+        {
+            const Client = yield* MakeClient(Token);
+
+            yield* Client.Subscriptions.RemoveDevice({ payload: { DeviceId } });
         }),
         Effect.provide(FetchHttpClient.layer)
     ));

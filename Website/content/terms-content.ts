@@ -4,7 +4,7 @@
  * This is the real, final Terms of Service for Notivex — not scaffolding.
  * It was drafted by AI at the site owner's direction and grounded in how
  * the app actually works (Notion OAuth via a Supabase Edge Function,
- * Google AdMob advertising, no payments), but it is not a substitute for
+ * Google AdMob advertising and store-processed purchases), but it is not a substitute for
  * review by a licensed attorney before being relied on commercially.
  *
  * @file      terms-content.ts
@@ -16,7 +16,7 @@
 import type { LegalSection } from "@/content/legal-section";
 
 export/** The effective date shown at the top of the Terms page. */
-const termsEffectiveDate = "August 19, 2026";
+const termsEffectiveDate = "August 21, 2026";
 
 export/** The ordered sections of the Terms of Service. */
 const termsSections: ReadonlyArray<LegalSection> = [
@@ -46,7 +46,13 @@ const termsSections: ReadonlyArray<LegalSection> = [
             + "per-database destination settings that let you control which fields "
             + "appear and which are required.",
             "Notivex requires an active Notion account and workspace access to "
-            + "function. The App is provided free of charge and is not affiliated "
+            + "function. The App offers a limited, advertising-supported Free tier and "
+            + "one paid Notivex Pro entitlement. Free currently includes three active "
+            + "databases and five page creations in each rolling thirty-minute window. "
+            + "Pro removes those product-level limits, removes ads, and unlocks the "
+            + "customization features identified in the App's plan comparison. Security, "
+            + "accessibility, core Notion properties, and account controls are available "
+            + "on both tiers. Notivex is not affiliated "
             + "with, endorsed by, or sponsored by Notion Labs, Inc. \"Notion\" is a "
             + "trademark of Notion Labs, Inc."
         ]
@@ -87,10 +93,34 @@ const termsSections: ReadonlyArray<LegalSection> = [
         ]
     },
     {
-        heading: "5. Advertising",
+        heading: "5. Notivex Pro Purchases",
+        id: "purchases",
+        paragraphs: [
+            "Notivex Pro is offered as an automatically renewing monthly subscription, "
+            + "an automatically renewing yearly subscription, or a lifetime one-time "
+            + "purchase. Prices shown in the App are localized store prices and may "
+            + "include or exclude taxes as determined by Apple or Google. Apple or "
+            + "Google bills you, controls payment methods, and applies its purchase and "
+            + "refund rules; Notivex does not receive your complete payment-card details.",
+            "Monthly and yearly plans renew automatically unless canceled through your "
+            + "App Store or Google Play account before renewal. A cancellation remains "
+            + "active through the paid period. Billing grace periods and restoration are "
+            + "handled through the store and our purchase processor. You can restore "
+            + "eligible purchases in the App. Deleting your Notivex account or deleting "
+            + "the App does not cancel an external store subscription; cancel it in your "
+            + "store account first.",
+            "A lifetime purchase means access for the supported lifetime of the Notivex "
+            + "service, not your lifetime and not a promise that Notivex will operate "
+            + "forever. We may change future prices or features, subject to store rules "
+            + "and applicable notice requirements. Existing paid access will be honored "
+            + "through its then-current paid period, grace period, or valid lifetime term."
+        ]
+    },
+    {
+        heading: "6. Advertising",
         id: "advertising",
         paragraphs: [
-            "Notivex is offered free of charge and is supported by advertising served "
+            "The Free tier is supported by advertising served "
             + "through Google AdMob, a mobile advertising service operated by Google. "
             + "AdMob and its partners may collect and use device and advertising "
             + "identifiers, and other information, to serve and measure ads, in "
@@ -98,18 +128,20 @@ const termsSections: ReadonlyArray<LegalSection> = [
             "You can review and adjust your ad-personalization and tracking "
             + "preferences through your device's operating system settings. We do not "
             + "control the specific ads AdMob serves and are not responsible for the "
-            + "content of third-party advertisements shown within the App."
+            + "content of third-party advertisements shown within the App. Confirmed Pro "
+            + "accounts do not receive ads."
         ]
     },
     {
-        heading: "6. User Content and Data Ownership",
+        heading: "7. User Content and Data Ownership",
         id: "user-content",
         paragraphs: [
             "You retain full ownership of the content and pages you create in Notion "
             + "through the App. Notivex acts only as a capture tool: it transmits the "
-            + "page data you submit directly to the Notion API on your behalf, and it "
-            + "does not retain a long-term copy of that page content once it has been "
-            + "created in Notion.",
+            + "page data you submit to the Notion API on your behalf. Notivex also stores "
+            + "the submitted operation payload, status, and resulting Notion page id as "
+            + "operation history until the account is deleted or a disclosed retention "
+            + "period applies, as described in the Privacy Policy.",
             "You are solely responsible for the content you create through Notivex, "
             + "including ensuring that it complies with Notion's own content and "
             + "acceptable-use policies, and with any other legal obligations that "
@@ -117,7 +149,7 @@ const termsSections: ReadonlyArray<LegalSection> = [
         ]
     },
     {
-        heading: "7. Acceptable Use",
+        heading: "8. Acceptable Use",
         id: "acceptable-use",
         paragraphs: [
             "You agree not to use Notivex to: violate any applicable law or "
@@ -133,7 +165,7 @@ const termsSections: ReadonlyArray<LegalSection> = [
         ]
     },
     {
-        heading: "8. Intellectual Property",
+        heading: "9. Intellectual Property",
         id: "intellectual-property",
         paragraphs: [
             "The Notivex name, logo, and the App's design, look, and feel are the "
@@ -146,12 +178,13 @@ const termsSections: ReadonlyArray<LegalSection> = [
         ]
     },
     {
-        heading: "9. Termination",
+        heading: "10. Termination",
         id: "termination",
         paragraphs: [
             "You may stop using Notivex and disconnect your Notion workspace at any "
             + "time from the App's account settings, and may delete the App from your "
-            + "device at any time.",
+            + "device at any time. Account or app deletion does not cancel a store "
+            + "subscription.",
             "We may suspend or terminate your access to the App, without notice, if "
             + "we believe you have violated these Terms, if required to comply with "
             + "legal process, or if we discontinue the App. Sections of these Terms "
@@ -161,7 +194,7 @@ const termsSections: ReadonlyArray<LegalSection> = [
         ]
     },
     {
-        heading: "10. Disclaimers and Warranties",
+        heading: "11. Disclaimers and Warranties",
         id: "disclaimers",
         paragraphs: [
             "Notivex is provided \"as is\" and \"as available,\" without warranties "
@@ -176,7 +209,7 @@ const termsSections: ReadonlyArray<LegalSection> = [
         ]
     },
     {
-        heading: "11. Limitation of Liability",
+        heading: "12. Limitation of Liability",
         id: "liability",
         paragraphs: [
             "To the fullest extent permitted by applicable law, in no event will "
@@ -187,12 +220,13 @@ const termsSections: ReadonlyArray<LegalSection> = [
             + "damages.",
             "To the fullest extent permitted by applicable law, our total aggregate "
             + "liability to you for any claim arising out of or relating to these "
-            + "Terms or the App will not exceed fifty U.S. dollars ($50), since the "
-            + "App is provided to you free of charge."
+            + "Terms or the App will not exceed the greater of fifty U.S. dollars "
+            + "($50) or the amounts you paid for Notivex during the twelve months "
+            + "immediately preceding the event giving rise to the claim."
         ]
     },
     {
-        heading: "12. Indemnification",
+        heading: "13. Indemnification",
         id: "indemnification",
         paragraphs: [
             "You agree to indemnify and hold harmless Gage Sorrell from and against "
@@ -203,7 +237,7 @@ const termsSections: ReadonlyArray<LegalSection> = [
         ]
     },
     {
-        heading: "13. Changes to These Terms",
+        heading: "14. Changes to These Terms",
         id: "changes",
         paragraphs: [
             "We may revise these Terms at any time. Material changes will be "
@@ -214,7 +248,7 @@ const termsSections: ReadonlyArray<LegalSection> = [
         ]
     },
     {
-        heading: "14. Governing Law",
+        heading: "15. Governing Law",
         id: "governing-law",
         paragraphs: [
             "These Terms are governed by the laws of the State of Indiana, United "
@@ -226,7 +260,7 @@ const termsSections: ReadonlyArray<LegalSection> = [
         ]
     },
     {
-        heading: "15. Severability",
+        heading: "16. Severability",
         id: "severability",
         paragraphs: [
             "If any provision of these Terms is found to be unenforceable or invalid "
@@ -236,7 +270,7 @@ const termsSections: ReadonlyArray<LegalSection> = [
         ]
     },
     {
-        heading: "16. Entire Agreement",
+        heading: "17. Entire Agreement",
         id: "entire-agreement",
         paragraphs: [
             "These Terms, together with our Privacy Policy, constitute the entire "
@@ -246,7 +280,7 @@ const termsSections: ReadonlyArray<LegalSection> = [
         ]
     },
     {
-        heading: "17. Contact",
+        heading: "18. Contact",
         id: "contact",
         paragraphs: [
             "Questions about these Terms can be sent to gage@sorrell.sh, or filed as "

@@ -70,7 +70,8 @@ __export(DataSourcesApi_exports, {
   List: () => List2,
   Refresh: () => Refresh,
   RefreshDataSourcePayload: () => RefreshDataSourcePayload,
-  Search: () => Search
+  Search: () => Search,
+  SwapFreeActivePayload: () => SwapFreeActivePayload
 });
 import * as Domain3 from "@notivex/domain";
 import { HttpApiEndpoint as HttpApiEndpoint3, HttpApiGroup as HttpApiGroup3 } from "effect/unstable/httpapi";
@@ -126,6 +127,7 @@ var Refresh = HttpApiEndpoint3.post("Refresh", "/Refresh", {
     Domain3.Error.NotionUnauthorized,
     Domain3.Error.NotionRateLimited,
     Domain3.Error.NotionUnavailable,
+    Domain3.Error.FreeDatabaseLimitReached,
     Domain3.Error.DatabaseError
   ],
   payload: RefreshDataSourcePayload,
@@ -142,7 +144,29 @@ var Get = HttpApiEndpoint3.get("Get", "/:DataSourceId", {
   },
   success: Domain3.DataSource.CachedDataSourceSchema
 });
-var DataSourcesApi = HttpApiGroup3.make("DataSources").add(Search, DiscoverOnboarding, List2, Refresh, Get);
+var SwapFreeActivePayload = Schema2.Struct({
+  ActivateDataSourceId: Domain3.Id.NotionDataSourceId,
+  LockDataSourceId: Domain3.Id.NotionDataSourceId
+});
+var SwapFreeActive = HttpApiEndpoint3.post("SwapFreeActive", "/SwapFreeActive", {
+  error: [
+    Domain3.Error.AuthenticationRequired,
+    Domain3.Error.DataSourceNotFound,
+    Domain3.Error.DatabaseError
+  ],
+  payload: SwapFreeActivePayload,
+  success: Schema2.Array(Domain3.DataSource.CachedDataSourceSchema)
+});
+var Remove = HttpApiEndpoint3.post("Remove", "/:DataSourceId/Remove", {
+  error: [
+    Domain3.Error.AuthenticationRequired,
+    Domain3.Error.DataSourceNotFound,
+    Domain3.Error.DatabaseError
+  ],
+  params: { DataSourceId: Domain3.Id.NotionDataSourceId },
+  success: Schema2.Void
+});
+var DataSourcesApi = HttpApiGroup3.make("DataSources").add(Search, DiscoverOnboarding, List2, Refresh, Get, SwapFreeActive, Remove);
 
 // Package/Api/Distribution/DestinationsApi.js
 var DestinationsApi_exports = {};
@@ -188,6 +212,7 @@ var Create = HttpApiEndpoint4.post("Create", "/", {
     Domain4.Error.AuthenticationRequired,
     Domain4.Error.NotionConnectionNotFound,
     Domain4.Error.DataSourceNotFound,
+    Domain4.Error.FeatureGateError,
     Domain4.Error.DatabaseError
   ],
   payload: CreateDestinationPayload,
@@ -199,6 +224,7 @@ var Update = HttpApiEndpoint4.patch("Update", "/:DestinationId", {
     Domain4.Error.DestinationNotFound,
     Domain4.Error.DataSourceNotFound,
     Domain4.Error.DataSourceSchemaChanged,
+    Domain4.Error.FeatureGateError,
     Domain4.Error.DatabaseError
   ],
   params: {
@@ -257,6 +283,8 @@ var Create3 = HttpApiEndpoint6.post("Create", "/", {
     Domain6.Error.NotionRateLimited,
     Domain6.Error.NotionValidationError,
     Domain6.Error.NotionUnavailable,
+    Domain6.Error.FreeCreationWindowExceeded,
+    Domain6.Error.FeatureGateError,
     Domain6.Error.DatabaseError
   ],
   payload: Domain6.Command.CreatePageCommand,
@@ -290,8 +318,57 @@ var UpdateSettings = HttpApiEndpoint7.patch("UpdateSettings", "/Settings", {
 });
 var ProfileApi = HttpApiGroup7.make("Profile").add(Get2, UpdateSettings);
 
+// Package/Api/Distribution/SubscriptionsApi.js
+var SubscriptionsApi_exports = {};
+__export(SubscriptionsApi_exports, {
+  RegisterDevicePayload: () => RegisterDevicePayload,
+  RemoveDevicePayload: () => RemoveDevicePayload,
+  SubscriptionsApi: () => SubscriptionsApi
+});
+import * as Domain8 from "@notivex/domain";
+import { HttpApiEndpoint as HttpApiEndpoint8, HttpApiGroup as HttpApiGroup8 } from "effect/unstable/httpapi";
+import { Schema as Schema4 } from "effect";
+var RegisterDevicePayload = Schema4.Struct({
+  DeviceId: Schema4.String,
+  Platform: Domain8.Subscription.DevicePlatform,
+  PushToken: Schema4.String
+});
+var RemoveDevicePayload = Schema4.Struct({ DeviceId: Schema4.String });
+var CommonErrors = [
+  Domain8.Error.AuthenticationRequired,
+  Domain8.Error.DatabaseError,
+  Domain8.Error.NetworkError
+];
+var Status = HttpApiEndpoint8.get("Status", "/Status", {
+  error: CommonErrors,
+  success: Domain8.Subscription.SubscriptionStatus
+});
+var Allowance = HttpApiEndpoint8.get("Allowance", "/Allowance", {
+  error: CommonErrors,
+  success: Domain8.Subscription.CreationAllowance
+});
+var Refresh2 = HttpApiEndpoint8.post("Refresh", "/Refresh", {
+  error: CommonErrors,
+  success: Domain8.Subscription.SubscriptionStatus
+});
+var Sale = HttpApiEndpoint8.get("Sale", "/Sale", {
+  error: CommonErrors,
+  success: Domain8.Subscription.ActiveSaleResponse
+});
+var RegisterDevice = HttpApiEndpoint8.post("RegisterDevice", "/Devices", {
+  error: CommonErrors,
+  payload: RegisterDevicePayload,
+  success: Schema4.Void
+});
+var RemoveDevice = HttpApiEndpoint8.post("RemoveDevice", "/Devices/Remove", {
+  error: CommonErrors,
+  payload: RemoveDevicePayload,
+  success: Schema4.Void
+});
+var SubscriptionsApi = HttpApiGroup8.make("Subscriptions").add(Status, Allowance, Refresh2, Sale, RegisterDevice, RemoveDevice);
+
 // Package/Api/Distribution/Api.js
-var NotivexApi = HttpApi.make("NotivexApi").add(ConnectionsApi.prefix("/Connections"), DataSourcesApi.prefix("/DataSources"), DestinationsApi.prefix("/Destinations"), PagesApi.prefix("/Pages"), ProfileApi.prefix("/Profile"), AccountApi.prefix("/Account"), ExportRequestsApi.prefix("/ExportRequests"));
+var NotivexApi = HttpApi.make("NotivexApi").add(ConnectionsApi.prefix("/Connections"), DataSourcesApi.prefix("/DataSources"), DestinationsApi.prefix("/Destinations"), PagesApi.prefix("/Pages"), ProfileApi.prefix("/Profile"), AccountApi.prefix("/Account"), ExportRequestsApi.prefix("/ExportRequests"), SubscriptionsApi.prefix("/Subscriptions"));
 export {
   AccountApi_exports as AccountApi,
   ConnectionsApi_exports as ConnectionsApi,
@@ -300,7 +377,8 @@ export {
   ExportRequestsApi_exports as ExportRequestsApi,
   NotivexApi,
   PagesApi_exports as PagesApi,
-  ProfileApi_exports as ProfileApi
+  ProfileApi_exports as ProfileApi,
+  SubscriptionsApi_exports as SubscriptionsApi
 };
 /**
  * The `Account` group: permanently deleting the current user's account.

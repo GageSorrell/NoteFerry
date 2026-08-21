@@ -19,7 +19,7 @@
  */
 
 import * as Domain from "@notivex/domain";
-import { AdminClient } from "./Database.ts";
+import { AdminClient, PrivateSchema } from "./Database.ts";
 import { Effect, Schema } from "effect";
 
 const DecodeSettings = Schema.decodeSync(Domain.Settings.AppSettings);
@@ -43,6 +43,27 @@ function RowToProfile(Row: Record<string, unknown>): Domain.Profile.Profile
         Settings,
         UpdatedAt: new Date(Row.updated_at as string),
         UserId: Row.user_id as Domain.Id.UserId
+    };
+}
+
+function ApplyEffectiveSettings(
+    Profile: Domain.Profile.Profile,
+    IsPro: boolean
+): Domain.Profile.Profile
+{
+    if (IsPro) return Profile;
+
+    return {
+        ...Profile,
+        Settings: {
+            Contrast: Profile.Settings.Contrast,
+            DatabaseOrder: [ ],
+            HomeScreenLayout: "1",
+            LaunchBehavior: { Type: "Home" },
+            NotifyOnOfflineSubmit: Profile.Settings.NotifyOnOfflineSubmit,
+            NotifyOnSubscriptionSales: Profile.Settings.NotifyOnSubscriptionSales,
+            QuickActionDataSourceIds: Profile.Settings.QuickActionDataSourceIds?.slice(0, 1)
+        }
     };
 }
 
@@ -71,10 +92,16 @@ export function GetForUser(UserId: string)
             }));
         }
 
-        return yield* Effect.try({
+        const Profile = yield* Effect.try({
             catch: DecodeFailed,
             try: () => RowToProfile(data as Record<string, unknown>)
         });
+        const { data: IsPro } = yield* Effect.promise(async () =>
+            await PrivateSchema.rpc("user_has_pro", { p_user_id: UserId }));
+
+        /* Return an effective Free projection while retaining all stored Pro
+         * preferences in the row for instant restoration after re-upgrade. */
+        return ApplyEffectiveSettings(Profile, IsPro === true);
     });
 }
 
@@ -108,15 +135,32 @@ export function UpdateSettingsForUser(UserId: string, Patch: Domain.Settings.App
             catch: DecodeFailed,
             try: () => DecodeSettings(Existing.settings as SettingsEncoded)
         });
+        const { data: IsPro } = yield* Effect.promise(async () =>
+            await PrivateSchema.rpc("user_has_pro", { p_user_id: UserId }));
 
         const Merged: Domain.Settings.AppSettings = {
             Contrast: Patch.Contrast ?? Current.Contrast,
-            DatabaseOrder: Patch.DatabaseOrder ?? Current.DatabaseOrder,
-            HomeScreenLayout: Patch.HomeScreenLayout ?? Current.HomeScreenLayout,
-            LaunchBehavior: Patch.LaunchBehavior ?? Current.LaunchBehavior,
+            DatabaseOrder: IsPro === true
+                ? Patch.DatabaseOrder ?? Current.DatabaseOrder
+                : Current.DatabaseOrder,
+            HomeScreenLayout: IsPro === true
+                ? Patch.HomeScreenLayout ?? Current.HomeScreenLayout
+                : Current.HomeScreenLayout,
+            LaunchBehavior: IsPro === true
+                ? Patch.LaunchBehavior ?? Current.LaunchBehavior
+                : Current.LaunchBehavior,
             NotifyOnOfflineSubmit: Patch.NotifyOnOfflineSubmit ?? Current.NotifyOnOfflineSubmit,
-            QuickActionDataSourceIds: Patch.QuickActionDataSourceIds
-                ?? Current.QuickActionDataSourceIds
+            NotifyOnSubscriptionSales: Patch.NotifyOnSubscriptionSales
+                ?? Current.NotifyOnSubscriptionSales,
+            QuickActionDataSourceIds: IsPro === true
+                ? Patch.QuickActionDataSourceIds ?? Current.QuickActionDataSourceIds
+                : Patch.QuickActionDataSourceIds?.[0]
+                    ? [
+                        Patch.QuickActionDataSourceIds[0],
+                        ...(Current.QuickActionDataSourceIds ?? []).filter((Id) =>
+                            Id !== Patch.QuickActionDataSourceIds?.[0])
+                    ]
+                    : Current.QuickActionDataSourceIds
         };
 
         const SettingsJson = yield* Effect.try({
@@ -139,9 +183,11 @@ export function UpdateSettingsForUser(UserId: string, Patch: Domain.Settings.App
             }));
         }
 
-        return yield* Effect.try({
+        const Profile = yield* Effect.try({
             catch: DecodeFailed,
             try: () => RowToProfile(data as Record<string, unknown>)
         });
+
+        return ApplyEffectiveSettings(Profile, IsPro === true);
     });
 }

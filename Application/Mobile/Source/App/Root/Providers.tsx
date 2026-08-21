@@ -19,6 +19,7 @@ import { ThemeProvider as NotivexThemeProvider } from "@notivex/ui";
 import { OnboardingProvider } from "@/features/onboarding/onboarding-context";
 import { StatusBar } from "@/Domain/Miscellaneous/StatusBar";
 import { useHighContrast } from "@/features/settings/use-high-contrast";
+import { SubscriptionProvider } from "@/Domain/Subscription";
 
 export/**
        * The various providers used across the application.
@@ -38,9 +39,11 @@ const Providers = ({ children }: React.PropsWithChildren): React.JSX.Element =>
                 <BottomSheetModalProvider>
                     <DevelopmentOnboardingProvider>
                         <NotivexAuthProvider>
-                            <OnboardingProvider Enabled={ !Development.Active }>
-                                { children }
-                            </OnboardingProvider>
+                            <SubscriptionProvider>
+                                <OnboardingProvider Enabled={ !Development.Active }>
+                                    { children }
+                                </OnboardingProvider>
+                            </SubscriptionProvider>
                         </NotivexAuthProvider>
                     </DevelopmentOnboardingProvider>
                 </BottomSheetModalProvider>

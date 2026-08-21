@@ -89,6 +89,7 @@ const Create = HttpApiEndpoint.post(
             Domain.Error.AuthenticationRequired,
             Domain.Error.NotionConnectionNotFound,
             Domain.Error.DataSourceNotFound,
+            Domain.Error.FeatureGateError,
             Domain.Error.DatabaseError
         ],
         payload: CreateDestinationPayload,
@@ -112,6 +113,7 @@ const Update = HttpApiEndpoint.patch(
             Domain.Error.DestinationNotFound,
             Domain.Error.DataSourceNotFound,
             Domain.Error.DataSourceSchemaChanged,
+            Domain.Error.FeatureGateError,
             Domain.Error.DatabaseError
         ],
         params:

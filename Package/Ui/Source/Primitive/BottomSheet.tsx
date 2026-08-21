@@ -25,6 +25,7 @@ import { MakeStyles, ViewStyle as MakeViewStyle } from "../MakeStyles.js";
 import {
     type StyleProp,
     type TextStyle,
+    View,
     type ViewStyle,
     useWindowDimensions
 } from "react-native";
@@ -155,11 +156,11 @@ export/**
        * @since 1.0.0
        */
 const BottomSheetTitle = ({ Style, children }: BottomSheetTitleProps): React.JSX.Element =>
-    <BottomSheetView>
+    <View>
         <ModalTitle { ...{ Style } }>
             { children }
         </ModalTitle>
-    </BottomSheetView>;
+    </View>;
 
 /** {@inheritDoc BottomSheetDescription} */
 export interface BottomSheetDescriptionProps extends React.PropsWithChildren { }

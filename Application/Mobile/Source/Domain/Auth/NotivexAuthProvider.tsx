@@ -14,6 +14,16 @@
 import * as React from "react";
 import type { AuthChangeEvent, AuthError, Session } from "@supabase/supabase-js";
 import { Supabase } from "@/Domain/Runtime/Supabase";
+import * as Application from "expo-application";
+import { Platform } from "react-native";
+import { RemoveSubscriptionSaleDevice } from "@/Domain/Runtime/NotivexApi";
+
+async function CurrentDeviceId(): Promise<string>
+{
+    return Platform.OS === "ios"
+        ? `ios:${await Application.getIosIdForVendorAsync() ?? "unknown"}`
+        : `android:${Application.getAndroidId()}`;
+}
 
 /** The shape provided to consumers of {@link useAuth}. */
 export interface NotivexAuth
@@ -142,6 +152,14 @@ const NotivexAuthProvider = ({ children }: React.PropsWithChildren) =>
         Session,
         SignOut: async () =>
         {
+            try
+            {
+                await RemoveSubscriptionSaleDevice(await CurrentDeviceId());
+            }
+            catch
+            {
+                /* Sign-out must still finish if best-effort token cleanup fails. */
+            }
             await Supabase.auth.signOut();
         }
     }), [ IsLoading, Session ]);

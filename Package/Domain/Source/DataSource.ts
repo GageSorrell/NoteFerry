@@ -119,6 +119,7 @@ export/**
        * @since 1.0.0
        */
 const CachedDataSourceSchema = Schema.Struct({
+    Access: Schema.Literals([ "Available", "Locked" ]),
     ConnectionId: Id.NotionConnectionId,
     CoverUrl: Schema.optional(Schema.String),
     DataSourceId: Id.NotionDataSourceId,

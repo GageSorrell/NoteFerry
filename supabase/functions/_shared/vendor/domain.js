@@ -336,6 +336,7 @@ var OnboardingDiscovery = Schema6.Struct({
   Pages: Schema6.Array(OnboardingPage)
 });
 var CachedDataSourceSchema = Schema6.Struct({
+  Access: Schema6.Literals(["Available", "Locked"]),
   ConnectionId: NotionConnectionId,
   CoverUrl: Schema6.optional(Schema6.String),
   DataSourceId: NotionDataSourceId,
@@ -407,7 +408,7 @@ var FieldConfiguration = Schema8.Struct({
   Version: FieldConfigurationVersion
 });
 function IsQuickEntryProperty(Property) {
-  return !["Files", "People", "Relation"].includes(Property.Type);
+  return !["People", "Relation"].includes(Property.Type);
 }
 function ReconcileFieldConfiguration(Current, Properties) {
   const PropertyById = new Map(Properties.map((Property) => [Property.Id, Property]));
@@ -490,6 +491,7 @@ var AppSettings = Schema9.Struct({
   HomeScreenLayout: Schema9.optional(HomeScreenLayout),
   LaunchBehavior: Schema9.optional(LaunchBehavior),
   NotifyOnOfflineSubmit: Schema9.optional(Schema9.Boolean),
+  NotifyOnSubscriptionSales: Schema9.optional(Schema9.Boolean),
   QuickActionDataSourceIds: Schema9.optional(Schema9.Array(NotionDataSourceId))
 });
 var DefaultAppSettings = {
@@ -498,6 +500,7 @@ var DefaultAppSettings = {
   HomeScreenLayout: "1",
   LaunchBehavior: { Type: "Home" },
   NotifyOnOfflineSubmit: true,
+  NotifyOnSubscriptionSales: false,
   QuickActionDataSourceIds: []
 };
 function WithDefaults(Stored) {
@@ -507,6 +510,7 @@ function WithDefaults(Stored) {
     HomeScreenLayout: Stored.HomeScreenLayout ?? DefaultAppSettings.HomeScreenLayout,
     LaunchBehavior: Stored.LaunchBehavior ?? DefaultAppSettings.LaunchBehavior,
     NotifyOnOfflineSubmit: Stored.NotifyOnOfflineSubmit ?? DefaultAppSettings.NotifyOnOfflineSubmit,
+    NotifyOnSubscriptionSales: Stored.NotifyOnSubscriptionSales ?? DefaultAppSettings.NotifyOnSubscriptionSales,
     QuickActionDataSourceIds: (Stored.QuickActionDataSourceIds ?? DefaultAppSettings.QuickActionDataSourceIds).slice(0, MaxQuickActionCount)
   };
 }
@@ -544,13 +548,36 @@ var PageDraft = Schema11.Struct({
 var Command_exports = {};
 __export(Command_exports, {
   CreatePageCommand: () => CreatePageCommand,
-  CreatePageResult: () => CreatePageResult
+  CreatePageResult: () => CreatePageResult,
+  PageCoverInput: () => PageCoverInput,
+  PageIconInput: () => PageIconInput
 });
 import { Schema as Schema12 } from "effect";
+var PageIconInput = Schema12.Union([
+  Schema12.Struct({ Emoji: Schema12.String, Type: Schema12.tag("Emoji") }),
+  Schema12.Struct({ Type: Schema12.tag("External"), Url: Schema12.String }),
+  Schema12.Struct({
+    Base64: Schema12.String,
+    MimeType: Schema12.optional(Schema12.String),
+    Name: Schema12.String,
+    Type: Schema12.tag("Upload")
+  })
+]);
+var PageCoverInput = Schema12.Union([
+  Schema12.Struct({ Name: Schema12.String, Type: Schema12.tag("External"), Url: Schema12.String }),
+  Schema12.Struct({
+    Base64: Schema12.String,
+    MimeType: Schema12.optional(Schema12.String),
+    Name: Schema12.String,
+    Type: Schema12.tag("Upload")
+  })
+]);
 var CreatePageCommand = Schema12.Struct({
   Body: Schema12.optional(Schema12.String),
+  Cover: Schema12.optional(PageCoverInput),
   DestinationId,
   OperationId,
+  Icon: Schema12.optional(PageIconInput),
   Title: Schema12.optional(Schema12.String),
   Values: Schema12.Array(PropertyInputValue)
 });
@@ -568,6 +595,9 @@ __export(Error_exports, {
   DatabaseError: () => DatabaseError,
   DestinationNotFound: () => DestinationNotFound,
   DomainError: () => DomainError,
+  FeatureGateError: () => FeatureGateError,
+  FreeCreationWindowExceeded: () => FreeCreationWindowExceeded,
+  FreeDatabaseLimitReached: () => FreeDatabaseLimitReached,
   InvalidPageDraft: () => InvalidPageDraft,
   NetworkError: () => NetworkError,
   NotionConnectionNotFound: () => NotionConnectionNotFound,
@@ -607,6 +637,12 @@ var DatabaseError = class extends Schema13.TaggedError()("DatabaseError", { Mess
 };
 var NetworkError = class extends Schema13.TaggedError()("NetworkError", { Message: Schema13.String }, { httpApiStatus: 502 }) {
 };
+var FeatureGateError = class extends Schema13.TaggedError()("FeatureGateError", { Feature: Schema13.String }, { httpApiStatus: 403 }) {
+};
+var FreeCreationWindowExceeded = class extends Schema13.TaggedError()("FreeCreationWindowExceeded", { NextAvailableAt: Schema13.DateFromString }, { httpApiStatus: 429 }) {
+};
+var FreeDatabaseLimitReached = class extends Schema13.TaggedError()("FreeDatabaseLimitReached", { Limit: Schema13.Number }, { httpApiStatus: 409 }) {
+};
 var DomainError = Schema13.Union([
   AuthenticationRequired,
   NotionConnectionNotFound,
@@ -621,8 +657,79 @@ var DomainError = Schema13.Union([
   DestinationNotFound,
   InvalidPageDraft,
   DatabaseError,
-  NetworkError
+  NetworkError,
+  FeatureGateError,
+  FreeCreationWindowExceeded,
+  FreeDatabaseLimitReached
 ]);
+
+// Package/Domain/Distribution/Subscription.js
+var Subscription_exports = {};
+__export(Subscription_exports, {
+  ActiveSale: () => ActiveSale,
+  ActiveSaleResponse: () => ActiveSaleResponse,
+  CreationAllowance: () => CreationAllowance,
+  DevicePlatform: () => DevicePlatform,
+  EntitlementState: () => EntitlementState,
+  FreeCreationLimit: () => FreeCreationLimit,
+  FreeCreationWindowMinutes: () => FreeCreationWindowMinutes,
+  FreeDatabaseLimit: () => FreeDatabaseLimit,
+  ProEntitlementId: () => ProEntitlementId,
+  ProductTerm: () => ProductTerm,
+  PurchaseStore: () => PurchaseStore,
+  ResourceAccess: () => ResourceAccess,
+  SubscriptionStatus: () => SubscriptionStatus,
+  SubscriptionTier: () => SubscriptionTier
+});
+import { Schema as Schema14 } from "effect";
+var ProEntitlementId = "pro";
+var FreeCreationLimit = 5;
+var FreeCreationWindowMinutes = 30;
+var FreeDatabaseLimit = 3;
+var SubscriptionTier = Schema14.Literals(["Free", "Pro"]);
+var ProductTerm = Schema14.Literals(["Monthly", "Yearly", "Lifetime"]);
+var PurchaseStore = Schema14.Literals(["AppStore", "PlayStore", "Unknown"]);
+var EntitlementState = Schema14.Literals([
+  "Active",
+  "GracePeriod",
+  "BillingIssue",
+  "Expired",
+  "Free"
+]);
+var SubscriptionStatus = Schema14.Struct({
+  Active: Schema14.Boolean,
+  EnforcementEnabled: Schema14.Boolean,
+  Expiration: Schema14.optional(Schema14.DateFromString),
+  ManagementUrl: Schema14.optional(Schema14.String),
+  ProductId: Schema14.optional(Schema14.String),
+  Renews: Schema14.Boolean,
+  State: EntitlementState,
+  Store: PurchaseStore,
+  Term: Schema14.optional(ProductTerm),
+  Tier: SubscriptionTier,
+  VerifiedAt: Schema14.optional(Schema14.DateFromString)
+});
+var CreationAllowance = Schema14.Struct({
+  Limit: Schema14.Number,
+  NextAvailableAt: Schema14.optional(Schema14.DateFromString),
+  Remaining: Schema14.Number,
+  Used: Schema14.Number,
+  WindowMinutes: Schema14.Number
+});
+var ActiveSale = Schema14.Struct({
+  CampaignId: Schema14.String,
+  Copy: Schema14.String,
+  DeepLink: Schema14.String,
+  EndsAt: Schema14.DateFromString,
+  OfferingIdentifier: Schema14.String,
+  StartsAt: Schema14.DateFromString,
+  TargetedPackages: Schema14.Array(ProductTerm)
+});
+var ActiveSaleResponse = Schema14.Struct({
+  Sale: Schema14.NullOr(ActiveSale)
+});
+var ResourceAccess = Schema14.Literals(["Available", "Locked"]);
+var DevicePlatform = Schema14.Literals(["Ios", "Android"]);
 export {
   Behavior_exports as Behavior,
   Command_exports as Command,
@@ -634,7 +741,8 @@ export {
   PageDraft_exports as PageDraft,
   Profile_exports as Profile,
   Property_exports as Property,
-  Settings_exports as Settings
+  Settings_exports as Settings,
+  Subscription_exports as Subscription
 };
 /**
  * Branded string identifiers for every stable identity concept in Notivex.

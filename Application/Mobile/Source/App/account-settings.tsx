@@ -12,7 +12,7 @@
  */
 
 import * as WebBrowser from "expo-web-browser";
-import { Alert, ScrollView, View } from "react-native";
+import { Alert, Linking, ScrollView, View } from "react-native";
 import { Button, Description, Heading1, Heading2 } from "@notivex/ui/Primitive";
 import { DeleteAccount, RequestAccountData } from "@/Domain/Runtime/NotivexApi";
 import { MakeStyles, TextStyle, Token, ViewStyle } from "@notivex/ui";
@@ -20,6 +20,8 @@ import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/Domain/Auth/NotivexAuthProvider";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { useSubscription } from "@/Domain/Subscription";
+import Purchases from "react-native-purchases";
 
 const NotionIntegrationsUrl = "https://www.notion.so/my-integrations";
 
@@ -28,6 +30,7 @@ const AccountSettingsScreen = (): React.JSX.Element =>
     const Router = useLazyRouter();
     const Styles = useStyles();
     const { SignOut } = useAuth();
+    const { Status } = useSubscription();
     const [ IsDeleting, SetIsDeleting ] = useState(false);
     const [ IsRequestingData, SetIsRequestingData ] = useState(false);
 
@@ -80,12 +83,22 @@ const AccountSettingsScreen = (): React.JSX.Element =>
 
     const HandleDeleteAccount = useCallback(() =>
     {
+        const Manage = (): void =>
+        {
+            if (Status?.ManagementUrl) void Linking.openURL(Status.ManagementUrl);
+            else void Purchases.showManageSubscriptions();
+        };
+
         Alert.alert(
             "Delete your account?",
             "This permanently deletes your Notivex account, connections, and "
-                + "quick-entry destinations. This can't be undone.",
+                + "quick-entry destinations. This can't be undone. Deleting your "
+                + "Notivex account does not cancel an App Store or Play Store subscription.",
             [
                 { style: "cancel", text: "Cancel" },
+                ...(Status?.Active && Status.Term !== "Lifetime"
+                    ? [ { onPress: Manage, text: "Manage subscription" } ]
+                    : []),
                 {
                     onPress: () => void PerformDelete(),
                     style: "destructive",
@@ -93,7 +106,7 @@ const AccountSettingsScreen = (): React.JSX.Element =>
                 }
             ]
         );
-    }, [ PerformDelete ]);
+    }, [ PerformDelete, Status ]);
 
     return (
         <View style={ Styles.Container }>
@@ -129,7 +142,7 @@ const AccountSettingsScreen = (): React.JSX.Element =>
                     <Heading2 Style={ Styles.SectionHeading }>Danger zone</Heading2>
                     <Description Style={ Styles.DangerDescription }>
                         Permanently deletes your account and everything associated
-                        with it. This can't be undone.
+                        with it. Store subscriptions must be canceled separately.
                     </Description>
                     <Button
                         Appearance="Red"

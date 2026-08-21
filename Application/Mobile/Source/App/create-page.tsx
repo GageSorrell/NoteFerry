@@ -11,6 +11,7 @@
 
 import * as Domain from "@notivex/domain";
 import * as ImagePicker from "expo-image-picker";
+import { File } from "expo-file-system";
 import {
     ActivityIndicator,
     Alert,
@@ -27,7 +28,7 @@ import {
     Button,
     Description,
     Input,
-    ItemTitle,
+    NavigationTitle,
     Pressable,
     Separator,
     Textarea
@@ -83,8 +84,30 @@ import { UrlPropertyField } from
     "@/features/page-creation/url-property-field";
 import { randomUUID } from "expo-crypto";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { useSubscription } from "@/Domain/Subscription";
 
 const MaxPageBodyLength = 200_000;
+
+const FileNameFromUri = (Uri: string, Fallback: string): string =>
+    decodeURIComponent(Uri.split(/[?#]/u)[0]?.split("/").pop() ?? Fallback) || Fallback;
+
+function FindTaggedError(Error_: unknown): Record<string, unknown> | null
+{
+    const Seen = new Set<unknown>();
+    const Queue: unknown[] = [ Error_ ];
+
+    while (Queue.length > 0)
+    {
+        const Current = Queue.shift();
+        if (!Current || typeof Current !== "object" || Seen.has(Current)) continue;
+        Seen.add(Current);
+        const Record_ = Current as Record<string, unknown>;
+        if (typeof Record_._tag === "string") return Record_;
+        Queue.push(Record_.cause, Record_.error, Record_.failure);
+    }
+
+    return null;
+}
 
 type FieldValue =
     | boolean
@@ -189,12 +212,11 @@ const DatabaseHeaderTitle = ({
                     />
                 )
                 : <DatabaseIcon Source={ Source } /> }
-            <ItemTitle
+            <NavigationTitle
                 NumberOfLines={ 1 }
-                Style={ Styles.NavigationTitleText }
-                Weight="600">
+                Style={ Styles.NavigationTitleText }>
                 { Title }
-            </ItemTitle>
+            </NavigationTitle>
         </View>
     );
 };
@@ -390,6 +412,7 @@ const PageCreateScreen = (): React.JSX.Element =>
     const Router = useLazyRouter();
     const Theme = useTheme();
     const Styles = useStyles();
+    const { HasProAccess, Refresh: RefreshSubscription } = useSubscription();
     const DataSourceId = Params.dataSourceId as Domain.Id.NotionDataSourceId;
     const [ DataSource, SetDataSource ] =
         useState<Domain.DataSource.CachedDataSourceSchema | null>(null);
@@ -405,6 +428,7 @@ const PageCreateScreen = (): React.JSX.Element =>
     const IconMenuRef = useRef<BottomSheet>(null);
     const Insets = useSafeAreaInsets();
     const AllowNavigation = useRef(false);
+    const OperationId = useRef(randomUUID() as Domain.Id.OperationId);
     const IsDirty = PageBody.trim() !== ""
         || Object.values(Values).some((Value: FieldValue) =>
             Value === true
@@ -443,6 +467,20 @@ const PageCreateScreen = (): React.JSX.Element =>
             return;
         }
 
+        if (!HasProAccess)
+        {
+            Alert.alert(
+                "Customize forms with Pro",
+                "Pro lets you change aliases, visibility, required fields, order, defaults, and post-creation behavior.",
+                [
+                    { style: "cancel", text: "Not now" },
+                    { onPress: Router.push("/plans"), text: "Compare plans" },
+                    { onPress: Router.push("/subscribe"), text: "Upgrade" }
+                ]
+            );
+            return;
+        }
+
         if (IsDirty)
         {
             ShowDiscardConfirmation(NavigateToDatabaseSettings);
@@ -451,7 +489,7 @@ const PageCreateScreen = (): React.JSX.Element =>
         {
             NavigateToDatabaseSettings();
         }
-    }, [ DataSource, IsDirty, NavigateToDatabaseSettings ]);
+    }, [ DataSource, HasProAccess, IsDirty, NavigateToDatabaseSettings, Router ]);
     type BeforeRemoveEvent = EventArg<"beforeRemove", true, { action: NavigationAction; }>;
     useEffect(() => Navigation.addListener("beforeRemove", (Event: BeforeRemoveEvent) =>
     {
@@ -721,10 +759,29 @@ const PageCreateScreen = (): React.JSX.Element =>
         Theme.Semantic.IconPrimary
     ]);
 
+    const ShowProPrompt = useCallback((Benefit: string): void =>
+    {
+        Alert.alert(
+            "Available with Notivex Pro",
+            Benefit,
+            [
+                { style: "cancel", text: "Not now" },
+                { onPress: Router.push("/plans"), text: "Compare plans" },
+                { onPress: Router.push("/subscribe"), text: "Upgrade" }
+            ]
+        );
+    }, [ Router ]);
+
     const OpenIconMenu = useCallback((): void =>
     {
+        if (!HasProAccess)
+        {
+            ShowProPrompt("Add a recognizable icon to pages you capture.");
+            return;
+        }
+
         IconMenuRef.current?.present();
-    }, [ ]);
+    }, [ HasProAccess, ShowProPrompt ]);
 
     /**
      * Attaching an icon seeds a default document glyph so a value is set (the
@@ -732,9 +789,15 @@ const PageCreateScreen = (): React.JSX.Element =>
      */
     const AddIcon = useCallback((): void =>
     {
-        SetPageIcon({ Src: "file-text", Type: "Lucide" });
+        if (!HasProAccess)
+        {
+            ShowProPrompt("Add a recognizable icon to pages you capture.");
+            return;
+        }
+
+        SetPageIcon({ Src: "📄", Type: "Emoji" });
         IconMenuRef.current?.present();
-    }, [ ]);
+    }, [ HasProAccess, ShowProPrompt ]);
 
     const SelectIcon = useCallback((Icon: IconData): void =>
     {
@@ -750,6 +813,12 @@ const PageCreateScreen = (): React.JSX.Element =>
 
     const PickCover = useCallback(async (): Promise<void> =>
     {
+        if (!HasProAccess)
+        {
+            ShowProPrompt("Add a cover image to pages you capture.");
+            return;
+        }
+
         const Permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
         if (!Permission.granted)
@@ -768,7 +837,7 @@ const PageCreateScreen = (): React.JSX.Element =>
         {
             SetCoverUrl(Asset.uri);
         }
-    }, [ ]);
+    }, [ HasProAccess, ShowProPrompt ]);
 
     const RemoveCover = useCallback((): void =>
     {
@@ -844,6 +913,38 @@ const PageCreateScreen = (): React.JSX.Element =>
                     Value
                 });
             }
+            else if (Property.Type === "Files" && IsFileMediaValue(Value))
+            {
+                if (Value.Type === "Link")
+                {
+                    Inputs.push({
+                        PropertyId: Property.Id,
+                        Value: {
+                            Type: "Files",
+                            Value: {
+                                Name: Value.Name ?? FileNameFromUri(Value.Uri, "attachment"),
+                                Type: "External",
+                                Url: Value.Uri
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    Inputs.push({
+                        PropertyId: Property.Id,
+                        Value: {
+                            Type: "Files",
+                            Value: {
+                                Base64: await new File(Value.Uri).base64(),
+                                ...(Value.MimeType === undefined ? { } : { MimeType: Value.MimeType }),
+                                Name: Value.Name ?? FileNameFromUri(Value.Uri, "attachment"),
+                                Type: "Upload"
+                            }
+                        }
+                    });
+                }
+            }
             else if (typeof Value === "string" && Value.trim() !== "")
             {
                 const Trimmed = Value.trim();
@@ -884,13 +985,35 @@ const PageCreateScreen = (): React.JSX.Element =>
 
         try
         {
+            const Cover: Domain.Command.PageCoverInput | undefined = CoverUrl === undefined
+                ? undefined
+                : {
+                    Base64: await new File(CoverUrl).base64(),
+                    MimeType: "image/jpeg",
+                    Name: FileNameFromUri(CoverUrl, "cover.jpg"),
+                    Type: "Upload"
+                };
+            const Icon: Domain.Command.PageIconInput | undefined = PageIcon?.Type === "Emoji"
+                ? { Emoji: PageIcon.Src, Type: "Emoji" }
+                : PageIcon?.Type === "Url"
+                    ? {
+                        Base64: await new File(PageIcon.Src).base64(),
+                        MimeType: "image/png",
+                        Name: FileNameFromUri(PageIcon.Src, "icon.png"),
+                        Type: "Upload"
+                    }
+                    : undefined;
+
             await CreatePage({
                 ...(Body === undefined ? { } : { Body }),
+                ...(Cover === undefined ? { } : { Cover }),
                 DestinationId: Destination.Id,
-                OperationId: randomUUID() as Domain.Id.OperationId,
+                ...(Icon === undefined ? { } : { Icon }),
+                OperationId: OperationId.current,
                 Title,
                 Values: Inputs
             });
+            void RefreshSubscription();
             AllowNavigation.current = true;
 
             const AfterCreate = Domain.Destination.ResolvePostCreationBehavior(Destination);
@@ -913,6 +1036,29 @@ const PageCreateScreen = (): React.JSX.Element =>
         }
         catch (Error: unknown)
         {
+            const Tagged = FindTaggedError(Error);
+
+            if (Tagged?._tag === "FreeCreationWindowExceeded")
+            {
+                const Next = Tagged.NextAvailableAt instanceof Date
+                    ? Tagged.NextAvailableAt
+                    : new Date(`${ Tagged.NextAvailableAt }`);
+
+                Alert.alert(
+                    "Free page limit reached",
+                    `Your draft is safe. Your next slot is available at ${Next.toLocaleTimeString([], {
+                        hour: "numeric",
+                        minute: "2-digit"
+                    })}.`,
+                    [
+                        { style: "cancel", text: "Keep editing" },
+                        { onPress: Router.push("/subscribe"), text: "Upgrade" }
+                    ]
+                );
+                void RefreshSubscription();
+                return;
+            }
+
             SetErrorMessage("We couldn't create the page. Check the form and try again.");
             /* eslint-disable-next-line no-console */
             console.error("Failed to create page", Error);
@@ -921,7 +1067,18 @@ const PageCreateScreen = (): React.JSX.Element =>
         {
             SetIsSaving(false);
         }
-    }, [ Destination, IsSaving, PageBody, PageTitleText, Router, Values, VisibleProperties ]);
+    }, [
+        Destination,
+        CoverUrl,
+        IsSaving,
+        PageBody,
+        PageIcon,
+        PageTitleText,
+        RefreshSubscription,
+        Router,
+        Values,
+        VisibleProperties
+    ]);
 
     const HasIcon = PageIcon !== undefined;
     const HasCover = CoverUrl !== undefined;

@@ -25,3 +25,4 @@ export * as Settings from "./Settings.js";
 export * as PageDraft from "./PageDraft.js";
 export * as Command from "./Command.js";
 export * as Error from "./Error.js";
+export * as Subscription from "./Subscription.js";

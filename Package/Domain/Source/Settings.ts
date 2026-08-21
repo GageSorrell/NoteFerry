@@ -69,6 +69,7 @@ const AppSettings = Schema.Struct({
     HomeScreenLayout: Schema.optional(HomeScreenLayout),
     LaunchBehavior: Schema.optional(Behavior.LaunchBehavior),
     NotifyOnOfflineSubmit: Schema.optional(Schema.Boolean),
+    NotifyOnSubscriptionSales: Schema.optional(Schema.Boolean),
     QuickActionDataSourceIds: Schema.optional(Schema.Array(Id.NotionDataSourceId))
 });
 
@@ -89,6 +90,7 @@ export interface ResolvedAppSettings
     readonly HomeScreenLayout: HomeScreenLayout;
     readonly LaunchBehavior: Behavior.LaunchBehavior;
     readonly NotifyOnOfflineSubmit: boolean;
+    readonly NotifyOnSubscriptionSales: boolean;
     readonly QuickActionDataSourceIds: ReadonlyArray<Id.NotionDataSourceId>;
 }
 
@@ -104,6 +106,7 @@ export const DefaultAppSettings: ResolvedAppSettings = {
     HomeScreenLayout: "1",
     LaunchBehavior: { Type: "Home" },
     NotifyOnOfflineSubmit: true,
+    NotifyOnSubscriptionSales: false,
     QuickActionDataSourceIds: [ ]
 };
 
@@ -124,6 +127,8 @@ export function WithDefaults(Stored: AppSettings): ResolvedAppSettings
         LaunchBehavior: Stored.LaunchBehavior ?? DefaultAppSettings.LaunchBehavior,
         NotifyOnOfflineSubmit: Stored.NotifyOnOfflineSubmit
             ?? DefaultAppSettings.NotifyOnOfflineSubmit,
+        NotifyOnSubscriptionSales: Stored.NotifyOnSubscriptionSales
+            ?? DefaultAppSettings.NotifyOnSubscriptionSales,
         QuickActionDataSourceIds: (Stored.QuickActionDataSourceIds
             ?? DefaultAppSettings.QuickActionDataSourceIds).slice(0, MaxQuickActionCount)
     };

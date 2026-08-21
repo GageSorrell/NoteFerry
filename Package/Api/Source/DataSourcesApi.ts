@@ -129,6 +129,7 @@ const Refresh = HttpApiEndpoint.post(
             Domain.Error.NotionUnauthorized,
             Domain.Error.NotionRateLimited,
             Domain.Error.NotionUnavailable,
+            Domain.Error.FreeDatabaseLimitReached,
             Domain.Error.DatabaseError
         ],
         payload: RefreshDataSourcePayload,
@@ -160,6 +161,31 @@ const Get = HttpApiEndpoint.get(
     }
 );
 
+export const SwapFreeActivePayload = Schema.Struct({
+    ActivateDataSourceId: Domain.Id.NotionDataSourceId,
+    LockDataSourceId: Domain.Id.NotionDataSourceId
+});
+
+const SwapFreeActive = HttpApiEndpoint.post("SwapFreeActive", "/SwapFreeActive", {
+    error: [
+        Domain.Error.AuthenticationRequired,
+        Domain.Error.DataSourceNotFound,
+        Domain.Error.DatabaseError
+    ],
+    payload: SwapFreeActivePayload,
+    success: Schema.Array(Domain.DataSource.CachedDataSourceSchema)
+});
+
+const Remove = HttpApiEndpoint.post("Remove", "/:DataSourceId/Remove", {
+    error: [
+        Domain.Error.AuthenticationRequired,
+        Domain.Error.DataSourceNotFound,
+        Domain.Error.DatabaseError
+    ],
+    params: { DataSourceId: Domain.Id.NotionDataSourceId },
+    success: Schema.Void
+});
+
 export/**
        * The `DataSources` resource group of the Notivex API.
        *
@@ -171,5 +197,7 @@ const DataSourcesApi = HttpApiGroup.make("DataSources").add(
     DiscoverOnboarding,
     List,
     Refresh,
-    Get
+    Get,
+    SwapFreeActive,
+    Remove
 );

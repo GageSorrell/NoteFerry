@@ -13,17 +13,27 @@
 import type * as Domain from "@notivex/domain";
 import {
     Body,
+    BottomSheet,
+    BottomSheetDescription,
+    BottomSheetTitle,
+    BottomSheetView,
+    MenuGroup,
+    MenuItem,
+    MenuItemCheck,
     Pressable,
     RadioGroup,
     RadioGroupItem,
     Setting,
     SettingsContainer
 } from "@notivex/ui/Primitive";
-import { MakeStyles, Token, ViewStyle } from "@notivex/ui";
+import { MakeStyles, Token, ViewStyle, useToken } from "@notivex/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useCallback } from "react";
+import { ChevronDown } from "lucide-react-native";
+import { useCallback, useRef } from "react";
 import { useSettings } from "@/features/settings/use-settings";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
+import { useSubscription } from "@/Domain/Subscription";
+import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 
 interface LayoutOption
 {
@@ -31,7 +41,7 @@ interface LayoutOption
     readonly Value: Domain.Settings.HomeScreenLayout;
 }
 
-const LayoutOptions: ReadonlyArray<LayoutOption> = [
+const LayoutOptions: readonly LayoutOption[] = [
     { AccessibilityLabel: "One database per row", Value: "1" },
     { AccessibilityLabel: "Two square cards per row", Value: "2" }
 ];
@@ -39,29 +49,63 @@ const LayoutOptions: ReadonlyArray<LayoutOption> = [
 interface ContrastOption
 {
     readonly Label: string;
+    readonly ShortLabel: string;
     readonly Value: Domain.Settings.Contrast;
 }
 
-const ContrastOptions: ReadonlyArray<ContrastOption> = [
-    { Label: "Use system setting", Value: "System" },
-    { Label: "Standard contrast", Value: "Standard" },
-    { Label: "High contrast", Value: "High" }
+const ContrastOptions: readonly ContrastOption[] = [
+    { Label: "Use system setting", ShortLabel: "System", Value: "System" },
+    { Label: "Standard contrast", ShortLabel: "Disabled", Value: "Standard" },
+    { Label: "High contrast", ShortLabel: "Enabled", Value: "High" }
 ];
 
 const GeneralSettingsScreen = (): React.JSX.Element =>
 {
     const Styles = useStyles();
     const { Settings: AppSettings, Update } = useSettings();
+    const { HasProAccess } = useSubscription();
+    const Router = useLazyRouter();
+    const ContrastSheetRef = useRef<BottomSheet | null>(null);
+    const { [Token.Semantic.Muted]: MutedColor } = useToken(Token.Semantic.Muted);
+
+    const SelectedContrast =
+        ContrastOptions.find((Option: ContrastOption) => Option.Value === AppSettings.Contrast)
+            ?? ContrastOptions[ 0 ];
 
     const SetHomeScreenLayout = useCallback((Value: Domain.Settings.HomeScreenLayout) =>
     {
+        if (Value !== "1" && !HasProAccess)
+        {
+            Alert.alert(
+                "Customize your home with Pro",
+                "Pro unlocks the two-column layout and custom database ordering.",
+                [
+                    { style: "cancel", text: "Not now" },
+                    { onPress: Router.push("/plans"), text: "Compare plans" },
+                    { onPress: Router.push("/subscribe"), text: "Upgrade" }
+                ]
+            );
+            return;
+        }
+
         void Update({ HomeScreenLayout: Value });
-    }, [ Update ]);
+    }, [ HasProAccess, Router, Update ]);
 
     const SetContrast = useCallback((Value: Domain.Settings.Contrast) =>
     {
         void Update({ Contrast: Value });
     }, [ Update ]);
+
+    const OpenContrastMenu = useCallback((): void =>
+    {
+        ContrastSheetRef.current?.present();
+    }, []);
+
+    const SelectContrast = useCallback((Value: Domain.Settings.Contrast): void =>
+    {
+        SetContrast(Value);
+        ContrastSheetRef.current?.dismiss();
+    }, [ SetContrast ]);
 
     return (
         <View style={ Styles.Container }>
@@ -69,8 +113,7 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
                 <SettingsContainer>
                     <Setting
                         Description="Show one database per row, or two square cards per row."
-                        Title="Home screen layout"
-                        Wide>
+                        Title="Home screen layout">
                         { /* `RadioGroupItem` is decorative only (`pointerEvents="none"`) —
                              the outer `Pressable` covers the preview *and* the dot, so
                              tapping either registers the same selection. */ }
@@ -119,47 +162,77 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
                     </Setting>
                     <Setting
                         Description="Increase the contrast of dividers, borders, and switches."
-                        Title="High contrast"
-                        Wide>
-                        { /* Mirrors the row above: `RadioGroupItem` is decorative only
-                             (`pointerEvents="none"`) — the outer `Pressable` covers the
-                             whole row, so tapping the label registers the selection too. */ }
-                        <RadioGroup
-                            OnValueChange={ (Value: string) =>
-                                SetContrast(Value as Domain.Settings.Contrast) }
-                            Value={ AppSettings.Contrast }>
-                            { ContrastOptions.map((Option: ContrastOption) => (
-                                <Pressable
-                                    Accessibility={ {
-                                        Label: Option.Label,
-                                        Role: "radio",
-                                        State: { checked: AppSettings.Contrast === Option.Value }
-                                    } }
-                                    OnPress={ () => SetContrast(Option.Value) }
-                                    key={ Option.Value }
-                                    style={ Styles.ContrastOption }>
-                                    <View
-                                        accessible={ false }
-                                        pointerEvents="none">
-                                        <RadioGroupItem Value={ Option.Value } />
-                                    </View>
-                                    <Body>{ Option.Label }</Body>
-                                </Pressable>
-                            )) }
-                        </RadioGroup>
+                        Title="High contrast">
+                        <Pressable
+                            Accessibility={ {
+                                Label: `High contrast: ${ SelectedContrast.Label }`,
+                                Role: "button"
+                            } }
+                            OnPress={ OpenContrastMenu }
+                            style={ Styles.ContrastMenuTrigger }>
+                            <Body NumberOfLines={ 1 }>{ SelectedContrast.ShortLabel }</Body>
+                            <ChevronDown
+                                color={ MutedColor }
+                                size={ 16 }
+                            />
+                        </Pressable>
                     </Setting>
                 </SettingsContainer>
             </SafeAreaView>
+            <BottomSheet
+                Ref={ ContrastSheetRef }
+                SnapPoints={ [ "34%" ] }
+                TestId="contrast-options-sheet">
+                <BottomSheetView style={ Styles.ContrastSheet }>
+                    <View style={ Styles.ContrastSheetHeader }>
+                        <BottomSheetTitle>High contrast</BottomSheetTitle>
+                        <BottomSheetDescription>
+                            Choose how much contrast to use for dividers, borders, and switches.
+                        </BottomSheetDescription>
+                    </View>
+                    <MenuGroup Style={ Styles.ContrastMenu }>
+                        { ContrastOptions.map((Option: ContrastOption) => (
+                            <MenuItem
+                                AccessibilityLabel={ Option.Label }
+                                Label={ Option.Label }
+                                OnPress={ () => SelectContrast(Option.Value) }
+                                key={ Option.Value }
+                                Style={ Styles.ContrastMenuOption }>
+                                { AppSettings.Contrast === Option.Value
+                                    ? <MenuItemCheck />
+                                    : null }
+                            </MenuItem>
+                        )) }
+                    </MenuGroup>
+                </BottomSheetView>
+            </BottomSheet>
         </View>
     );
 };
 
 const useStyles = MakeStyles({
-    ContrastOption: ViewStyle({
+    ContrastMenu: ViewStyle({
+        marginTop: 12
+    }),
+    ContrastMenuOption: ViewStyle({
+        minHeight: 48,
+        paddingHorizontal: 12
+    }),
+    ContrastMenuTrigger: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
-        gap: 10,
-        paddingVertical: 4
+        gap: 6,
+        justifyContent: "flex-end",
+        maxWidth: "100%",
+        minHeight: 44
+    }),
+    ContrastSheet: ViewStyle({
+        flex: 1,
+        paddingHorizontal: Token.Spacing.SheetHorizontal,
+        paddingVertical: Token.Spacing.S
+    }),
+    ContrastSheetHeader: ViewStyle({
+        gap: 4
     }),
     Container: ViewStyle({
         backgroundColor: Token.Semantic.BackgroundSidebar,

@@ -22,7 +22,7 @@ import * as Domain from "@notivex/domain";
 import * as Destinations from "./Destinations.ts";
 import * as Notion from "./Notion.ts";
 import { CallNotionData, LoadConnectionTokens, RateLimited } from "./NotionAuth.ts";
-import { AdminClient } from "./Database.ts";
+import { AdminClient, PrivateSchema } from "./Database.ts";
 import { Effect } from "effect";
 
 /* --- Pure mapping ----------------------------------------------------- */
@@ -311,13 +311,17 @@ function ToDiscovered(
 }
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function RowToCached(Row: Record<string, unknown>): Domain.DataSource.CachedDataSourceSchema
+function RowToCached(
+    Row: Record<string, unknown>,
+    IsPro = false
+): Domain.DataSource.CachedDataSourceSchema
 {
     const CoverUrl = Row.cover_url as string | null;
     const Icon = Row.icon as string | null;
     const IconType = Row.icon_type as NormalizedIcon["IconType"] | null;
 
     return {
+        Access: IsPro || Row.free_active === true ? "Available" : "Locked",
         ConnectionId: Row.connection_id as Domain.Id.NotionConnectionId,
         ...(CoverUrl ? { CoverUrl } : {}),
         DatabaseId: Row.notion_database_id as Domain.Id.NotionDatabaseId,
@@ -661,6 +665,37 @@ export function RefreshForUser(UserId: string, ConnectionId: string, DataSourceI
         const Icon = NormalizeIcon(Database.icon ?? Object_.icon ?? ParentPage?.icon);
         const NotionLastEditedTime = Object_.last_edited_time ? new Date(Object_.last_edited_time) : new Date();
         const RefreshedAt = new Date();
+        const { data: ProResult } = yield* Effect.promise(async () =>
+            await PrivateSchema.rpc("user_has_pro", { p_user_id: UserId }));
+        const IsPro = ProResult === true;
+        const { count: ActiveCount, error: ActiveCountError } = yield* Effect.promise(async () =>
+            await AdminClient
+                .from("data_sources")
+                .select("notion_data_source_id", { count: "exact", head: true })
+                .eq("user_id", UserId)
+                .eq("selected", true)
+                .eq("free_active", true));
+
+        if (ActiveCountError)
+        {
+            return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: ActiveCountError.message }));
+        }
+
+        const Existing = yield* Effect.promise(async () =>
+            await AdminClient
+                .from("data_sources")
+                .select("free_active,selected")
+                .eq("user_id", UserId)
+                .eq("connection_id", ConnectionId)
+                .eq("notion_data_source_id", DataSourceId)
+                .maybeSingle());
+
+        if (!IsPro && (ActiveCount ?? 0) >= 3 && Existing.data?.selected !== true)
+        {
+            return yield* Effect.fail(new Domain.Error.FreeDatabaseLimitReached({ Limit: 3 }));
+        }
+
+        const FreeActive = Existing.data?.free_active === true || (ActiveCount ?? 0) < 3;
 
         const { error } = yield* Effect.promise(async () =>
             await AdminClient
@@ -669,6 +704,7 @@ export function RefreshForUser(UserId: string, ConnectionId: string, DataSourceI
                     {
                         connection_id: ConnectionId,
                         cover_url: CoverUrl ?? null,
+                        free_active: FreeActive,
                         icon: Icon?.Icon ?? null,
                         icon_type: Icon?.IconType ?? null,
                         notion_data_source_id: DataSourceId,
@@ -697,6 +733,7 @@ export function RefreshForUser(UserId: string, ConnectionId: string, DataSourceI
         );
 
         return {
+            Access: IsPro || FreeActive ? "Available" : "Locked",
             ConnectionId: ConnectionId as Domain.Id.NotionConnectionId,
             ...(CoverUrl ? { CoverUrl } : {}),
             DatabaseId: DatabaseId as Domain.Id.NotionDatabaseId,
@@ -722,20 +759,24 @@ export function ListForUser(UserId: string)
 {
     return Effect.gen(function* ()
     {
-        const { data, error } = yield* Effect.promise(async () =>
-            await AdminClient
+        const [ SourcesResult, ProResult ] = yield* Effect.promise(async () => Promise.all([
+            AdminClient
                 .from("data_sources")
                 .select("*")
                 .eq("user_id", UserId)
                 .eq("selected", true)
-                .order("refreshed_at", { ascending: false }));
+                .order("refreshed_at", { ascending: false }),
+            PrivateSchema.rpc("user_has_pro", { p_user_id: UserId })
+        ]));
+        const { data, error } = SourcesResult;
 
         if (error)
         {
             return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: error.message }));
         }
 
-        return (data ?? []).map((Row) => RowToCached(Row as Record<string, unknown>));
+        return (data ?? []).map((Row) =>
+            RowToCached(Row as Record<string, unknown>, ProResult.data === true));
     });
 }
 
@@ -749,13 +790,16 @@ export function GetForUser(UserId: string, DataSourceId: string)
 {
     return Effect.gen(function* ()
     {
-        const { data, error } = yield* Effect.promise(async () =>
-            await AdminClient
+        const [ SourceResult, ProResult ] = yield* Effect.promise(async () => Promise.all([
+            AdminClient
                 .from("data_sources")
                 .select("*")
                 .eq("user_id", UserId)
                 .eq("notion_data_source_id", DataSourceId)
-                .maybeSingle());
+                .maybeSingle(),
+            PrivateSchema.rpc("user_has_pro", { p_user_id: UserId })
+        ]));
+        const { data, error } = SourceResult;
 
         if (error)
         {
@@ -767,6 +811,63 @@ export function GetForUser(UserId: string, DataSourceId: string)
             return yield* Effect.fail(new Domain.Error.DataSourceNotFound({ DataSourceId: DataSourceId as Domain.Id.NotionDataSourceId }));
         }
 
-        return RowToCached(data as Record<string, unknown>);
+        return RowToCached(data as Record<string, unknown>, ProResult.data === true);
+    });
+}
+
+/** Atomically replaces one of a Free user's three active database slots. */
+export function SwapFreeActiveForUser(
+    UserId: string,
+    ActivateDataSourceId: string,
+    LockDataSourceId: string
+)
+{
+    return Effect.gen(function* ()
+    {
+        const { error } = yield* Effect.promise(async () =>
+            await PrivateSchema.rpc("swap_free_active_data_source", {
+                p_activate_data_source_id: ActivateDataSourceId,
+                p_lock_data_source_id: LockDataSourceId,
+                p_user_id: UserId
+            }));
+
+        if (error)
+        {
+            if (error.message.includes("DATA_SOURCE_NOT_FOUND"))
+            {
+                return yield* Effect.fail(new Domain.Error.DataSourceNotFound({
+                    DataSourceId: ActivateDataSourceId as Domain.Id.NotionDataSourceId
+                }));
+            }
+
+            return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: error.message }));
+        }
+
+        return yield* ListForUser(UserId);
+    });
+}
+
+/** Removes a database from Notivex without deleting anything in Notion. */
+export function RemoveForUser(UserId: string, DataSourceId: string)
+{
+    return Effect.gen(function* ()
+    {
+        const { data, error } = yield* Effect.promise(async () =>
+            await PrivateSchema.rpc("remove_data_source_from_notivex", {
+                p_data_source_id: DataSourceId,
+                p_user_id: UserId
+            }));
+
+        if (error)
+        {
+            return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: error.message }));
+        }
+
+        if (data !== true)
+        {
+            return yield* Effect.fail(new Domain.Error.DataSourceNotFound({
+                DataSourceId: DataSourceId as Domain.Id.NotionDataSourceId
+            }));
+        }
     });
 }

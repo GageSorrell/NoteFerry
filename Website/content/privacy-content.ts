@@ -18,7 +18,7 @@
 import type { LegalSection } from "@/content/legal-section";
 
 export/** The effective date shown at the top of the Privacy page. */
-const privacyEffectiveDate = "August 19, 2026";
+const privacyEffectiveDate = "August 21, 2026";
 
 export/** The ordered sections of the Privacy Policy. */
 const privacySections: ReadonlyArray<LegalSection> = [
@@ -63,7 +63,17 @@ const privacySections: ReadonlyArray<LegalSection> = [
             + "Deletion\" below for how long this is kept.",
             "Advertising identifiers — Google AdMob, which serves ads in the App, "
             + "may collect device and advertising identifiers and other technical "
-            + "information. See \"Advertising\" below."
+            + "information. See \"Advertising\" below.",
+            "Purchase information — RevenueCat, Apple, and Google process purchases. "
+            + "We receive product and subscription identifiers, transaction metadata, "
+            + "purchase and expiration dates, entitlement and renewal state, store, and "
+            + "a pseudonymous identifier based on your Notivex account. We never receive "
+            + "your complete payment-card details.",
+            "Notification information — if you separately opt in to subscription-sale "
+            + "notifications, we store your Expo push token, device and platform "
+            + "identifier, preference, last-seen time, campaign delivery tickets and "
+            + "receipts, and invalid-token status. Operational notification permission "
+            + "does not by itself enroll you in promotional notifications."
         ]
     },
     {
@@ -76,7 +86,10 @@ const privacySections: ReadonlyArray<LegalSection> = [
             + "retrying that request if it initially fails or you were offline; "
             + "maintain a history of your operations so you can see what was "
             + "submitted and its status; respond to support and data requests you "
-            + "make; and serve advertising through Google AdMob.",
+            + "make; enforce feature entitlements and usage limits; prevent purchase "
+            + "fraud; provide billing support; send subscription-sale notices only when "
+            + "you opt in; and serve advertising to confirmed Free accounts through "
+            + "Google AdMob.",
             "We do not use the content of the Notion pages you create through "
             + "Notivex for any purpose other than creating the page you asked us "
             + "to create."
@@ -135,7 +148,10 @@ const privacySections: ReadonlyArray<LegalSection> = [
             "We do not sell your personal information.",
             "We share information only as needed to operate Notivex: with Notion, "
             + "to create pages on your behalf; with Supabase, our backend "
-            + "infrastructure provider; with Google AdMob, to serve ads; and with "
+            + "infrastructure provider; with Google AdMob, to serve ads to Free "
+            + "accounts; with RevenueCat, Apple, and Google, to process purchases "
+            + "and maintain entitlements; with Expo Push Service, APNs, and FCM, "
+            + "to deliver requested notifications; and with "
             + "Resend, an email delivery service we use to notify ourselves (not "
             + "you) when you submit an in-app data request, so we can fulfill it — "
             + "that notification includes your account and request identifiers, "
@@ -165,12 +181,19 @@ const privacySections: ReadonlyArray<LegalSection> = [
             "Deleting your account is immediate and permanent: it removes your "
             + "profile, Notion connection and credentials, cached data-source "
             + "schemas, destinations, and operation history — including the "
-            + "content of pages you've previously submitted — from our systems.",
+            + "content of pages you've previously submitted — from our operational "
+            + "systems. Store providers and RevenueCat may retain transaction or "
+            + "customer records as required for accounting, fraud prevention, legal "
+            + "compliance, and purchase restoration under their own policies.",
             "Short of deleting your account, we retain your operation history, "
             + "including submitted page content, so you can see your submission "
             + "history and so failed or offline submissions can be retried. We do "
             + "not currently delete individual operations automatically after a "
-            + "fixed period; if that changes, this section will be updated."
+            + "fixed period; if that changes, this section will be updated. Push tokens "
+            + "are removed on logout, account reassignment, account deletion, opt-out, "
+            + "or when a push provider reports that the device is unregistered. Campaign "
+            + "delivery records are retained only as needed for deduplication, receipt "
+            + "handling, abuse prevention, and support."
         ]
     },
     {
@@ -186,7 +209,11 @@ const privacySections: ReadonlyArray<LegalSection> = [
             + "(account settings), which notifies us so we can prepare and send "
             + "it to you. You can delete your account and all associated data at "
             + "any time from the App's account settings, as described above. For "
-            + "any other request, contact us using the details below."
+            + "any other request, contact us using the details below.",
+            "You can withdraw consent for subscription-sale notifications at any time "
+            + "in Settings > Notifications. Turning off operating-system notification "
+            + "permission also stops delivery, but using the in-app switch lets us "
+            + "remove the promotional push registration promptly."
         ]
     },
     {

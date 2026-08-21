@@ -18,6 +18,7 @@ import * as React from "react";
 import {
     ActivityIndicator,
     Alert,
+    Platform,
     ScrollView,
     View
 } from "react-native";
@@ -27,6 +28,7 @@ import {
     BottomSheet,
     BottomSheetView,
     Button,
+    ButtonLabel,
     Caption,
     Checkbox,
     Description,
@@ -38,7 +40,7 @@ import {
     Pressable,
     ScreenTitle
 } from "@notivex/ui/Primitive";
-import { ChevronDown, ChevronUp } from "lucide-react-native";
+import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react-native";
 import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { Boolean } from "effect";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -48,7 +50,9 @@ import type { ImageAsset } from "@/Domain/Utility";
 import type { NotionSyncStatus } from "@/features/onboarding/use-notion-sync";
 import { OnboardingScreen } from "@/features/onboarding/onboarding-screen";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { SymbolView } from "expo-symbols";
 import type { Thunk } from "@sorrell/effect/Function";
+import { router } from "expo-router";
 
 /** Props shared by views with a single primary action. */
 export interface OnboardingActionProps
@@ -250,18 +254,29 @@ const SignInModalView = ({
                         databases under that page.
                     </Body>
                     <View style={ Styles.Spacer } />
-                    <AuthButton
-                        Icon={
-                            <Image
-                                source={ require("../../../Resource/Onboarding/NotionLogoLight.svg") }
-                                style={ { height: 24, width: 24 } }
-                            />
-                        }
+                    <Button
                         Loading={ Pending }
                         OnPress={ OnSignIn }
                         Style={ Styles.FullWidthCta }>
-                        Log in with Notion
-                    </AuthButton>
+                        <ButtonLabel Color={ Token.Semantic.Primary }>
+                            Log in with Notion
+                        </ButtonLabel>
+                        { Platform.OS === "ios"
+                            ? (
+                                <SymbolView
+                                    name="arrow.up.right.square"
+                                    size={ 16 }
+                                    tintColor={ Theme.Semantic.Primary }
+                                />
+                            )
+                            : (
+                                <ExternalLink
+                                    color={ Theme.Semantic.Primary }
+                                    size={ 16 }
+                                    strokeWidth={ 1.8 }
+                                />
+                            ) }
+                    </Button>
                 </ScrollView>
             </SafeAreaView>
         </View>
@@ -486,7 +501,7 @@ const DatabaseSelectionView = ({
         );
     const [ SelectedIds, SetSelectedIds ] = React.useState<ReadonlySet<string>>(
         () => new Set(SortedDatabases
-            .slice(0, 10)
+            .slice(0, 3)
             .map((Database: Domain.DataSource.OnboardingDatabase) =>
                 Database.DataSourceId))
     );
@@ -509,6 +524,20 @@ const DatabaseSelectionView = ({
             }
             else
             {
+                if (Current.size >= 3)
+                {
+                    Alert.alert(
+                        "Add unlimited databases with Pro",
+                        "Free includes three active databases. You can replace them later without changing Notion.",
+                        [
+                            { style: "cancel", text: "Not now" },
+                            { onPress: () => router.push("/plans"), text: "Compare plans" },
+                            { onPress: () => router.push("/subscribe"), text: "Upgrade" }
+                        ]
+                    );
+                    return Current;
+                }
+
                 Next.add(DataSourceId);
             }
 
@@ -534,7 +563,8 @@ const DatabaseSelectionView = ({
                         Choose your databases
                     </Heading1>
                     <Description>
-                        These are the databases that Notivex will display for creating pages.
+                        Free includes up to three databases. Notivex Pro includes unlimited
+                        databases, and you can replace a Free selection later.
                     </Description>
                 </View>
 

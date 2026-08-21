@@ -19,7 +19,7 @@
 
 import * as Domain from "@notivex/domain";
 import { Effect, Schema } from "effect";
-import { AdminClient } from "./Database.ts";
+import { AdminClient, PrivateSchema } from "./Database.ts";
 
 /* The schema-versioned blob stored in `destinations.configuration`: the     *
  * `FieldConfiguration` and `DestinationTemplate`, encoded/decoded through   *
@@ -88,6 +88,34 @@ function RowToDestination(Row: Record<string, unknown>): Domain.Destination.Dest
         Template: Config.Template,
         UpdatedAt: new Date(Row.updated_at as string),
         UserId: Row.user_id as Domain.Id.UserId
+    };
+}
+
+function AutomaticFieldConfiguration(
+    Properties: ReadonlyArray<Domain.Property.PropertyDefinition>
+): Domain.Destination.FieldConfiguration
+{
+    return Domain.Destination.ReconcileFieldConfiguration(
+        { FieldOrder: [ ], Fields: [ ], Version: 1 },
+        Properties
+    );
+}
+
+function FreeProjection(
+    Destination: Domain.Destination.Destination,
+    Source: { readonly property_schema: unknown; readonly title: string }
+): Domain.Destination.Destination
+{
+    const { Icon: _StoredIcon, ...Base } = Destination;
+
+    return {
+        ...Base,
+        FieldConfiguration: AutomaticFieldConfiguration(
+            Source.property_schema as ReadonlyArray<Domain.Property.PropertyDefinition>
+        ),
+        Name: Source.title,
+        PostCreationBehavior: { Type: "Home" },
+        Template: { Type: "None" }
     };
 }
 
@@ -173,21 +201,45 @@ export function ListForUser(UserId: string)
 {
     return Effect.gen(function* ()
     {
-        const { data, error } = yield* Effect.promise(async () =>
-            await AdminClient
-                .from("destinations")
-                .select("*")
-                .eq("user_id", UserId)
-                .order("position", { ascending: true }));
+        const [ DestinationResult, DataSourceResult, ProResult ] = yield* Effect.promise(
+            async () => Promise.all([
+                AdminClient
+                    .from("destinations")
+                    .select("*")
+                    .eq("user_id", UserId)
+                    .order("position", { ascending: true }),
+                AdminClient
+                    .from("data_sources")
+                    .select("notion_data_source_id,title,property_schema")
+                    .eq("user_id", UserId),
+                PrivateSchema.rpc("user_has_pro", { p_user_id: UserId })
+            ])
+        );
+        const { data, error } = DestinationResult;
 
         if (error)
         {
             return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: error.message }));
         }
 
-        return yield* Effect.try({
+        const Destinations = yield* Effect.try({
             catch: DecodeFailed,
             try: () => (data ?? [ ]).map(RowToDestination)
+        });
+
+        if (ProResult.data === true)
+        {
+            return Destinations;
+        }
+
+        const SourceById = new Map((DataSourceResult.data ?? [ ]).map((Source) =>
+            [ Source.notion_data_source_id, Source ] as const));
+
+        return Destinations.map((Destination) =>
+        {
+            const Source = SourceById.get(Destination.DataSourceId);
+
+            return Source ? FreeProjection(Destination, Source) : Destination;
         });
     });
 }
@@ -226,7 +278,7 @@ export function CreateForUser(UserId: string, Payload: DestinationCreateInput)
         const { data: DataSource, error: DataSourceError } = yield* Effect.promise(async () =>
             await AdminClient
                 .from("data_sources")
-                .select("notion_data_source_id")
+                .select("notion_data_source_id,title,property_schema,free_active")
                 .eq("connection_id", Payload.ConnectionId)
                 .eq("notion_data_source_id", Payload.DataSourceId)
                 .eq("user_id", UserId)
@@ -244,14 +296,28 @@ export function CreateForUser(UserId: string, Payload: DestinationCreateInput)
             }));
         }
 
+        const { data: IsPro } = yield* Effect.promise(async () =>
+            await PrivateSchema.rpc("user_has_pro", { p_user_id: UserId }));
+
+        if (IsPro !== true && DataSource.free_active !== true)
+        {
+            return yield* Effect.fail(new Domain.Error.FeatureGateError({ Feature: "Database" }));
+        }
+
+        const EffectiveFieldConfiguration = IsPro === true
+            ? Payload.FieldConfiguration
+            : AutomaticFieldConfiguration(
+                DataSource.property_schema as ReadonlyArray<Domain.Property.PropertyDefinition>
+            );
+
         const ConfigurationJson = yield* Effect.try({
             catch: DecodeFailed,
             try: () => EncodeConfiguration({
-                FieldConfiguration: Payload.FieldConfiguration,
-                ...(Payload.PostCreationBehavior
+                FieldConfiguration: EffectiveFieldConfiguration,
+                ...(IsPro === true && Payload.PostCreationBehavior
                     ? { PostCreationBehavior: Payload.PostCreationBehavior }
                     : {}),
-                Template: Payload.Template
+                Template: IsPro === true ? Payload.Template : { Type: "None" }
             })
         });
 
@@ -262,8 +328,8 @@ export function CreateForUser(UserId: string, Payload: DestinationCreateInput)
                     configuration: ConfigurationJson,
                     connection_id: Payload.ConnectionId,
                     data_source_id: Payload.DataSourceId,
-                    icon: Payload.Icon ?? null,
-                    name: Payload.Name,
+                    icon: IsPro === true ? Payload.Icon ?? null : null,
+                    name: IsPro === true ? Payload.Name : DataSource.title,
                     position: Payload.Position,
                     user_id: UserId
                 })
@@ -313,6 +379,16 @@ export function UpdateForUser(UserId: string, DestinationId: string, Payload: De
         {
             return yield* Effect.fail(new Domain.Error.DestinationNotFound({
                 DestinationId: DestinationId as Domain.Id.DestinationId
+            }));
+        }
+
+        const { data: IsPro } = yield* Effect.promise(async () =>
+            await PrivateSchema.rpc("user_has_pro", { p_user_id: UserId }));
+
+        if (IsPro !== true && Object.keys(Payload).length > 0)
+        {
+            return yield* Effect.fail(new Domain.Error.FeatureGateError({
+                Feature: "DatabaseCustomization"
             }));
         }
 

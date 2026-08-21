@@ -87,7 +87,7 @@ export type FieldConfiguration = Schema.Schema.Type<typeof FieldConfiguration>;
 /** Whether a property can be edited by the current quick-entry form. */
 export function IsQuickEntryProperty(Property: PropertyDefinition): boolean
 {
-    return ![ "Files", "People", "Relation" ].includes(Property.Type);
+    return ![ "People", "Relation" ].includes(Property.Type);
 }
 
 /**

@@ -39,6 +39,8 @@ const Create = HttpApiEndpoint.post(
             Domain.Error.NotionRateLimited,
             Domain.Error.NotionValidationError,
             Domain.Error.NotionUnavailable,
+            Domain.Error.FreeCreationWindowExceeded,
+            Domain.Error.FeatureGateError,
             Domain.Error.DatabaseError
         ],
         payload: Domain.Command.CreatePageCommand,

@@ -13,15 +13,16 @@
  */
 
 import type * as Domain from "@notivex/domain";
-import { ActivityIndicator, ScrollView, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, View } from "react-native";
 import { Body, Button, Description, Heading1, LabelText } from "@notivex/ui/Primitive";
 import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDataSources } from "@/features/data-sources/use-data-sources";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useLocalSearchParams } from "expo-router";
+import { useSubscription } from "@/Domain/Subscription";
 
-/* eslint-disable-next-line jsdoc/require-jsdoc */
+/** True when Notion supplied an emoji rather than an image URL. */
 function IsEmoji(Icon: string | undefined): Icon is string
 {
     return Icon !== undefined && !Icon.startsWith("http");
@@ -34,14 +35,60 @@ const DataSourcesScreen = () =>
     const Styles = useStyles();
     const Params = useLocalSearchParams<{ connectionId: string; workspaceName?: string }>();
     const ConnectionId = Params.connectionId as Domain.Id.NotionConnectionId;
+    const { HasProAccess } = useSubscription();
 
     const { Discovered, Cached, IsSearching, BusyId, Search, Cache } = useDataSources(ConnectionId);
 
-    type CachedById = ReadonlyMap<Domain.Id.NotionDataSourceId, Domain.DataSource.CachedDataSourceSchema>;
-    const CachedById: CachedById = new Map(
+    type CachedDataSourceMap = ReadonlyMap<Domain.Id.NotionDataSourceId, Domain.DataSource.CachedDataSourceSchema>;
+    const CachedById: CachedDataSourceMap = new Map(
         Cached.map((Entry: Domain.DataSource.CachedDataSourceSchema) =>
             [ Entry.DataSourceId, Entry ] as const)
     );
+    const Save = (DataSourceId: Domain.Id.NotionDataSourceId): void =>
+    {
+        const Existing = CachedById.get(DataSourceId);
+        if (!Existing && !HasProAccess
+            && Cached.filter((Source) => Source.Access === "Available").length >= 3)
+        {
+            Alert.alert(
+                "Add unlimited databases with Pro",
+                "Free includes three active databases. You can replace one from Database settings.",
+                [
+                    { style: "cancel", text: "Not now" },
+                    { onPress: Router.push("/plans"), text: "Compare plans" },
+                    { onPress: Router.push("/subscribe"), text: "Upgrade" }
+                ]
+            );
+            return;
+        }
+
+        void Cache(DataSourceId);
+    };
+    const Configure = (Source: Domain.DataSource.DiscoveredDataSource): void =>
+    {
+        if (!HasProAccess)
+        {
+            Alert.alert(
+                "Customize databases with Pro",
+                "Pro unlocks aliases, form settings, templates, and post-creation behavior.",
+                [
+                    { style: "cancel", text: "Not now" },
+                    { onPress: Router.push("/plans"), text: "Compare plans" },
+                    { onPress: Router.push("/subscribe"), text: "Upgrade" }
+                ]
+            );
+            return;
+        }
+
+        Router.push({
+            params: {
+                connectionId: Source.ConnectionId,
+                dataSourceId: Source.DataSourceId,
+                title: Source.Title
+            },
+            pathname: "/destination-config"
+        })();
+    };
 
     return (
         <View style={ Styles.Container }>
@@ -100,7 +147,8 @@ const DataSourcesScreen = () =>
                                                 { Entry
                                                     ? (
                                                         <LabelText Style={ Styles.Meta }>
-                                                            Saved · { Entry.Properties.length } fields
+                                                            { Entry.Access === "Locked" ? "Locked" : "Saved" }
+                                                            { ` · ${Entry.Properties.length} fields` }
                                                         </LabelText>
                                                     )
                                                     : null }
@@ -112,15 +160,7 @@ const DataSourcesScreen = () =>
                                                 ? (
                                                     <Button
                                                         Appearance="Link"
-                                                        OnPress={ Router.push({
-                                                            params:
-                                                            {
-                                                                connectionId: Source.ConnectionId,
-                                                                dataSourceId: Source.DataSourceId,
-                                                                title: Source.Title
-                                                            },
-                                                            pathname: "/destination-config"
-                                                        }) }>
+                                                        OnPress={ () => Configure(Source) }>
                                                         Configure
                                                     </Button>
                                                 )
@@ -128,7 +168,7 @@ const DataSourcesScreen = () =>
                                             <Button
                                                 Appearance={ Entry ? "Cell" : "Primary" }
                                                 Disabled={ Busy }
-                                                OnPress={ () => void Cache(Source.DataSourceId) }>
+                                                OnPress={ () => Save(Source.DataSourceId) }>
                                                 { Busy ? "Saving…" : Entry ? "Update" : "Save" }
                                             </Button>
                                         </View>

@@ -626,6 +626,8 @@ export async function SendFileUpload(
 export interface NotionCreatePageBody
 {
     readonly children?: ReadonlyArray<unknown>;
+    readonly cover?: unknown;
+    readonly icon?: unknown;
     readonly parent: { readonly type: "data_source_id"; readonly data_source_id: string };
     readonly properties: Readonly<Record<string, unknown>>;
 }

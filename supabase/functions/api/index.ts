@@ -23,6 +23,7 @@ import * as FileSystem from "effect/FileSystem";
 import * as Pages from "../_shared/Pages.ts";
 import * as Path from "effect/Path";
 import * as Profile from "../_shared/Profile.ts";
+import * as Subscriptions from "../_shared/Subscriptions.ts";
 import { AdminClient, PrivateSchema } from "../_shared/Database.ts";
 import { Effect, Layer } from "effect";
 import { Etag, HttpPlatform, HttpRouter } from "effect/unstable/http";
@@ -176,6 +177,24 @@ const DataSourcesLive = HttpApiBuilder.group(NotivexApi, "DataSources", (Handler
                 const UserId = yield* RequireUser;
 
                 return yield* DataSources.GetForUser(UserId, Input.params.DataSourceId);
+            }))
+        .handle("SwapFreeActive", (Input) =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                return yield* DataSources.SwapFreeActiveForUser(
+                    UserId,
+                    Input.payload.ActivateDataSourceId,
+                    Input.payload.LockDataSourceId
+                );
+            }))
+        .handle("Remove", (Input) =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                yield* DataSources.RemoveForUser(UserId, Input.params.DataSourceId);
             })));
 
 const DestinationsLive = HttpApiBuilder.group(NotivexApi, "Destinations", (Handlers) =>
@@ -253,6 +272,56 @@ const ExportRequestsLive = HttpApiBuilder.group(NotivexApi, "ExportRequests", (H
             yield* ExportRequests.CreateForUser(UserId);
         })));
 
+const SubscriptionsLive = HttpApiBuilder.group(NotivexApi, "Subscriptions", (Handlers) =>
+    Handlers
+        .handle("Status", () =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                return yield* Subscriptions.GetForUser(UserId);
+            }))
+        .handle("Allowance", () =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                return yield* Subscriptions.GetAllowanceForUser(UserId);
+            }))
+        .handle("Refresh", () =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                return yield* Subscriptions.RefreshFromRevenueCat(UserId);
+            }))
+        .handle("Sale", () =>
+            Effect.gen(function* ()
+            {
+                yield* RequireUser;
+
+                return yield* Subscriptions.GetActiveSale();
+            }))
+        .handle("RegisterDevice", (Input) =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                yield* Subscriptions.RegisterDeviceForUser(
+                    UserId,
+                    Input.payload.DeviceId,
+                    Input.payload.Platform,
+                    Input.payload.PushToken
+                );
+            }))
+        .handle("RemoveDevice", (Input) =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                yield* Subscriptions.RemoveDeviceForUser(UserId, Input.payload.DeviceId);
+            })));
+
 /* The web platform services the served HttpApi needs. Edge functions never
  * serve files, so a no-op FileSystem is sufficient. */
 const PlatformLayer = Layer.mergeAll(
@@ -269,6 +338,7 @@ const AppLayer = HttpApiBuilder.layer(NotivexApi).pipe(
     Layer.provide(ProfileLive),
     Layer.provide(AccountLive),
     Layer.provide(ExportRequestsLive),
+    Layer.provide(SubscriptionsLive),
     Layer.provide(PlatformLayer)
 );
 

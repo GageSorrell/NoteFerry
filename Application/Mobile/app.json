@@ -125,7 +125,8 @@
           }
         }
       ],
-      "expo-mail-composer"
+      "expo-mail-composer",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true,

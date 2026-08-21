@@ -1,34 +1,28 @@
-/**
- * Whether the current user should see no ads at all. No purchase or
- * subscription system exists yet -- this is the single seam every ad
- * placement checks, so wiring a future paid tier only means changing the
- * body of {@link IsAdFree} (and, if it becomes asynchronous/reactive, the
- * subscribable snapshot behind {@link useIsAdFree}, following the same
- * `useSyncExternalStore` shape as {@link useAdsReady}).
- *
- * @module notivex/Domain/Ads/Entitlement
- *
- * @file      Entitlement.ts
- * @author    Gage Sorrell <gage@sorrell.sh>
- * @copyright (c) 2026 Gage Sorrell
- * @license   MIT
- */
+/** Reactive ad eligibility. Unresolved billing state always suppresses ads. */
 
-export/**
-       * Whether the current user is entitled to an ad-free experience. Always
-       * `false` today. For use outside components (module singletons like
-       * {@link AppOpenAdManager}); inside components, prefer
-       * {@link useIsAdFree}.
-       *
-       * @category Ads
-       * @since 1.0.0
-       */
-const IsAdFree = (): boolean => false;
+import { useSyncExternalStore } from "react";
 
-export/**
-       * Whether the current user is entitled to an ad-free experience.
-       *
-       * @category Ads
-       * @since 1.0.0
-       */
-const useIsAdFree = (): boolean => IsAdFree();
+let ConfirmedFree: boolean | null = null;
+const Listeners = new Set<() => void>();
+
+/** Called only after server verification. */
+export function SetConfirmedFree(Value: boolean | null): void
+{
+    if (ConfirmedFree === Value) return;
+    ConfirmedFree = Value;
+    for (const Listener of Listeners) Listener();
+}
+
+/** Paid and unresolved users are both ad-free. */
+export const IsAdFree = (): boolean => ConfirmedFree !== true;
+
+/** Reactive form of {@link IsAdFree}. */
+export const useIsAdFree = (): boolean => useSyncExternalStore(
+    (Listener) =>
+    {
+        Listeners.add(Listener);
+        return () => Listeners.delete(Listener);
+    },
+    IsAdFree,
+    () => true
+);

@@ -23,6 +23,7 @@ import { ExportRequestsApi } from "./ExportRequestsApi.js";
 import { HttpApi } from "effect/unstable/httpapi";
 import { PagesApi } from "./PagesApi.js";
 import { ProfileApi } from "./ProfileApi.js";
+import { SubscriptionsApi } from "./SubscriptionsApi.js";
 
 /**
  * The union of every domain error any `NotivexApi` endpoint can produce.
@@ -51,5 +52,6 @@ const NotivexApi = HttpApi.make("NotivexApi").add(
     PagesApi.prefix("/Pages"),
     ProfileApi.prefix("/Profile"),
     AccountApi.prefix("/Account"),
-    ExportRequestsApi.prefix("/ExportRequests")
+    ExportRequestsApi.prefix("/ExportRequests"),
+    SubscriptionsApi.prefix("/Subscriptions")
 );

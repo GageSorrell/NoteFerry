@@ -15,34 +15,54 @@ import type * as Domain from "@notivex/domain";
 import { Checkbox, Description, Setting, SettingsContainer } from "@notivex/ui/Primitive";
 import { MakeStyles, Token, ViewStyle } from "@notivex/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView, View } from "react-native";
+import { Alert, ScrollView, View } from "react-native";
 import { useCallback } from "react";
 import { useConnections } from "@/Domain/Connection";
 import { useSettings } from "@/features/settings/use-settings";
+import { useSubscription } from "@/Domain/Subscription";
+import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 
 const QuickActionSettingsScreen = (): React.JSX.Element =>
 {
     const Styles = useStyles();
     const { DataSources } = useConnections();
     const { Settings: AppSettings, Update } = useSettings();
+    const { HasProAccess } = useSubscription();
+    const Router = useLazyRouter();
 
     const ToggleQuickAction = useCallback((DataSourceId: Domain.Id.NotionDataSourceId) =>
     {
         const Current = AppSettings.QuickActionDataSourceIds;
+        const IsAdding = !Current.includes(DataSourceId);
+
+        if (IsAdding && !HasProAccess && Current.length >= 1)
+        {
+            Alert.alert(
+                "Add more Quick Actions with Pro",
+                "Free includes one home-screen database shortcut. Pro includes up to six.",
+                [
+                    { style: "cancel", text: "Not now" },
+                    { onPress: Router.push("/plans"), text: "Compare plans" },
+                    { onPress: Router.push("/subscribe"), text: "Upgrade" }
+                ]
+            );
+            return;
+        }
+
         const Next = Current.includes(DataSourceId)
             ? Current.filter((Id: Domain.Id.NotionDataSourceId) => Id !== DataSourceId)
             : [ ...Current, DataSourceId ];
 
         void Update({ QuickActionDataSourceIds: Next });
-    }, [ AppSettings.QuickActionDataSourceIds, Update ]);
+    }, [ AppSettings.QuickActionDataSourceIds, HasProAccess, Router, Update ]);
 
     return (
         <View style={ Styles.Container }>
             <SafeAreaView style={ Styles.SafeArea }>
                 <Description>
-                    Choose up to six databases to show as home-screen shortcuts
-                    (long-press the app icon). Leave all unchecked to use the first
-                    six databases automatically.
+                    Free includes one database shortcut; Pro includes up to six.
+                    Long-press the app icon to use one. Your full saved selection
+                    is restored after re-upgrading.
                 </Description>
 
                 <ScrollView
@@ -55,7 +75,8 @@ const QuickActionSettingsScreen = (): React.JSX.Element =>
                         {
                             const Checked = AppSettings.QuickActionDataSourceIds
                                 .includes(Source.DataSourceId);
-                            const AtLimit = AppSettings.QuickActionDataSourceIds.length >= 6;
+                            const EffectiveLimit = HasProAccess ? 6 : 1;
+                            const AtLimit = AppSettings.QuickActionDataSourceIds.length >= EffectiveLimit;
 
                             return (
                                 <Setting
@@ -63,7 +84,7 @@ const QuickActionSettingsScreen = (): React.JSX.Element =>
                                     key={ Source.DataSourceId }>
                                     <Checkbox
                                         Checked={ Checked }
-                                        Disabled={ !Checked && AtLimit }
+                                        Disabled={ !Checked && AtLimit && HasProAccess }
                                         OnCheckedChange={ () => ToggleQuickAction(Source.DataSourceId) }
                                     />
                                 </Setting>

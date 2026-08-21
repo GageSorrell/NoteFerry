@@ -19,7 +19,7 @@
 import * as Domain from "@notivex/domain";
 import * as Notion from "./Notion.ts";
 import { CallNotionData, type ConnectionTokens, LoadConnectionTokens, RateLimited } from "./NotionAuth.ts";
-import { AdminClient } from "./Database.ts";
+import { AdminClient, PrivateSchema } from "./Database.ts";
 import { Effect } from "effect";
 
 /** The page-creation input, typed in `@notivex/domain` identity (see the note
@@ -27,8 +27,10 @@ import { Effect } from "effect";
 export interface CreatePageInput
 {
     readonly Body?: string | undefined;
+    readonly Cover?: Domain.Command.PageCoverInput | undefined;
     readonly DestinationId: Domain.Id.DestinationId;
     readonly OperationId: Domain.Id.OperationId;
+    readonly Icon?: Domain.Command.PageIconInput | undefined;
     readonly Title?: string | undefined;
     readonly Values: readonly Domain.PageDraft.PropertyInputValue[];
 }
@@ -251,6 +253,13 @@ export function CreateForUser(UserId: string, Command: CreatePageInput)
         }
 
         const Properties = DataSource.property_schema as readonly Domain.Property.PropertyDefinition[];
+        const { data: IsPro } = yield* Effect.promise(async () =>
+            await PrivateSchema.rpc("user_has_pro", { p_user_id: UserId }));
+
+        if (IsPro !== true && (Command.Icon || Command.Cover))
+        {
+            return yield* Effect.fail(new Domain.Error.FeatureGateError({ Feature: "PageArtwork" }));
+        }
         const PropertyById = new Map(Properties.map((Property) => [ Property.Id as string, Property ] as const));
         const TitleProperty = Properties.find((Property) => Property.Type === "Title");
 
@@ -301,7 +310,9 @@ export function CreateForUser(UserId: string, Command: CreatePageInput)
                 type: "paragraph"
             } ];
 
-        for (const Field of Configuration.FieldConfiguration?.Fields ?? [])
+        for (const Field of IsPro === true
+            ? Configuration.FieldConfiguration?.Fields ?? []
+            : [])
         {
             if (Field.Required && Field.PropertyId && !Provided.has(Field.PropertyId))
             {
@@ -309,48 +320,50 @@ export function CreateForUser(UserId: string, Command: CreatePageInput)
             }
         }
 
-        /* 4. Idempotency: return the existing page if this OperationId already
-         * succeeded; otherwise (re)mark the attempt pending before calling. */
-        const { data: Existing, error: ExistingError } = yield* Effect.promise(async () =>
-            await AdminClient
-                .from("operations")
-                .select("state, notion_page_id")
-                .eq("id", Command.OperationId)
-                .eq("user_id", UserId)
-                .maybeSingle());
+        /* 4. Reserve the rolling-window slot and operation atomically. The
+         * transaction is serialized per user, so concurrent sixth requests
+         * cannot both observe an available slot. Idempotent replays return the
+         * existing operation without consuming another slot. */
+        const { data: ReservationRows, error: OperationError } = yield* Effect.promise(async () =>
+            await PrivateSchema.rpc("reserve_page_operation", {
+                p_destination_id: Command.DestinationId,
+                p_operation_id: Command.OperationId,
+                p_payload: Command,
+                p_user_id: UserId
+            }));
 
-        if (ExistingError)
+        if (OperationError)
         {
-            return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: ExistingError.message }));
+            if (OperationError.message.includes("FEATURE_GATE:database"))
+            {
+                return yield* Effect.fail(new Domain.Error.FeatureGateError({ Feature: "Database" }));
+            }
+
+            return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: OperationError.message }));
         }
 
-        if (Existing && Existing.state === "succeeded" && Existing.notion_page_id)
+        const Reservation = (ReservationRows as ReadonlyArray<Record<string, unknown>> | null)?.[0];
+
+        if (Reservation?.operation_state === "limit_exceeded")
+        {
+            return yield* Effect.fail(new Domain.Error.FreeCreationWindowExceeded({
+                NextAvailableAt: new Date(Reservation.next_available_at as string)
+            }));
+        }
+
+        if (Reservation?.operation_state === "succeeded" && Reservation.notion_page_id)
         {
             return {
-                NotionPageId: Existing.notion_page_id as Domain.Id.NotionPageId,
+                NotionPageId: Reservation.notion_page_id as Domain.Id.NotionPageId,
                 OperationId: Command.OperationId
             };
         }
 
-        const { error: OperationError } = yield* Effect.promise(async () =>
-            await AdminClient
-                .from("operations")
-                .upsert(
-                    {
-                        destination_id: Command.DestinationId,
-                        error: null,
-                        id: Command.OperationId,
-                        notion_page_id: null,
-                        payload: Command,
-                        state: "pending",
-                        user_id: UserId
-                    },
-                    { onConflict: "id" }
-                ));
-
-        if (OperationError)
+        if (Reservation?.operation_state === "already_pending")
         {
-            return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: OperationError.message }));
+            return yield* Effect.fail(new Domain.Error.NotionUnavailable({
+                Message: "This page creation is already in progress. Retry shortly."
+            }));
         }
 
         /* 5. Resolve any pending file uploads, then call Notion; on failure
@@ -366,10 +379,67 @@ export function CreateForUser(UserId: string, Command: CreatePageInput)
                     yield* ResolveFilesValue(Tokens, ConnectionId, Pending.Value);
             }
 
+            let NotionCover: unknown;
+            if (Command.Cover?.Type === "External")
+            {
+                NotionCover = { external: { url: Command.Cover.Url }, type: "external" };
+            }
+            else if (Command.Cover?.Type === "Upload")
+            {
+                const Upload = yield* Effect.tryPromise({
+                    catch: (Error_) => Error_,
+                    try: async () =>
+                    {
+                        const ContentType = Command.Cover?.MimeType ?? "image/jpeg";
+                        const Filename = Command.Cover?.Name ?? "cover.jpg";
+                        const Created = await CallNotionData(Tokens, ConnectionId, (Token) =>
+                            Notion.CreateFileUpload(Token, { ContentType, Filename }));
+                        await CallNotionData(Tokens, ConnectionId, (Token) =>
+                            Notion.SendFileUpload(
+                                Token,
+                                Created.id,
+                                DecodeBase64(Command.Cover?.Base64 ?? ""),
+                                Filename,
+                                ContentType
+                            ));
+                        return { file_upload: { id: Created.id }, type: "file_upload" };
+                    }
+                });
+                NotionCover = Upload;
+            }
+
+            const NotionIcon = Command.Icon?.Type === "Emoji"
+                ? { emoji: Command.Icon.Emoji, type: "emoji" }
+                : Command.Icon?.Type === "External"
+                    ? { external: { url: Command.Icon.Url }, type: "external" }
+                    : Command.Icon?.Type === "Upload"
+                        ? yield* Effect.tryPromise({
+                            catch: (Error_) => Error_,
+                            try: async () =>
+                            {
+                                const ContentType = Command.Icon?.MimeType ?? "image/png";
+                                const Filename = Command.Icon?.Name ?? "icon.png";
+                                const Created = await CallNotionData(Tokens, ConnectionId, (Token) =>
+                                    Notion.CreateFileUpload(Token, { ContentType, Filename }));
+                                await CallNotionData(Tokens, ConnectionId, (Token) =>
+                                    Notion.SendFileUpload(
+                                        Token,
+                                        Created.id,
+                                        DecodeBase64(Command.Icon?.Base64 ?? ""),
+                                        Filename,
+                                        ContentType
+                                    ));
+                                return { file_upload: { id: Created.id }, type: "file_upload" };
+                            }
+                        })
+                        : undefined;
+
             return yield* Effect.tryPromise({
                 catch: (Error_) => Error_,
                 try: () => CallNotionData(Tokens, ConnectionId, (Token) => Notion.CreatePage(Token, {
                     ...(PageChildren === undefined ? { } : { children: PageChildren }),
+                    ...(NotionCover === undefined ? { } : { cover: NotionCover }),
+                    ...(NotionIcon === undefined ? { } : { icon: NotionIcon }),
                     parent: { data_source_id: DataSourceId, type: "data_source_id" },
                     properties: NotionProperties
                 }))
