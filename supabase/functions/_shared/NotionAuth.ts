@@ -31,7 +31,7 @@ export interface ConnectionTokens
  * @category NotionAuth
  * @since 1.0.0
  */
-export function LoadConnectionTokens(UserId: string, ConnectionId: string)
+export const LoadConnectionTokens = (UserId: string, ConnectionId: string) =>
 {
     return Effect.gen(function* ()
     {
@@ -95,7 +95,7 @@ export function LoadConnectionTokens(UserId: string, ConnectionId: string)
 
         return Tokens;
     });
-}
+};
 
 /**
  * Runs a Notion Data API call with the connection's access token. On a 401,
@@ -108,11 +108,11 @@ export function LoadConnectionTokens(UserId: string, ConnectionId: string)
  * @category NotionAuth
  * @since 1.0.0
  */
-export async function CallNotionData<A>(
+export const CallNotionData = async <A>(
     Tokens: ConnectionTokens,
     ConnectionId: string,
     Operation: (AccessToken: string) => Promise<A>
-): Promise<A>
+): Promise<A> =>
 {
     try
     {
@@ -159,7 +159,7 @@ export async function CallNotionData<A>(
 
         return await Operation(Fresh.access_token);
     }
-}
+};
 
 /**
  * Maps a Notion 429 to the domain rate-limit error, carrying `Retry-After`
@@ -168,11 +168,11 @@ export async function CallNotionData<A>(
  * @category NotionAuth
  * @since 1.0.0
  */
-export function RateLimited(ApiError: Notion.NotionApiError): Domain.Error.NotionRateLimited
+export const RateLimited = (ApiError: Notion.NotionApiError): Domain.Error.NotionRateLimited =>
 {
     return new Domain.Error.NotionRateLimited(
         ApiError.RetryAfterSeconds !== undefined
             ? { RetryAfterSeconds: ApiError.RetryAfterSeconds }
             : { }
     );
-}
+};

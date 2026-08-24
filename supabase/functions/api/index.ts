@@ -34,7 +34,7 @@ import { NotivexApi } from "@notivex/api";
 import { RequireUser } from "../_shared/Authentication.ts";
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function ToNotionConnection(Row: Record<string, unknown>): Domain.NotionConnection.NotionConnection
+const ToNotionConnection = (Row: Record<string, unknown>): Domain.NotionConnection.NotionConnection =>
 {
     return {
         BotId: Row.bot_id as string,
@@ -52,7 +52,7 @@ function ToNotionConnection(Row: Record<string, unknown>): Domain.NotionConnecti
         WorkspaceId: Row.workspace_id as Domain.Id.NotionWorkspaceId,
         WorkspaceName: Row.workspace_name as string
     };
-}
+};
 
 const ConnectionsLive = HttpApiBuilder.group(NotivexApi, "Connections", (Handlers) =>
     Handlers

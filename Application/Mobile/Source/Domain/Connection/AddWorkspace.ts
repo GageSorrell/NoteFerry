@@ -27,9 +27,9 @@ import { ListConnections } from "@/Domain/Runtime/NotivexApi";
  * @category Connections
  * @since 1.0.0
  */
-export async function AddWorkspace(
+export const AddWorkspace = async (
     ExistingConnections: ReadonlyArray<Domain.NotionConnection.NotionConnection>
-): Promise<Domain.NotionConnection.NotionConnection | null>
+): Promise<Domain.NotionConnection.NotionConnection | null> =>
 {
     const Succeeded = await ConnectNotion();
 
@@ -56,4 +56,4 @@ export async function AddWorkspace(
     ) => Right.ConnectedAt.getTime() - Left.ConnectedAt.getTime());
 
     return ByMostRecentlyConnected[0] ?? null;
-}
+};

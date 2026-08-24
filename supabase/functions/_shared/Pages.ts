@@ -37,7 +37,7 @@ export interface CreatePageInput
 
 /* Translates one Notivex property input into its Notion property value. */
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function MapValueToNotion(Value: Domain.Property.PropertyInput): unknown
+const MapValueToNotion = (Value: Domain.Property.PropertyInput): unknown =>
 {
     switch (Value.Type)
     {
@@ -76,10 +76,10 @@ function MapValueToNotion(Value: Domain.Property.PropertyInput): unknown
         default:
             return {};
     }
-}
+};
 
 /** Base64-decodes a client-submitted local file's contents into raw bytes. */
-function DecodeBase64(Value: string): Uint8Array
+const DecodeBase64 = (Value: string): Uint8Array =>
 {
     const Binary = atob(Value);
     const Bytes = new Uint8Array(Binary.length);
@@ -90,7 +90,7 @@ function DecodeBase64(Value: string): Uint8Array
     }
 
     return Bytes;
-}
+};
 
 /**
  * Resolves one Files & media value into Notion's `files` property shape. An
@@ -100,11 +100,11 @@ function DecodeBase64(Value: string): Uint8Array
  * caller applies one shared {@link MapCreateError} over this and the
  * subsequent Create Page call.
  */
-function ResolveFilesValue(
+const ResolveFilesValue = (
     Tokens: ConnectionTokens,
     ConnectionId: string,
     Value: Domain.Property.FilesPropertyInput["Value"]
-): Effect.Effect<{ readonly files: ReadonlyArray<unknown> }, unknown>
+): Effect.Effect<{ readonly files: ReadonlyArray<unknown> }, unknown> =>
 {
     if (Value.Type === "External")
     {
@@ -131,12 +131,12 @@ function ResolveFilesValue(
             };
         }
     });
-}
+};
 
 const NotionRichTextContentLimit = 2_000;
 
 /** Splits plaintext across Notion text objects without applying Markdown formatting. */
-function MapPlainTextToNotion(Value: string): ReadonlyArray<unknown>
+const MapPlainTextToNotion = (Value: string): ReadonlyArray<unknown> =>
 {
     const RichText: Array<unknown> = [];
 
@@ -149,10 +149,10 @@ function MapPlainTextToNotion(Value: string): ReadonlyArray<unknown>
     }
 
     return RichText;
-}
+};
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function MapCreateError(
+const MapCreateError = (
     Error_: unknown,
     DataSourceId: string
 ):
@@ -160,7 +160,7 @@ function MapCreateError(
     | Domain.Error.NotionUnauthorized
     | Domain.Error.NotionRateLimited
     | Domain.Error.NotionValidationError
-    | Domain.Error.NotionUnavailable
+    | Domain.Error.NotionUnavailable =>
 {
     if (Error_ instanceof Notion.NotionApiError)
     {
@@ -188,7 +188,7 @@ function MapCreateError(
     }
 
     return new Domain.Error.NotionUnavailable({ Message: String(Error_) });
-}
+};
 
 /** The persisted-configuration slice `Pages` needs: which fields are required. */
 interface StoredConfiguration
@@ -206,7 +206,7 @@ interface StoredConfiguration
  * @category Pages
  * @since 1.0.0
  */
-export function CreateForUser(UserId: string, Command: CreatePageInput)
+export const CreateForUser = (UserId: string, Command: CreatePageInput) =>
 {
     return Effect.gen(function* ()
     {
@@ -465,4 +465,4 @@ export function CreateForUser(UserId: string, Command: CreatePageInput)
             OperationId: Command.OperationId
         };
     });
-}
+};

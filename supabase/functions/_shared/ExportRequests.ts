@@ -22,7 +22,7 @@ import { Effect } from "effect";
  * @category ExportRequests
  * @since 1.0.0
  */
-export function CreateForUser(UserId: string)
+export const CreateForUser = (UserId: string) =>
 {
     return Effect.gen(function* ()
     {
@@ -36,4 +36,4 @@ export function CreateForUser(UserId: string)
             return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: error.message }));
         }
     });
-}
+};

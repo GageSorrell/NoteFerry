@@ -11,10 +11,10 @@ import { type NavLink, navLinks, siteConfig } from "@/content/site-config";
 import Link from "next/link";
 import { Logo } from "@/components/site/logo";
 
-/**
- * The footer shown at the bottom of every page.
- */
-export function Footer()
+export/**
+       * The footer shown at the bottom of every page.
+       */
+const Footer = () =>
 {
     return (
         <footer className="border-t border-border">
@@ -45,4 +45,4 @@ export function Footer()
             </div>
         </footer>
     );
-}
+};

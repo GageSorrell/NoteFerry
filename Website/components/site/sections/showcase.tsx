@@ -30,10 +30,10 @@ const showcaseItems: ReadonlyArray<ShowcaseItem> = [
     }
 ];
 
-/**
- * A row of additional device-mockup placeholders with captions.
- */
-export function Showcase()
+export/**
+       * A row of additional device-mockup placeholders with captions.
+       */
+const Showcase = () =>
 {
     return (
         <section className="border-t border-border bg-muted/40 py-24">
@@ -61,4 +61,4 @@ export function Showcase()
             </div>
         </section>
     );
-}
+};

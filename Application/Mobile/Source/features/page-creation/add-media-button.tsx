@@ -28,12 +28,12 @@ export interface AddMediaButtonProps
 }
 
 /** A subtle labeled icon button used to attach a page icon or cover. */
-export function AddMediaButton({
+export const AddMediaButton = ({
     Disabled = false,
     Icon,
     Label,
     OnPress
-}: AddMediaButtonProps): React.JSX.Element
+}: AddMediaButtonProps): React.JSX.Element =>
 {
     const Theme = useTheme();
     const Styles = useStyles();
@@ -64,7 +64,7 @@ export function AddMediaButton({
             </Body>
         </Pressable>
     );
-}
+};
 
 const useStyles = MakeStyles({
     Button: ViewStyle({

@@ -54,7 +54,7 @@ const EmptyTemplateConfiguration: Domain.Destination.TemplateConfiguration =
  * destination starts from — before `DecodeConfiguration` ever sees it.
  */
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function DecodeStoredConfiguration(Raw: unknown): Schema.Schema.Type<typeof ConfigurationSchema>
+const DecodeStoredConfiguration = (Raw: unknown): Schema.Schema.Type<typeof ConfigurationSchema> =>
 {
     const IsLegacyDefault = Raw !== null
         && typeof Raw === "object"
@@ -68,7 +68,7 @@ function DecodeStoredConfiguration(Raw: unknown): Schema.Schema.Type<typeof Conf
         : Raw;
 
     return DecodeConfiguration(Normalized as ConfigurationEncoded);
-}
+};
 
 /**
  * The create/update inputs, typed in `@notivex/domain` identity so the
@@ -103,7 +103,7 @@ export interface DestinationUpdateInput
 }
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function RowToDestination(Row: Record<string, unknown>): Domain.Destination.Destination
+const RowToDestination = (Row: Record<string, unknown>): Domain.Destination.Destination =>
 {
     const Config = DecodeStoredConfiguration(Row.configuration);
     const Icon = Row.icon as string | null;
@@ -123,22 +123,22 @@ function RowToDestination(Row: Record<string, unknown>): Domain.Destination.Dest
         UpdatedAt: new Date(Row.updated_at as string),
         UserId: Row.user_id as Domain.Id.UserId
     };
-}
+};
 
-function AutomaticFieldConfiguration(
+const AutomaticFieldConfiguration = (
     Properties: ReadonlyArray<Domain.Property.PropertyDefinition>
-): Domain.Destination.FieldConfiguration
+): Domain.Destination.FieldConfiguration =>
 {
     return Domain.Destination.ReconcileFieldConfiguration(
         { FieldOrder: [ ], Fields: [ ], Version: 1 },
         Properties
     );
-}
+};
 
-function FreeProjection(
+const FreeProjection = (
     Destination: Domain.Destination.Destination,
     Source: { readonly property_schema: unknown; readonly title: string }
-): Domain.Destination.Destination
+): Domain.Destination.Destination =>
 {
     const { Icon: _StoredIcon, ...Base } = Destination;
 
@@ -152,7 +152,7 @@ function FreeProjection(
         Template: { Type: "None" },
         TemplateConfiguration: EmptyTemplateConfiguration
     };
-}
+};
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 const DecodeFailed = (DecodeError: unknown): Domain.Error.DatabaseError =>
@@ -167,13 +167,13 @@ const DecodeFailed = (DecodeError: unknown): Domain.Error.DatabaseError =>
  * no longer returns resets to `{Type:"None"}` — Notivex has nothing sensible
  * left to point it at.
  */
-export function ReconcileForDataSource(
+export const ReconcileForDataSource = (
     UserId: string,
     ConnectionId: string,
     DataSourceId: string,
     Properties: ReadonlyArray<Domain.Property.PropertyDefinition>,
     Templates: ReadonlyArray<Domain.DataSource.CachedDataSourceTemplate>
-)
+) =>
 {
     return Effect.gen(function* ()
     {
@@ -242,7 +242,7 @@ export function ReconcileForDataSource(
             }
         }
     });
-}
+};
 
 /**
  * Every destination the user has configured, ordered for display.
@@ -250,7 +250,7 @@ export function ReconcileForDataSource(
  * @category Destinations
  * @since 1.0.0
  */
-export function ListForUser(UserId: string)
+export const ListForUser = (UserId: string) =>
 {
     return Effect.gen(function* ()
     {
@@ -295,7 +295,7 @@ export function ListForUser(UserId: string)
             return Source ? FreeProjection(Destination, Source) : Destination;
         });
     });
-}
+};
 
 /**
  * Creates a destination for a cached data source, after verifying the caller
@@ -304,7 +304,7 @@ export function ListForUser(UserId: string)
  * @category Destinations
  * @since 1.0.0
  */
-export function CreateForUser(UserId: string, Payload: DestinationCreateInput)
+export const CreateForUser = (UserId: string, Payload: DestinationCreateInput) =>
 {
     return Effect.gen(function* ()
     {
@@ -420,7 +420,7 @@ export function CreateForUser(UserId: string, Payload: DestinationCreateInput)
             try: () => RowToDestination(data as Record<string, unknown>)
         });
     });
-}
+};
 
 /**
  * Applies a partial update to a destination. `ConnectionId`/`DataSourceId` are
@@ -430,7 +430,7 @@ export function CreateForUser(UserId: string, Payload: DestinationCreateInput)
  * @category Destinations
  * @since 1.0.0
  */
-export function UpdateForUser(UserId: string, DestinationId: string, Payload: DestinationUpdateInput)
+export const UpdateForUser = (UserId: string, DestinationId: string, Payload: DestinationUpdateInput) =>
 {
     return Effect.gen(function* ()
     {
@@ -523,7 +523,7 @@ export function UpdateForUser(UserId: string, DestinationId: string, Payload: De
             try: () => RowToDestination(data as Record<string, unknown>)
         });
     });
-}
+};
 
 /**
  * Deletes a destination. Idempotent — deleting an unknown id is not an error.
@@ -531,7 +531,7 @@ export function UpdateForUser(UserId: string, DestinationId: string, Payload: De
  * @category Destinations
  * @since 1.0.0
  */
-export function DeleteForUser(UserId: string, DestinationId: string)
+export const DeleteForUser = (UserId: string, DestinationId: string) =>
 {
     return Effect.gen(function* ()
     {
@@ -547,4 +547,4 @@ export function DeleteForUser(UserId: string, DestinationId: string)
             return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: error.message }));
         }
     });
-}
+};

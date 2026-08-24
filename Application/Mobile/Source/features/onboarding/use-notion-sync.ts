@@ -52,10 +52,10 @@ const EmptyDiscovery: Domain.DataSource.OnboardingDiscovery =
  * `AuthorizationSucceeded === false` classifies a cancelled/denied install
  * immediately; `null` keeps discovery dormant while the browser is still open.
  */
-export function useNotionSync(
+export const useNotionSync = (
     Enabled: boolean,
     AuthorizationSucceeded: boolean | null
-): UseNotionSync
+): UseNotionSync =>
 {
     const [ Status, SetStatus ] = useState<NotionSyncStatus>("Syncing");
     const [ Data, SetData ] = useState<Domain.DataSource.OnboardingDiscovery | null>(null);
@@ -221,4 +221,4 @@ export function useNotionSync(
         Retry,
         Status: EffectiveStatus
     };
-}
+};

@@ -40,13 +40,13 @@ const themeOptions: ReadonlyArray<ThemeOptionEntry> = [
     { icon: MonitorIcon, label: "System", value: "system" }
 ];
 
-/**
- * A dropdown theme switch with Light / Dark / System options. Renders a
- * stable-sized trigger even before mount to avoid layout shift, but only
- * shows the active icon once mounted (the resolved theme is unknown during
- * server render).
- */
-export function ThemeToggle()
+export/**
+       * A dropdown theme switch with Light / Dark / System options. Renders a
+       * stable-sized trigger even before mount to avoid layout shift, but only
+       * shows the active icon once mounted (the resolved theme is unknown during
+       * server render).
+       */
+const ThemeToggle = () =>
 {
     const [ mounted, setMounted ] = React.useState(false);
     const { theme, setTheme } = useTheme();
@@ -88,4 +88,4 @@ export function ThemeToggle()
             </DropdownMenuContent>
         </DropdownMenu>
     );
-}
+};

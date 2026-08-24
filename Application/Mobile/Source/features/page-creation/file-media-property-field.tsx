@@ -346,13 +346,13 @@ export interface FileMediaPropertyFieldProps
 }
 
 /** Renders a labeled attachment field for a Notion Files & media property. */
-export function FileMediaPropertyField({
+export const FileMediaPropertyField = ({
     Disabled = false,
     Inline = false,
     OnValueChange,
     Property,
     Value
-}: FileMediaPropertyFieldProps): React.JSX.Element
+}: FileMediaPropertyFieldProps): React.JSX.Element =>
 {
     const Styles = useStyles();
     const SheetRef = useRef<BottomSheetHandle | null>(null);
@@ -376,7 +376,7 @@ export function FileMediaPropertyField({
             />
         </View>
     );
-}
+};
 
 const useStyles = MakeStyles({
     ChooseRows: ViewStyle({

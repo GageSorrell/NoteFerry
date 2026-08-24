@@ -33,27 +33,27 @@ const LoremWords: ReadonlyArray<string> = [
 ];
 
 /** A random integer in `[Min, Max]`, inclusive of both ends. */
-function RandomInt(Min: number, Max: number): number
+const RandomInt = (Min: number, Max: number): number =>
 {
     return Min + Math.floor(Math.random() * (Max - Min + 1));
-}
+};
 
 /** One random element of `Items`, or `undefined` if it's empty. */
-function PickRandom<Item>(Items: ReadonlyArray<Item>): Item | undefined
+const PickRandom = <Item>(Items: ReadonlyArray<Item>): Item | undefined =>
 {
     return Items.length === 0 ? undefined : Items[Math.floor(Math.random() * Items.length)];
-}
+};
 
 /** `Count` random, distinct elements of `Items` (order not preserved). */
-function PickRandomSubset<Item>(Items: ReadonlyArray<Item>, Count: number): ReadonlyArray<Item>
+const PickRandomSubset = <Item>(Items: ReadonlyArray<Item>, Count: number): ReadonlyArray<Item> =>
 {
     return [ ...Items ]
         .sort(() => Math.random() - 0.5)
         .slice(0, Count);
-}
+};
 
 /** `WordCount` random lorem ipsum words, as one capitalized, punctuated sentence. */
-function LoremIpsum(WordCount: number): string
+const LoremIpsum = (WordCount: number): string =>
 {
     const Words = Array.from(
         { length: WordCount },
@@ -62,7 +62,7 @@ function LoremIpsum(WordCount: number): string
     const Sentence = Words.join(" ");
 
     return `${ Sentence.charAt(0).toUpperCase() }${ Sentence.slice(1) }.`;
-}
+};
 
 export/**
        * `SentenceCount` lorem ipsum sentences joined into one paragraph —
@@ -85,14 +85,14 @@ const StockPhotoModule = require("../../../Resource/DevTools/StockPhoto.jpg");
 let StockPhotoUriPromise: Promise<string> | undefined;
 
 /** Resolves the bundled stock photo to a real, loadable URI, once per session. */
-function GetStockPhotoUri(): Promise<string>
+const GetStockPhotoUri = (): Promise<string> =>
 {
     StockPhotoUriPromise ??= Asset.fromModule(StockPhotoModule)
         .downloadAsync()
         .then((StockAsset: Asset) => StockAsset.localUri ?? StockAsset.uri);
 
     return StockPhotoUriPromise;
-}
+};
 
 export/**
        * The bundled stock photo as a `Files` property value, resolving its

@@ -23,7 +23,7 @@ import { Effect } from "effect";
  * @category Account
  * @since 1.0.0
  */
-export function DeleteForUser(UserId: string)
+export const DeleteForUser = (UserId: string) =>
 {
     return Effect.gen(function* ()
     {
@@ -35,4 +35,4 @@ export function DeleteForUser(UserId: string)
             return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: error.message }));
         }
     });
-}
+};

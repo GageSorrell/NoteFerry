@@ -62,7 +62,7 @@ const metadata: Metadata = {
 /**
  * The root layout component, wrapping every page in the shared HTML shell.
  */
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>)
+const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) =>
 {
     return (
         <html lang="en"
@@ -78,4 +78,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </body>
         </html>
     );
-}
+};
+
+export default RootLayout;

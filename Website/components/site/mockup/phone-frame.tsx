@@ -39,16 +39,16 @@ export interface PhoneFrameProps
     readonly className?: string;
 }
 
-/**
- * A phone-shaped device mockup: rounded bezel, notch or camera cutout,
- * and an inner screen area that either shows `src` or a designed
- * placeholder fill. Renders an iPhone frame by default and swaps to the
- * Android frame once the visitor's device is detected as Android — the
- * server render always shows the iPhone frame to avoid a hydration
- * mismatch, then swaps client-side after mount if needed.
- * See {@link PhoneFrameProps}.
- */
-export function PhoneFrame({ src, alt, label, className }: PhoneFrameProps)
+export/**
+       * A phone-shaped device mockup: rounded bezel, notch or camera cutout,
+       * and an inner screen area that either shows `src` or a designed
+       * placeholder fill. Renders an iPhone frame by default and swaps to the
+       * Android frame once the visitor's device is detected as Android — the
+       * server render always shows the iPhone frame to avoid a hydration
+       * mismatch, then swaps client-side after mount if needed.
+       * See {@link PhoneFrameProps}.
+       */
+const PhoneFrame = ({ src, alt, label, className }: PhoneFrameProps) =>
 {
     const isAndroid = useIsAndroid();
     const Frame = isAndroid ? Android : Iphone;
@@ -60,4 +60,4 @@ export function PhoneFrame({ src, alt, label, className }: PhoneFrameProps)
             placeholder={ <MockupPlaceholder label={ label } /> }
             src={ src } />
     );
-}
+};

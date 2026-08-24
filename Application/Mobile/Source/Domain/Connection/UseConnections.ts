@@ -37,7 +37,7 @@ export interface UseConnections
  * @category Connections
  * @since 1.0.0
  */
-export function useConnections(): UseConnections
+export const useConnections = (): UseConnections =>
 {
     const [ Connections, SetConnections ] =
         useState<ReadonlyArray<Domain.NotionConnection.NotionConnection>>([ ]);
@@ -98,4 +98,4 @@ export function useConnections(): UseConnections
     }, [ Refetch ]);
 
     return { Connections, DataSources, IsLoading, Refetch };
-}
+};

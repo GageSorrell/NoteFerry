@@ -28,7 +28,7 @@ import { Effect } from "effect";
 /* --- Pure mapping ----------------------------------------------------- */
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function MapColor(Color: string): Domain.Property.PropertyOptionColor
+const MapColor = (Color: string): Domain.Property.PropertyOptionColor =>
 {
     const Base = Color.replace(/_background$/, "");
     const Table: Record<string, Domain.Property.PropertyOptionColor> =
@@ -46,22 +46,22 @@ function MapColor(Color: string): Domain.Property.PropertyOptionColor
     };
 
     return Table[Base] ?? "Default";
-}
+};
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function MapOptions(Options: readonly Notion.NotionOption[] | undefined): Domain.Property.PropertyOption[]
+const MapOptions = (Options: readonly Notion.NotionOption[] | undefined): Domain.Property.PropertyOption[] =>
 {
     return (Options ?? []).map((Option) => ({
         Color: MapColor(Option.color),
         Id: Option.id as Domain.Id.NotionOptionId,
         Name: Option.name
     }));
-}
+};
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function MapStatusGroups(
+const MapStatusGroups = (
     Groups: readonly Notion.NotionStatusGroup[] | undefined
-): Domain.Property.StatusGroup[]
+): Domain.Property.StatusGroup[] =>
 {
     return (Groups ?? []).map((Group) => ({
         Color: MapColor(Group.color),
@@ -69,7 +69,7 @@ function MapStatusGroups(
         Name: Group.name,
         OptionIds: Group.option_ids as readonly Domain.Id.NotionOptionId[]
     }));
-}
+};
 
 /**
  * Maps one Notion property to its `PropertyDefinition`, or `null` for property
@@ -77,7 +77,7 @@ function MapStatusGroups(
  * created_time, and other read-only/derived types), which are dropped.
  */
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function MapProperty(Property: Notion.NotionProperty): Domain.Property.PropertyDefinition | null
+const MapProperty = (Property: Notion.NotionProperty): Domain.Property.PropertyDefinition | null =>
 {
     const Base = { Id: Property.id as Domain.Id.NotionPropertyId, Name: Property.name };
 
@@ -128,7 +128,7 @@ function MapProperty(Property: Notion.NotionProperty): Domain.Property.PropertyD
         default:
             return null;
     }
-}
+};
 
 /**
  * Maps one Notion page property *value* back to a Notivex `PropertyInput`,
@@ -141,10 +141,10 @@ function MapProperty(Property: Notion.NotionProperty): Domain.Property.PropertyD
  * already excluded from quick-entry forms).
  */
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function MapPropertyValue(
+const MapPropertyValue = (
     Value: Notion.NotionPagePropertyValue,
     Definition: Domain.Property.PropertyDefinition
-): Domain.Property.PropertyInput | null
+): Domain.Property.PropertyInput | null =>
 {
     switch (Definition.Type)
     {
@@ -198,7 +198,7 @@ function MapPropertyValue(
         default:
             return null;
     }
-}
+};
 
 /**
  * Snapshots a template page's own property values into the ordered
@@ -210,10 +210,10 @@ function MapPropertyValue(
  * @category DataSources
  * @since 1.0.0
  */
-export function MapTemplateProperties(
+export const MapTemplateProperties = (
     Page: Notion.NotionPageObject,
     Properties: ReadonlyArray<Domain.Property.PropertyDefinition>
-): ReadonlyArray<Domain.PageDraft.PropertyInputValue>
+): ReadonlyArray<Domain.PageDraft.PropertyInputValue> =>
 {
     const Values: Array<Domain.PageDraft.PropertyInputValue> = [];
 
@@ -240,7 +240,7 @@ export function MapTemplateProperties(
     }
 
     return Values;
-}
+};
 
 /**
  * Normalizes Notion's property map (keyed by display name) into the ordered,
@@ -249,9 +249,9 @@ export function MapTemplateProperties(
  * @category DataSources
  * @since 1.0.0
  */
-export function MapProperties(
+export const MapProperties = (
     Properties: Readonly<Record<string, Notion.NotionProperty>>
-): Domain.Property.PropertyDefinition[]
+): Domain.Property.PropertyDefinition[] =>
 {
     const Mapped: Domain.Property.PropertyDefinition[] = [];
 
@@ -266,7 +266,7 @@ export function MapProperties(
     }
 
     return Mapped;
-}
+};
 
 /**
  * A stable, order-independent hash of a normalized property schema, used to
@@ -276,7 +276,7 @@ export function MapProperties(
  * @category DataSources
  * @since 1.0.0
  */
-export function ComputeSchemaHash(Properties: readonly Domain.Property.PropertyDefinition[]): string
+export const ComputeSchemaHash = (Properties: readonly Domain.Property.PropertyDefinition[]): string =>
 {
     const Canonical = [ ...Properties ]
         .sort((Left, Right) => (Left.Id < Right.Id ? -1 : Left.Id > Right.Id ? 1 : 0))
@@ -327,7 +327,7 @@ export function ComputeSchemaHash(Properties: readonly Domain.Property.PropertyD
     }
 
     return Hash.toString(16).padStart(8, "0");
-}
+};
 
 type NormalizedIcon =
 {
@@ -336,7 +336,7 @@ type NormalizedIcon =
 };
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function NormalizeIcon(Icon: Notion.NotionIcon | undefined): NormalizedIcon | undefined
+const NormalizeIcon = (Icon: Notion.NotionIcon | undefined): NormalizedIcon | undefined =>
 {
     if (!Icon)
     {
@@ -364,10 +364,10 @@ function NormalizeIcon(Icon: Notion.NotionIcon | undefined): NormalizedIcon | un
     }
 
     return { Icon: Icon.icon.name, IconType: "Native" };
-}
+};
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function FileToUrl(File: Notion.NotionFile | undefined): string | undefined
+const FileToUrl = (File: Notion.NotionFile | undefined): string | undefined =>
 {
     if (!File)
     {
@@ -375,10 +375,10 @@ function FileToUrl(File: Notion.NotionFile | undefined): string | undefined
     }
 
     return File.type === "external" ? File.external.url : File.file.url;
-}
+};
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function TitleToString(Title: readonly Notion.NotionRichTextItem[] | undefined): string
+const TitleToString = (Title: readonly Notion.NotionRichTextItem[] | undefined): string =>
 {
     if (!Title || Title.length === 0)
     {
@@ -386,23 +386,23 @@ function TitleToString(Title: readonly Notion.NotionRichTextItem[] | undefined):
     }
 
     return Title.map((Item) => Item.plain_text ?? "").join("").trim() || "Untitled";
-}
+};
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function PageTitleToString(Page: Notion.NotionPageObject): string
+const PageTitleToString = (Page: Notion.NotionPageObject): string =>
 {
     const TitleProperty = Object.values(Page.properties ?? {}).find(
         (Property) => Property.type === "title"
     );
 
     return TitleToString(TitleProperty?.title);
-}
+};
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function ToDiscovered(
+const ToDiscovered = (
     ConnectionId: string,
     Object_: Notion.NotionDataSourceObject
-): Domain.DataSource.DiscoveredDataSource | null
+): Domain.DataSource.DiscoveredDataSource | null =>
 {
     const DatabaseId = Object_.parent?.database_id;
 
@@ -420,17 +420,27 @@ function ToDiscovered(
         ...(Icon ?? {}),
         Title: TitleToString(Object_.title)
     };
-}
+};
+
+/**
+ * The shape `templates` jsonb rows actually decode to: identical to
+ * {@link Domain.DataSource.CachedDataSourceTemplate} except `NotionLastEditedTime`,
+ * which jsonb can only ever hold as the ISO string `Date.toJSON` serialized it
+ * to on the way in.
+ */
+type StoredTemplate = Omit<Domain.DataSource.CachedDataSourceTemplate, "NotionLastEditedTime">
+    & { readonly NotionLastEditedTime: string; };
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function RowToCached(
+const RowToCached = (
     Row: Record<string, unknown>,
     IsPro = false
-): Domain.DataSource.CachedDataSourceSchema
+): Domain.DataSource.CachedDataSourceSchema =>
 {
     const CoverUrl = Row.cover_url as string | null;
     const Icon = Row.icon as string | null;
     const IconType = Row.icon_type as NormalizedIcon["IconType"] | null;
+    const StoredTemplates = (Row.templates ?? []) as ReadonlyArray<StoredTemplate>;
 
     return {
         Access: IsPro || Row.free_active === true ? "Available" : "Locked",
@@ -444,18 +454,27 @@ function RowToCached(
         Properties: Row.property_schema as readonly Domain.Property.PropertyDefinition[],
         RefreshedAt: new Date(Row.refreshed_at as string),
         SchemaHash: Row.schema_hash as string,
-        Templates: (Row.templates ?? []) as readonly Domain.DataSource.CachedDataSourceTemplate[],
+        /* `templates` round-trips through jsonb, which has no Date type — every
+         * `Date` written into it (see `FetchTemplatesForDataSource`) comes back
+         * out as the ISO string its own `toJSON` produced. Re-hydrate it here,
+         * the same way `notion_last_edited_time`'s own column value is above,
+         * or the response schema's `Schema.DateFromString` fails to *encode*
+         * this string (it expects a `Date`) and the whole request 400s. */
+        Templates: StoredTemplates.map((Template) => ({
+            ...Template,
+            NotionLastEditedTime: new Date(Template.NotionLastEditedTime)
+        })),
         Title: Row.title as string,
         Version: 2
     };
-}
+};
 
 /* --- Notion error mapping --------------------------------------------- */
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function MapReadError(
+const MapReadError = (
     Error_: unknown
-): Domain.Error.NotionUnauthorized | Domain.Error.NotionRateLimited | Domain.Error.NotionUnavailable
+): Domain.Error.NotionUnauthorized | Domain.Error.NotionRateLimited | Domain.Error.NotionUnavailable =>
 {
     if (Error_ instanceof Notion.NotionApiError)
     {
@@ -473,17 +492,17 @@ function MapReadError(
     }
 
     return new Domain.Error.NotionUnavailable({ Message: String(Error_) });
-}
+};
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function MapRetrieveError(
+const MapRetrieveError = (
     Error_: unknown,
     DataSourceId: string
 ):
     | Domain.Error.DataSourceNotFound
     | Domain.Error.NotionUnauthorized
     | Domain.Error.NotionRateLimited
-    | Domain.Error.NotionUnavailable
+    | Domain.Error.NotionUnavailable =>
 {
     if (Error_ instanceof Notion.NotionApiError && Error_.Status === 404)
     {
@@ -491,7 +510,7 @@ function MapRetrieveError(
     }
 
     return MapReadError(Error_);
-}
+};
 
 /**
  * Fetches and normalizes a data source's Notion templates: the template list
@@ -504,12 +523,12 @@ function MapRetrieveError(
  * stay within Notion's documented ~3-requests-per-second guidance.
  */
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function FetchTemplatesForDataSource(
+const FetchTemplatesForDataSource = (
     Tokens: ConnectionTokens,
     ConnectionId: string,
     DataSourceId: string,
     Properties: ReadonlyArray<Domain.Property.PropertyDefinition>
-): Effect.Effect<ReadonlyArray<Domain.DataSource.CachedDataSourceTemplate>>
+): Effect.Effect<ReadonlyArray<Domain.DataSource.CachedDataSourceTemplate>> =>
 {
     return Effect.promise(async () =>
     {
@@ -583,7 +602,7 @@ function FetchTemplatesForDataSource(
             return [];
         }
     });
-}
+};
 
 /* --- Operations ------------------------------------------------------- */
 
@@ -594,7 +613,7 @@ function FetchTemplatesForDataSource(
  * @category DataSources
  * @since 1.0.0
  */
-export function SearchForUser(UserId: string, ConnectionId: string)
+export const SearchForUser = (UserId: string, ConnectionId: string) =>
 {
     return Effect.gen(function* ()
     {
@@ -619,7 +638,7 @@ export function SearchForUser(UserId: string, ConnectionId: string)
 
         return Discovered;
     });
-}
+};
 
 /**
  * Discovers the regular pages and first 100 databases visible to a connection,
@@ -630,7 +649,7 @@ export function SearchForUser(UserId: string, ConnectionId: string)
  * @category DataSources
  * @since 1.0.0
  */
-export function DiscoverOnboardingForUser(UserId: string, ConnectionId: string)
+export const DiscoverOnboardingForUser = (UserId: string, ConnectionId: string) =>
 {
     return Effect.gen(function* ()
     {
@@ -814,7 +833,7 @@ export function DiscoverOnboardingForUser(UserId: string, ConnectionId: string)
             Pages: Pages.slice(0, 25)
         } satisfies Domain.DataSource.OnboardingDiscovery;
     });
-}
+};
 
 /**
  * Re-fetches a data source's schema from Notion, normalizes it, and upserts the
@@ -823,7 +842,7 @@ export function DiscoverOnboardingForUser(UserId: string, ConnectionId: string)
  * @category DataSources
  * @since 1.0.0
  */
-export function RefreshForUser(UserId: string, ConnectionId: string, DataSourceId: string)
+export const RefreshForUser = (UserId: string, ConnectionId: string, DataSourceId: string) =>
 {
     return Effect.gen(function* ()
     {
@@ -956,7 +975,7 @@ export function RefreshForUser(UserId: string, ConnectionId: string, DataSourceI
             Version: 2
         } satisfies Domain.DataSource.CachedDataSourceSchema;
     });
-}
+};
 
 /**
  * Lists every data source cached for the user's connections.
@@ -964,7 +983,7 @@ export function RefreshForUser(UserId: string, ConnectionId: string, DataSourceI
  * @category DataSources
  * @since 1.0.0
  */
-export function ListForUser(UserId: string)
+export const ListForUser = (UserId: string) =>
 {
     return Effect.gen(function* ()
     {
@@ -987,7 +1006,7 @@ export function ListForUser(UserId: string)
         return (data ?? []).map((Row) =>
             RowToCached(Row as Record<string, unknown>, ProResult.data === true));
     });
-}
+};
 
 /**
  * Reads a single cached data source by its Notion id.
@@ -995,7 +1014,7 @@ export function ListForUser(UserId: string)
  * @category DataSources
  * @since 1.0.0
  */
-export function GetForUser(UserId: string, DataSourceId: string)
+export const GetForUser = (UserId: string, DataSourceId: string) =>
 {
     return Effect.gen(function* ()
     {
@@ -1022,14 +1041,14 @@ export function GetForUser(UserId: string, DataSourceId: string)
 
         return RowToCached(data as Record<string, unknown>, ProResult.data === true);
     });
-}
+};
 
 /** Atomically replaces one of a Free user's three active database slots. */
-export function SwapFreeActiveForUser(
+export const SwapFreeActiveForUser = (
     UserId: string,
     ActivateDataSourceId: string,
     LockDataSourceId: string
-)
+) =>
 {
     return Effect.gen(function* ()
     {
@@ -1054,10 +1073,10 @@ export function SwapFreeActiveForUser(
 
         return yield* ListForUser(UserId);
     });
-}
+};
 
 /** Removes a database from Notivex without deleting anything in Notion. */
-export function RemoveForUser(UserId: string, DataSourceId: string)
+export const RemoveForUser = (UserId: string, DataSourceId: string) =>
 {
     return Effect.gen(function* ()
     {
@@ -1079,4 +1098,4 @@ export function RemoveForUser(UserId: string, DataSourceId: string)
             }));
         }
     });
-}
+};

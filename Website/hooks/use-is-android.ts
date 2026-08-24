@@ -12,14 +12,14 @@
 
 import * as React from "react";
 
-/**
- * Returns whether the visitor's user agent reports an Android device.
- * Always `false` during server rendering and before mount — the server
- * render is platform-agnostic to avoid a hydration mismatch, then this
- * swaps once the real device is known, the same pattern `ThemeToggle`
- * uses for its icon.
- */
-export function useIsAndroid(): boolean
+export/**
+       * Returns whether the visitor's user agent reports an Android device.
+       * Always `false` during server rendering and before mount — the server
+       * render is platform-agnostic to avoid a hydration mismatch, then this
+       * swaps once the real device is known, the same pattern `ThemeToggle`
+       * uses for its icon.
+       */
+const useIsAndroid = (): boolean =>
 {
     const [ isAndroid, setIsAndroid ] = React.useState(false);
 
@@ -29,4 +29,4 @@ export function useIsAndroid(): boolean
     }, []);
 
     return isAndroid;
-}
+};

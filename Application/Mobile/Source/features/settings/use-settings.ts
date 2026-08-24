@@ -24,15 +24,15 @@ export interface UseSettings
     readonly Update: (Patch: Domain.Settings.AppSettings) => Promise<void>;
 }
 
-/**
- * Loads the current user's app-wide settings (resolved to concrete values via
- * `Domain.Settings.WithDefaults`) and exposes a merging update, refetching
- * afterward.
- *
- * @category Settings
- * @since 1.0.0
- */
-export function useSettings(): UseSettings
+export/**
+       * Loads the current user's app-wide settings (resolved to concrete values via
+       * `Domain.Settings.WithDefaults`) and exposes a merging update, refetching
+       * afterward.
+       *
+       * @category Settings
+       * @since 1.0.0
+       */
+const useSettings = (): UseSettings =>
 {
     const [ Settings, SetSettings ] =
         useState<Domain.Settings.ResolvedAppSettings>(Domain.Settings.DefaultAppSettings);
@@ -82,4 +82,4 @@ export function useSettings(): UseSettings
     }, [ Refetch ]);
 
     return { IsLoading, Refetch, Settings, Update };
-}
+};

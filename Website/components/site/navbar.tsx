@@ -11,10 +11,10 @@
 import { Logo } from "@/components/site/logo";
 import { ThemeToggle } from "@/components/site/theme-toggle";
 
-/**
- * The sticky top navigation bar shown on every page.
- */
-export function Navbar()
+export/**
+       * The sticky top navigation bar shown on every page.
+       */
+const Navbar = () =>
 {
     return (
         <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
@@ -33,4 +33,4 @@ export function Navbar()
             </div>
         </header>
     );
-}
+};

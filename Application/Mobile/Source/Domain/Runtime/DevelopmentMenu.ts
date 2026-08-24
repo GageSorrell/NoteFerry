@@ -17,7 +17,7 @@ import { registerDevMenuItems } from "expo-dev-client";
 import { router } from "expo-router";
 
 /** Clears persisted state and reloads so in-memory auth/context state is reset. */
-async function ClearAndReload(): Promise<void>
+const ClearAndReload = async (): Promise<void> =>
 {
     try
     {
@@ -32,7 +32,7 @@ async function ClearAndReload(): Promise<void>
     {
         DevSettings.reload("Cleared persisted app state");
     }
-}
+};
 
 export/**
        * Adds Notivex-specific actions to Expo's development-client menu.

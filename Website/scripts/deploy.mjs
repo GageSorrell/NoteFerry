@@ -44,7 +44,7 @@ const repoRoot = resolve(websiteDir, "..");
 const outputDir = join(repoRoot, ".vercel", "output");
 
 /** Runs a command, streaming output, and exits the process if it fails. */
-function run(command, args)
+const run = (command, args) =>
 {
     const commandLine = `${ command } ${ args.join(" ") }`;
     console.log(`\n$ ${ commandLine }`);
@@ -62,13 +62,13 @@ function run(command, args)
         console.error(`\n"${ commandLine }" failed (exit ${ result.status }).`);
         process.exit(result.status ?? 1);
     }
-}
+};
 
 /**
  * Recursively replaces every symlink under `dir` with a real copy of
  * whatever it resolves to. See the file header for why this is needed.
  */
-function dereferenceSymlinks(dir)
+const dereferenceSymlinks = (dir) =>
 {
     let count = 0;
 
@@ -97,7 +97,7 @@ function dereferenceSymlinks(dir)
     }
 
     return count;
-}
+};
 
 run("vercel", [ "build", "--prod" ]);
 

@@ -32,7 +32,7 @@ const DecodeFailed = (Error_: unknown): Domain.Error.DatabaseError =>
     new Domain.Error.DatabaseError({ Message: `Profile settings codec failed: ${String(Error_)}` });
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function RowToProfile(Row: Record<string, unknown>): Domain.Profile.Profile
+const RowToProfile = (Row: Record<string, unknown>): Domain.Profile.Profile =>
 {
     const Settings = DecodeSettings(Row.settings as SettingsEncoded);
     const DisplayName = Row.display_name as string | null;
@@ -44,12 +44,12 @@ function RowToProfile(Row: Record<string, unknown>): Domain.Profile.Profile
         UpdatedAt: new Date(Row.updated_at as string),
         UserId: Row.user_id as Domain.Id.UserId
     };
-}
+};
 
-function ApplyEffectiveSettings(
+const ApplyEffectiveSettings = (
     Profile: Domain.Profile.Profile,
     IsPro: boolean
-): Domain.Profile.Profile
+): Domain.Profile.Profile =>
 {
     if (IsPro) return Profile;
 
@@ -67,7 +67,7 @@ function ApplyEffectiveSettings(
             ShowAllWorkspaceDatabases: Profile.Settings.ShowAllWorkspaceDatabases
         }
     };
-}
+};
 
 /**
  * The current user's profile. Every authenticated user has exactly one row,
@@ -76,7 +76,7 @@ function ApplyEffectiveSettings(
  * @category Profile
  * @since 1.0.0
  */
-export function GetForUser(UserId: string)
+export const GetForUser = (UserId: string) =>
 {
     return Effect.gen(function* ()
     {
@@ -105,7 +105,7 @@ export function GetForUser(UserId: string)
          * preferences in the row for instant restoration after re-upgrade. */
         return ApplyEffectiveSettings(Profile, IsPro === true);
     });
-}
+};
 
 /**
  * Merges a partial settings update into the current value and persists it.
@@ -115,7 +115,7 @@ export function GetForUser(UserId: string)
  * @category Profile
  * @since 1.0.0
  */
-export function UpdateSettingsForUser(UserId: string, Patch: Domain.Settings.AppSettings)
+export const UpdateSettingsForUser = (UserId: string, Patch: Domain.Settings.AppSettings) =>
 {
     return Effect.gen(function* ()
     {
@@ -195,4 +195,4 @@ export function UpdateSettingsForUser(UserId: string, Patch: Domain.Settings.App
 
         return ApplyEffectiveSettings(Profile, IsPro === true);
     });
-}
+};

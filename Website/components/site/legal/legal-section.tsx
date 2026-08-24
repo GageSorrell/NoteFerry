@@ -18,11 +18,11 @@ export interface LegalSectionViewProps
     readonly section: LegalSectionData;
 }
 
-/**
- * One anchor-linked heading followed by its paragraphs.
- * See {@link LegalSectionViewProps}.
- */
-export function LegalSectionView({ section }: LegalSectionViewProps)
+export/**
+       * One anchor-linked heading followed by its paragraphs.
+       * See {@link LegalSectionViewProps}.
+       */
+const LegalSectionView = ({ section }: LegalSectionViewProps) =>
 {
     return (
         <section
@@ -42,4 +42,4 @@ export function LegalSectionView({ section }: LegalSectionViewProps)
             </div>
         </section>
     );
-}
+};

@@ -40,7 +40,7 @@ export interface UseDestinations
  * @category Destinations
  * @since 1.0.0
  */
-export function useDestinations(DataSourceId: Domain.Id.NotionDataSourceId): UseDestinations
+export const useDestinations = (DataSourceId: Domain.Id.NotionDataSourceId): UseDestinations =>
 {
     const [ Destinations, SetDestinations ] =
         useState<ReadonlyArray<Domain.Destination.Destination>>([ ]);
@@ -95,4 +95,4 @@ export function useDestinations(DataSourceId: Domain.Id.NotionDataSourceId): Use
     }, [ Refetch ]);
 
     return { Create, Destinations, IsLoading, Refetch, Remove, Update };
-}
+};

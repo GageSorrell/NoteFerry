@@ -65,7 +65,7 @@ const IconOverlaySize = 24;
 const SvgCache = new Map<string, Promise<string>>();
 
 /** Loads an SVG once for the lifetime of its current Notion file URL. */
-function LoadSvg(Uri: string): Promise<string>
+const LoadSvg = (Uri: string): Promise<string> =>
 {
     const Cached = SvgCache.get(Uri);
 
@@ -93,13 +93,13 @@ function LoadSvg(Uri: string): Promise<string>
     SvgCache.set(Uri, Request);
 
     return Request;
-}
+};
 
 /**
  * Detects soft, blurred-color SVGs whose Gaussian filter is not faithfully
  * supported by Android image decoders and returns their two endpoint colors.
  */
-function GetBlurredSvgGradient(Xml: string): SvgGradient | null
+const GetBlurredSvgGradient = (Xml: string): SvgGradient | null =>
 {
     const BlurredCircleCount = Array.from(Xml.matchAll(/<circle\b/giu)).length;
 
@@ -124,7 +124,7 @@ function GetBlurredSvgGradient(Xml: string): SvgGradient | null
     return Colors.length >= 2
         ? { EndColor: Colors[1] as string, StartColor: Colors[0] as string }
         : null;
-}
+};
 
 /** Renders remote SVG covers without losing their large blurred gradients. */
 const DatabaseSvgCover = ({ Uri }: { readonly Uri: string; }): React.JSX.Element =>
@@ -357,7 +357,12 @@ const useStyles = MakeStyles({
          * `Border`/`BorderButton` tokens this card sat on before. */
         borderColor: Token.Semantic.BorderCell,
         borderRadius: Token.Radii.ExtraLarge,
-        borderWidth: StyleSheet.hairlineWidth
+        borderWidth: StyleSheet.hairlineWidth,
+        /* The Android ripple (`android_ripple={ foreground: true }`) paints on
+         * this `Pressable` itself, not on `ClippedContent` below — without
+         * clipping here too, the ripple ignores the border radius and bleeds
+         * square into the rounded corners. */
+        overflow: "hidden"
     }),
     ClippedContent: ViewStyle({
         borderRadius: Token.Radii.ExtraLarge,

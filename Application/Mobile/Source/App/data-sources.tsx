@@ -23,13 +23,13 @@ import { useLocalSearchParams } from "expo-router";
 import { useSubscription } from "@/Domain/Subscription";
 
 /** True when Notion supplied an emoji rather than an image URL. */
-function IsEmoji(Icon: string | undefined): Icon is string
+const IsEmoji = (Icon: string | undefined): Icon is string =>
 {
     return Icon !== undefined && !Icon.startsWith("http");
-}
+};
 
 /** Walks an Effect failure's `cause`/`error`/`failure` chain for a tagged error, matching `feedback.tsx`. */
-function FindTaggedError(Error_: unknown): Record<string, unknown> | null
+const FindTaggedError = (Error_: unknown): Record<string, unknown> | null =>
 {
     const Seen = new Set<unknown>();
     const Queue: unknown[] = [ Error_ ];
@@ -55,7 +55,7 @@ function FindTaggedError(Error_: unknown): Record<string, unknown> | null
     }
 
     return null;
-}
+};
 
 const DataSourcesScreen = () =>
 {

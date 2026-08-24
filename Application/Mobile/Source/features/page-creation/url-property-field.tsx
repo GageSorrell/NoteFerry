@@ -29,13 +29,13 @@ export interface UrlPropertyFieldProps
 }
 
 /** Renders a labeled URL field with the OS URL keyboard and a matching text size. */
-export function UrlPropertyField({
+export const UrlPropertyField = ({
     Disabled = false,
     Inline = false,
     OnValueChange,
     Property,
     Value
-}: UrlPropertyFieldProps): React.JSX.Element
+}: UrlPropertyFieldProps): React.JSX.Element =>
 {
     const Styles = useStyles();
 
@@ -54,7 +54,7 @@ export function UrlPropertyField({
             />
         </View>
     );
-}
+};
 
 const useStyles = MakeStyles({
     Field: ViewStyle({
@@ -74,6 +74,7 @@ const useStyles = MakeStyles({
     }),
     Text: TextStyle({
         fontSize: 16,
+        fontWeight: "400",
         lineHeight: 24
     })
 });

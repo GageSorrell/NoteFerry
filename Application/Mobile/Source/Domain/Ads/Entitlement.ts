@@ -6,12 +6,12 @@ let ConfirmedFree: boolean | null = null;
 const Listeners = new Set<() => void>();
 
 /** Called only after server verification. */
-export function SetConfirmedFree(Value: boolean | null): void
+export const SetConfirmedFree = (Value: boolean | null): void =>
 {
     if (ConfirmedFree === Value) return;
     ConfirmedFree = Value;
     for (const Listener of Listeners) Listener();
-}
+};
 
 /** Paid and unresolved users are both ad-free. */
 export const IsAdFree = (): boolean => ConfirmedFree !== true;

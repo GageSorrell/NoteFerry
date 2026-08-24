@@ -14,7 +14,7 @@ import Link from "next/link";
 /**
  * The 404 page rendered for unmatched routes.
  */
-export default function NotFound()
+const NotFound = () =>
 {
     return (
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 py-32 text-center">
@@ -31,4 +31,6 @@ export default function NotFound()
             </Button>
         </div>
     );
-}
+};
+
+export default NotFound;

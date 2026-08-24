@@ -124,7 +124,7 @@ export const DefaultAppSettings: ResolvedAppSettings = {
  * @category Settings
  * @since 1.0.0
  */
-export function WithDefaults(Stored: AppSettings): ResolvedAppSettings
+export const WithDefaults = (Stored: AppSettings): ResolvedAppSettings =>
 {
     return {
         Contrast: Stored.Contrast ?? DefaultAppSettings.Contrast,

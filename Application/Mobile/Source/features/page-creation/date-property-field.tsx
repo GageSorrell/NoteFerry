@@ -43,13 +43,13 @@ const FormatDate = (Value: Date, IncludeTime: boolean): string =>
     format(Value, IncludeTime ? "MMMM d, yyyy h:mm a" : "MMMM d, yyyy");
 
 /** Opens the shared date sheet and displays its selected date or range. */
-export function DatePropertyField({
+export const DatePropertyField = ({
     Disabled = false,
     Inline = false,
     OnValueChange,
     Property,
     Value
-}: DatePropertyFieldProps): React.JSX.Element
+}: DatePropertyFieldProps): React.JSX.Element =>
 {
     const Theme = useTheme();
     const Styles = useStyles();
@@ -182,7 +182,7 @@ export function DatePropertyField({
             />
         </View>
     );
-}
+};
 
 const useStyles = MakeStyles({
     Field: ViewStyle({
@@ -203,6 +203,7 @@ const useStyles = MakeStyles({
         borderRadius: Token.Radii.Medium,
         borderWidth: 1,
         flexDirection: "row",
+        marginBottom: -4,
         minHeight: 36,
         minWidth: 0,
         paddingHorizontal: 8,
@@ -214,8 +215,16 @@ const useStyles = MakeStyles({
     TriggerPressed: ViewStyle({
         opacity: 0.65
     }),
+    /* Measured on-device: this `Body`'s painted glyph sits ~4dp below where
+     * `PropertyRow`'s cross-axis centering places its layout box (a
+     * font-metrics quirk specific to this bare `Text`, not a box-model bug —
+     * confirmed by testing that repositioning the surrounding boxes has no
+     * effect on it). Nudging it down closes that gap against the property
+     * label. Pill-wrapped values (Select/Status/MultiSelect when filled)
+     * don't have this gap and must NOT get this nudge. */
     Value: TextStyle({
         flex: 1,
+        marginTop: 4,
         minWidth: 0
     })
 });

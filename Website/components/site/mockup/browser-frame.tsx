@@ -33,18 +33,18 @@ export interface BrowserFrameProps
     readonly className?: string;
 }
 
-/**
- * A browser-shaped device mockup: a top chrome bar with traffic-light dots
- * and a fake URL pill, and a body that either shows `src` or a designed
- * placeholder fill. See {@link BrowserFrameProps}.
- */
-export function BrowserFrame({
+export/**
+       * A browser-shaped device mockup: a top chrome bar with traffic-light dots
+       * and a fake URL pill, and a body that either shows `src` or a designed
+       * placeholder fill. See {@link BrowserFrameProps}.
+       */
+const BrowserFrame = ({
     src,
     alt,
     label,
     url = "notivex.sorrell.sh",
     className
-}: BrowserFrameProps)
+}: BrowserFrameProps) =>
 {
     return (
         <div
@@ -77,4 +77,4 @@ export function BrowserFrame({
             </div>
         </div>
     );
-}
+};

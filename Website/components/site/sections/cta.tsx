@@ -10,8 +10,8 @@
 
 import { StoreBadges } from "@/components/site/store-badges";
 
-/** The centered closing CTA band. */
-export function Cta()
+export/** The centered closing CTA band. */
+const Cta = () =>
 {
     return (
         <section className="border-t border-border">
@@ -26,4 +26,4 @@ export function Cta()
             </div>
         </section>
     );
-}
+};

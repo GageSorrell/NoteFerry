@@ -19,7 +19,7 @@ const metadata: Metadata = {
 /**
  * Renders the Terms of Service.
  */
-export default function TermsPage()
+const TermsPage = () =>
 {
     return (
         <LegalPageShell
@@ -28,4 +28,6 @@ export default function TermsPage()
             sections={ termsSections }
             title="Terms of Service" />
     );
-}
+};
+
+export default TermsPage;

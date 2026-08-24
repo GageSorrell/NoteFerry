@@ -26,13 +26,13 @@ export interface TextPropertyFieldProps
 }
 
 /** Renders a labeled single-line text field for a Notion Rich text property. */
-export function TextPropertyField({
+export const TextPropertyField = ({
     Disabled = false,
     Inline = false,
     OnValueChange,
     Property,
     Value
-}: TextPropertyFieldProps): React.JSX.Element
+}: TextPropertyFieldProps): React.JSX.Element =>
 {
     const Styles = useStyles();
 
@@ -49,7 +49,7 @@ export function TextPropertyField({
             />
         </View>
     );
-}
+};
 
 const useStyles = MakeStyles({
     Field: ViewStyle({
@@ -64,6 +64,11 @@ const useStyles = MakeStyles({
         borderWidth: 0,
         minHeight: 32,
         paddingHorizontal: 0,
-        paddingVertical: 5
+        // paddingVertical: 5,
+        /* `Textarea`'s shared default is top-aligned, correct for the
+         * multi-line page body — but this single-line (`NumberOfLines={1}`)
+         * inline use is a property row, where the value should center like
+         * every other field's. */
+        textAlignVertical: "center"
     })
 });

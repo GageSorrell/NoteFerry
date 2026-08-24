@@ -26,10 +26,10 @@ const IsImageUrl = (Value: string): boolean =>
  * @category Templates
  * @since 1.0.0
  */
-export function ResolveTemplateIconData(
+export const ResolveTemplateIconData = (
     Icon: string | undefined,
     IconType: "Emoji" | "Image" | "Native" | undefined
-): IconData
+): IconData =>
 {
     if (!Icon)
     {
@@ -47,4 +47,4 @@ export function ResolveTemplateIconData(
     }
 
     return { Src: Icon, Type: "Emoji" };
-}
+};

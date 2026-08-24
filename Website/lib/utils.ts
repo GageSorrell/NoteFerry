@@ -10,14 +10,14 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-/**
- * Merges class-name fragments with `clsx`, then resolves conflicting
- * Tailwind utility classes with `tailwind-merge` (shadcn/ui's standard
- * `cn()` helper).
- *
- * @param inputs - Class-name fragments (strings, conditionals, arrays).
- */
-export function cn(...inputs: Array<ClassValue>): string
+export/**
+       * Merges class-name fragments with `clsx`, then resolves conflicting
+       * Tailwind utility classes with `tailwind-merge` (shadcn/ui's standard
+       * `cn()` helper).
+       *
+       * @param inputs - Class-name fragments (strings, conditionals, arrays).
+       */
+const cn = (...inputs: Array<ClassValue>): string =>
 {
     return twMerge(clsx(inputs));
-}
+};

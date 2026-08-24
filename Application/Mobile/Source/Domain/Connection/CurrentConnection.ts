@@ -24,10 +24,10 @@ import { Predicate } from "@sorrell/effect";
  * @category Connections
  * @since 1.0.0
  */
-export function ResolveCurrentConnection(
+export const ResolveCurrentConnection = (
     Connections: ReadonlyArray<Domain.NotionConnection.NotionConnection>,
     SelectedConnectionId: Domain.Id.NotionConnectionId | undefined
-): Domain.NotionConnection.NotionConnection | undefined
+): Domain.NotionConnection.NotionConnection | undefined =>
 {
     if (SelectedConnectionId !== undefined)
     {
@@ -41,4 +41,4 @@ export function ResolveCurrentConnection(
     }
 
     return Connections.find(Predicate.HasPropertyValue("Status", "Active")) ?? Connections[0];
-}
+};

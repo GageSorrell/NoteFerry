@@ -78,13 +78,13 @@ export interface NumberPropertyFieldProps
 }
 
 /** Renders a labeled numeric field, annotated with the property's unit. */
-export function NumberPropertyField({
+export const NumberPropertyField = ({
     Disabled = false,
     Inline = false,
     OnValueChange,
     Property,
     Value
-}: NumberPropertyFieldProps): React.JSX.Element
+}: NumberPropertyFieldProps): React.JSX.Element =>
 {
     const Styles = useStyles();
     const Unit = NumberUnits[Property.Format];
@@ -112,7 +112,7 @@ export function NumberPropertyField({
             </View>
         </View>
     );
-}
+};
 
 const useStyles = MakeStyles({
     Field: ViewStyle({

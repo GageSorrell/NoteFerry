@@ -45,7 +45,7 @@ const ReadAttempts = 12;
  * @category Runtime
  * @since 1.0.0
  */
-async function ReadWithRetry(Read: () => Promise<string | null>): Promise<string | null>
+const ReadWithRetry = async (Read: () => Promise<string | null>): Promise<string | null> =>
 {
     const TimedOut = Symbol("timed-out");
 
@@ -66,7 +66,7 @@ async function ReadWithRetry(Read: () => Promise<string | null>): Promise<string
     }
 
     return null;
-}
+};
 
 /**
  * Encrypts values with a random AES-256-CTR key stored in SecureStore, keeping

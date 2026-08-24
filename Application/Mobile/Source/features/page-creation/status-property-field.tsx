@@ -11,7 +11,7 @@
 
 import type * as Domain from "@notivex/domain";
 import { Body, type BottomSheet } from "@notivex/ui/Primitive";
-import { MakeStyles, Token, ViewStyle } from "@notivex/ui";
+import { MakeStyles, TextStyle, Token, ViewStyle } from "@notivex/ui";
 import {
     PropertyOptionPill,
     PropertyOptionSheet,
@@ -107,13 +107,13 @@ const BuildDisplayGroups = (
 };
 
 /** Renders a Notion-style status picker with its three ordered groups. */
-export function StatusPropertyField({
+export const StatusPropertyField = ({
     Disabled = false,
     Inline = false,
     OnValueChange,
     Property,
     Value
-}: StatusPropertyFieldProps): React.JSX.Element
+}: StatusPropertyFieldProps): React.JSX.Element =>
 {
     const Styles = useStyles();
     const SheetRef = useRef<BottomSheet | null>(null);
@@ -130,7 +130,8 @@ export function StatusPropertyField({
                 Inline={ Inline }
                 OnPress={ () => SheetRef.current?.present() }>
                 { SelectedOption === undefined
-                    ? <Body Color={ Token.Semantic.Muted }>Empty</Body>
+                    ? <Body Color={ Token.Semantic.Muted }
+                        Style={ Styles.EmptyValue }>Empty</Body>
                     : <PropertyOptionPill Option={ SelectedOption }
                         Status /> }
             </PropertyOptionSheetTrigger>
@@ -155,10 +156,22 @@ export function StatusPropertyField({
             />
         </View>
     );
-}
+};
 
 const useStyles = MakeStyles({
+    /* Measured on-device: this bare `Body`'s painted glyph sits ~4dp above
+     * where the property label's glyph sits, unlike `PropertyOptionPill`
+     * (a font-metrics quirk specific to unwrapped `Text`, not present once
+     * it's wrapped in the pill's own padded box) — so only the "Empty"
+     * fallback needs this nudge, never the pill. Doubled to 8: this sits
+     * inside `PropertyOptionSheetTrigger`'s own centered `TriggerValue`
+     * wrapper, which (confirmed on-device) absorbs half of an asymmetric
+     * top margin on a centered child. */
+    EmptyValue: TextStyle({
+        marginTop: 8
+    }),
     Field: ViewStyle({
+        alignItems: "baseline",
         gap: 6
     }),
     InlineField: ViewStyle({

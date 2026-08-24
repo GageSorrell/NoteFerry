@@ -31,7 +31,7 @@ const IsBugReportMode = (Mode: string | undefined): boolean => Mode === "bug";
 /* Finds a tagged domain error (e.g. `RateLimitExceeded`) buried inside an
  * Effect `FiberFailure`/`Cause`, the same way `create-page.tsx` does for
  * `FreeCreationWindowExceeded`. */
-function FindTaggedError(Error_: unknown): Record<string, unknown> | null
+const FindTaggedError = (Error_: unknown): Record<string, unknown> | null =>
 {
     const Seen = new Set<unknown>();
     const Queue: unknown[] = [ Error_ ];
@@ -47,7 +47,7 @@ function FindTaggedError(Error_: unknown): Record<string, unknown> | null
     }
 
     return null;
-}
+};
 
 const FeedbackScreen = (): React.JSX.Element =>
 {

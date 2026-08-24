@@ -1,9 +1,9 @@
 /**
  * Text input for Notion Phone number properties. Requests the OS's phone
- * keyboard via the shared `Input` primitive, with its value text explicitly
- * pinned to the same size/line-height Text (`Textarea`) and Number
- * (`Input`'s own default) render at, rather than leaving it to that
- * default implicitly.
+ * keyboard via the shared `Input` primitive, with its value text pinned to
+ * the same larger size and flush-left inline padding as the other
+ * inline-trigger property values (Select/Status/MultiSelect/Date/Url),
+ * rather than the shared `Input` primitive's smaller default text size.
  *
  * @module notivex/features/page-creation/phone-number-property-field
  *
@@ -30,13 +30,13 @@ export interface PhoneNumberPropertyFieldProps
 }
 
 /** Renders a labeled phone number field with the OS phone keyboard. */
-export function PhoneNumberPropertyField({
+export const PhoneNumberPropertyField = ({
     Disabled = false,
     Inline = false,
     OnValueChange,
     Property,
     Value
-}: PhoneNumberPropertyFieldProps): React.JSX.Element
+}: PhoneNumberPropertyFieldProps): React.JSX.Element =>
 {
     const Styles = useStyles();
 
@@ -48,14 +48,14 @@ export function PhoneNumberPropertyField({
                 KeyboardType="phone-pad"
                 OnChangeText={ OnValueChange }
                 Placeholder="Empty"
-                Style={ Styles.Input }
+                Style={ [ Styles.Input, Inline && Styles.InlineInput ] }
                 TextStyle={ Styles.Text }
                 Value={ Value }
                 Variant={ Inline ? "Flat" : "Default" }
             />
         </View>
     );
-}
+};
 
 const useStyles = MakeStyles({
     Field: ViewStyle({
@@ -65,15 +65,16 @@ const useStyles = MakeStyles({
         flex: 1,
         minWidth: 0
     }),
+    InlineInput: ViewStyle({
+        minHeight: 32,
+        paddingHorizontal: 0
+    }),
     Input: ViewStyle({
         flex: 1,
         minWidth: 0
     }),
-    /* Matches `TextPropertyField`'s `Textarea` (Text) and `Input`'s own
-     * default (Number) exactly, rather than relying on that default holding
-     * without an explicit line-height alongside it. */
     Text: TextStyle({
-        fontSize: 14,
-        lineHeight: 20
+        fontSize: 16,
+        lineHeight: 24
     })
 });

@@ -23,11 +23,11 @@ export interface LogoProps
     readonly className?: string;
 }
 
-/**
- * The Notivex logo mark, optionally paired with the wordmark, linking home.
- * See {@link LogoProps}.
- */
-export function Logo({ showWordmark = true, className }: LogoProps)
+export/**
+       * The Notivex logo mark, optionally paired with the wordmark, linking home.
+       * See {@link LogoProps}.
+       */
+const Logo = ({ showWordmark = true, className }: LogoProps) =>
 {
     return (
         <Link className={ cn("flex items-center gap-2", className) }
@@ -53,4 +53,4 @@ export function Logo({ showWordmark = true, className }: LogoProps)
                 : null }
         </Link>
     );
-}
+};

@@ -20,7 +20,7 @@ import { useEffect, useState } from "react";
 import { useSettings } from "@/features/settings/use-settings";
 
 /** Queries the OS's own increase-contrast accessibility setting, if this platform has one. */
-async function QuerySystemHighContrast(): Promise<boolean>
+const QuerySystemHighContrast = async (): Promise<boolean> =>
 {
     if (Platform.OS === "android")
     {
@@ -33,14 +33,14 @@ async function QuerySystemHighContrast(): Promise<boolean>
     }
 
     return false;
-}
+};
 
 /**
  * Live system "increase contrast" state, refreshed on mount and whenever the
  * OS reports the setting changed. Neither the query nor the change event
  * exists outside Android/iOS, so other platforms just stay `false`.
  */
-function useSystemHighContrast(): boolean
+const useSystemHighContrast = (): boolean =>
 {
     const [ SystemHighContrast, SetSystemHighContrast ] = useState(false);
 
@@ -77,7 +77,7 @@ function useSystemHighContrast(): boolean
     }, [ ]);
 
     return SystemHighContrast;
-}
+};
 
 /**
  * Resolves the boolean `@notivex/ui`'s `ThemeProvider` expects for its
@@ -87,7 +87,7 @@ function useSystemHighContrast(): boolean
  * @category Settings
  * @since 1.0.0
  */
-export function useHighContrast(): boolean
+export const useHighContrast = (): boolean =>
 {
     const { Settings: AppSettings } = useSettings();
     const SystemHighContrast = useSystemHighContrast();
@@ -103,4 +103,4 @@ export function useHighContrast(): boolean
     }
 
     return SystemHighContrast;
-}
+};

@@ -7,20 +7,23 @@ import { FeatureMatrix } from "@/features/subscription/feature-matrix";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useSubscription } from "@/Domain/Subscription";
+import type { PurchasesPackage } from "react-native-purchases";
 
-export default function PlansScreen(): React.JSX.Element
+const PlansScreen = (): React.JSX.Element =>
 {
     const Styles = useStyles();
     const { Allowance, Packages, Status } = useSubscription();
     const PriceSummary = Packages.length > 0
-        ? Packages.map((Package) => Package.product.priceString).join(" · ")
+        ? Packages.map((Package: PurchasesPackage) => Package.product.priceString).join(" · ")
         : "Localized store pricing appears at checkout.";
 
     return (
         <View style={ Styles.Container }>
-            <SafeAreaView style={ Styles.SafeArea } edges={ [ "bottom" ] }>
+            <SafeAreaView
+                edges={ [ "bottom" ] }
+                style={ Styles.SafeArea }>
                 <ScrollView contentContainerStyle={ Styles.Content }>
-                    <Heading1>Choose what fits</Heading1>
+                    <Heading1>Get Notivex™ Premium</Heading1>
                     <Description>
                         Free keeps capture, accessibility, reliability, and account controls.
                         Pro unlocks customization, more destinations, and removes advertising.
@@ -55,7 +58,9 @@ export default function PlansScreen(): React.JSX.Element
             </SafeAreaView>
         </View>
     );
-}
+};
+
+export default PlansScreen;
 
 const useStyles = MakeStyles({
     Container: ViewStyle({ backgroundColor: Token.Semantic.BackgroundSidebar, flex: 1 }),

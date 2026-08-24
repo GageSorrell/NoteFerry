@@ -79,11 +79,11 @@ export interface PropertyOptionPillProps
 }
 
 /** Renders a Select/Multi-select pill, or a dotted Status pill. */
-export function PropertyOptionPill({
+export const PropertyOptionPill = ({
     OnRemove,
     Option,
     Status = false
-}: PropertyOptionPillProps): React.JSX.Element
+}: PropertyOptionPillProps): React.JSX.Element =>
 {
     const Theme = useTheme();
     const Styles = useStyles();
@@ -127,7 +127,7 @@ export function PropertyOptionPill({
                 { Content }
             </Pressable>
         );
-}
+};
 
 /** Props for the compact control that opens a property option sheet. */
 export interface PropertyOptionSheetTriggerProps extends PropsWithChildren
@@ -140,14 +140,14 @@ export interface PropertyOptionSheetTriggerProps extends PropsWithChildren
 }
 
 /** Renders the common field trigger used by all option property types. */
-export function PropertyOptionSheetTrigger({
+export const PropertyOptionSheetTrigger = ({
     AccessibilityLabel,
     Disabled = false,
     Inline = false,
     OnPress,
     Style,
     children
-}: PropertyOptionSheetTriggerProps): React.JSX.Element
+}: PropertyOptionSheetTriggerProps): React.JSX.Element =>
 {
     const Styles = useStyles();
 
@@ -174,7 +174,7 @@ export function PropertyOptionSheetTrigger({
             <View style={ Styles.TriggerValue }>{ children }</View>
         </Pressable>
     );
-}
+};
 
 /** Props for the shared option picker sheet. */
 export interface PropertyOptionSheetProps
@@ -190,7 +190,7 @@ export interface PropertyOptionSheetProps
 }
 
 /** Displays selected pills and available options in a native bottom sheet. */
-export function PropertyOptionSheet({
+export const PropertyOptionSheet = ({
     Multiple = false,
     OnOptionPress,
     OnRemoveOption,
@@ -199,7 +199,7 @@ export function PropertyOptionSheet({
     Sections,
     SelectedOptionIds,
     Status = false
-}: PropertyOptionSheetProps): React.JSX.Element
+}: PropertyOptionSheetProps): React.JSX.Element =>
 {
     const Theme = useTheme();
     const Styles = useStyles();
@@ -288,7 +288,7 @@ export function PropertyOptionSheet({
             </BottomSheetScrollView>
         </BottomSheet>
     );
-}
+};
 
 const useStyles = MakeStyles({
     Disabled: ViewStyle({

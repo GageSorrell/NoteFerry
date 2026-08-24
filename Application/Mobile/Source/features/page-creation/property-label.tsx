@@ -58,10 +58,10 @@ export interface PropertyLabelProps
 }
 
 /** Displays the type-specific icon and name of a Notion property. */
-export function PropertyLabel({
+export const PropertyLabel = ({
     Muted = false,
     Property
-}: PropertyLabelProps): React.JSX.Element
+}: PropertyLabelProps): React.JSX.Element =>
 {
     const Theme = useTheme();
     const Styles = useStyles();
@@ -85,7 +85,7 @@ export function PropertyLabel({
             </LabelText>
         </View>
     );
-}
+};
 
 const useStyles = MakeStyles({
     Container: ViewStyle({

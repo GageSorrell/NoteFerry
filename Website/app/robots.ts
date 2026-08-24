@@ -13,7 +13,7 @@ import { siteConfig } from "@/content/site-config";
 /**
  * Allows all crawlers and points them at the sitemap.
  */
-export default function robots(): MetadataRoute.Robots
+const robots = (): MetadataRoute.Robots =>
 {
     return {
         rules: {
@@ -22,4 +22,6 @@ export default function robots(): MetadataRoute.Robots
         },
         sitemap: `${ siteConfig.canonicalUrl }/sitemap.xml`
     };
-}
+};
+
+export default robots;

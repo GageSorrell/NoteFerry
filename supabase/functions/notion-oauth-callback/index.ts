@@ -21,7 +21,7 @@ import { ExchangeAuthorizationCode } from "../_shared/Notion.ts";
 const AppReturnUrl = "notivex://notion/connected";
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function RedirectToApp(Params: Record<string, string>): Response
+const RedirectToApp = (Params: Record<string, string>): Response =>
 {
     const Url = new URL(AppReturnUrl);
 
@@ -34,7 +34,7 @@ function RedirectToApp(Params: Record<string, string>): Response
         headers: { Location: Url.toString() },
         status: 302
     });
-}
+};
 
 Deno.serve(async (Request: Request) =>
 {

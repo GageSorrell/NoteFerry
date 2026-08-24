@@ -25,7 +25,7 @@ import {
 import { useCallback } from "react";
 import { useSubscription } from "@/Domain/Subscription";
 
-async function DeviceId(): Promise<string>
+const DeviceId = async (): Promise<string> =>
 {
     if (Platform.OS === "ios")
     {
@@ -33,7 +33,7 @@ async function DeviceId(): Promise<string>
     }
 
     return `android:${Application.getAndroidId()}`;
-}
+};
 
 const NotificationSettingsScreen = (): React.JSX.Element =>
 {

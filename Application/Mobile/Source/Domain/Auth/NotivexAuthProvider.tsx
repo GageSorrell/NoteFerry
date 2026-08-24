@@ -18,12 +18,12 @@ import * as Application from "expo-application";
 import { Platform } from "react-native";
 import { RemoveSubscriptionSaleDevice } from "@/Domain/Runtime/NotivexApi";
 
-async function CurrentDeviceId(): Promise<string>
+const CurrentDeviceId = async (): Promise<string> =>
 {
     return Platform.OS === "ios"
         ? `ios:${await Application.getIosIdForVendorAsync() ?? "unknown"}`
         : `android:${Application.getAndroidId()}`;
-}
+};
 
 /** The shape provided to consumers of {@link useAuth}. */
 export interface NotivexAuth

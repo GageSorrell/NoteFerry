@@ -15,7 +15,7 @@ import { Showcase } from "@/components/site/sections/showcase";
 /**
  * Composes the landing page's sections in order.
  */
-export default function HomePage()
+const HomePage = () =>
 {
     return (
         <>
@@ -25,4 +25,6 @@ export default function HomePage()
             <Cta />
         </>
     );
-}
+};
+
+export default HomePage;

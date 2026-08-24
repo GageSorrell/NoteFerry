@@ -296,7 +296,7 @@ const MakeStyles = <Config extends StylesConfig>(Config: Config): () => Resolved
 {
     const Entries = Object.entries(Config) as ReadonlyArray<[ string, Readonly<Record<string, unknown>> ]>;
 
-    return function useStyles(): ResolvedStyles<Config>
+    return (): ResolvedStyles<Config> =>
     {
         const { HighContrast, Mode } = useTheme();
 

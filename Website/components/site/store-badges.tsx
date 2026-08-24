@@ -33,11 +33,11 @@ export interface StoreBadgeProps
     readonly className?: string;
 }
 
-/**
- * The official "Download on the App Store" badge, swapping Apple's black
- * and white artwork by theme. See {@link StoreBadgeProps}.
- */
-export function AppStoreBadge({ className }: StoreBadgeProps)
+export/**
+       * The official "Download on the App Store" badge, swapping Apple's black
+       * and white artwork by theme. See {@link StoreBadgeProps}.
+       */
+const AppStoreBadge = ({ className }: StoreBadgeProps) =>
 {
     const size = className ?? "h-11 w-auto";
 
@@ -59,12 +59,12 @@ export function AppStoreBadge({ className }: StoreBadgeProps)
                 width={ 120 } />
         </a>
     );
-}
+};
 
-/**
- * The official "Get it on Google Play" badge. See {@link StoreBadgeProps}.
- */
-export function PlayStoreBadge({ className }: StoreBadgeProps)
+export/**
+       * The official "Get it on Google Play" badge. See {@link StoreBadgeProps}.
+       */
+const PlayStoreBadge = ({ className }: StoreBadgeProps) =>
 {
     return (
         <a
@@ -78,13 +78,13 @@ export function PlayStoreBadge({ className }: StoreBadgeProps)
                 width={ 564 } />
         </a>
     );
-}
+};
 
-/**
- * Both store badges together, in a wrapping row. `className`, if given,
- * applies to the row wrapper — see {@link StoreBadgeProps}.
- */
-export function StoreBadges({ className }: StoreBadgeProps)
+export/**
+       * Both store badges together, in a wrapping row. `className`, if given,
+       * applies to the row wrapper — see {@link StoreBadgeProps}.
+       */
+const StoreBadges = ({ className }: StoreBadgeProps) =>
 {
     return (
         <div className={ className ?? "flex flex-wrap items-center gap-3" }>
@@ -92,4 +92,4 @@ export function StoreBadges({ className }: StoreBadgeProps)
             <PlayStoreBadge />
         </div>
     );
-}
+};

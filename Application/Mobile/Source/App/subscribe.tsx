@@ -20,15 +20,15 @@ import { PurchaseSyncPendingError } from "@/Domain/Subscription/SubscriptionProv
 const TermsUrl = "https://notivex.sorrell.sh/terms";
 const PrivacyUrl = "https://notivex.sorrell.sh/privacy";
 
-function Term(Package: PurchasesPackage): "Monthly" | "Yearly" | "Lifetime" | null
+const Term = (Package: PurchasesPackage): "Monthly" | "Yearly" | "Lifetime" | null =>
 {
     if (Package.packageType === PACKAGE_TYPE.MONTHLY) return "Monthly";
     if (Package.packageType === PACKAGE_TYPE.ANNUAL) return "Yearly";
     if (Package.packageType === PACKAGE_TYPE.LIFETIME) return "Lifetime";
     return null;
-}
+};
 
-export default function SubscribeScreen(): React.JSX.Element
+const SubscribeScreen = (): React.JSX.Element =>
 {
     const Styles = useStyles();
     const {
@@ -184,7 +184,9 @@ export default function SubscribeScreen(): React.JSX.Element
             </SafeAreaView>
         </View>
     );
-}
+};
+
+export default SubscribeScreen;
 
 const useStyles = MakeStyles({
     Card: ViewStyle({

@@ -29,7 +29,7 @@ const StorageReadAttempts = 12 as const;
 const StorageReadTimeoutMs = 1_000 as const;
 
 /** Reads the persisted onboarding marker without allowing native storage to hang startup. */
-async function ReadPendingOnboarding(): Promise<boolean>
+const ReadPendingOnboarding = async (): Promise<boolean> =>
 {
     const TimedOut = Symbol("timed-out");
 
@@ -53,7 +53,7 @@ async function ReadPendingOnboarding(): Promise<boolean>
     }
 
     return false;
-}
+};
 
 /** The onboarding state shared through {@link useOnboarding}. */
 export interface OnboardingState
@@ -107,10 +107,10 @@ export interface OnboardingProviderProps extends React.PropsWithChildren
  * @category Providers
  * @since 1.0.0
  */
-export function OnboardingProvider({
+export const OnboardingProvider = ({
     Enabled = true,
     children
-}: OnboardingProviderProps)
+}: OnboardingProviderProps) =>
 {
     const { Session } = useAuth();
     const [ HasConnection, SetHasConnection ] = React.useState(false);
@@ -175,27 +175,39 @@ export function OnboardingProvider({
 
         SetIsLoadingConnection(true);
 
-        try
-        {
-            const [ Connections, DataSources ] = await Promise.all([
-                ListConnections(),
-                ListDataSources()
-            ]);
+        /* Settled independently rather than `Promise.all` — a `DataSources`
+         * failure (e.g. a cached row that fails to encode) must not also
+         * discard a perfectly good `Connections` result, or a real, already-
+         * completed connection reads back as "not connected" and sends the
+         * user through the Notion OAuth flow again for no reason. */
+        const [ ConnectionsResult, DataSourcesResult ] = await Promise.allSettled([
+            ListConnections(),
+            ListDataSources()
+        ]);
 
-            SetHasConnection(Connections.some((
+        if (ConnectionsResult.status === "fulfilled")
+        {
+            SetHasConnection(ConnectionsResult.value.some((
                 Connection: Domain.NotionConnection.NotionConnection
             ) => Connection.Status === "Active"));
-            SetHasSelectedDatabases(DataSources.length > 0);
         }
-        catch (Error)
+        else
         {
             /* eslint-disable-next-line no-console */
-            console.error("Failed to check for a Notion connection", Error);
+            console.error("Failed to check for a Notion connection", ConnectionsResult.reason);
         }
-        finally
+
+        if (DataSourcesResult.status === "fulfilled")
         {
-            SetIsLoadingConnection(false);
+            SetHasSelectedDatabases(DataSourcesResult.value.length > 0);
         }
+        else
+        {
+            /* eslint-disable-next-line no-console */
+            console.error("Failed to check for selected databases", DataSourcesResult.reason);
+        }
+
+        SetIsLoadingConnection(false);
     }, [ Enabled, Session ]);
 
     React.useEffect(() => void RefetchConnection(), [ RefetchConnection ]);
@@ -273,7 +285,7 @@ export function OnboardingProvider({
             { children }
         </OnboardingContext.Provider>
     );
-}
+};
 
 export/**
        * Reads the onboarding state provided by {@link OnboardingProvider}.

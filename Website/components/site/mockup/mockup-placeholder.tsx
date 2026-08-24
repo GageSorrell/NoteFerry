@@ -23,13 +23,13 @@ export interface MockupPlaceholderProps
     readonly className?: string;
 }
 
-/**
- * A textured, labeled fill area used as the "no screenshot yet" state for
- * the device-mockup components. Swap it out by passing a real `src` to
- * `PhoneFrame`/`BrowserFrame` — this component simply stops rendering once
- * that happens. See {@link MockupPlaceholderProps}.
- */
-export function MockupPlaceholder({ label, className }: MockupPlaceholderProps)
+export/**
+       * A textured, labeled fill area used as the "no screenshot yet" state for
+       * the device-mockup components. Swap it out by passing a real `src` to
+       * `PhoneFrame`/`BrowserFrame` — this component simply stops rendering once
+       * that happens. See {@link MockupPlaceholderProps}.
+       */
+const MockupPlaceholder = ({ label, className }: MockupPlaceholderProps) =>
 {
     const stripes = "bg-[repeating-linear-gradient(135deg,var(--color-border)_0,"
         + "var(--color-border)_1px,transparent_1px,transparent_10px)]";
@@ -53,4 +53,4 @@ export function MockupPlaceholder({ label, className }: MockupPlaceholderProps)
                 : null }
         </div>
     );
-}
+};

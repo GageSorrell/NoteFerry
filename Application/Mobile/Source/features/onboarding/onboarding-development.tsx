@@ -66,7 +66,7 @@ const DevelopmentOnboardingContext = React.createContext<DevelopmentOnboardingSt
 });
 
 /** Provides a development-only, non-persistent onboarding mock session. */
-export function DevelopmentOnboardingProvider({ children }: React.PropsWithChildren)
+export const DevelopmentOnboardingProvider = ({ children }: React.PropsWithChildren) =>
 {
     const [ Session, SetSession ] = React.useState<MockSession | null>(null);
     const Timers = React.useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
@@ -213,7 +213,7 @@ export function DevelopmentOnboardingProvider({ children }: React.PropsWithChild
             { children }
         </DevelopmentOnboardingContext.Provider>
     );
-}
+};
 
 export/**
        * Reads the active development onboarding session.

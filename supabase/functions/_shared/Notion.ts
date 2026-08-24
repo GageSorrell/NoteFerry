@@ -54,10 +54,10 @@ export class NotionOAuthError extends Error
 }
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function BasicAuthHeader(ClientId: string, ClientSecret: string): string
+const BasicAuthHeader = (ClientId: string, ClientSecret: string): string =>
 {
     return `Basic ${btoa(`${ClientId}:${ClientSecret}`)}`;
-}
+};
 
 /**
  * Builds the Notion authorization URL the client opens to begin the OAuth
@@ -66,11 +66,11 @@ function BasicAuthHeader(ClientId: string, ClientSecret: string): string
  * @category Notion
  * @since 1.0.0
  */
-export function BuildAuthorizationUrl(Options: {
+export const BuildAuthorizationUrl = (Options: {
     readonly ClientId: string;
     readonly RedirectUri: string;
     readonly State: string;
-}): string
+}): string =>
 {
     const Url = new URL(AuthorizeEndpoint);
 
@@ -81,7 +81,7 @@ export function BuildAuthorizationUrl(Options: {
     Url.searchParams.set("state", Options.State);
 
     return Url.toString();
-}
+};
 
 /**
  * Exchanges an authorization code for Notion OAuth tokens using HTTP Basic
@@ -91,12 +91,12 @@ export function BuildAuthorizationUrl(Options: {
  * @category Notion
  * @since 1.0.0
  */
-export async function ExchangeAuthorizationCode(Options: {
+export const ExchangeAuthorizationCode = async (Options: {
     readonly ClientId: string;
     readonly ClientSecret: string;
     readonly Code: string;
     readonly RedirectUri: string;
-}): Promise<NotionOAuthTokens>
+}): Promise<NotionOAuthTokens> =>
 {
     const Response = await fetch(TokenEndpoint, {
         body: JSON.stringify({
@@ -119,7 +119,7 @@ export async function ExchangeAuthorizationCode(Options: {
     }
 
     return await Response.json() as NotionOAuthTokens;
-}
+};
 
 /**
  * Exchanges a refresh token for a fresh access/refresh token pair. Notion
@@ -129,11 +129,11 @@ export async function ExchangeAuthorizationCode(Options: {
  * @category Notion
  * @since 1.0.0
  */
-export async function RefreshAuthorization(Options: {
+export const RefreshAuthorization = async (Options: {
     readonly ClientId: string;
     readonly ClientSecret: string;
     readonly RefreshToken: string;
-}): Promise<NotionOAuthTokens>
+}): Promise<NotionOAuthTokens> =>
 {
     const Response = await fetch(TokenEndpoint, {
         body: JSON.stringify({
@@ -155,7 +155,7 @@ export async function RefreshAuthorization(Options: {
     }
 
     return await Response.json() as NotionOAuthTokens;
-}
+};
 
 /* --- Data API (search / retrieve) ------------------------------------- */
 
@@ -313,17 +313,17 @@ export class NotionApiError extends Error
 }
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-function DataApiHeaders(AccessToken: string): Record<string, string>
+const DataApiHeaders = (AccessToken: string): Record<string, string> =>
 {
     return {
         "Authorization": `Bearer ${AccessToken}`,
         "Content-Type": "application/json",
         "Notion-Version": NotionVersion
     };
-}
+};
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
-async function ThrowNotionApiError(Response: Response): Promise<never>
+const ThrowNotionApiError = async (Response: Response): Promise<never> =>
 {
     const RetryAfter = Response.headers.get("retry-after");
 
@@ -332,7 +332,7 @@ async function ThrowNotionApiError(Response: Response): Promise<never>
         await Response.text(),
         RetryAfter ? Number(RetryAfter) : undefined
     );
-}
+};
 
 /**
  * Lists every data source the connection can currently see, following Notion's
@@ -341,7 +341,7 @@ async function ThrowNotionApiError(Response: Response): Promise<never>
  * @category Notion
  * @since 1.0.0
  */
-export async function SearchDataSources(AccessToken: string): Promise<readonly NotionDataSourceObject[]>
+export const SearchDataSources = async (AccessToken: string): Promise<readonly NotionDataSourceObject[]> =>
 {
     const Results: NotionDataSourceObject[] = [];
     let Cursor: string | undefined;
@@ -386,7 +386,7 @@ export async function SearchDataSources(AccessToken: string): Promise<readonly N
     while (Cursor);
 
     return Results;
-}
+};
 
 /**
  * Lists every regular page the connection can currently see. Search results
@@ -396,7 +396,7 @@ export async function SearchDataSources(AccessToken: string): Promise<readonly N
  * @category Notion
  * @since 1.0.0
  */
-export async function SearchPages(AccessToken: string): Promise<readonly NotionPageObject[]>
+export const SearchPages = async (AccessToken: string): Promise<readonly NotionPageObject[]> =>
 {
     const Results: NotionPageObject[] = [];
     let Cursor: string | undefined;
@@ -437,7 +437,7 @@ export async function SearchPages(AccessToken: string): Promise<readonly NotionP
     while (Cursor);
 
     return Results;
-}
+};
 
 /**
  * Counts the first 100 pages in one data source. `has_more` distinguishes a
@@ -446,10 +446,10 @@ export async function SearchPages(AccessToken: string): Promise<readonly NotionP
  * @category Notion
  * @since 1.0.0
  */
-export async function QueryDataSourcePageCount(
+export const QueryDataSourcePageCount = async (
     AccessToken: string,
     DataSourceId: string
-): Promise<NotionDataSourcePageCount>
+): Promise<NotionDataSourcePageCount> =>
 {
     for (let Attempt = 0; Attempt < 3; Attempt += 1)
     {
@@ -486,7 +486,7 @@ export async function QueryDataSourcePageCount(
     }
 
     return { HasMoreThan100Pages: false, PageCount: 0 };
-}
+};
 
 /**
  * Retrieves one data source, including its full property schema. Throws
@@ -496,10 +496,10 @@ export async function QueryDataSourcePageCount(
  * @category Notion
  * @since 1.0.0
  */
-export async function RetrieveDataSource(
+export const RetrieveDataSource = async (
     AccessToken: string,
     DataSourceId: string
-): Promise<NotionDataSourceObject>
+): Promise<NotionDataSourceObject> =>
 {
     const Response = await fetch(`${ApiBase}/data_sources/${DataSourceId}`, {
         headers: DataApiHeaders(AccessToken),
@@ -512,7 +512,7 @@ export async function RetrieveDataSource(
     }
 
     return await Response.json() as NotionDataSourceObject;
-}
+};
 
 /**
  * Retrieves a database's title, icon, and cover. In Notion's current API,
@@ -522,10 +522,10 @@ export async function RetrieveDataSource(
  * @category Notion
  * @since 1.0.0
  */
-export async function RetrieveDatabase(
+export const RetrieveDatabase = async (
     AccessToken: string,
     DatabaseId: string
-): Promise<NotionDatabaseObject>
+): Promise<NotionDatabaseObject> =>
 {
     const Response = await fetch(`${ApiBase}/databases/${DatabaseId}`, {
         headers: DataApiHeaders(AccessToken),
@@ -538,7 +538,7 @@ export async function RetrieveDatabase(
     }
 
     return await Response.json() as NotionDatabaseObject;
-}
+};
 
 /**
  * Retrieves a page's icon and cover. Inline databases may expose their visible
@@ -547,10 +547,10 @@ export async function RetrieveDatabase(
  * @category Notion
  * @since 1.0.0
  */
-export async function RetrievePage(
+export const RetrievePage = async (
     AccessToken: string,
     PageId: string
-): Promise<NotionPageObject>
+): Promise<NotionPageObject> =>
 {
     const Response = await fetch(`${ApiBase}/pages/${PageId}`, {
         headers: DataApiHeaders(AccessToken),
@@ -563,7 +563,7 @@ export async function RetrievePage(
     }
 
     return await Response.json() as NotionPageObject;
-}
+};
 
 /** One template entry as returned by `GET /data_sources/{id}/templates`. */
 export type NotionTemplateSummary =
@@ -582,10 +582,10 @@ export type NotionTemplateSummary =
  * @category Notion
  * @since 1.0.0
  */
-export async function ListDataSourceTemplates(
+export const ListDataSourceTemplates = async (
     AccessToken: string,
     DataSourceId: string
-): Promise<readonly NotionTemplateSummary[]>
+): Promise<readonly NotionTemplateSummary[]> =>
 {
     const Results: NotionTemplateSummary[] = [];
     let Cursor: string | undefined;
@@ -623,7 +623,7 @@ export async function ListDataSourceTemplates(
     while (Cursor);
 
     return Results;
-}
+};
 
 /** A Notion File Upload object, as returned by `POST /file_uploads`. */
 export type NotionFileUploadObject =
@@ -641,10 +641,10 @@ export type NotionFileUploadObject =
  * @category Notion
  * @since 1.0.0
  */
-export async function CreateFileUpload(
+export const CreateFileUpload = async (
     AccessToken: string,
     Options: { readonly ContentType?: string; readonly Filename: string }
-): Promise<NotionFileUploadObject>
+): Promise<NotionFileUploadObject> =>
 {
     const Response = await fetch(`${ApiBase}/file_uploads`, {
         body: JSON.stringify({
@@ -661,7 +661,7 @@ export async function CreateFileUpload(
     }
 
     return await Response.json() as NotionFileUploadObject;
-}
+};
 
 /**
  * Sends a file's bytes to a previously-created File Upload object, completing
@@ -671,13 +671,13 @@ export async function CreateFileUpload(
  * @category Notion
  * @since 1.0.0
  */
-export async function SendFileUpload(
+export const SendFileUpload = async (
     AccessToken: string,
     FileUploadId: string,
     Bytes: Uint8Array,
     Filename: string,
     ContentType: string
-): Promise<NotionFileUploadObject>
+): Promise<NotionFileUploadObject> =>
 {
     const Form = new FormData();
 
@@ -700,7 +700,7 @@ export async function SendFileUpload(
     }
 
     return await Response.json() as NotionFileUploadObject;
-}
+};
 
 /** The Notion Create Page request body Notivex sends. */
 export interface NotionCreatePageBody
@@ -719,10 +719,10 @@ export interface NotionCreatePageBody
  * @category Notion
  * @since 1.0.0
  */
-export async function CreatePage(
+export const CreatePage = async (
     AccessToken: string,
     Body: NotionCreatePageBody
-): Promise<{ readonly id: string }>
+): Promise<{ readonly id: string }> =>
 {
     const Response = await fetch(`${ApiBase}/pages`, {
         body: JSON.stringify(Body),
@@ -736,4 +736,4 @@ export async function CreatePage(
     }
 
     return await Response.json() as { readonly id: string };
-}
+};

@@ -13,7 +13,7 @@ import { siteConfig } from "@/content/site-config";
 /**
  * Lists the site's three static routes.
  */
-export default function sitemap(): MetadataRoute.Sitemap
+const sitemap = (): MetadataRoute.Sitemap =>
 {
     const lastModified = new Date();
 
@@ -21,4 +21,6 @@ export default function sitemap(): MetadataRoute.Sitemap
         lastModified,
         url: `${ siteConfig.canonicalUrl }${ path }`
     }));
-}
+};
+
+export default sitemap;

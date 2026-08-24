@@ -7,7 +7,7 @@ import { StatusBar, StyleSheet, View, useColorScheme } from "react-native";
 import { NewAppScreen } from "@react-native/new-app-screen";
 import React from "react";
 
-function App()
+const App = () =>
 {
     const isDarkMode = useColorScheme() === "dark";
 
@@ -17,9 +17,9 @@ function App()
             <AppContent />
         </SafeAreaProvider>
     );
-}
+};
 
-function AppContent()
+const AppContent = () =>
 {
     const safeAreaInsets = useSafeAreaInsets();
 
@@ -30,7 +30,7 @@ function AppContent()
             <NewAppScreen  { ...{ safeAreaInsets, templateFileName } } />
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container:

@@ -16,13 +16,15 @@ The integrated PowerShell session may have neither `ANDROID_HOME` nor
 installation rather than installing another copy:
 
 ```powershell
-$env:PATH = "C:\Users\Gage\AppData\Local\Android\Sdk\platform-tools;$env:PATH"
+$env:PATH = "C:\Android\Sdk-Quail3\platform-tools;$env:PATH"
 $env:AGENT_DEVICE_STATE_DIR = "C:\Users\Gage\.agent-device\notivex-android"
 agent-device devices --platform android
 ```
 
-The separate state directory matters when the default `agent-device` daemon
-was already launched without `adb` on its inherited `PATH`; changing the
-calling shell's `PATH` does not update that running daemon's environment. Use
-the same two environment assignments for every subsequent `agent-device`
-command in that session.
+The separate state directory matters when the default `agent-device` daemon was already launched without `adb` on its inherited `PATH`; changing the calling shell's `PATH` does not update that running daemon's environment. Use the same two environment assignments for every subsequent `agent-device` command in that session.
+
+The developer's machine has two Android Studio installations: the up-to-date version (Studio and the SDK) is installed in the usual location (to support VR development in the Unreal Engine; unrelated to Notivex), and a separate location at `C:\Android`, with Studio and the SDK present at this secondary location.
+
+## Writing Markdown
+
+Do not split sentences across multiple lines; do not worry about how many columns a line takes up: every time a Markdown file is viewed by a human, assume that line-wrapping is used.

@@ -1,7 +1,5 @@
 /**
- *
- *
- * @module notivex/App/Root
+ * @module notivex/Domain/Localization
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,6 +7,4 @@
  * @license   MIT
  */
 
-export * from "./Navigator";
-export * from "./Providers";
-export * from "./Registration";
+export * as Brand from "./Brand";

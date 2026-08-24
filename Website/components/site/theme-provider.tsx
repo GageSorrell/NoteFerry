@@ -13,14 +13,14 @@
 import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
-/**
- * Provides `next-themes` context to the app, using the `class` strategy
- * (matches the `.dark { ... }` selector in `app/globals.css`).
- */
-export function ThemeProvider({
+export/**
+       * Provides `next-themes` context to the app, using the `class` strategy
+       * (matches the `.dark { ... }` selector in `app/globals.css`).
+       */
+const ThemeProvider = ({
     children,
     ...props
-}: React.ComponentProps<typeof NextThemesProvider>)
+}: React.ComponentProps<typeof NextThemesProvider>) =>
 {
     return (
         <NextThemesProvider
@@ -31,4 +31,4 @@ export function ThemeProvider({
             { children }
         </NextThemesProvider>
     );
-}
+};

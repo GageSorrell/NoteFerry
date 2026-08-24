@@ -20,7 +20,7 @@ const contentType = "image/png";
 /**
  * Renders the OG card: dark background, the tagline, and the site name.
  */
-export default function OpengraphImage()
+const OpengraphImage = () =>
 {
     return new ImageResponse(
         (
@@ -65,4 +65,6 @@ export default function OpengraphImage()
         ),
         { ...size }
     );
-}
+};
+
+export default OpengraphImage;

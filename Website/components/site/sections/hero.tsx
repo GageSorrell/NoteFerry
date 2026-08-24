@@ -12,10 +12,10 @@ import { PhoneFrame } from "@/components/site/mockup/phone-frame";
 import { StoreBadges } from "@/components/site/store-badges";
 import { siteConfig } from "@/content/site-config";
 
-/**
- * The above-the-fold hero section.
- */
-export function Hero()
+export/**
+       * The above-the-fold hero section.
+       */
+const Hero = () =>
 {
     const layout = "flex-col items-center gap-16 px-6 pb-24 pt-16 sm:pt-24 "
         + "lg:flex-row lg:items-center lg:gap-12 lg:pb-32 lg:pt-32";
@@ -38,4 +38,4 @@ export function Hero()
             </div>
         </section>
     );
-}
+};

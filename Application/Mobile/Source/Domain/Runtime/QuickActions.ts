@@ -54,7 +54,7 @@ const IosFallbackIcon = "symbol:square.grid.2x2";
  * `AndroidFallbackIcon`/`IosFallbackIcon` for why a database's actual icon
  * can't be used more broadly.
  */
-function ResolveQuickActionIcon(Source: Domain.DataSource.CachedDataSourceSchema): string
+const ResolveQuickActionIcon = (Source: Domain.DataSource.CachedDataSourceSchema): string =>
 {
     if (Platform.OS === "ios" && Source.IconType === "Native" && Source.Icon)
     {
@@ -67,13 +67,13 @@ function ResolveQuickActionIcon(Source: Domain.DataSource.CachedDataSourceSchema
     }
 
     return Platform.OS === "ios" ? IosFallbackIcon : AndroidFallbackIcon;
-}
+};
 
 /** Chooses which data sources become quick actions: the setting, or a default. */
-function ResolveQuickActionDataSources(
+const ResolveQuickActionDataSources = (
     DataSources: ReadonlyArray<Domain.DataSource.CachedDataSourceSchema>,
     Settings: Domain.Settings.ResolvedAppSettings
-): ReadonlyArray<Domain.DataSource.CachedDataSourceSchema>
+): ReadonlyArray<Domain.DataSource.CachedDataSourceSchema> =>
 {
     const ByDataSourceId = new Map(DataSources.map((
         Source: Domain.DataSource.CachedDataSourceSchema
@@ -101,7 +101,7 @@ function ResolveQuickActionDataSources(
         ];
 
     return Ordered.slice(0, Domain.Settings.MaxQuickActionCount);
-}
+};
 
 export/**
        * Sets Notivex's quick action shortcuts from the current data sources and

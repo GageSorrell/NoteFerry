@@ -12,26 +12,29 @@ import {
     ActivityIndicator,
     Alert,
     AppState,
+    type AppStateStatus,
+    Platform,
     type PressableStateCallbackType,
     ScrollView,
     View
 } from "react-native";
 import { AddWorkspace, ResolveCurrentConnection, useConnections } from "@/Domain/Connection";
 import { Body, Button, Description, MeterBar, Pressable } from "@notivex/ui/Primitive";
+import { CircleFadingArrowUp, HelpCircle, Settings, UserRound } from "lucide-react-native";
 import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
-import { HelpCircle, Settings, UserRound } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DatabaseCard } from "@/Component/DatabaseCard";
 import { Image } from "expo-image";
 import { RegisterQuickActions } from "@/Domain/Runtime/QuickActions";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { SymbolView } from "expo-symbols";
+import { WorkspaceMenu } from "@/Component/WorkspaceMenu";
 import { useAuth } from "@/Domain/Auth";
+import { useFocusEffect } from "expo-router";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSettings } from "@/features/settings/use-settings";
-import { useFocusEffect } from "expo-router";
 import { useSubscription } from "@/Domain/Subscription";
-import { WorkspaceMenu } from "@/Component/WorkspaceMenu";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 /* Only the *first* home-screen mount of an app session should honor
  * `LaunchBehavior`; a returning visit from inside the app (e.g. back from
@@ -39,8 +42,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
  * so it survives remounts but resets on a fresh JS bundle (app restart). */
 let HasAppliedLaunchBehavior = false;
 
+const PlansLastOpenedStoragePrefix = "notivex:plans-last-opened:";
+const PlansReminderIntervalMilliseconds = 5 * 24 * 60 * 60 * 1000;
+
 /** The `create-page` destination for tapping a given database's card. */
-function CreatePageHref(Source: Domain.DataSource.CachedDataSourceSchema)
+const CreatePageHref = (Source: Domain.DataSource.CachedDataSourceSchema) =>
 {
     return {
         params:
@@ -50,13 +56,13 @@ function CreatePageHref(Source: Domain.DataSource.CachedDataSourceSchema)
         },
         pathname: "/create-page" as const
     };
-}
+};
 
 /** Applies `DatabaseOrder`, keeping unlisted sources in their existing order. */
-function OrderDataSources(
+const OrderDataSources = (
     DataSources: ReadonlyArray<Domain.DataSource.CachedDataSourceSchema>,
     DatabaseOrder: ReadonlyArray<Domain.Id.NotionDataSourceId>
-): ReadonlyArray<Domain.DataSource.CachedDataSourceSchema>
+): ReadonlyArray<Domain.DataSource.CachedDataSourceSchema> =>
 {
     if (DatabaseOrder.length === 0)
     {
@@ -78,7 +84,7 @@ function OrderDataSources(
         ...DataSources.filter((Source: Domain.DataSource.CachedDataSourceSchema) =>
             !OrderedIds.has(Source.DataSourceId))
     ];
-}
+};
 
 interface NotionAvatarProps
 {
@@ -142,9 +148,17 @@ const HomeScreen = () =>
         Settings: AppSettings,
         Update: UpdateSettings
     } = useSettings();
-    const { Allowance, Refresh: RefreshSubscription, Sale, Status } = useSubscription();
-    const { SignOut } = useAuth();
+    const {
+        Allowance,
+        HasProAccess,
+        Refresh: RefreshSubscription,
+        Sale,
+        Status
+    } = useSubscription();
+    const { Session, SignOut } = useAuth();
     const [ DismissedSaleId, SetDismissedSaleId ] = useState<string | null>(null);
+    const [ PlansLastOpenedAt, SetPlansLastOpenedAt ] = useState<number | null>(null);
+    const [ CurrentTime, SetCurrentTime ] = useState(() => Date.now());
     const [ IsAddingWorkspace, SetIsAddingWorkspace ] = useState(false);
     const Router = useLazyRouter();
     const Theme = useTheme();
@@ -162,6 +176,12 @@ const HomeScreen = () =>
             Source.ConnectionId === CurrentConnection.Id);
     const OrderedDataSources = OrderDataSources(VisibleDataSources, AppSettings.DatabaseOrder);
     const IsFree = Status !== null && !Status.Active && Status.EnforcementEnabled;
+    const PlansStorageKey = Session
+        ? `${PlansLastOpenedStoragePrefix}${Session.user.id}`
+        : null;
+    const ShowPlansButton = Platform.OS !== "ios" || (Status !== null && !HasProAccess);
+    const ShowPlansBadge = PlansLastOpenedAt === null
+        || CurrentTime - PlansLastOpenedAt >= PlansReminderIntervalMilliseconds;
 
     const HandleSelectWorkspace = useCallback((ConnectionId: Domain.Id.NotionConnectionId): void =>
     {
@@ -210,7 +230,8 @@ const HomeScreen = () =>
         {
             Alert.alert(
                 "Unlock this database with Pro",
-                "Free includes three active databases. Upgrade for unlimited databases, or replace an active database in Database settings.",
+                "Free includes three active databases.  Upgrade for unlimited databases, " +
+                "or replace an active database in Database settings.",
                 [
                     { style: "cancel", text: "Not now" },
                     { onPress: Router.push("/plans"), text: "Compare plans" },
@@ -232,9 +253,12 @@ const HomeScreen = () =>
 
     useEffect(() =>
     {
-        const Subscription = AppState.addEventListener("change", (State) =>
+        const Subscription = AppState.addEventListener("change", (State: AppStateStatus) =>
         {
-            if (State === "active") void RefreshSubscription();
+            if (State === "active")
+            {
+                void RefreshSubscription();
+            }
         });
 
         return Subscription.remove;
@@ -242,24 +266,85 @@ const HomeScreen = () =>
 
     useEffect(() =>
     {
-        if (!Allowance?.NextAvailableAt) return;
-        const Timer = setInterval(() => void RefreshSubscription(), 15000);
+        if (!Allowance?.NextAvailableAt)
+        {
+            return;
+        }
+
+        const Timer = setInterval(RefreshSubscription, 15000);
         return () => clearInterval(Timer);
     }, [ Allowance?.NextAvailableAt, RefreshSubscription ]);
 
     useEffect(() =>
     {
-        if (!Sale) return;
+        if (!Sale)
+        {
+            return;
+        }
+
         void AsyncStorage.getItem(`subscription-sale-dismissed:${Sale.CampaignId}`)
-            .then((Value) => SetDismissedSaleId(Value === "true" ? Sale.CampaignId : null));
+            .then((Value: string | null) => SetDismissedSaleId(Value === "true" ? Sale.CampaignId : null));
     }, [ Sale ]);
 
     const DismissSale = useCallback((): void =>
     {
-        if (!Sale) return;
+        if (!Sale)
+        {
+            return;
+        }
+
         SetDismissedSaleId(Sale.CampaignId);
         void AsyncStorage.setItem(`subscription-sale-dismissed:${Sale.CampaignId}`, "true");
     }, [ Sale ]);
+
+    useEffect(() =>
+    {
+        if (!PlansStorageKey)
+        {
+            return;
+        }
+
+        let IsCurrent = true;
+        void AsyncStorage.getItem(PlansStorageKey)
+            .then((Value: string | null) =>
+            {
+                if (!IsCurrent)
+                {
+                    return;
+                }
+                const Timestamp = Value === null ? NaN : Number(Value);
+                SetPlansLastOpenedAt(Number.isFinite(Timestamp) ? Timestamp : null);
+            })
+            .catch(() =>
+            {
+                if (IsCurrent)
+                {
+                    SetPlansLastOpenedAt(null);
+                }
+            });
+
+        return () =>
+        {
+            IsCurrent = false;
+        };
+    }, [ PlansStorageKey ]);
+
+    useEffect(() =>
+    {
+        const Timer = setInterval(() => SetCurrentTime(Date.now()), 60 * 1000);
+        return () => clearInterval(Timer);
+    }, [ ]);
+
+    const OpenPlans = useCallback((): void =>
+    {
+        const Timestamp = Date.now();
+        SetPlansLastOpenedAt(Timestamp);
+        if (PlansStorageKey)
+        {
+            void AsyncStorage.setItem(PlansStorageKey, String(Timestamp));
+        }
+        Router.push("/plans")();
+    }, [ PlansStorageKey, Router ]);
 
     /* Launch behavior: hand off to `create-page` for the chosen database on
      * the very first mount of the session only. */
@@ -311,23 +396,61 @@ const HomeScreen = () =>
                             key={ AvatarUri ?? AvatarName }
                         />
                     </WorkspaceMenu>
-                    <Pressable
-                        Accessibility={ {
-                            Label: "Settings",
-                            Role: "button"
-                        } }
-                        OnPress={ Router.push("/settings") }
-                        style={ ({ pressed }: PressableStateCallbackType) => [
-                            Styles.SettingsButton,
-                            { backgroundColor: ControlBackground },
-                            pressed && Styles.ControlPressed
-                        ] }>
-                        <Settings
-                            color="#8C8786"
-                            size={ 19 }
-                            strokeWidth={ 1.8 }
-                        />
-                    </Pressable>
+                    <View style={ Styles.HeaderActions }>
+                        { ShowPlansButton
+                            ? (
+                                <Pressable
+                                    Accessibility={ {
+                                        Label: ShowPlansBadge
+                                            ? "Compare plans, new"
+                                            : "Compare plans",
+                                        Role: "button"
+                                    } }
+                                    OnPress={ OpenPlans }
+                                    style={ ({ pressed }: PressableStateCallbackType) => [
+                                        Styles.SettingsButton,
+                                        { backgroundColor: ControlBackground },
+                                        pressed && Styles.ControlPressed
+                                    ] }>
+                                    { Platform.OS === "ios"
+                                        ? (
+                                            <SymbolView
+                                                name="arrow.up.circle"
+                                                size={ 20 }
+                                                tintColor="#8C8786"
+                                            />
+                                        )
+                                        : (
+                                            <CircleFadingArrowUp
+                                                color="#8C8786"
+                                                size={ 20 }
+                                                strokeWidth={ 1.8 }
+                                            />
+                                        ) }
+                                    { ShowPlansBadge
+                                        ? <View style={ Styles.NotificationBadge } />
+                                        : null }
+                                </Pressable>
+                            )
+                            : null }
+                        <Pressable
+                            Accessibility={ {
+                                Label: "Settings",
+                                Role: "button"
+                            } }
+                            OnPress={ Router.push("/settings") }
+                            style={ ({ pressed }: PressableStateCallbackType) => [
+                                Styles.SettingsButton,
+                                { backgroundColor: ControlBackground },
+                                pressed && Styles.ControlPressed
+                            ] }>
+                            <Settings
+                                color="#8C8786"
+                                size={ 19 }
+                                strokeWidth={ 1.8 }
+                            />
+                        </Pressable>
+                    </View>
                 </View>
 
                 <ScrollView
@@ -394,7 +517,11 @@ const HomeScreen = () =>
                                     <Body Weight="600">{ Sale.Copy }</Body>
                                     <Description>View the limited-time offer</Description>
                                 </Pressable>
-                                <Button Appearance="Link" OnPress={ DismissSale }>Dismiss</Button>
+                                <Button
+                                    Appearance="Link"
+                                    OnPress={ DismissSale }>
+                                    Dismiss
+                                </Button>
                             </View>
                         )
                         : null }
@@ -413,7 +540,10 @@ const HomeScreen = () =>
                                         />
                                     </Pressable>
                                 </View>
-                                <MeterBar Max={ Allowance.Limit } Value={ Allowance.Used } />
+                                <MeterBar
+                                    Max={ Allowance.Limit }
+                                    Value={ Allowance.Used }
+                                />
                                 <Description>
                                     { Allowance.Used } of { Allowance.Limit } pages used in the last
                                     { ` ${Allowance.WindowMinutes} minutes.` }
@@ -479,6 +609,11 @@ const useStyles = MakeStyles({
     GridCell: ViewStyle({
         width: "48%"
     }),
+    HeaderActions: ViewStyle({
+        alignItems: "center",
+        flexDirection: "row",
+        gap: Token.Spacing.S
+    }),
     List: ViewStyle({
         gap: 14,
         paddingBottom: 28,
@@ -490,6 +625,22 @@ const useStyles = MakeStyles({
         flex: 1,
         marginHorizontal: -16
     }),
+    NotificationBadge: ViewStyle({
+        backgroundColor: "#D92D20",
+        borderColor: Token.Semantic.BackgroundSidebar,
+        borderRadius: 5,
+        borderWidth: 1.5,
+        height: 10,
+        position: "absolute",
+        right: 2,
+        top: 2,
+        width: 10
+    }),
+    SafeArea: ViewStyle({
+        flex: 1,
+        paddingHorizontal: Token.Spacing.L,
+        paddingTop: 10
+    }),
     SaleBanner: ViewStyle({
         alignItems: "center",
         backgroundColor: Token.Semantic.BackgroundModal,
@@ -499,11 +650,6 @@ const useStyles = MakeStyles({
         padding: Token.Spacing.L
     }),
     SaleCopy: ViewStyle({ flex: 1, gap: 2 }),
-    SafeArea: ViewStyle({
-        flex: 1,
-        paddingHorizontal: Token.Spacing.L,
-        paddingTop: 10
-    }),
     SectionTitle: TextStyle({
         fontSize: 14,
         lineHeight: 20,
@@ -516,6 +662,12 @@ const useStyles = MakeStyles({
         justifyContent: "center",
         width: 82
     }),
+    TopBar: ViewStyle({
+        alignItems: "center",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        minHeight: Token.Size.TouchTarget.Minimum
+    }),
     UsageHeading: ViewStyle({
         alignItems: "center",
         flexDirection: "row",
@@ -526,12 +678,6 @@ const useStyles = MakeStyles({
         borderRadius: 12,
         gap: Token.Spacing.M,
         padding: Token.Spacing.L
-    }),
-    TopBar: ViewStyle({
-        alignItems: "center",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        minHeight: Token.Size.TouchTarget.Minimum
     })
 });
 

@@ -27,7 +27,7 @@ import type { FeedbackApi } from "@notivex/api";
  * @category Feedback
  * @since 1.0.0
  */
-export function CreateForUser(UserId: string, Input: FeedbackApi.CreateFeedbackPayload)
+export const CreateForUser = (UserId: string, Input: FeedbackApi.CreateFeedbackPayload) =>
 {
     return Effect.gen(function* ()
     {
@@ -51,4 +51,4 @@ export function CreateForUser(UserId: string, Input: FeedbackApi.CreateFeedbackP
             return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: error.message }));
         }
     });
-}
+};

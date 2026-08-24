@@ -11,7 +11,7 @@
 
 import type * as Domain from "@notivex/domain";
 import { Body, type BottomSheet } from "@notivex/ui/Primitive";
-import { MakeStyles, Token, ViewStyle } from "@notivex/ui";
+import { MakeStyles, TextStyle, Token, ViewStyle } from "@notivex/ui";
 import {
     PropertyOptionPill,
     PropertyOptionSheet,
@@ -37,13 +37,13 @@ export interface MultiSelectPropertyFieldProps
 }
 
 /** Renders an option-only multi-select without free-form text entry. */
-export function MultiSelectPropertyField({
+export const MultiSelectPropertyField = ({
     Disabled = false,
     Inline = false,
     OnValueChange,
     Property,
     Value = EmptySelectedOptionIds
-}: MultiSelectPropertyFieldProps): React.JSX.Element
+}: MultiSelectPropertyFieldProps): React.JSX.Element =>
 {
     const Styles = useStyles();
     const SheetRef = useRef<BottomSheet | null>(null);
@@ -69,7 +69,8 @@ export function MultiSelectPropertyField({
                 Inline={ Inline }
                 OnPress={ () => SheetRef.current?.present() }>
                 { SelectedOptions.length === 0
-                    ? <Body Color={ Token.Semantic.Muted }>Empty</Body>
+                    ? <Body Color={ Token.Semantic.Muted }
+                        Style={ Styles.EmptyValue }>Empty</Body>
                     : SelectedOptions.map((Option: Domain.Property.PropertyOption) => (
                         <PropertyOptionPill Option={ Option }
                             key={ Option.Id } />
@@ -91,9 +92,20 @@ export function MultiSelectPropertyField({
             />
         </View>
     );
-}
+};
 
 const useStyles = MakeStyles({
+    /* Measured on-device: this bare `Body`'s painted glyph sits ~4dp above
+     * where the property label's glyph sits, unlike `PropertyOptionPill`
+     * (a font-metrics quirk specific to unwrapped `Text`, not present once
+     * it's wrapped in the pill's own padded box) — so only the "Empty"
+     * fallback needs this nudge, never the pill. Doubled to 8: this sits
+     * inside `PropertyOptionSheetTrigger`'s own centered `TriggerValue`
+     * wrapper, which (confirmed on-device) absorbs half of an asymmetric
+     * top margin on a centered child. */
+    EmptyValue: TextStyle({
+        marginTop: 8
+    }),
     Field: ViewStyle({
         gap: 6
     }),

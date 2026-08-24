@@ -1,6 +1,10 @@
 /**
  * Text input for Notion Email properties. Requests the OS's email keyboard
- * (its "@" affordance) via the shared `Input` primitive.
+ * (its "@" affordance) via the shared `Input` primitive, with its value text
+ * pinned to the same larger size and flush-left inline padding as the other
+ * inline-trigger property values (Select/Status/MultiSelect/Date/Url/Phone
+ * number), rather than the shared `Input` primitive's smaller default text
+ * size.
  *
  * @module notivex/features/page-creation/email-property-field
  *
@@ -11,7 +15,7 @@
  */
 
 import type * as Domain from "@notivex/domain";
-import { MakeStyles, ViewStyle } from "@notivex/ui";
+import { MakeStyles, TextStyle, ViewStyle } from "@notivex/ui";
 import { Input } from "@notivex/ui/Primitive";
 import { PropertyLabel } from "@/features/page-creation/property-label";
 import { View } from "react-native";
@@ -27,13 +31,13 @@ export interface EmailPropertyFieldProps
 }
 
 /** Renders a labeled email field with the OS email keyboard. */
-export function EmailPropertyField({
+export const EmailPropertyField = ({
     Disabled = false,
     Inline = false,
     OnValueChange,
     Property,
     Value
-}: EmailPropertyFieldProps): React.JSX.Element
+}: EmailPropertyFieldProps): React.JSX.Element =>
 {
     const Styles = useStyles();
 
@@ -45,13 +49,14 @@ export function EmailPropertyField({
                 KeyboardType="email-address"
                 OnChangeText={ OnValueChange }
                 Placeholder="Empty"
-                Style={ Styles.Input }
+                Style={ [ Styles.Input, Inline && Styles.InlineInput ] }
+                TextStyle={ Styles.Text }
                 Value={ Value }
                 Variant={ Inline ? "Flat" : "Default" }
             />
         </View>
     );
-}
+};
 
 const useStyles = MakeStyles({
     Field: ViewStyle({
@@ -61,8 +66,16 @@ const useStyles = MakeStyles({
         flex: 1,
         minWidth: 0
     }),
+    InlineInput: ViewStyle({
+        minHeight: 32,
+        paddingHorizontal: 0
+    }),
     Input: ViewStyle({
         flex: 1,
         minWidth: 0
+    }),
+    Text: TextStyle({
+        fontSize: 16,
+        lineHeight: 24
     })
 });

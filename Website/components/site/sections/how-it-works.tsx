@@ -11,10 +11,10 @@
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type HowItWorksStep, howItWorksSteps } from "@/content/how-it-works";
 
-/**
- * The four-step "how it works" grid.
- */
-export function HowItWorks()
+export/**
+       * The four-step "how it works" grid.
+       */
+const HowItWorks = () =>
 {
     return (
         <section
@@ -52,4 +52,4 @@ export function HowItWorks()
             </div>
         </section>
     );
-}
+};

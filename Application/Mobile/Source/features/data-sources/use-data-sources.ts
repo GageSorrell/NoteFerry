@@ -44,7 +44,7 @@ export interface UseDataSources
  * @category DataSources
  * @since 1.0.0
  */
-export function useDataSources(ConnectionId: Domain.Id.NotionConnectionId): UseDataSources
+export const useDataSources = (ConnectionId: Domain.Id.NotionConnectionId): UseDataSources =>
 {
     const [ Discovered, SetDiscovered ] =
         useState<ReadonlyArray<Domain.DataSource.DiscoveredDataSource>>([ ]);
@@ -132,4 +132,4 @@ export function useDataSources(ConnectionId: Domain.Id.NotionConnectionId): UseD
         IsSearching,
         Search
     } as const;
-}
+};

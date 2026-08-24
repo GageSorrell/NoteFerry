@@ -37,14 +37,14 @@ interface FeedbackSubmissionPayload
  * env var — one fewer secret to provision per environment. */
 const NotifyEmail = "gage@sorrell.sh";
 
-function EscapeHtml(Value: string): string
+const EscapeHtml = (Value: string): string =>
 {
     return Value
         .replace(/&/gu, "&amp;")
         .replace(/</gu, "&lt;")
         .replace(/>/gu, "&gt;")
         .replace(/"/gu, "&quot;");
-}
+};
 
 Deno.serve(async (Request: Request) =>
 {

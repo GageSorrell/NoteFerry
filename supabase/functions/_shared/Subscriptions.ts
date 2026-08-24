@@ -15,10 +15,10 @@ const DefaultStatus = (EnforcementEnabled = false): Domain.Subscription.Subscrip
     Tier: "Free"
 });
 
-function ToStatus(
+const ToStatus = (
     Row: Record<string, unknown> | null,
     EnforcementEnabled = false
-): Domain.Subscription.SubscriptionStatus
+): Domain.Subscription.SubscriptionStatus =>
 {
     if (!Row)
     {
@@ -50,10 +50,10 @@ function ToStatus(
         Tier: Active ? Row.tier as Domain.Subscription.SubscriptionTier : "Free",
         ...(Row.verified_at ? { VerifiedAt: new Date(Row.verified_at as string) } : {})
     };
-}
+};
 
 /** Returns the most recently verified server snapshot, defaulting safely Free. */
-export function GetForUser(UserId: string)
+export const GetForUser = (UserId: string) =>
 {
     return Effect.gen(function* ()
     {
@@ -81,10 +81,10 @@ export function GetForUser(UserId: string)
             Configuration.data?.enforcement_enabled === true
         );
     });
-}
+};
 
 /** Reads the rolling 30-minute allowance computed by Postgres. */
-export function GetAllowanceForUser(UserId: string)
+export const GetAllowanceForUser = (UserId: string) =>
 {
     return Effect.gen(function* ()
     {
@@ -115,10 +115,10 @@ export function GetAllowanceForUser(UserId: string)
             WindowMinutes: Row.window_minutes as number
         } satisfies Domain.Subscription.CreationAllowance;
     });
-}
+};
 
 /** Returns the one currently active, time-bounded sale campaign, if any. */
-export function GetActiveSale()
+export const GetActiveSale = () =>
 {
     return Effect.gen(function* ()
     {
@@ -153,14 +153,14 @@ export function GetActiveSale()
                 : null
         } satisfies Domain.Subscription.ActiveSaleResponse;
     });
-}
+};
 
-export function RegisterDeviceForUser(
+export const RegisterDeviceForUser = (
     UserId: string,
     DeviceId: string,
     Platform: Domain.Subscription.DevicePlatform,
     PushToken: string
-)
+) =>
 {
     return Effect.gen(function* ()
     {
@@ -184,9 +184,9 @@ export function RegisterDeviceForUser(
             return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: error.message }));
         }
     });
-}
+};
 
-export function RemoveDeviceForUser(UserId: string, DeviceId: string)
+export const RemoveDeviceForUser = (UserId: string, DeviceId: string) =>
 {
     return Effect.gen(function* ()
     {
@@ -202,23 +202,23 @@ export function RemoveDeviceForUser(UserId: string, DeviceId: string)
             return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: error.message }));
         }
     });
-}
+};
 
-function ProductTerm(ProductId: string): Domain.Subscription.ProductTerm
+const ProductTerm = (ProductId: string): Domain.Subscription.ProductTerm =>
 {
     const Value = ProductId.toLowerCase();
 
     if (Value.includes("lifetime")) return "Lifetime";
     if (Value.includes("annual") || Value.includes("year") || Value.includes("1y")) return "Yearly";
     return "Monthly";
-}
+};
 
-function Store(Value: string | undefined): Domain.Subscription.PurchaseStore
+const Store = (Value: string | undefined): Domain.Subscription.PurchaseStore =>
 {
     if (Value === "app_store" || Value === "mac_app_store") return "AppStore";
     if (Value === "play_store") return "PlayStore";
     return "Unknown";
-}
+};
 
 interface RevenueCatEntitlement
 {
@@ -255,7 +255,7 @@ interface RevenueCatSubscriberResponse
 }
 
 /** Queries RevenueCat instead of trusting webhook ordering, then upserts state. */
-export function RefreshFromRevenueCat(UserId: string)
+export const RefreshFromRevenueCat = (UserId: string) =>
 {
     return Effect.gen(function* ()
     {
@@ -371,4 +371,4 @@ export function RefreshFromRevenueCat(UserId: string)
 
         return ToStatus(Row, Configuration.data?.enforcement_enabled === true);
     });
-}
+};

@@ -11,7 +11,6 @@
 
 import * as Domain from "@notivex/domain";
 import * as ImagePicker from "expo-image-picker";
-import { File } from "expo-file-system";
 import {
     ActivityIndicator,
     Alert,
@@ -34,7 +33,6 @@ import {
     Textarea
 } from "@notivex/ui/Primitive";
 import { ChevronLeft, ImagePlus, LayoutTemplate, Settings, Smile, Wand2 } from "lucide-react-native";
-import type { LucideIcon } from "lucide-react-native";
 import { Cover, IconBlock, type IconData, IconMenu } from "@notivex/ui/Block";
 import {
     CreateDestination,
@@ -47,7 +45,17 @@ import {
 import type { EventArg, NavigationAction } from "expo-router/build/react-navigation";
 import { FileMediaPropertyField, type FileMediaValue } from
     "@/features/page-creation/file-media-property-field";
+import {
+    GenerateDummyValue,
+    GenerateLoremIpsumParagraph,
+    GetStockPhotoFileValue,
+    IsFieldEmpty
+} from "@/features/page-creation/dummy-page-data";
 import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
+import {
+    ResolveTemplateFieldValues,
+    type TemplateFieldAssignment
+} from "@/features/templates/template-values";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
 import { String, pipe } from "effect";
@@ -58,32 +66,19 @@ import { CheckboxPropertyField } from
 import { DatabaseIcon } from "@/Component/DatabaseCard";
 import { DatePropertyField } from
     "@/features/page-creation/date-property-field";
-import {
-    GenerateDummyValue,
-    GenerateLoremIpsumParagraph,
-    GetStockPhotoFileValue,
-    IsFieldEmpty
-} from "@/features/page-creation/dummy-page-data";
-import { EmailPropertyField } from
-    "@/features/page-creation/email-property-field";
-import { MultiSelectPropertyField } from
-    "@/features/page-creation/multi-select-property-field";
-import { ResolveTemplateFieldValues } from "@/features/templates/template-values";
-import { TemplatePickerSheet } from "@/features/templates/template-picker-sheet";
-import { NumberPropertyField } from
-    "@/features/page-creation/number-property-field";
-import { PhoneNumberPropertyField } from
-    "@/features/page-creation/phone-number-property-field";
+import { EmailPropertyField } from "@/features/page-creation/email-property-field";
+import { File } from "expo-file-system";
+import type { LucideIcon } from "lucide-react-native";
+import { MultiSelectPropertyField } from "@/features/page-creation/multi-select-property-field";
+import { NumberPropertyField } from "@/features/page-creation/number-property-field";
+import { PhoneNumberPropertyField } from "@/features/page-creation/phone-number-property-field";
 import { PropertyLabel } from "@/features/page-creation/property-label";
-import { SelectPropertyField } from
-    "@/features/page-creation/select-property-field";
-import { StatusPropertyField } from
-    "@/features/page-creation/status-property-field";
-import { TextPropertyField } from
-    "@/features/page-creation/text-property-field";
+import { SelectPropertyField } from "@/features/page-creation/select-property-field";
+import { StatusPropertyField } from "@/features/page-creation/status-property-field";
+import { TemplatePickerSheet } from "@/features/templates/template-picker-sheet";
+import { TextPropertyField } from "@/features/page-creation/text-property-field";
 import type { Thunk } from "@sorrell/effect/Function";
-import { UrlPropertyField } from
-    "@/features/page-creation/url-property-field";
+import { UrlPropertyField } from "@/features/page-creation/url-property-field";
 import { randomUUID } from "expo-crypto";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSubscription } from "@/Domain/Subscription";
@@ -93,23 +88,31 @@ const MaxPageBodyLength = 200_000;
 const FileNameFromUri = (Uri: string, Fallback: string): string =>
     decodeURIComponent(Uri.split(/[?#]/u)[0]?.split("/").pop() ?? Fallback) || Fallback;
 
-function FindTaggedError(Error_: unknown): Record<string, unknown> | null
+const FindTaggedError = (InError: unknown): Record<string, unknown> | null =>
 {
     const Seen = new Set<unknown>();
-    const Queue: unknown[] = [ Error_ ];
+    const Queue: Array<unknown> = [ InError ];
 
     while (Queue.length > 0)
     {
         const Current = Queue.shift();
-        if (!Current || typeof Current !== "object" || Seen.has(Current)) continue;
+        if (!Current || typeof Current !== "object" || Seen.has(Current))
+        {
+            continue;
+        }
+
         Seen.add(Current);
-        const Record_ = Current as Record<string, unknown>;
-        if (typeof Record_._tag === "string") return Record_;
-        Queue.push(Record_.cause, Record_.error, Record_.failure);
+        const CurrentRecord = Current as Record<string, unknown>;
+        if (typeof CurrentRecord._tag === "string")
+        {
+            return CurrentRecord;
+        }
+
+        Queue.push(CurrentRecord.cause, CurrentRecord.error, CurrentRecord.failure);
     }
 
     return null;
-}
+};
 
 type FieldValue =
     | boolean
@@ -161,7 +164,10 @@ const ShowDiscardConfirmation = (OnDiscard: () => void): void =>
     );
 };
 
-/** Accessible native-stack header action — the current database's settings, and (dev-only) populating the form. */
+/**
+ * Accessible native-stack header action — the current database's settings, and
+ * (dev-only) populating the form.
+ */
 const HeaderIconButton = ({
     Color,
     Disabled,
@@ -196,29 +202,42 @@ const HeaderIconButton = ({
     );
 };
 
-/** Displays the selected database identity in the native stack header. */
+/**
+ * Displays the selected database identity in the native stack header. The
+ * native-stack header clips a custom `headerTitle` to its measured box, so
+ * the icon can't be pulled out via absolute positioning without disappearing
+ * — instead, a same-sized invisible spacer mirrors the icon on the far side
+ * of the title text. That keeps the icon in normal flow (visible) while
+ * making the text the exact midpoint of the row, so centering the whole row
+ * centers the text rather than the icon+text pair.
+ */
 const DatabaseHeaderTitle = ({
     Source,
     Title
 }: DatabaseHeaderTitleProps): React.JSX.Element =>
 {
     const Styles = useStyles();
+    const HasIcon = Source !== null && Boolean(Source.Icon);
 
     return (
         <View style={ Styles.NavigationTitle }>
-            { Source === null
-                ? (
-                    <View
-                        accessible={ false }
-                        style={ Styles.NavigationIconPlaceholder }
-                    />
-                )
-                : <DatabaseIcon Source={ Source } /> }
+            { HasIcon && (
+                <View style={ Styles.NavigationIconSlot }>
+                    <DatabaseIcon Source={ Source } />
+                </View>
+            ) }
             <NavigationTitle
                 NumberOfLines={ 1 }
                 Style={ Styles.NavigationTitleText }>
                 { Title }
             </NavigationTitle>
+            { HasIcon && (
+                <View
+                    accessible={ false }
+                    pointerEvents="none"
+                    style={ Styles.NavigationIconSlot }
+                />
+            ) }
         </View>
     );
 };
@@ -474,7 +493,8 @@ const PageCreateScreen = (): React.JSX.Element =>
         {
             Alert.alert(
                 "Customize forms with Pro",
-                "Pro lets you change aliases, visibility, required fields, order, defaults, and post-creation behavior.",
+                "Pro lets you change aliases, visibility, required fields, " +
+                "order, defaults, and post-creation behavior.",
                 [
                     { style: "cancel", text: "Not now" },
                     { onPress: Router.push("/plans"), text: "Compare plans" },
@@ -786,7 +806,7 @@ const PageCreateScreen = (): React.JSX.Element =>
                 SetFieldValue(Assignment.PropertyId, Assignment.Value);
             }
         };
-        const Collisions = Assignments.filter((Assignment) =>
+        const Collisions = Assignments.filter((Assignment: TemplateFieldAssignment) =>
             !IsFieldEmpty(Values[Assignment.PropertyId]));
 
         if (Collisions.length === 0)
@@ -860,6 +880,19 @@ const PageCreateScreen = (): React.JSX.Element =>
                     />
                 )
                 : null }
+            {
+                HasProAccess && HasSwitchableTemplate
+                    ? (
+                        <HeaderIconButton
+                            Color={ Theme.Semantic.IconPrimary }
+                            Disabled={ DataSource === null }
+                            Icon={ LayoutTemplate }
+                            Label="Use a template"
+                            OnPress={ OpenTemplateSwitcher }
+                        />
+                    )
+                    : null
+            }
             <HeaderIconButton
                 Color={ Theme.Semantic.IconPrimary }
                 Disabled={ DataSource === null }
@@ -867,17 +900,6 @@ const PageCreateScreen = (): React.JSX.Element =>
                 Label={ `Settings for ${ DatabaseTitle }` }
                 OnPress={ OpenDatabaseSettings }
             />
-            { HasProAccess && HasSwitchableTemplate
-                ? (
-                    <HeaderIconButton
-                        Color={ Theme.Semantic.IconPrimary }
-                        Disabled={ DataSource === null }
-                        Icon={ LayoutTemplate }
-                        Label="Use a template"
-                        OnPress={ OpenTemplateSwitcher }
-                    />
-                )
-                : null }
         </View>
     ), [
         DataSource,
@@ -1506,8 +1528,10 @@ const useStyles = MakeStyles({
         flex: 1,
         padding: Token.Spacing.Xl
     }),
-    NavigationIconPlaceholder: ViewStyle({
+    NavigationIconSlot: ViewStyle({
+        alignItems: "center",
         height: 24,
+        justifyContent: "center",
         width: 24
     }),
     NavigationTitle: ViewStyle({
@@ -1566,8 +1590,7 @@ const useStyles = MakeStyles({
         paddingBottom: 40
     }),
     Submit: ViewStyle({
-        marginTop: 28,
-        minHeight: Token.Size.Control.Large
+        marginTop: 28
     })
 });
 

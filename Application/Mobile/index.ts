@@ -40,7 +40,7 @@ import "react-native-url-polyfill/auto";
  * has no way to read `Set-Cookie` headers regardless. */
 if (typeof Headers !== "undefined" && typeof Headers.prototype.getSetCookie !== "function")
 {
-    Headers.prototype.getSetCookie = function getSetCookie(): Array<string>
+    Headers.prototype.getSetCookie = (): Array<string> =>
     {
         return [ ];
     };

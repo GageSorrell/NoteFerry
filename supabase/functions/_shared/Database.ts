@@ -64,7 +64,7 @@ export const PrivateSchema = createClient(SupabaseUrl, ServiceRoleKey, {
  * @category Database
  * @since 1.0.0
  */
-export async function GetUserId(BearerToken: string | null): Promise<string | null>
+export const GetUserId = async (BearerToken: string | null): Promise<string | null> =>
 {
     if (!BearerToken)
     {
@@ -79,4 +79,4 @@ export async function GetUserId(BearerToken: string | null): Promise<string | nu
     }
 
     return data.user.id;
-}
+};

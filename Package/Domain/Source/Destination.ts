@@ -96,20 +96,20 @@ const FieldConfiguration = Schema.Struct({
 export type FieldConfiguration = Schema.Schema.Type<typeof FieldConfiguration>;
 
 /** Whether a property can be edited by the current quick-entry form. */
-export function IsQuickEntryProperty(Property: PropertyDefinition): boolean
+export const IsQuickEntryProperty = (Property: PropertyDefinition): boolean =>
 {
     return ![ "People", "Relation" ].includes(Property.Type);
-}
+};
 
 /**
  * Reconciles saved field preferences with a freshly fetched Notion schema.
  * Existing settings follow stable property IDs, deleted properties disappear,
  * and new writable properties are appended and shown by default.
  */
-export function ReconcileFieldConfiguration(
+export const ReconcileFieldConfiguration = (
     Current: FieldConfiguration,
     Properties: ReadonlyArray<PropertyDefinition>
-): FieldConfiguration
+): FieldConfiguration =>
 {
     const PropertyById = new Map(Properties.map((Property: PropertyDefinition) =>
         [ Property.Id, Property ] as const));
@@ -164,7 +164,7 @@ export function ReconcileFieldConfiguration(
     });
 
     return { FieldOrder, Fields, Version: 1 };
-}
+};
 
 export/**
        * The current schema version of {@link TemplateConfiguration}. Bump this
@@ -203,10 +203,10 @@ const EmptyTemplateConfiguration: TemplateConfiguration = { Hidden: [ ], Templat
  * Notion no longer returns disappear, and newly seen templates are appended
  * to the order, visible by default.
  */
-export function ReconcileTemplateConfiguration(
+export const ReconcileTemplateConfiguration = (
     Current: TemplateConfiguration,
     Templates: ReadonlyArray<CachedDataSourceTemplate>
-): TemplateConfiguration
+): TemplateConfiguration =>
 {
     const KnownIds = new Set(Templates.map((Template: CachedDataSourceTemplate) => Template.TemplateId));
     const SeenIds = new Set<Id.NotionTemplateId>();
@@ -233,7 +233,7 @@ export function ReconcileTemplateConfiguration(
     const Hidden = Current.Hidden.filter((TemplateId: Id.NotionTemplateId) => KnownIds.has(TemplateId));
 
     return { Hidden, TemplateOrder, Version: 1 };
-}
+};
 
 export/**
        * A user-configured quick-entry experience for one Notion data source.
@@ -267,12 +267,12 @@ export type Destination = Schema.Schema.Type<typeof Destination>;
  * @category Destination
  * @since 2.0.0
  */
-export function ResolvePostCreationBehavior(
+export const ResolvePostCreationBehavior = (
     Destination: Destination
-): Behavior.PostCreationBehavior
+): Behavior.PostCreationBehavior =>
 {
     return Destination.PostCreationBehavior ?? { Type: "Home" };
-}
+};
 
 /**
  * A destination's template order/visibility preferences, defaulting to empty
@@ -282,12 +282,12 @@ export function ResolvePostCreationBehavior(
  * @category Destination
  * @since 2.0.0
  */
-export function ResolveTemplateConfiguration(
+export const ResolveTemplateConfiguration = (
     Destination: Destination
-): TemplateConfiguration
+): TemplateConfiguration =>
 {
     return Destination.TemplateConfiguration ?? EmptyTemplateConfiguration;
-}
+};
 
 /**
  * The data source template a destination currently selects as its Notivex
@@ -297,10 +297,10 @@ export function ResolveTemplateConfiguration(
  * @category Destination
  * @since 2.0.0
  */
-export function ResolveSelectedTemplate(
+export const ResolveSelectedTemplate = (
     Destination: Destination,
     Templates: ReadonlyArray<CachedDataSourceTemplate>
-): CachedDataSourceTemplate | undefined
+): CachedDataSourceTemplate | undefined =>
 {
     const Selection = Destination.Template;
 
@@ -311,4 +311,4 @@ export function ResolveSelectedTemplate(
 
     return Templates.find((Template: CachedDataSourceTemplate) =>
         Template.TemplateId === Selection.TemplateId);
-}
+};

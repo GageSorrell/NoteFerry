@@ -38,7 +38,7 @@ export type TemplateFieldValue =
  * @category Templates
  * @since 1.0.0
  */
-export function InputToFieldValue(Input: Domain.Property.PropertyInput): TemplateFieldValue | undefined
+export const InputToFieldValue = (Input: Domain.Property.PropertyInput): TemplateFieldValue | undefined =>
 {
     switch (Input.Type)
     {
@@ -62,7 +62,7 @@ export function InputToFieldValue(Input: Domain.Property.PropertyInput): Templat
         default:
             return undefined;
     }
-}
+};
 
 /** One property a template would set on the create-page form. */
 export interface TemplateFieldAssignment
@@ -79,9 +79,9 @@ export interface TemplateFieldAssignment
  * @category Templates
  * @since 1.0.0
  */
-export function ResolveTemplateFieldValues(
+export const ResolveTemplateFieldValues = (
     Template: Domain.DataSource.CachedDataSourceTemplate
-): ReadonlyArray<TemplateFieldAssignment>
+): ReadonlyArray<TemplateFieldAssignment> =>
 {
     const Assignments: Array<TemplateFieldAssignment> = [];
 
@@ -96,7 +96,7 @@ export function ResolveTemplateFieldValues(
     }
 
     return Assignments;
-}
+};
 
 /**
  * Rebuilds a full template order from a reordered *visible* subsequence,
@@ -108,15 +108,15 @@ export function ResolveTemplateFieldValues(
  * @category Templates
  * @since 1.0.0
  */
-export function ApplyVisibleReorder(
+export const ApplyVisibleReorder = (
     FullOrder: ReadonlyArray<Domain.Id.NotionTemplateId>,
     Hidden: ReadonlyArray<Domain.Id.NotionTemplateId>,
     NextVisibleOrder: ReadonlyArray<string>
-): ReadonlyArray<Domain.Id.NotionTemplateId>
+): ReadonlyArray<Domain.Id.NotionTemplateId> =>
 {
     const HiddenSet = new Set(Hidden);
     const VisibleQueue = [ ...NextVisibleOrder ] as Array<Domain.Id.NotionTemplateId>;
 
     return FullOrder.map((TemplateId: Domain.Id.NotionTemplateId): Domain.Id.NotionTemplateId =>
         HiddenSet.has(TemplateId) ? TemplateId : (VisibleQueue.shift() ?? TemplateId));
-}
+};

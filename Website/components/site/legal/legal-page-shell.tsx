@@ -34,15 +34,15 @@ export interface LegalPageShellProps
     readonly isPlaceholder?: boolean;
 }
 
-/**
- * The shared Terms/Privacy page layout. See {@link LegalPageShellProps}.
- */
-export function LegalPageShell({
+export/**
+       * The shared Terms/Privacy page layout. See {@link LegalPageShellProps}.
+       */
+const LegalPageShell = ({
     title,
     effectiveDate,
     sections,
     isPlaceholder = true
-}: LegalPageShellProps)
+}: LegalPageShellProps) =>
 {
     return (
         <div className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
@@ -86,4 +86,4 @@ export function LegalPageShell({
             </div>
         </div>
     );
-}
+};

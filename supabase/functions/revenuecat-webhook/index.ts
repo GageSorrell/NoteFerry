@@ -4,7 +4,7 @@ import * as Subscriptions from "../_shared/Subscriptions.ts";
 import { Effect } from "effect";
 import { PrivateSchema } from "../_shared/Database.ts";
 
-function Equal(Left: string, Right: string): boolean
+const Equal = (Left: string, Right: string): boolean =>
 {
     const Encoder = new TextEncoder();
     const A = Encoder.encode(Left);
@@ -16,9 +16,9 @@ function Equal(Left: string, Right: string): boolean
     for (let Index = 0; Index < A.length; Index += 1) Difference |= A[Index]! ^ B[Index]!;
 
     return Difference === 0;
-}
+};
 
-async function Signature(Payload: string, Secret: string): Promise<string>
+const Signature = async (Payload: string, Secret: string): Promise<string> =>
 {
     const Encoder = new TextEncoder();
     const Key = await crypto.subtle.importKey(
@@ -31,7 +31,7 @@ async function Signature(Payload: string, Secret: string): Promise<string>
     const Bytes = new Uint8Array(await crypto.subtle.sign("HMAC", Key, Encoder.encode(Payload)));
 
     return Array.from(Bytes).map((Byte) => Byte.toString(16).padStart(2, "0")).join("");
-}
+};
 
 Deno.serve(async (Request_: Request): Promise<Response> =>
 {

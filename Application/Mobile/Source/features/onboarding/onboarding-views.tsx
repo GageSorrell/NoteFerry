@@ -517,7 +517,8 @@ const DatabaseSelectionView = ({
                 {
                     Alert.alert(
                         "Add unlimited databases with Pro",
-                        "Free includes three active databases. You can replace them later without changing Notion.",
+                        "Free includes three active databases.  " +
+                        "You can replace them later without changing Notion.",
                         [
                             { style: "cancel", text: "Not now" },
                             { onPress: () => router.push("/plans"), text: "Compare plans" },
@@ -736,12 +737,12 @@ const SyncView = ({
                         Loading={ IsPending }
                         OnPress={ OnStartOver }
                         Style={ { alignSelf: "stretch" } }>
-                    Go back and start over
+                        Go back and start over
                     </Button>
                     <Link
                         Href={ NotionConnectionsHelpUrl }
                         Style={ Styles.HelpLink }>
-                    Learn about third-party connections in Notion
+                        Learn about third-party connections in Notion
                     </Link>
                 </View>
             </AccessOutcomeLayout>
@@ -849,7 +850,7 @@ const EnableNotificationsView = ({
 
     return (
         <OnboardingScreen
-            Hero={ undefined }
+            Hero={ require("../../../Resource/Onboarding/Notifications.png") }
             Subtitle="Get notified when Notivex finishes creating pages you submitted while offline."
             Title="Enable Notifications">
             <View style={ Styles.Spacer } />
@@ -857,13 +858,13 @@ const EnableNotificationsView = ({
                 Appearance="Blue"
                 Loading={ Pending }
                 OnPress={ OnEnable }
-                Style={ Styles.Cta }>
+                Style={ { alignSelf: "stretch" } }>
                 Enable notifications
             </Button>
             <Button
                 Disabled={ Pending }
                 OnPress={ OnSkip }
-                Style={ Styles.Cta }>
+                Style={ { alignSelf: "stretch" } }>
                 Not now
             </Button>
         </OnboardingScreen>

@@ -26,13 +26,13 @@ export interface CheckboxPropertyFieldProps
 }
 
 /** Renders a labeled checkbox for a Notion Checkbox property. */
-export function CheckboxPropertyField({
+export const CheckboxPropertyField = ({
     Disabled = false,
     Inline = false,
     OnValueChange,
     Property,
     Value
-}: CheckboxPropertyFieldProps): React.JSX.Element
+}: CheckboxPropertyFieldProps): React.JSX.Element =>
 {
     const Styles = useStyles();
 
@@ -49,7 +49,7 @@ export function CheckboxPropertyField({
             </View>
         </View>
     );
-}
+};
 
 const useStyles = MakeStyles({
     CheckboxValue: ViewStyle({

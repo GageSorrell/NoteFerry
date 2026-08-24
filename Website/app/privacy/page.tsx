@@ -19,7 +19,7 @@ const metadata: Metadata = {
 /**
  * Renders the Privacy Policy.
  */
-export default function PrivacyPage()
+const PrivacyPage = () =>
 {
     return (
         <LegalPageShell
@@ -28,4 +28,6 @@ export default function PrivacyPage()
             sections={ privacySections }
             title="Privacy Policy" />
     );
-}
+};
+
+export default PrivacyPage;
