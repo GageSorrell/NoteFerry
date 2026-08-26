@@ -1,7 +1,7 @@
 /**
  *
  *
- * @module @notivex/icons/Icon.Types
+ * @module @noteferry/icons/Icon.Types
  *
  * @file      Icon.Types.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,12 +12,12 @@
 import type { SvgProps } from "react-native-svg";
 
 /**
- * The props to render the underlying vector graphic of a Notivex icon.
+ * The props to render the underlying vector graphic of a NoteFerry icon.
  *
  * @category Component
  * @since 1.0.0
  */
-export interface NotivexIconProps extends Omit<SvgProps, "color">
+export interface NoteFerryIconProps extends Omit<SvgProps, "color">
 {
     /** The fill applied to the whole (monochrome) icon. Defaults to `#231F20`. */
     color?: SvgProps["color"];

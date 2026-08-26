@@ -6,7 +6,7 @@
     "effect/FileSystem": "npm:effect@4.0.0-rc.109/FileSystem",
     "effect/Path": "npm:effect@4.0.0-rc.109/Path",
     "@supabase/supabase-js": "npm:@supabase/supabase-js@2",
-    "@notivex/domain": "../_shared/vendor/domain.js",
-    "@notivex/api": "../_shared/vendor/api.js"
+    "@noteferry/domain": "../_shared/vendor/domain.js",
+    "@noteferry/api": "../_shared/vendor/api.js"
   }
 }

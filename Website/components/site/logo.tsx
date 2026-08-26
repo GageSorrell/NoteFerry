@@ -1,5 +1,5 @@
 /**
- * The Notivex wordmark, swapping the light/dark logo art via CSS
+ * The NoteFerry wordmark, swapping the light/dark logo art via CSS
  * (`dark:` classes) rather than JS state, so it renders correctly on the
  * very first paint with no theme-detection flicker.
  *
@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 /** Props for {@link Logo}. */
 export interface LogoProps
 {
-    /** Whether to show the "Notivex" wordmark next to the mark. Defaults to `true`. */
+    /** Whether to show the "NoteFerry" wordmark next to the mark. Defaults to `true`. */
     readonly showWordmark?: boolean;
 
     /** Extra class names for the wrapping link. */
@@ -24,7 +24,7 @@ export interface LogoProps
 }
 
 export/**
-       * The Notivex logo mark, optionally paired with the wordmark, linking home.
+       * The NoteFerry logo mark, optionally paired with the wordmark, linking home.
        * See {@link LogoProps}.
        */
 const Logo = ({ showWordmark = true, className }: LogoProps) =>
@@ -34,22 +34,22 @@ const Logo = ({ showWordmark = true, className }: LogoProps) =>
             href="/">
             <span className="relative block size-7 overflow-hidden rounded-lg">
                 <Image
-                    alt="Notivex"
+                    alt="NoteFerry"
                     className="object-contain dark:hidden"
                     fill
                     priority
-                    src="/NotivexLogoLight.svg"
+                    src="/NoteFerryLogoLight.svg"
                     unoptimized />
                 <Image
-                    alt="Notivex"
+                    alt="NoteFerry"
                     className="hidden object-contain dark:block"
                     fill
                     priority
-                    src="/NotivexLogoDark.svg"
+                    src="/NoteFerryLogoDark.svg"
                     unoptimized />
             </span>
             { showWordmark
-                ? <span className="text-sm font-semibold tracking-tight text-foreground">Notivex</span>
+                ? <span className="text-sm font-semibold tracking-tight text-foreground">NoteFerry</span>
                 : null }
         </Link>
     );

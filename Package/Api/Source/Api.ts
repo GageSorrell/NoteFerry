@@ -1,12 +1,12 @@
 /**
- * The complete Notivex API contract: every group, endpoint, payload, success and
+ * The complete NoteFerry API contract: every group, endpoint, payload, success and
  * error schema the Expo app and the `api` Supabase Edge Function agree on.
  *
  * This module only *describes* the API.  Implementing each group's handlers
  * (`HttpApiBuilder.group`) and deriving a client (`HttpApiClient.make`) both
  * happen elsewhere, against this same value.
  *
- * @module @notivex/api/Api
+ * @module @noteferry/api/Api
  *
  * @file      Api.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -14,7 +14,7 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import { AccountApi } from "./AccountApi.js";
 import { ConnectionsApi } from "./ConnectionsApi.js";
 import { DataSourcesApi } from "./DataSourcesApi.js";
@@ -27,26 +27,26 @@ import { ProfileApi } from "./ProfileApi.js";
 import { SubscriptionsApi } from "./SubscriptionsApi.js";
 
 /**
- * The union of every domain error any `NotivexApi` endpoint can produce.
+ * The union of every domain error any `NoteFerryApi` endpoint can produce.
  * Also gives the declaration emitter a local binding through which it can
- * name each tagged error class embedded in `NotivexApi`'s inferred type
+ * name each tagged error class embedded in `NoteFerryApi`'s inferred type
  * (TS2883), without a hand-written type annotation for the whole `HttpApi`
  * value.
  *
  * @category Api
  * @since 1.0.0
  */
-export type NotivexApiError = Domain.Error.DomainError;
+export type NoteFerryApiError = Domain.Error.DomainError;
 
 export/**
-       * The complete Notivex HTTP API: `Connections`, `DataSources`,
+       * The complete NoteFerry HTTP API: `Connections`, `DataSources`,
        * `Destinations`, `Pages`, `Profile`, `Account`, `ExportRequests` and
        * `Feedback`, each prefixed under its own resource path.
        *
        * @category Api
        * @since 1.0.0
        */
-const NotivexApi = HttpApi.make("NotivexApi").add(
+const NoteFerryApi = HttpApi.make("NoteFerryApi").add(
     ConnectionsApi.prefix("/Connections"),
     DataSourcesApi.prefix("/DataSources"),
     DestinationsApi.prefix("/Destinations"),

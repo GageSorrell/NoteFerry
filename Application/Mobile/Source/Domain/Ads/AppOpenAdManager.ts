@@ -5,7 +5,7 @@
  * splash screen already covers that moment -- only later
  * background/inactive -> active transitions are candidates.
  *
- * @module notivex/Domain/Ads/AppOpenAdManager
+ * @module noteferry/Domain/Ads/AppOpenAdManager
  *
  * @file      AppOpenAdManager.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

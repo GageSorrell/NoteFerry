@@ -10,7 +10,7 @@
  * matching cmdk/shadcn precedent, the consumer's `OnSelect` handler is
  * expected to close it (e.g. via `CommandDialog`'s own `OnOpenChange`).
  *
- * @module @notivex/ui/Primitive/Command
+ * @module @noteferry/ui/Primitive/Command
  *
  * @file      Command.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

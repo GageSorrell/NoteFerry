@@ -3,7 +3,7 @@
  * field and, when the property's `Format` carries a unit (a currency or
  * percent), shows that unit alongside the entered value.
  *
- * @module notivex/features/page-creation/number-property-field
+ * @module noteferry/features/page-creation/number-property-field
  *
  * @file      number-property-field.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -11,9 +11,9 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
-import { Body, Input } from "@notivex/ui/Primitive";
-import { MakeStyles, Token, ViewStyle } from "@notivex/ui";
+import type * as Domain from "@noteferry/domain";
+import { Body, Input } from "@noteferry/ui/Primitive";
+import { MakeStyles, Token, ViewStyle } from "@noteferry/ui";
 import { PropertyLabel } from "@/features/page-creation/property-label";
 import { View } from "react-native";
 

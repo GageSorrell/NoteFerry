@@ -1,9 +1,9 @@
--- `app.data_sources` — the normalized, cached Notion data-source schema Notivex
+-- `app.data_sources` — the normalized, cached Notion data-source schema NoteFerry
 -- renders its quick-add UI from without a Notion round trip on every launch
--- (ArchitectureInitialDraft.md §11-12). Mirrors `@notivex/domain`
+-- (ArchitectureInitialDraft.md §11-12). Mirrors `@noteferry/domain`
 -- DataSource.ts `CachedDataSourceSchema`. Notion remains canonical.
 --
--- `property_schema` holds the *normalized* Notivex schema (versioned
+-- `property_schema` holds the *normalized* NoteFerry schema (versioned
 -- PropertyDefinition[] plus its Version), NOT an opaque dump of Notion's API
 -- response, so a Notion API change only touches one mapper (§11).
 
@@ -21,7 +21,7 @@ create table app.data_sources (
     property_schema jsonb not null,
     -- normalized Notion page templates for this data source (name, icon,
     -- Notion's own is_default flag, and a snapshot of each template's own
-    -- property values), mirroring @notivex/domain DataSource.ts
+    -- property values), mirroring @noteferry/domain DataSource.ts
     -- `CachedDataSourceTemplate[]`. Refreshed alongside `property_schema`.
     templates jsonb not null default '[]'::jsonb,
     schema_hash text not null,

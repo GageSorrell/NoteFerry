@@ -1,5 +1,5 @@
 /**
- * Server-only profile access (Deno + Effect). A profile is Notivex-specific
+ * Server-only profile access (Deno + Effect). A profile is NoteFerry-specific
  * user information — today, just the cross-device
  * {@link Domain.Settings.AppSettings} blob — that does not belong in
  * Supabase's own `auth.users` table.
@@ -10,7 +10,7 @@
  * partial value decodes cleanly, and `Domain.Settings.WithDefaults` fills the
  * gaps for callers.
  *
- * @module notivex/functions/_shared/Profile
+ * @module noteferry/functions/_shared/Profile
  *
  * @file      Profile.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -18,7 +18,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { AdminClient, PrivateSchema } from "./Database.ts";
 import { Effect, Schema } from "effect";
 

@@ -4,7 +4,7 @@
  * because data access is guarded by RLS. The session is persisted through
  * {@link SecureSessionStore} and auto-refreshed while the app is foregrounded.
  *
- * @module notivex/Domain/Runtime/Supabase
+ * @module noteferry/Domain/Runtime/Supabase
  *
  * @file      Supabase.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

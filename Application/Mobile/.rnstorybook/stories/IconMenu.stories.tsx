@@ -1,11 +1,11 @@
 /**
- * Storybook stories for `@notivex/ui`'s `IconMenu` primitive — a page icon
+ * Storybook stories for `@noteferry/ui`'s `IconMenu` primitive — a page icon
  * picker bottom sheet (emoji, Lucide icon, or an uploaded photo). Built on
  * `BottomSheet` (`@expo/ui`-native), so — per `BottomSheet.stories.tsx`'s
  * own caveat — this renders but the sheet itself will not open under Expo
  * Go or on web; see the package ReadMe for building a dev client.
  *
- * @module notivex/app/.rnstorybook/stories/IconMenu
+ * @module noteferry/app/.rnstorybook/stories/IconMenu
  *
  * @file      IconMenu.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -14,8 +14,8 @@
  */
 
 import * as React from "react";
-import { type BottomSheet, Button } from "@notivex/ui/Primitive";
-import { IconBlock, type IconData, IconMenu } from "@notivex/ui/Block";
+import { type BottomSheet, Button } from "@noteferry/ui/Primitive";
+import { IconBlock, type IconData, IconMenu } from "@noteferry/ui/Block";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 

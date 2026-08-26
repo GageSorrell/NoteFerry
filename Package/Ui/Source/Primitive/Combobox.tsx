@@ -7,7 +7,7 @@
  * case this file covers: `Select` (tap a fixed short list) plus a search
  * box, built on `Autocomplete.tsx`'s engine the same way `Command.tsx` is.
  *
- * @module @notivex/ui/Primitive/Combobox
+ * @module @noteferry/ui/Primitive/Combobox
  *
  * @file      Combobox.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -59,7 +59,7 @@ const useComboboxValueContext = (): ComboboxValueContextValue =>
 
     if (Value === undefined)
     {
-        throw new Error("[@notivex/ui] A `Combobox` part was used outside of `<Combobox>`.");
+        throw new Error("[@noteferry/ui] A `Combobox` part was used outside of `<Combobox>`.");
     }
 
     return Value;

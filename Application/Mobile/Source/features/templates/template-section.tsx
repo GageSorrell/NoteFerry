@@ -2,11 +2,11 @@
  * The "Templates" section of the database settings sub-screen
  * (`destination-config.tsx`): a "No template" row, a drag-reorderable list
  * of a data source's non-hidden Notion templates (each with a 3-dot menu to
- * hide it or select it as Notivex's default), and a collapsed-by-default
+ * hide it or select it as NoteFerry's default), and a collapsed-by-default
  * list of the templates that have been hidden, each with a button to
  * restore it to the main list.
  *
- * @module notivex/features/templates/template-section
+ * @module noteferry/features/templates/template-section
  *
  * @file      template-section.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -14,7 +14,7 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import {
     Body,
     DropdownMenu,
@@ -25,10 +25,10 @@ import {
     LabelText,
     Pressable,
     Sortable
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import { Ban, Check, ChevronDown, ChevronUp, EllipsisVertical, Eye, EyeOff, Star } from "lucide-react-native";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme, useToken } from "@notivex/ui";
-import { IconBlock } from "@notivex/ui/Block";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme, useToken } from "@noteferry/ui";
+import { IconBlock } from "@noteferry/ui/Block";
 import { ApplyVisibleReorder } from "./template-values";
 import { ResolveTemplateIconData } from "./template-icon";
 import { useCallback, useState } from "react";

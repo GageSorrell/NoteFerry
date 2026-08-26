@@ -1,9 +1,9 @@
 /**
- * The `ExportRequests` group: asking Notivex to prepare an export of the
+ * The `ExportRequests` group: asking NoteFerry to prepare an export of the
  * current user's account data. Requests are fulfilled manually — creating one
- * only records the request and notifies Notivex.
+ * only records the request and notifies NoteFerry.
  *
- * @module @notivex/api/ExportRequestsApi
+ * @module @noteferry/api/ExportRequestsApi
  *
  * @file      ExportRequestsApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -11,7 +11,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
 
 export/**
@@ -33,7 +33,7 @@ const Create = HttpApiEndpoint.post(
 );
 
 export/**
-       * The `ExportRequests` resource group of the Notivex API.
+       * The `ExportRequests` resource group of the NoteFerry API.
        *
        * @category ExportRequests
        * @since 1.0.0

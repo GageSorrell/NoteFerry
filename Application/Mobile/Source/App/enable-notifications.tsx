@@ -2,7 +2,7 @@
  * Controller for choosing the offline-submit notification preference during
  * onboarding.
  *
- * @module notivex/app/enable-notifications
+ * @module noteferry/app/enable-notifications
  *
  * @file      enable-notifications.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -16,7 +16,7 @@ import {
     OnboardingMockTiming,
     useDevelopmentOnboarding
 } from "@/features/onboarding/onboarding-development";
-import { UpdateProfileSettings } from "@/Domain/Runtime/NotivexApi";
+import { UpdateProfileSettings } from "@/Domain/Runtime/NoteFerryApi";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useState } from "react";
 

@@ -1,5 +1,5 @@
 /**
- * Shared utilities for the Notivex marketing website.
+ * Shared utilities for the NoteFerry marketing website.
  *
  * @file      utils.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

@@ -1,10 +1,10 @@
 /**
- * Storybook stories for `@notivex/ui`'s `BottomSheet` primitive. Built on
+ * Storybook stories for `@noteferry/ui`'s `BottomSheet` primitive. Built on
  * `@expo/ui`, which needs a custom dev client — this story renders but the
  * sheet itself will not open under Expo Go or on web; see the package
  * ReadMe for building a dev client.
  *
- * @module notivex/app/.rnstorybook/stories/BottomSheet
+ * @module noteferry/app/.rnstorybook/stories/BottomSheet
  *
  * @file      BottomSheet.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -20,7 +20,7 @@ import {
     BottomSheetHeader,
     BottomSheetTitle,
     Button
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 
 const BottomSheetExample = (): React.JSX.Element =>

@@ -1,7 +1,7 @@
 /**
  *
  *
- * @module notivex/Domain/Auth
+ * @module noteferry/Domain/Auth
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,5 +9,7 @@
  * @license   MIT
  */
 
-export * from "./NotivexAuthProvider";
+export * from "./NoteFerryAuthProvider";
 export * from "./OAuth";
+export * from "./OAuthBrowser";
+export * from "./OAuthRedirect";

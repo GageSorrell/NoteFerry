@@ -1,7 +1,7 @@
 /**
  * Single-choice input for Notion Select properties.
  *
- * @module notivex/features/page-creation/select-property-field
+ * @module noteferry/features/page-creation/select-property-field
  *
  * @file      select-property-field.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,9 +9,9 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
-import { Body, type BottomSheet } from "@notivex/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle } from "@notivex/ui";
+import type * as Domain from "@noteferry/domain";
+import { Body, type BottomSheet } from "@noteferry/ui/Primitive";
+import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui";
 import {
     PropertyOptionPill,
     PropertyOptionSheet,

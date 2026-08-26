@@ -1,12 +1,12 @@
 /**
- * Storybook stories for `@notivex/ui`'s `CoverPicker` primitive — a page
+ * Storybook stories for `@noteferry/ui`'s `CoverPicker` primitive — a page
  * cover-image picker bottom sheet (upload a photo, or paste an image URL).
  * Built on `BottomSheet` (`@expo/ui`-native), so — per
  * `BottomSheet.stories.tsx`'s own caveat — this renders but the sheet
  * itself will not open under Expo Go or on web; see the package ReadMe for
  * building a dev client.
  *
- * @module notivex/app/.rnstorybook/stories/CoverPicker
+ * @module noteferry/app/.rnstorybook/stories/CoverPicker
  *
  * @file      CoverPicker.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -15,9 +15,9 @@
  */
 
 import * as React from "react";
-import { Cover, CoverPicker } from "@notivex/ui/Block";
+import { Cover, CoverPicker } from "@noteferry/ui/Block";
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { type BottomSheet } from "@notivex/ui/Primitive";
+import { type BottomSheet } from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 const CoverPickerExample = (): React.JSX.Element =>

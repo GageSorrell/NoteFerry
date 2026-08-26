@@ -1,8 +1,8 @@
 {
-  "name": "@notivex/domain",
+  "name": "@noteferry/domain",
   "description": "Schemas and data utilities shared across the monorepo.",
   "private": true,
-  "homepage": "https://notivex.sorrell.sh",
+  "homepage": "https://noteferry.sorrell.sh",
   "version": "1.0.0",
   "author": {
     "name": "Gage Sorrell",
@@ -10,13 +10,13 @@
     "url": "https://sorrell.sh"
   },
   "bugs": {
-    "url": "https://github.com/GageSorrell/Notivex/issues"
+    "url": "https://github.com/GageSorrell/NoteFerry/issues"
   },
   "license": "MIT",
   "repository": {
     "directory": "Package/Domain",
     "type": "git",
-    "url": "git+https://github.com/GageSorrell/Notivex.git"
+    "url": "git+https://github.com/GageSorrell/NoteFerry.git"
   },
   "engines": {
     "node": "24.19.0",

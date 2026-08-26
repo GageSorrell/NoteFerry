@@ -18,7 +18,7 @@
  * markup, mirroring how source left all `data-selected`/`data-selecting`
  * styling to the caller too.
  *
- * @module @notivex/ui/Primitive/Selectable
+ * @module @noteferry/ui/Primitive/Selectable
  *
  * @file      Selectable.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -58,7 +58,7 @@ const useSelectableContext = (): SelectableContextValue =>
 
     if (Value === undefined)
     {
-        throw new Error("[@notivex/ui] A `Selectable` part was used outside of `<SelectableRoot>`.");
+        throw new Error("[@noteferry/ui] A `Selectable` part was used outside of `<SelectableRoot>`.");
     }
 
     return Value;

@@ -1,8 +1,8 @@
 /**
- * Storybook stories for `@notivex/ui`'s `Combobox` primitive — a searchable
+ * Storybook stories for `@noteferry/ui`'s `Combobox` primitive — a searchable
  * single-select built on the `Autocomplete` engine.
  *
- * @module notivex/app/.rnstorybook/stories/Combobox
+ * @module noteferry/app/.rnstorybook/stories/Combobox
  *
  * @file      Combobox.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -20,7 +20,7 @@ import {
     ComboboxList,
     ComboboxTrigger,
     ComboboxValue
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 

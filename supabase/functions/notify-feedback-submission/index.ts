@@ -7,12 +7,12 @@
  * header the trigger and this function both know (the same
  * `WEBHOOK_SECRET` the `notify-account-data-request` function uses).
  *
- * Emails Notivex via Resend so the feedback or bug report can be triaged by
+ * Emails NoteFerry via Resend so the feedback or bug report can be triaged by
  * hand. When the submitter opted to share their contact info, their account
  * email is resolved here (service role) and included so they can be replied
  * to directly; nothing else writes back to the database.
  *
- * @module notivex/functions/notify-feedback-submission
+ * @module noteferry/functions/notify-feedback-submission
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -32,7 +32,7 @@ interface FeedbackSubmissionPayload
     readonly created_at: string;
 }
 
-/* This webhook only ever notifies Notivex's own maintainer, so unlike
+/* This webhook only ever notifies NoteFerry's own maintainer, so unlike
  * `ACCOUNT_DATA_REQUEST_NOTIFY_EMAIL` it is a fixed address rather than an
  * env var — one fewer secret to provision per environment. */
 const NotifyEmail = "gage@sorrell.sh";
@@ -49,7 +49,7 @@ const EscapeHtml = (Value: string): string =>
 Deno.serve(async (Request: Request) =>
 {
     const ExpectedSecret = Deno.env.get("WEBHOOK_SECRET");
-    const ProvidedSecret = Request.headers.get("x-notivex-webhook-secret");
+    const ProvidedSecret = Request.headers.get("x-noteferry-webhook-secret");
 
     if (!ExpectedSecret || ProvidedSecret !== ExpectedSecret)
     {
@@ -95,12 +95,12 @@ Deno.serve(async (Request: Request) =>
 
     const EmailResponse = await fetch("https://api.resend.com/emails", {
         body: JSON.stringify({
-            from: "Notivex <noreply@notifications.sorrell.sh>",
+            from: "NoteFerry <noreply@notifications.sorrell.sh>",
             html: `<p><strong>${ KindLabel }</strong> from user `
                 + `<code>${ Payload.user_id }</code> (${ Payload.created_at }).</p>`
                 + `<p>${ ContactLine }</p>`
                 + `<p>${ MessageHtml }</p>`,
-            subject: `Notivex: ${ KindLabel.toLowerCase() }`,
+            subject: `NoteFerry: ${ KindLabel.toLowerCase() }`,
             to: [ NotifyEmail ]
         }),
         headers:

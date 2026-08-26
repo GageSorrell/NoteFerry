@@ -1,5 +1,5 @@
 /**
- * @module notivex/Component
+ * @module noteferry/Component
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

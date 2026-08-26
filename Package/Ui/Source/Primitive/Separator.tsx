@@ -1,7 +1,7 @@
 /**
  * Ported from `@notion-kit/ui`'s `primitives/separator.tsx`.
  *
- * @module @notivex/ui/Primitive/Separator
+ * @module @noteferry/ui/Primitive/Separator
  *
  * @file      Separator.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

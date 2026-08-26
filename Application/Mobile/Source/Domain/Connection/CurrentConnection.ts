@@ -2,7 +2,7 @@
  * Resolves which of the user's Notion connections is "current" — the one the
  * home screen and its avatar switcher treat as selected.
  *
- * @module notivex/Domain/Connection/CurrentConnection
+ * @module noteferry/Domain/Connection/CurrentConnection
  *
  * @file      CurrentConnection.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -10,7 +10,7 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import { Predicate } from "@sorrell/effect";
 
 /**

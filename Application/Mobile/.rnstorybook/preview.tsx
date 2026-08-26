@@ -1,5 +1,5 @@
 /**
- * @module notivex/.rnstorybook/preview
+ * @module noteferry/.rnstorybook/preview
  * @internal
  *
  * @file      preview.tsx
@@ -9,13 +9,13 @@
  */
 
 import type { Decorator, Preview } from "@storybook/react-native";
-import { MakeStyles, ThemeProvider, ViewStyle } from "@notivex/ui";
+import { MakeStyles, ThemeProvider, ViewStyle } from "@noteferry/ui";
 import type { PartialStoryFn, StoryContext } from "storybook/internal/types";
 import { View } from "react-native";
 
 /**
  * Renders one story inside its themed stage. A separate component from
- * `withNotivexTheme` on purpose — `useStyles` (like any `@notivex/ui` token
+ * `withNoteFerryTheme` on purpose — `useStyles` (like any `@noteferry/ui` token
  * hook) needs a `ThemeProvider` ancestor, and a component can't read a
  * context it renders for the first time in its own body; only descendants
  * (like this one) see it.
@@ -37,11 +37,11 @@ const StoryStage = ({
     );
 };
 
-// Every story here renders a `@notivex/ui` component, and every one of
+// Every story here renders a `@noteferry/ui` component, and every one of
 // those reads design tokens via `ThemeProvider`'s hooks (`useColor`,
 // `useTypography`, ...) — so every story needs a `ThemeProvider` ancestor,
 // applied once here rather than repeated in each `.stories.tsx` file.
-const withNotivexTheme: Decorator = (
+const withNoteFerryTheme: Decorator = (
     Story: PartialStoryFn,
     Context: StoryContext
 ) => (
@@ -55,7 +55,7 @@ const withNotivexTheme: Decorator = (
 
 const preview: Preview =
     {
-        decorators: [ withNotivexTheme ],
+        decorators: [ withNoteFerryTheme ],
         parameters:
         {
             controls:

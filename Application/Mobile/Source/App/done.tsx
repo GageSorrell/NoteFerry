@@ -1,7 +1,7 @@
 /**
  * Controller for completing onboarding and entering the app.
  *
- * @module notivex/app/done
+ * @module noteferry/app/done
  *
  * @file      done.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -10,7 +10,7 @@
  */
 
 import { AddWorkspace } from "@/Domain/Connection";
-import { ListConnections } from "@/Domain/Runtime/NotivexApi";
+import { ListConnections } from "@/Domain/Runtime/NoteFerryApi";
 import { OnboardingMockTiming, useDevelopmentOnboarding } from "@/features/onboarding/onboarding-development";
 import { DoneView } from "@/features/onboarding/onboarding-views";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";

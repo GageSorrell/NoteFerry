@@ -1,4 +1,4 @@
-/** Store-backed monthly, yearly, and lifetime Notivex Pro checkout. */
+/** Store-backed monthly, yearly, and lifetime NoteFerry Pro checkout. */
 
 import {
     Body,
@@ -8,17 +8,17 @@ import {
     Heading2,
     LabelText,
     Pressable
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import { Alert, Linking, ScrollView, View } from "react-native";
-import { MakeStyles, Token, ViewStyle } from "@notivex/ui";
+import { MakeStyles, Token, ViewStyle } from "@noteferry/ui";
 import { PACKAGE_TYPE, PURCHASES_ERROR_CODE, type PurchasesError, type PurchasesPackage } from "react-native-purchases";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useMemo, useState } from "react";
 import { useSubscription } from "@/Domain/Subscription";
 import { PurchaseSyncPendingError } from "@/Domain/Subscription/SubscriptionProvider";
 
-const TermsUrl = "https://notivex.sorrell.sh/terms";
-const PrivacyUrl = "https://notivex.sorrell.sh/privacy";
+const TermsUrl = "https://noteferry.sorrell.sh/terms";
+const PrivacyUrl = "https://noteferry.sorrell.sh/privacy";
 
 const Term = (Package: PurchasesPackage): "Monthly" | "Yearly" | "Lifetime" | null =>
 {
@@ -56,7 +56,7 @@ const SubscribeScreen = (): React.JSX.Element =>
         try
         {
             await Purchase(SelectedPackage);
-            Alert.alert("Notivex Pro is ready", "Your Pro features are now active.");
+            Alert.alert("NoteFerry Pro is ready", "Your Pro features are now active.");
         }
         catch (Error_)
         {
@@ -112,7 +112,7 @@ const SubscribeScreen = (): React.JSX.Element =>
         <View style={ Styles.Container }>
             <SafeAreaView style={ Styles.SafeArea } edges={ [ "bottom" ] }>
                 <ScrollView contentContainerStyle={ Styles.Content }>
-                    <Heading1>Notivex Pro</Heading1>
+                    <Heading1>NoteFerry Pro</Heading1>
                     <Description>
                         Unlimited databases and capture, full customization, and no ads.
                     </Description>
@@ -144,7 +144,7 @@ const SubscribeScreen = (): React.JSX.Element =>
                                 <Body>{ Option.Package.product.priceString }</Body>
                                 <Description>
                                     { Option.Term === "Lifetime"
-                                        ? "One-time purchase. Access lasts for the supported lifetime of the Notivex service."
+                                        ? "One-time purchase. Access lasts for the supported lifetime of the NoteFerry service."
                                         : "Auto-renews unless canceled through your store account." }
                                 </Description>
                             </Pressable>
@@ -174,7 +174,7 @@ const SubscribeScreen = (): React.JSX.Element =>
                         : null }
 
                     <Description>
-                        By purchasing, you agree to the store billing terms and Notivex policies.
+                        By purchasing, you agree to the store billing terms and NoteFerry policies.
                     </Description>
                     <View style={ Styles.Links }>
                         <Button Appearance="Link" OnPress={ () => void Linking.openURL(TermsUrl) }>Terms</Button>

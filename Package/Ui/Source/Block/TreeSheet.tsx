@@ -31,7 +31,7 @@
  *   titles) and capped at `MaxSearchResults`, matching the same defensive
  *   cap source's own `useEmojiFactory.search` applies.
  *
- * @module @notivex/ui/Primitive/TreeSheet
+ * @module @noteferry/ui/Primitive/TreeSheet
  *
  * @file      TreeSheet.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

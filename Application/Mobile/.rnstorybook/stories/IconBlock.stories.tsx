@@ -1,9 +1,9 @@
 /**
- * Storybook stories for `@notivex/ui`'s `IconBlock` primitive — a page/
+ * Storybook stories for `@noteferry/ui`'s `IconBlock` primitive — a page/
  * database icon (an emoji, a Lucide icon, a remote image, or a letter
  * fallback), sized and rounded consistently wherever an icon appears.
  *
- * @module notivex/app/.rnstorybook/stories/IconBlock
+ * @module noteferry/app/.rnstorybook/stories/IconBlock
  *
  * @file      IconBlock.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,7 +12,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { IconBlock } from "@notivex/ui/Block";
+import { IconBlock } from "@noteferry/ui/Block";
 import { View } from "react-native";
 
 const meta =
@@ -79,7 +79,7 @@ export const Types: Story =
                 />
                 <IconBlock
                     Icon={ {
-                        Src: "https://picsum.photos/seed/notivex/128",
+                        Src: "https://picsum.photos/seed/noteferry/128",
                         Type: "Url"
                     } }
                     Size="Large"

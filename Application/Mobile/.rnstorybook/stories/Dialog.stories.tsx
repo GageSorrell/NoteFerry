@@ -1,7 +1,7 @@
 /**
- * Storybook stories for `@notivex/ui`'s `Dialog` primitive.
+ * Storybook stories for `@noteferry/ui`'s `Dialog` primitive.
  *
- * @module notivex/app/.rnstorybook/stories/Dialog
+ * @module noteferry/app/.rnstorybook/stories/Dialog
  *
  * @file      Dialog.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -20,7 +20,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 
 const DialogExample = (): React.JSX.Element => (

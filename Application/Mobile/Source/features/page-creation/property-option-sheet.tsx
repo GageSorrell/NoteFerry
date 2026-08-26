@@ -1,7 +1,7 @@
 /**
  * Shared Notion-style option picker presented in a native bottom sheet.
  *
- * @module notivex/features/page-creation/property-option-sheet
+ * @module noteferry/features/page-creation/property-option-sheet
  *
  * @file      property-option-sheet.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,7 +9,7 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import {
     Body,
     BottomSheet,
@@ -17,7 +17,7 @@ import {
     BottomSheetScrollView,
     ModalTitle,
     Pressable
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import { Check, X } from "lucide-react-native";
 import {
     Keyboard,
@@ -27,7 +27,7 @@ import {
     StyleSheet,
     View
 } from "react-native";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
 import type { PropsWithChildren, RefObject } from "react";
 
 export /** Notion's option-pill background color per `PropertyOptionColor`. */

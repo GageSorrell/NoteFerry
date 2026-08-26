@@ -1,5 +1,5 @@
 /**
- * @module notivex/Storybook/Badge
+ * @module noteferry/Storybook/Badge
  * @internal
  *
  * @file      Badge.stories.tsx
@@ -9,7 +9,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { Badge } from "@notivex/ui/Primitive";
+import { Badge } from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 const meta =

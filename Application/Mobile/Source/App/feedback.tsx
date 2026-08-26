@@ -2,11 +2,11 @@
  * Feedback / bug-report screen. One shared screen reached two ways from
  * Settings — "Submit feedback" and "Report a bug" — distinguished only by
  * the expo-router header text, driven by the `mode` param. Submitting
- * uploads a row to `app.feedback_submissions`, which emails Notivex via
+ * uploads a row to `app.feedback_submissions`, which emails NoteFerry via
  * Resend (`supabase/schemas/11_notifications.sql`); the server also
  * enforces a basic per-user rate limit.
  *
- * @module notivex/app/feedback
+ * @module noteferry/app/feedback
  *
  * @file      feedback.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -15,12 +15,12 @@
  */
 
 import { Alert, ScrollView, View } from "react-native";
-import { Body, Button, Checkbox, Description, LabelText, Textarea } from "@notivex/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle } from "@notivex/ui";
+import { Body, Button, Checkbox, Description, LabelText, Textarea } from "@noteferry/ui/Primitive";
+import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { SubmitFeedback } from "@/Domain/Runtime/NotivexApi";
+import { SubmitFeedback } from "@/Domain/Runtime/NoteFerryApi";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 
 const MinimumMessageLength = 12;
@@ -150,7 +150,7 @@ const FeedbackScreen = (): React.JSX.Element =>
                             OnCheckedChange={ SetShareContact }
                         />
                         <Body Style={ Styles.ShareLabel }>
-                            Share my contact info so Notivex can respond
+                            Share my contact info so NoteFerry can respond
                         </Body>
                     </View>
 

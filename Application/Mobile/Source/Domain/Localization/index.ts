@@ -1,5 +1,5 @@
 /**
- * @module notivex/Domain/Localization
+ * @module noteferry/Domain/Localization
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

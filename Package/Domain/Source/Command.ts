@@ -1,10 +1,10 @@
 /**
- * `CreatePageCommand` — a Notivex-shaped request to create a Notion page,
+ * `CreatePageCommand` — a NoteFerry-shaped request to create a Notion page,
  * distinct from both {@link PageDraft.PageDraft} (local, still-editable
  * state) and Notion's own Create Page request body, which only the
  * server-side Notion adapter ever constructs.
  *
- * @module @notivex/domain/Command
+ * @module @noteferry/domain/Command
  *
  * @file      Command.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

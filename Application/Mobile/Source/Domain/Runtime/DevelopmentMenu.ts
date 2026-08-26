@@ -2,7 +2,7 @@
  * Development-client menu extensions. This module is registered by the root
  * layout only in development builds.
  *
- * @module notivex/Domain/Runtime/DevelopmentMenu
+ * @module noteferry/Domain/Runtime/DevelopmentMenu
  *
  * @file      DevelopmentMenu.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -35,7 +35,7 @@ const ClearAndReload = async (): Promise<void> =>
 };
 
 export/**
-       * Adds Notivex-specific actions to Expo's development-client menu.
+       * Adds NoteFerry-specific actions to Expo's development-client menu.
        *
        * @category Development
        * @since 1.0.0

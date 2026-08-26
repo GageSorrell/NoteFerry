@@ -1,13 +1,13 @@
 /**
- * `Destination` — a first-class Notivex concept: how a user has configured a
+ * `Destination` — a first-class NoteFerry concept: how a user has configured a
  * quick-entry experience for one Notion data source.
  *
- * A `Destination` answers "how has this Notivex user configured a
+ * A `Destination` answers "how has this NoteFerry user configured a
  * quick-entry experience for this data source?" — see
  * {@link NotionConnection} for "which Notion authorization do I use?" and
  * {@link DataSource} for "which Notion table/schema is this?".
  *
- * @module @notivex/domain/Destination
+ * @module @noteferry/domain/Destination
  *
  * @file      Destination.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -28,14 +28,14 @@ export/**
        * either automatically (Notion's own default, snapshotted the moment
        * the destination is created) or explicitly by the user, and never
        * re-derived from Notion's live default afterward. Being a "default
-       * template" in Notivex is deliberately decoupled from being Notion's
+       * template" in NoteFerry is deliberately decoupled from being Notion's
        * default: see `Destinations.ts`'s `CreateForUser` for the one place
        * that snapshot happens.
        *
        * A destination saved before this decoupling may still have the legacy
        * `{Type:"Default"}` value stored in its `configuration` JSONB blob —
        * `Destinations.ts` normalizes that to `{Type:"None"}` before this
-       * schema ever sees it, since Notivex can no longer tell which Notion
+       * schema ever sees it, since NoteFerry can no longer tell which Notion
        * template a stored "Default" pointed to.
        *
        * @category Destination
@@ -53,7 +53,7 @@ const DestinationTemplate = Schema.Union([
 export type DestinationTemplate = Schema.Schema.Type<typeof DestinationTemplate>;
 
 export/**
-       * A single field's Notivex-specific presentation settings, layered on top of
+       * A single field's NoteFerry-specific presentation settings, layered on top of
        * (and never modifying) the underlying Notion property definition.
        *
        * @category Destination
@@ -177,7 +177,7 @@ export/**
 const TemplateConfigurationVersion = Schema.Literal(1);
 
 export/**
-       * A destination's Notivex-only template preferences, layered on top of
+       * A destination's NoteFerry-only template preferences, layered on top of
        * (and never modifying) the data source's Notion-sourced template list:
        * which templates are hidden from the main list, and the display/drag
        * order of every known template (hidden ones included, so a template
@@ -290,7 +290,7 @@ export const ResolveTemplateConfiguration = (
 };
 
 /**
- * The data source template a destination currently selects as its Notivex
+ * The data source template a destination currently selects as its NoteFerry
  * default, or `undefined` for `{Type:"None"}` or a `Specific` selection that
  * no longer resolves against the given (freshly reconciled) template list.
  *

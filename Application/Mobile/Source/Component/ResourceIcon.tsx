@@ -5,7 +5,7 @@
  * fails to load. Shared by the onboarding database/page tables and the
  * database settings table so both render icons identically.
  *
- * @module notivex/Component/ResourceIcon
+ * @module noteferry/Component/ResourceIcon
  *
  * @file      ResourceIcon.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -14,9 +14,9 @@
  */
 
 import * as React from "react";
-import { ImageStyle, MakeStyles, TextStyle, ViewStyle } from "@notivex/ui";
-import { IconBlock, type LucideIconName } from "@notivex/ui/Block";
-import { ItemTitle, Skeleton } from "@notivex/ui/Primitive";
+import { ImageStyle, MakeStyles, TextStyle, ViewStyle } from "@noteferry/ui";
+import { IconBlock, type LucideIconName } from "@noteferry/ui/Block";
+import { ItemTitle, Skeleton } from "@noteferry/ui/Primitive";
 import { Image } from "expo-image";
 import { SvgUri } from "react-native-svg";
 

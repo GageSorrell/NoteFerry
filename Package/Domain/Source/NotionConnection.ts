@@ -1,5 +1,5 @@
 /**
- * `NotionConnection` — the user-visible metadata Notivex keeps about one
+ * `NotionConnection` — the user-visible metadata NoteFerry keeps about one
  * authorized Notion connection.
  *
  * This is deliberately **only** the non-secret metadata a Supabase user is
@@ -13,7 +13,7 @@
  * experience?" and {@link DataSource} for "which Notion table/schema is
  * this?".
  *
- * @module @notivex/domain/NotionConnection
+ * @module @noteferry/domain/NotionConnection
  *
  * @file      NotionConnection.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

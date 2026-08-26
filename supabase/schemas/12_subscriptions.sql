@@ -1,4 +1,4 @@
--- Notivex Pro billing snapshots, free-tier enforcement, sale campaigns, and
+-- NoteFerry Pro billing snapshots, free-tier enforcement, sale campaigns, and
 -- promotional push delivery state. RevenueCat remains billing source of truth.
 
 alter table app.data_sources
@@ -364,7 +364,7 @@ begin
 end;
 $$;
 
-create or replace function private.remove_data_source_from_notivex(
+create or replace function private.remove_data_source_from_noteferry(
     p_user_id uuid,
     p_data_source_id text
 )
@@ -412,11 +412,11 @@ $$;
 
 revoke all on function private.swap_free_active_data_source(uuid, text, text)
     from public, anon, authenticated;
-revoke all on function private.remove_data_source_from_notivex(uuid, text)
+revoke all on function private.remove_data_source_from_noteferry(uuid, text)
     from public, anon, authenticated;
 grant execute on function private.swap_free_active_data_source(uuid, text, text)
     to service_role;
-grant execute on function private.remove_data_source_from_notivex(uuid, text)
+grant execute on function private.remove_data_source_from_noteferry(uuid, text)
     to service_role;
 
 create or replace function private.reproject_free_active_data_sources(

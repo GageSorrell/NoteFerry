@@ -1,5 +1,5 @@
 /**
- * @module notivex/.rnstorybook/main
+ * @module noteferry/.rnstorybook/main
  * @internal
  *
  * @file      main.ts

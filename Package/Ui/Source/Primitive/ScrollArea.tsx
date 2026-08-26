@@ -7,7 +7,7 @@
  * token-free styled wrapper — no `ScrollBar`/`Thumb`/`Corner` parts to
  * port.
  *
- * @module @notivex/ui/Primitive/ScrollArea
+ * @module @noteferry/ui/Primitive/ScrollArea
  *
  * @file      ScrollArea.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

@@ -1,5 +1,5 @@
 {
-  "//": "Workspace-only harness: type-checks the Deno edge functions with the same effect + @notivex/* types they resolve at deploy time. Not used by Deno. See deno-shim.d.ts.",
+  "//": "Workspace-only harness: type-checks the Deno edge functions with the same effect + @noteferry/* types they resolve at deploy time. Not used by Deno. See deno-shim.d.ts.",
   "compilerOptions": {
     "module": "nodenext",
     "moduleResolution": "nodenext",

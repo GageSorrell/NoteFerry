@@ -8,7 +8,7 @@
  * onboarding is persisted until confirmation so an OAuth callback, reload, or
  * process recreation cannot skip the database-selection screen.
  *
- * @module notivex/features/onboarding/onboarding-context
+ * @module noteferry/features/onboarding/onboarding-context
  *
  * @file      onboarding-context.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -16,15 +16,15 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import * as React from "react";
-import { ListConnections, ListDataSources } from "@/Domain/Runtime/NotivexApi";
+import { ListConnections, ListDataSources } from "@/Domain/Runtime/NoteFerryApi";
 import { type UseNotionSync, useNotionSync } from "@/features/onboarding/use-notion-sync";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { AsyncThunk } from "@sorrell/effect/Function";
 import { useAuth } from "@/Domain/Auth";
 
-const PendingOnboardingStorageKey = "@notivex/onboarding-pending" as const;
+const PendingOnboardingStorageKey = "@noteferry/onboarding-pending" as const;
 const StorageReadAttempts = 12 as const;
 const StorageReadTimeoutMs = 1_000 as const;
 

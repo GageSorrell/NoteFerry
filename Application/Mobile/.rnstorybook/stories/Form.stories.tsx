@@ -1,9 +1,9 @@
 /**
- * Storybook stories for `@notivex/ui`'s `Form` primitive — `react-hook-form`
+ * Storybook stories for `@noteferry/ui`'s `Form` primitive — `react-hook-form`
  * wired into `Field`'s layout via `FormField`/`FormItem`/`FormLabel`/
  * `FormMessage`.
  *
- * @module notivex/app/.rnstorybook/stories/Form
+ * @module noteferry/app/.rnstorybook/stories/Form
  *
  * @file      Form.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -21,7 +21,7 @@ import {
     FormLabel,
     FormMessage,
     Input
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import { type ControllerRenderProps, useForm } from "react-hook-form";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";

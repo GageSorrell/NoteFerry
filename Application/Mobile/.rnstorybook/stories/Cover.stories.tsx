@@ -1,8 +1,8 @@
 /**
- * Storybook stories for `@notivex/ui`'s `Cover` primitive — a page's cover
+ * Storybook stories for `@noteferry/ui`'s `Cover` primitive — a page's cover
  * image, with a tap-visible "Change cover"/"Remove" action pair.
  *
- * @module notivex/app/.rnstorybook/stories/Cover
+ * @module noteferry/app/.rnstorybook/stories/Cover
  *
  * @file      Cover.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -11,22 +11,22 @@
  */
 
 import * as React from "react";
-import { Cover, CoverSkeleton } from "@notivex/ui/Block";
+import { Cover, CoverSkeleton } from "@noteferry/ui/Block";
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { Description } from "@notivex/ui/Primitive";
+import { Description } from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 const CoverExample = (): React.JSX.Element =>
 {
     const [ Url, SetUrl ] = React.useState<string | undefined>(
-        "https://picsum.photos/seed/notivex-cover/900/400"
+        "https://picsum.photos/seed/noteferry-cover/900/400"
     );
 
     return (
         <View style={ { gap: 8, width: 320 } }>
             <Cover
                 OnChangeCoverPress={ () =>
-                    SetUrl(`https://picsum.photos/seed/notivex-${ Date.now() }/900/400`)
+                    SetUrl(`https://picsum.photos/seed/noteferry-${ Date.now() }/900/400`)
                 }
                 OnRemovePress={ () => SetUrl(undefined) }
                 { ...{ Url } }

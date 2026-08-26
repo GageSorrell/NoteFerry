@@ -1,5 +1,5 @@
 -- Fires the `notify-account-data-request` Edge Function whenever a row is
--- inserted into `app.account_data_requests`, so Notivex gets emailed to
+-- inserted into `app.account_data_requests`, so NoteFerry gets emailed to
 -- fulfill the request by hand.
 --
 -- The function's URL and a shared secret (checked inside the function, since
@@ -44,7 +44,7 @@ begin
         url := webhook_url,
         headers := jsonb_build_object(
             'Content-Type', 'application/json',
-            'x-notivex-webhook-secret', webhook_secret
+            'x-noteferry-webhook-secret', webhook_secret
         ),
         body := jsonb_build_object(
             'id', new.id,
@@ -62,7 +62,7 @@ create trigger account_data_requests_notify
     for each row execute function private.notify_account_data_request();
 
 -- Fires the `notify-feedback-submission` Edge Function whenever a row is
--- inserted into `app.feedback_submissions`, so Notivex gets emailed the
+-- inserted into `app.feedback_submissions`, so NoteFerry gets emailed the
 -- feedback/bug report to triage by hand.
 --
 -- Reuses the same `notify_account_data_request_secret` value: both webhooks
@@ -103,7 +103,7 @@ begin
         url := webhook_url,
         headers := jsonb_build_object(
             'Content-Type', 'application/json',
-            'x-notivex-webhook-secret', webhook_secret
+            'x-noteferry-webhook-secret', webhook_secret
         ),
         body := jsonb_build_object(
             'id', new.id,

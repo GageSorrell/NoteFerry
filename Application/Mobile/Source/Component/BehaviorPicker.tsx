@@ -4,7 +4,7 @@
  * the app-wide `LaunchBehavior` setting, which share the same shape minus
  * `CloseApp`.
  *
- * @module notivex/Component/BehaviorPicker
+ * @module noteferry/Component/BehaviorPicker
  *
  * @file      BehaviorPicker.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,9 +12,9 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
-import { Body, LabelText, RadioGroup, RadioGroupItem } from "@notivex/ui/Primitive";
-import { MakeStyles, Token, ViewStyle, useTheme } from "@notivex/ui";
+import type * as Domain from "@noteferry/domain";
+import { Body, LabelText, RadioGroup, RadioGroupItem } from "@noteferry/ui/Primitive";
+import { MakeStyles, Token, ViewStyle, useTheme } from "@noteferry/ui";
 import { Platform, ScrollView, View } from "react-native";
 
 /** {@inheritDoc BehaviorPicker} */

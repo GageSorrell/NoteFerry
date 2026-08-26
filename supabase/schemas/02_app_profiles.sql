@@ -1,11 +1,11 @@
--- `app.profiles` — Notivex-specific user information that does not belong in the
+-- `app.profiles` — NoteFerry-specific user information that does not belong in the
 -- Supabase-owned `auth.users` table (ArchitectureInitialDraft.md §10). One row
 -- per authenticated user, keyed by the Supabase user id.
 
 create table app.profiles (
     user_id uuid primary key references auth.users (id) on delete cascade,
     display_name text,
-    -- App-wide, cross-device settings (`@notivex/domain`'s `Settings.AppSettings`
+    -- App-wide, cross-device settings (`@noteferry/domain`'s `Settings.AppSettings`
     -- — launch behavior, home-screen database order, quick-action picks,
     -- offline-notify preference). Every field is optional in the schema, so an
     -- empty object decodes cleanly for a brand-new profile; `Settings.WithDefaults`

@@ -4,7 +4,7 @@
  * The OAuth token exchange itself happens in the separate, unauthenticated
  * `notion-oauth-callback` Edge Function, not here.
  *
- * @module @notivex/api/ConnectionsApi
+ * @module @noteferry/api/ConnectionsApi
  *
  * @file      ConnectionsApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,7 +12,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
 import { Schema } from "effect";
 
@@ -31,7 +31,7 @@ const StartAuthorizationResult = Schema.Struct({
 export type StartAuthorizationResult = Schema.Schema.Type<typeof StartAuthorizationResult>;
 
 export/**
-       * Every Notion connection Notivex has authorized on behalf of the current
+       * Every Notion connection NoteFerry has authorized on behalf of the current
        * user.
        *
        * @category Connections
@@ -94,7 +94,7 @@ const Disconnect = HttpApiEndpoint.delete(
 );
 
 export/**
-       * The `Connections` resource group of the Notivex API.
+       * The `Connections` resource group of the NoteFerry API.
        *
        * @category Connections
        * @since 1.0.0

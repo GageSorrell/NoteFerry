@@ -2,11 +2,11 @@
  * The `Feedback` group: submitting in-app feedback or a bug report. Both
  * share this single endpoint, distinguished by `Kind` — the mobile app's
  * `feedback` screen is one component reused for both, with only its
- * expo-router header text differing. Creating a row emails Notivex via
+ * expo-router header text differing. Creating a row emails NoteFerry via
  * Resend (`supabase/schemas/11_notifications.sql`) and is rate-limited
  * server-side (`supabase/schemas/13_app_feedback_submissions.sql`).
  *
- * @module @notivex/api/FeedbackApi
+ * @module @noteferry/api/FeedbackApi
  *
  * @file      FeedbackApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -14,7 +14,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
 import { Schema } from "effect";
 
@@ -65,7 +65,7 @@ const Create = HttpApiEndpoint.post(
 );
 
 export/**
-       * The `Feedback` resource group of the Notivex API.
+       * The `Feedback` resource group of the NoteFerry API.
        *
        * @category Feedback
        * @since 1.0.0

@@ -17,13 +17,13 @@ installation rather than installing another copy:
 
 ```powershell
 $env:PATH = "C:\Android\Sdk-Quail3\platform-tools;$env:PATH"
-$env:AGENT_DEVICE_STATE_DIR = "C:\Users\Gage\.agent-device\notivex-android"
+$env:AGENT_DEVICE_STATE_DIR = "C:\Users\Gage\.agent-device\noteferry-android"
 agent-device devices --platform android
 ```
 
 The separate state directory matters when the default `agent-device` daemon was already launched without `adb` on its inherited `PATH`; changing the calling shell's `PATH` does not update that running daemon's environment. Use the same two environment assignments for every subsequent `agent-device` command in that session.
 
-The developer's machine has two Android Studio installations: the up-to-date version (Studio and the SDK) is installed in the usual location (to support VR development in the Unreal Engine; unrelated to Notivex), and a separate location at `C:\Android`, with Studio and the SDK present at this secondary location.
+The developer's machine has two Android Studio installations: the up-to-date version (Studio and the SDK) is installed in the usual location (to support VR development in the Unreal Engine; unrelated to NoteFerry), and a separate location at `C:\Android`, with Studio and the SDK present at this secondary location.
 
 ## Writing Markdown
 

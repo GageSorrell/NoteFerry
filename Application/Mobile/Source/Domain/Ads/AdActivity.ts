@@ -6,7 +6,7 @@
  * should not immediately follow an interstitial the user just dismissed, or
  * vice versa.
  *
- * @module notivex/Domain/Ads/AdActivity
+ * @module noteferry/Domain/Ads/AdActivity
  *
  * @file      AdActivity.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

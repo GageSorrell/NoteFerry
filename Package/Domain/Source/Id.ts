@@ -1,11 +1,11 @@
 /**
- * Branded string identifiers for every stable identity concept in Notivex.
+ * Branded string identifiers for every stable identity concept in NoteFerry.
  *
  * Every ID in this module is a `string` at runtime but is nominally distinct
  * at the type level, so e.g. a `NotionPageId` can never be passed where a
  * `DestinationId` is expected even though both decode from plain strings.
  *
- * @module @notivex/domain/Id
+ * @module @noteferry/domain/Id
  *
  * @file      Id.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -16,7 +16,7 @@
 import { Schema, pipe } from "effect";
 
 export/**
-       * Identifies a Notivex user (mirrors the Supabase Auth user id).
+       * Identifies a NoteFerry user (mirrors the Supabase Auth user id).
        *
        * @category Id
        * @since 1.0.0
@@ -106,7 +106,7 @@ export type NotionPageId = Schema.Schema.Type<typeof NotionPageId>;
 
 export/**
        * Identifies a single property on a Notion data source. Notion property IDs
-       * are stable even when a property is renamed, so Notivex stores this rather
+       * are stable even when a property is renamed, so NoteFerry stores this rather
        * than the property's display name.
        *
        * @category Id
@@ -150,7 +150,7 @@ const NotionTemplateId = pipe(
 export type NotionTemplateId = Schema.Schema.Type<typeof NotionTemplateId>;
 
 export/**
-       * Identifies a Notivex destination — a user-configured quick-entry
+       * Identifies a NoteFerry destination — a user-configured quick-entry
        * experience for one Notion data source.
        *
        * @category Id

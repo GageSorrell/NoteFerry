@@ -1,11 +1,11 @@
 /**
- * Storybook stories for `@notivex/ui`'s `DateSheet` primitive — the
+ * Storybook stories for `@noteferry/ui`'s `DateSheet` primitive — the
  * Notion-style "edit Date property" bottom sheet. Built on `BottomSheet`
  * (`@expo/ui`-native), so — per `BottomSheet.stories.tsx`'s own caveat —
  * this renders but the sheet itself will not open under Expo Go or on web;
  * see the package ReadMe for building a dev client.
  *
- * @module notivex/app/.rnstorybook/stories/DateSheet
+ * @module noteferry/app/.rnstorybook/stories/DateSheet
  *
  * @file      DateSheet.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -21,7 +21,7 @@ import {
     type DateSheetDateFormat,
     type DateSheetTimeFormat,
     Description
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 

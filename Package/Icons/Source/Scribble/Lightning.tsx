@@ -2,9 +2,9 @@
 
 import { G, Path, Svg } from "react-native-svg";
 import type { JSX } from "react";
-import type { NotivexIconProps } from "../Icon.Types";
+import type { NoteFerryIconProps } from "../Icon.Types";
 
-export const Lightning = ({ color = "#231F20", ...Tail }: NotivexIconProps): JSX.Element =>
+export const Lightning = ({ color = "#231F20", ...Tail }: NoteFerryIconProps): JSX.Element =>
 (
     <Svg width="96" height="96" viewBox="0 0 96 96" { ...Tail }>
         <G>

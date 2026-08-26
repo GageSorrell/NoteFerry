@@ -2,6 +2,6 @@
   "imports": {
     "effect": "npm:effect@4.0.0-rc.109",
     "@supabase/supabase-js": "npm:@supabase/supabase-js@2",
-    "@notivex/domain": "../_shared/vendor/domain.js"
+    "@noteferry/domain": "../_shared/vendor/domain.js"
   }
 }

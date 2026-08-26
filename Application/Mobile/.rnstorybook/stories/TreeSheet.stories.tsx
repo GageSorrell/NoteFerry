@@ -1,11 +1,11 @@
 /**
- * Storybook stories for `@notivex/ui`'s `TreeSheet` primitive — a
+ * Storybook stories for `@noteferry/ui`'s `TreeSheet` primitive — a
  * searchable, expandable page/database picker bottom sheet. Built on
  * `BottomSheet` (`@expo/ui`-native), so — per `BottomSheet.stories.tsx`'s
  * own caveat — this renders but the sheet itself will not open under Expo
  * Go or on web; see the package ReadMe for building a dev client.
  *
- * @module notivex/app/.rnstorybook/stories/TreeSheet
+ * @module noteferry/app/.rnstorybook/stories/TreeSheet
  *
  * @file      TreeSheet.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -14,9 +14,9 @@
  */
 
 import * as React from "react";
-import { type BottomSheet, Button, Description } from "@notivex/ui/Primitive";
+import { type BottomSheet, Button, Description } from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { type TreeItemData, TreeSheet } from "@notivex/ui/Block";
+import { type TreeItemData, TreeSheet } from "@noteferry/ui/Block";
 import { View } from "react-native";
 
 const SampleItems: ReadonlyArray<TreeItemData> =

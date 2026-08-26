@@ -1,5 +1,5 @@
 /**
- * @module notivex/Storybook/RadioGroup
+ * @module noteferry/Storybook/RadioGroup
  * @internal
  *
  * @file      RadioGroup.stories.tsx
@@ -9,7 +9,7 @@
  */
 
 import * as React from "react";
-import { Label, RadioGroup, RadioGroupItem, type RadioGroupProps } from "@notivex/ui/Primitive";
+import { Label, RadioGroup, RadioGroupItem, type RadioGroupProps } from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 

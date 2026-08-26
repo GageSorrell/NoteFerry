@@ -1,4 +1,4 @@
--- Notivex database: schema layout and shared utilities.
+-- NoteFerry database: schema layout and shared utilities.
 --
 -- `app`     — client-readable state, exposed through the Data API and protected
 --             by row-level security (ArchitectureInitialDraft.md §9, §18).

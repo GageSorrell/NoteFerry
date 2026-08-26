@@ -3,7 +3,7 @@
  * status property, shared between {@link Property.Definition} (what options
  * exist) and {@link Property.Input} (which option a user picked).
  *
- * @module @notivex/domain/Property/Option
+ * @module @noteferry/domain/Property/Option
  *
  * @file      Option.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

@@ -2,7 +2,7 @@
 -- the in-app "Submit feedback"/"Report a bug" screen (Settings). Both share
 -- one table and one screen, distinguished by `kind`; inserting a row fires
 -- the `feedback_submissions_notify` trigger (see `11_notifications.sql`),
--- which emails Notivex so it can be triaged by hand.
+-- which emails NoteFerry so it can be triaged by hand.
 
 create table app.feedback_submissions (
     id uuid primary key default gen_random_uuid(),

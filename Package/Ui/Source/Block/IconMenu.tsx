@@ -40,7 +40,7 @@
  *   `IconMenu`'s (see that file's header comment for why `UrlForm` itself
  *   wasn't ported as a standalone block).
  *
- * @module @notivex/ui/Primitive/IconMenu
+ * @module @noteferry/ui/Primitive/IconMenu
  *
  * @file      IconMenu.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -203,7 +203,7 @@ interface EmojiTabProps
 const EmojiTab = ({ OnSelect }: EmojiTabProps): React.JSX.Element =>
 {
     const Styles = useStyles();
-    const [ RecentIds, TrackRecent ] = useRecentIconIds("notivex:recent-emoji");
+    const [ RecentIds, TrackRecent ] = useRecentIconIds("noteferry:recent-emoji");
     const [ Query, SetQuery ] = React.useState("");
 
     const EmojiMap = React.useMemo(() =>
@@ -350,7 +350,7 @@ interface IconsTabProps
 const IconsTab = ({ OnSelect }: IconsTabProps): React.JSX.Element =>
 {
     const Styles = useStyles();
-    const [ RecentIds, TrackRecent ] = useRecentIconIds("notivex:recent-icons");
+    const [ RecentIds, TrackRecent ] = useRecentIconIds("noteferry:recent-icons");
     const [ Query, SetQuery ] = React.useState("");
     const [ SelectedColor, SetSelectedColor ] = React.useState<Color.Color>(Color.Default);
 

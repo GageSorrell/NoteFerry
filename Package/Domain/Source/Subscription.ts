@@ -2,7 +2,7 @@
  * Portable subscription, commercial-limit, and sale campaign schemas shared
  * by the mobile app and the authenticated API.
  *
- * @module @notivex/domain/Subscription
+ * @module @noteferry/domain/Subscription
  */
 
 import { Schema } from "effect";

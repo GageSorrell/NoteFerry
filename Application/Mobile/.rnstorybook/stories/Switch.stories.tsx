@@ -1,5 +1,5 @@
 /**
- * @module notivex/Storybook/Switch
+ * @module noteferry/Storybook/Switch
  * @internal
  *
  * @file      Switch.stories.tsx
@@ -10,7 +10,7 @@
 
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { Switch, type SwitchProps } from "@notivex/ui/Primitive";
+import { Switch, type SwitchProps } from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 const ControlledSwitch = (props: SwitchProps): React.JSX.Element =>

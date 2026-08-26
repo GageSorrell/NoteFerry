@@ -1,14 +1,14 @@
 /**
  * `CachedDataSourceSchema` — the versioned, normalized representation of a
- * Notion data source's schema that Notivex caches locally so its quick-add
+ * Notion data source's schema that NoteFerry caches locally so its quick-add
  * UI can render without a round trip to Notion on every launch.
  *
  * Notion remains the canonical source of truth; this is deliberately
- * a *normalized* Notivex schema rather than an opaque dump of Notion's API
+ * a *normalized* NoteFerry schema rather than an opaque dump of Notion's API
  * response, so that a future change to Notion's representation only
  * requires updating one mapper.
  *
- * @module @notivex/domain/DataSource
+ * @module @noteferry/domain/DataSource
  *
  * @file      DataSource.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -115,7 +115,7 @@ export type OnboardingDiscovery = Schema.Schema.Type<typeof OnboardingDiscovery>
 
 export/**
        * A Notion page template belonging to a data source, as cached by
-       * Notivex: enough to list it (name, icon), tell whether Notion itself
+       * NoteFerry: enough to list it (name, icon), tell whether Notion itself
        * currently marks it default, and pre-populate a create-page form from
        * its own property values. `Properties` deliberately omits the Title
        * property (Notion doesn't carry a template's own title into a page

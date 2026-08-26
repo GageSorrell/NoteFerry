@@ -8,7 +8,7 @@
  * sheet (SwiftUI on iOS, Jetpack Compose on Android, a CSS-animated `View`
  * on web) instead of an RN `Modal`.
  *
- * @module @notivex/ui/Primitive/BottomSheet
+ * @module @noteferry/ui/Primitive/BottomSheet
  *
  * @file      BottomSheet.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

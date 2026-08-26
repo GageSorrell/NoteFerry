@@ -4,7 +4,7 @@
  * `profiles`, `notion_connections`, `destinations`, `operations`,
  * `account_data_requests`) — no manual cleanup needed here.
  *
- * @module notivex/functions/_shared/Account
+ * @module noteferry/functions/_shared/Account
  *
  * @file      Account.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,7 +12,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { AdminClient } from "./Database.ts";
 import { Effect } from "effect";
 

@@ -2,10 +2,10 @@
  * Kicks off the Notion "connect" flow: ask the backend for an authorization URL
  * (which also records the one-time OAuth state), open it in an in-app browser,
  * and let the `notion-oauth-callback` Edge Function redirect back into the app
- * at `notivex://notion/connected`. The token exchange happens server-side; the
+ * at `noteferry://notion/connected`. The token exchange happens server-side; the
  * app never sees Notion credentials.
  *
- * @module notivex/Domain/Connection/Connect
+ * @module noteferry/Domain/Connection/Connect
  *
  * @file      Connect.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -13,16 +13,9 @@
  * @license   MIT
  */
 
-import * as WebBrowser from "expo-web-browser";
-import { StartNotionAuthorization } from "@/Domain/Runtime/NotivexApi";
-
-const ConnectedReturnUrl = "notivex://notion/connected" as const;
-
-/* See the matching comment in Domain/Auth/OAuth.ts: without `createTask:
- * false`, Android launches this Custom Tab through a separate-task
- * trampoline that the `notivex://` redirect never resumes, leaking an
- * orphaned browser task per attempt. */
-const BrowserOptions = { createTask: false } as const;
+import { NotionConnectedReturnUrl } from "@/Domain/Auth/OAuthRedirect";
+import { OpenAuthSession } from "@/Domain/Auth/OAuthBrowser";
+import { StartNotionAuthorization } from "@/Domain/Runtime/NoteFerryApi";
 
 /**
  * Runs the Notion connect flow to completion (or until the user dismisses the
@@ -34,10 +27,9 @@ const BrowserOptions = { createTask: false } as const;
 export const ConnectNotion = async (): Promise<boolean> =>
 {
     const AuthorizationUrl = await StartNotionAuthorization();
-    const Result = await WebBrowser.openAuthSessionAsync(
+    const Result = await OpenAuthSession(
         AuthorizationUrl,
-        ConnectedReturnUrl,
-        BrowserOptions
+        NotionConnectedReturnUrl
     );
 
     if (Result.type !== "success")

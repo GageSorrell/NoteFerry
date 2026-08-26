@@ -10,7 +10,7 @@ __export(AccountApi_exports, {
   AccountApi: () => AccountApi,
   Delete: () => Delete
 });
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
 var Delete = HttpApiEndpoint.delete("Delete", "/", {
   error: [
@@ -29,7 +29,7 @@ __export(ConnectionsApi_exports, {
   StartAuthorization: () => StartAuthorization,
   StartAuthorizationResult: () => StartAuthorizationResult
 });
-import * as Domain2 from "@notivex/domain";
+import * as Domain2 from "@noteferry/domain";
 import { HttpApiEndpoint as HttpApiEndpoint2, HttpApiGroup as HttpApiGroup2 } from "effect/unstable/httpapi";
 import { Schema } from "effect";
 var StartAuthorizationResult = Schema.Struct({
@@ -73,7 +73,7 @@ __export(DataSourcesApi_exports, {
   Search: () => Search,
   SwapFreeActivePayload: () => SwapFreeActivePayload
 });
-import * as Domain3 from "@notivex/domain";
+import * as Domain3 from "@noteferry/domain";
 import { HttpApiEndpoint as HttpApiEndpoint3, HttpApiGroup as HttpApiGroup3 } from "effect/unstable/httpapi";
 import { Schema as Schema2 } from "effect";
 var RefreshDataSourcePayload = Schema2.Struct({
@@ -179,7 +179,7 @@ __export(DestinationsApi_exports, {
   Update: () => Update,
   UpdateDestinationPayload: () => UpdateDestinationPayload
 });
-import * as Domain4 from "@notivex/domain";
+import * as Domain4 from "@noteferry/domain";
 import { HttpApiEndpoint as HttpApiEndpoint4, HttpApiGroup as HttpApiGroup4 } from "effect/unstable/httpapi";
 import { Schema as Schema3 } from "effect";
 var CreateDestinationPayload = Schema3.Struct({
@@ -252,7 +252,7 @@ __export(ExportRequestsApi_exports, {
   Create: () => Create2,
   ExportRequestsApi: () => ExportRequestsApi
 });
-import * as Domain5 from "@notivex/domain";
+import * as Domain5 from "@noteferry/domain";
 import { HttpApiEndpoint as HttpApiEndpoint5, HttpApiGroup as HttpApiGroup5 } from "effect/unstable/httpapi";
 var Create2 = HttpApiEndpoint5.post("Create", "/", {
   error: [
@@ -270,7 +270,7 @@ __export(FeedbackApi_exports, {
   FeedbackApi: () => FeedbackApi,
   FeedbackKind: () => FeedbackKind
 });
-import * as Domain6 from "@notivex/domain";
+import * as Domain6 from "@noteferry/domain";
 import { HttpApiEndpoint as HttpApiEndpoint6, HttpApiGroup as HttpApiGroup6 } from "effect/unstable/httpapi";
 import { Schema as Schema4 } from "effect";
 var FeedbackKind = Schema4.Literals(["Feedback", "BugReport"]);
@@ -298,7 +298,7 @@ __export(PagesApi_exports, {
   Create: () => Create4,
   PagesApi: () => PagesApi
 });
-import * as Domain7 from "@notivex/domain";
+import * as Domain7 from "@noteferry/domain";
 import { HttpApiEndpoint as HttpApiEndpoint7, HttpApiGroup as HttpApiGroup7 } from "effect/unstable/httpapi";
 var Create4 = HttpApiEndpoint7.post("Create", "/", {
   error: [
@@ -328,7 +328,7 @@ __export(ProfileApi_exports, {
   ProfileApi: () => ProfileApi,
   UpdateSettings: () => UpdateSettings
 });
-import * as Domain8 from "@notivex/domain";
+import * as Domain8 from "@noteferry/domain";
 import { HttpApiEndpoint as HttpApiEndpoint8, HttpApiGroup as HttpApiGroup8 } from "effect/unstable/httpapi";
 var Get2 = HttpApiEndpoint8.get("Get", "/", {
   error: [
@@ -354,7 +354,7 @@ __export(SubscriptionsApi_exports, {
   RemoveDevicePayload: () => RemoveDevicePayload,
   SubscriptionsApi: () => SubscriptionsApi
 });
-import * as Domain9 from "@notivex/domain";
+import * as Domain9 from "@noteferry/domain";
 import { HttpApiEndpoint as HttpApiEndpoint9, HttpApiGroup as HttpApiGroup9 } from "effect/unstable/httpapi";
 import { Schema as Schema5 } from "effect";
 var RegisterDevicePayload = Schema5.Struct({
@@ -397,7 +397,7 @@ var RemoveDevice = HttpApiEndpoint9.post("RemoveDevice", "/Devices/Remove", {
 var SubscriptionsApi = HttpApiGroup9.make("Subscriptions").add(Status, Allowance, Refresh2, Sale, RegisterDevice, RemoveDevice);
 
 // Package/Api/Distribution/Api.js
-var NotivexApi = HttpApi.make("NotivexApi").add(ConnectionsApi.prefix("/Connections"), DataSourcesApi.prefix("/DataSources"), DestinationsApi.prefix("/Destinations"), PagesApi.prefix("/Pages"), ProfileApi.prefix("/Profile"), AccountApi.prefix("/Account"), ExportRequestsApi.prefix("/ExportRequests"), SubscriptionsApi.prefix("/Subscriptions"), FeedbackApi.prefix("/Feedback"));
+var NoteFerryApi = HttpApi.make("NoteFerryApi").add(ConnectionsApi.prefix("/Connections"), DataSourcesApi.prefix("/DataSources"), DestinationsApi.prefix("/Destinations"), PagesApi.prefix("/Pages"), ProfileApi.prefix("/Profile"), AccountApi.prefix("/Account"), ExportRequestsApi.prefix("/ExportRequests"), SubscriptionsApi.prefix("/Subscriptions"), FeedbackApi.prefix("/Feedback"));
 export {
   AccountApi_exports as AccountApi,
   ConnectionsApi_exports as ConnectionsApi,
@@ -405,7 +405,7 @@ export {
   DestinationsApi_exports as DestinationsApi,
   ExportRequestsApi_exports as ExportRequestsApi,
   FeedbackApi_exports as FeedbackApi,
-  NotivexApi,
+  NoteFerryApi,
   PagesApi_exports as PagesApi,
   ProfileApi_exports as ProfileApi,
   SubscriptionsApi_exports as SubscriptionsApi
@@ -413,7 +413,7 @@ export {
 /**
  * The `Account` group: permanently deleting the current user's account.
  *
- * @module @notivex/api/AccountApi
+ * @module @noteferry/api/AccountApi
  *
  * @file      AccountApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -426,7 +426,7 @@ export {
  * The OAuth token exchange itself happens in the separate, unauthenticated
  * `notion-oauth-callback` Edge Function, not here.
  *
- * @module @notivex/api/ConnectionsApi
+ * @module @noteferry/api/ConnectionsApi
  *
  * @file      ConnectionsApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -435,9 +435,9 @@ export {
  */
 /**
  * The `DataSources` group: reading and refreshing the normalized, cached
- * Notion data-source schemas that drive Notivex's quick-add forms.
+ * Notion data-source schemas that drive NoteFerry's quick-add forms.
  *
- * @module @notivex/api/DataSourcesApi
+ * @module @noteferry/api/DataSourcesApi
  *
  * @file      DataSourcesApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -448,7 +448,7 @@ export {
  * The `Destinations` group: creating, reading, updating and deleting a
  * user's quick-entry destinations.
  *
- * @module @notivex/api/DestinationsApi
+ * @module @noteferry/api/DestinationsApi
  *
  * @file      DestinationsApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -456,11 +456,11 @@ export {
  * @license   MIT
  */
 /**
- * The `ExportRequests` group: asking Notivex to prepare an export of the
+ * The `ExportRequests` group: asking NoteFerry to prepare an export of the
  * current user's account data. Requests are fulfilled manually — creating one
- * only records the request and notifies Notivex.
+ * only records the request and notifies NoteFerry.
  *
- * @module @notivex/api/ExportRequestsApi
+ * @module @noteferry/api/ExportRequestsApi
  *
  * @file      ExportRequestsApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -471,11 +471,11 @@ export {
  * The `Feedback` group: submitting in-app feedback or a bug report. Both
  * share this single endpoint, distinguished by `Kind` — the mobile app's
  * `feedback` screen is one component reused for both, with only its
- * expo-router header text differing. Creating a row emails Notivex via
+ * expo-router header text differing. Creating a row emails NoteFerry via
  * Resend (`supabase/schemas/11_notifications.sql`) and is rate-limited
  * server-side (`supabase/schemas/13_app_feedback_submissions.sql`).
  *
- * @module @notivex/api/FeedbackApi
+ * @module @noteferry/api/FeedbackApi
  *
  * @file      FeedbackApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -484,11 +484,11 @@ export {
  */
 /**
  * The `Pages` group: creating a Notion page from a destination. This is the
- * one place the wire contract accepts a Notivex-shaped
+ * one place the wire contract accepts a NoteFerry-shaped
  * {@link Domain.Command.CreatePageCommand} rather than Notion's own request
  * body — only the server-side Notion adapter ever constructs that.
  *
- * @module @notivex/api/PagesApi
+ * @module @noteferry/api/PagesApi
  *
  * @file      PagesApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -499,7 +499,7 @@ export {
  * The `Profile` group: reading the current user's profile and updating their
  * app-wide {@link Domain.Settings.AppSettings}.
  *
- * @module @notivex/api/ProfileApi
+ * @module @noteferry/api/ProfileApi
  *
  * @file      ProfileApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -507,14 +507,14 @@ export {
  * @license   MIT
  */
 /**
- * The complete Notivex API contract: every group, endpoint, payload, success and
+ * The complete NoteFerry API contract: every group, endpoint, payload, success and
  * error schema the Expo app and the `api` Supabase Edge Function agree on.
  *
  * This module only *describes* the API. Implementing each group's handlers
  * (`HttpApiBuilder.group`) and deriving a client (`HttpApiClient.make`) both
  * happen elsewhere, against this same value.
  *
- * @module @notivex/api/Api
+ * @module @noteferry/api/Api
  *
  * @file      Api.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -522,13 +522,13 @@ export {
  * @license   MIT
  */
 /**
- * Public entry point for `@notivex/api`.
+ * Public entry point for `@noteferry/api`.
  *
  * The Effect `HttpApi` contract shared between the Expo app and the
- * Notivex Supabase Edge Function: request/response schemas built on top of
- * `@notivex/domain`, one module per resource group.
+ * NoteFerry Supabase Edge Function: request/response schemas built on top of
+ * `@noteferry/domain`, one module per resource group.
  *
- * @module @notivex/api
+ * @module @noteferry/api
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

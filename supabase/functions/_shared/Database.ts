@@ -6,7 +6,7 @@
  * connection metadata on the user's behalf. Because it bypasses RLS, every
  * query it runs MUST filter by the verified user id explicitly.
  *
- * @module notivex/functions/_shared/Database
+ * @module noteferry/functions/_shared/Database
  *
  * @file      Database.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

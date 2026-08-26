@@ -5,7 +5,7 @@
  * thumbnail and tapping it reopens the same sheet (now with a Remove
  * action) to change or clear it.
  *
- * @module notivex/features/page-creation/file-media-property-field
+ * @module noteferry/features/page-creation/file-media-property-field
  *
  * @file      file-media-property-field.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -14,7 +14,7 @@
  */
 
 import * as DocumentPicker from "expo-document-picker";
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import {
     Body,
@@ -23,9 +23,9 @@ import {
     BottomSheetView,
     Button,
     Input
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import { File as FileIcon, Link as LinkIcon, Play, Upload } from "lucide-react-native";
-import { ImageStyle, MakeStyles, Token, ViewStyle, useTheme } from "@notivex/ui";
+import { ImageStyle, MakeStyles, Token, ViewStyle, useTheme } from "@noteferry/ui";
 import { useEffect, useRef, useState } from "react";
 import { Image } from "expo-image";
 import { PropertyLabel } from "@/features/page-creation/property-label";

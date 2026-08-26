@@ -1,7 +1,7 @@
 /**
  * Inline text link styled after Notion's muted, underlined links.
  *
- * @module @notivex/ui/Primitive/Link
+ * @module @noteferry/ui/Primitive/Link
  *
  * @file      Link.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -56,7 +56,7 @@ export/**
        * rounded-corner highlight behind it while pressed — Notion's style
        * for footer links like "Privacy & terms" and "Need help?". It's
        * underline-free on its own, but picks up an underline automatically
-       * when nested inside a `@notivex/ui` `Text` (or one of its fixed-
+       * when nested inside a `@noteferry/ui` `Text` (or one of its fixed-
        * `Variant` wrappers), since there it reads as an inline link within
        * prose rather than a standalone footer button.
        *

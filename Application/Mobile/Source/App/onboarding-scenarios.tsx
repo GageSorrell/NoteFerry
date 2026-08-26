@@ -1,7 +1,7 @@
 /**
  * Development-only launcher for deterministic onboarding scenarios.
  *
- * @module notivex/app/onboarding-scenarios
+ * @module noteferry/app/onboarding-scenarios
  * @internal
  *
  * @file      onboarding-scenarios.tsx
@@ -10,8 +10,8 @@
  * @license   MIT
  */
 
-import { Body, Button, Description, Heading1 } from "@notivex/ui/Primitive";
-import { MakeStyles, Token, ViewStyle } from "@notivex/ui";
+import { Body, Button, Description, Heading1 } from "@noteferry/ui/Primitive";
+import { MakeStyles, Token, ViewStyle } from "@noteferry/ui";
 import {
     OnboardingMockRegistry,
     OnboardingMockScenarios,
@@ -45,7 +45,7 @@ const OnboardingScenariosScreen = (): React.JSX.Element | null =>
                     <Heading1>Onboarding scenarios</Heading1>
                     <Description>
                         These states use deterministic callbacks and never open OAuth,
-                        Notion, or the Notivex API.
+                        Notion, or the NoteFerry API.
                     </Description>
                     { Development.Scenario === null
                         ? null

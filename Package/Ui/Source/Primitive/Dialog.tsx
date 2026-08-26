@@ -6,7 +6,7 @@
  * extra dependency is needed here (unlike the anchored overlays in
  * `Popup.tsx`, a centered dialog has no anchor to measure against).
  *
- * @module @notivex/ui/Primitive/Dialog
+ * @module @noteferry/ui/Primitive/Dialog
  *
  * @file      Dialog.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -59,7 +59,7 @@ const useDialogContext = (): DialogContextValue =>
 
     if (Value === undefined)
     {
-        throw new Error("[@notivex/ui] A `Dialog` part was used outside of `<Dialog>`.");
+        throw new Error("[@noteferry/ui] A `Dialog` part was used outside of `<Dialog>`.");
     }
 
     return Value;

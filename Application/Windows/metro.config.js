@@ -7,7 +7,7 @@ const rnwPath = fs.realpathSync(
   path.resolve(require.resolve('react-native-windows/package.json'), '..'),
 );
 
-// This app lives inside an npm workspaces monorepo (E:\Notivex), so most of
+// This app lives inside an npm workspaces monorepo (E:\NoteFerry), so most of
 // its dependencies are hoisted to the repo-root node_modules rather than
 // living locally under Application/Windows/node_modules. Metro only crawls
 // (and can therefore resolve modules from) directories under `watchFolders`,

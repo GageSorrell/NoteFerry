@@ -15,7 +15,7 @@
  *   `unsplash`/`single-image-dropzone` blocks' own scoping notes; nothing
  *   here precludes adding it as a third tab later.
  *
- * @module @notivex/ui/Primitive/CoverPicker
+ * @module @noteferry/ui/Primitive/CoverPicker
  *
  * @file      CoverPicker.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

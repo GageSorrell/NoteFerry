@@ -1,7 +1,7 @@
 /**
  * Toggle control for Notion Checkbox properties.
  *
- * @module notivex/features/page-creation/checkbox-property-field
+ * @module noteferry/features/page-creation/checkbox-property-field
  *
  * @file      checkbox-property-field.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,9 +9,9 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
-import { MakeStyles, ViewStyle } from "@notivex/ui";
-import { Checkbox } from "@notivex/ui/Primitive";
+import type * as Domain from "@noteferry/domain";
+import { MakeStyles, ViewStyle } from "@noteferry/ui";
+import { Checkbox } from "@noteferry/ui/Primitive";
 import { PropertyLabel } from "@/features/page-creation/property-label";
 import { View } from "react-native";
 

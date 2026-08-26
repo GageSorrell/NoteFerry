@@ -1,5 +1,5 @@
 /**
- * @module notivex/app/_layout
+ * @module noteferry/app/_layout
  *
  * @file      _layout.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -11,15 +11,16 @@ import * as Notifications from "expo-notifications";
 import type { Action } from "expo-quick-actions";
 import type { Href } from "expo-router";
 import { Stack, router } from "expo-router";
+import { ActivityIndicator, View } from "react-native";
 import { useCallback, useEffect } from "react";
 import * as React from "react";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Function } from "@sorrell/effect";
-import { ThemeProvider as NotivexThemeProvider, useTheme } from "@notivex/ui";
+import { ThemeProvider as NoteFerryThemeProvider, useTheme } from "@noteferry/ui";
 import { useQuickActionCallback } from "expo-quick-actions/hooks";
 import { RegisterDevelopmentMenu } from "@/Domain/Runtime/DevelopmentMenu";
-import { NotivexAuthProvider, useAuth } from "@/Domain/Auth/NotivexAuthProvider";
+import { NoteFerryAuthProvider, useAuth } from "@/Domain/Auth/NoteFerryAuthProvider";
 import { StatusBar } from "@/Domain/Miscellaneous/StatusBar";
 import { SubscriptionProvider } from "@/Domain/Subscription";
 import {
@@ -93,22 +94,22 @@ const Providers = ({ children }: React.PropsWithChildren): React.JSX.Element =>
     const HighContrast = useHighContrast();
 
     return (
-        <NotivexThemeProvider HighContrast={ HighContrast }>
+        <NoteFerryThemeProvider HighContrast={ HighContrast }>
             <StatusBar />
             <GestureHandlerRootView style={ { flex: 1 } }>
                 <BottomSheetModalProvider>
                     <DevelopmentOnboardingProvider>
-                        <NotivexAuthProvider>
+                        <NoteFerryAuthProvider>
                             <SubscriptionProvider>
                                 <OnboardingProvider Enabled={ !Development.Active }>
                                     { children }
                                 </OnboardingProvider>
                             </SubscriptionProvider>
-                        </NotivexAuthProvider>
+                        </NoteFerryAuthProvider>
                     </DevelopmentOnboardingProvider>
                 </BottomSheetModalProvider>
             </GestureHandlerRootView>
-        </NotivexThemeProvider>
+        </NoteFerryThemeProvider>
     );
 };
 
@@ -176,7 +177,18 @@ const RootNavigator = () =>
             || IsLoadingActivity
             || (IsAuthenticated && IsLoadingConnection)))
     {
-        return null;
+        return (
+            <View
+                accessibilityLabel="Loading NoteFerry"
+                style={ {
+                    alignItems: "center",
+                    backgroundColor: Theme.Semantic.BackgroundMain,
+                    flex: 1,
+                    justifyContent: "center"
+                } }>
+                <ActivityIndicator color={ Theme.Semantic.Cursor } size="large" />
+            </View>
+        );
     }
 
     return (
@@ -189,6 +201,7 @@ const RootNavigator = () =>
                 fontWeight: "600"
             }
         } }>
+            <Stack.Screen name="oauth-callback" />
             <Stack.Protected guard={ IsSignedOut }>
                 <Stack.Screen name="sign-in" />
                 <Stack.Screen name="sign-in-modal"
@@ -257,13 +270,13 @@ const RootNavigator = () =>
                     options={ {
                         headerShown: true,
                         headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
-                        title: "Notivex Premium"
+                        title: "NoteFerry Premium"
                     } } />
                 <Stack.Screen name="subscribe"
                     options={ {
                         headerShown: true,
                         headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
-                        title: "Notivex Pro"
+                        title: "NoteFerry Pro"
                     } } />
                 <Stack.Screen name="database-settings"
                     options={ {

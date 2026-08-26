@@ -1,12 +1,12 @@
 /**
  * Server-side "who is calling?" for the `api` edge function. The function runs
  * with `verify_jwt = true`, so the platform has already validated the bearer
- * token; this recovers the Notivex user id from it and fails with
+ * token; this recovers the NoteFerry user id from it and fails with
  * {@link Domain.Error.AuthenticationRequired} when it is missing or invalid.
  *
  * Mirrors the app-side seam in `Application/Mobile/Source/Domain/Runtime/CurrentUser.ts`.
  *
- * @module notivex/functions/_shared/Authentication
+ * @module noteferry/functions/_shared/Authentication
  *
  * @file      Authentication.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -14,7 +14,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { Effect } from "effect";
 import { GetUserId } from "./Database.ts";
 import { HttpServerRequest } from "effect/unstable/http";

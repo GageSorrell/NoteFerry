@@ -1,9 +1,9 @@
 /**
- * Storybook stories for `@notivex/ui`'s `Sortable` primitive — a fixed-
+ * Storybook stories for `@noteferry/ui`'s `Sortable` primitive — a fixed-
  * extent, vertical, drag-to-reorder list built on `react-native-gesture-
  * handler` + `react-native-reanimated`.
  *
- * @module notivex/app/.rnstorybook/stories/Sortable
+ * @module noteferry/app/.rnstorybook/stories/Sortable
  *
  * @file      Sortable.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -13,7 +13,7 @@
 
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { Sortable, Text } from "@notivex/ui/Primitive";
+import { Sortable, Text } from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 const InitialOrder = [ "Introduction", "Getting Started", "Advanced Usage", "FAQ" ];

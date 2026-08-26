@@ -1,11 +1,11 @@
 /**
- * Public entry point for `@notivex/api`.
+ * Public entry point for `@noteferry/api`.
  *
  * The Effect `HttpApi` contract shared between the Expo app and the
- * Notivex Supabase Edge Function: request/response schemas built on top of
- * `@notivex/domain`, one module per resource group.
+ * NoteFerry Supabase Edge Function: request/response schemas built on top of
+ * `@noteferry/domain`, one module per resource group.
  *
- * @module @notivex/api
+ * @module @noteferry/api
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

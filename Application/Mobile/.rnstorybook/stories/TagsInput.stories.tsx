@@ -1,7 +1,7 @@
 /**
- * Storybook stories for `@notivex/ui`'s `TagsInput` primitive.
+ * Storybook stories for `@noteferry/ui`'s `TagsInput` primitive.
  *
- * @module notivex/app/.rnstorybook/stories/TagsInput
+ * @module noteferry/app/.rnstorybook/stories/TagsInput
  *
  * @file      TagsInput.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -11,7 +11,7 @@
 
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { TagsInput } from "@notivex/ui/Primitive";
+import { TagsInput } from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 const TagsInputExample = (): React.JSX.Element =>

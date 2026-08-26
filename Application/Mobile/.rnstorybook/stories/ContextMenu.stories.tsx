@@ -1,8 +1,8 @@
 /**
- * Storybook stories for `@notivex/ui`'s `ContextMenu` primitive —
+ * Storybook stories for `@noteferry/ui`'s `ContextMenu` primitive —
  * `DropdownMenu`'s engine, opened by long-press instead of tap.
  *
- * @module notivex/app/.rnstorybook/stories/ContextMenu
+ * @module noteferry/app/.rnstorybook/stories/ContextMenu
  *
  * @file      ContextMenu.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -17,7 +17,7 @@ import {
     ContextMenuItem,
     ContextMenuTrigger,
     Text
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 

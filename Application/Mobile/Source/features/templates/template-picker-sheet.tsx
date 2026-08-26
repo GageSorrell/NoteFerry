@@ -5,7 +5,7 @@
  * persisted default. Selecting a template dismisses the sheet and hands the
  * choice to the caller, which owns the keep/overwrite collision prompt.
  *
- * @module notivex/features/templates/template-picker-sheet
+ * @module noteferry/features/templates/template-picker-sheet
  *
  * @file      template-picker-sheet.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -13,7 +13,7 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import {
     Body,
     BottomSheet,
@@ -21,11 +21,11 @@ import {
     BottomSheetScrollView,
     ModalTitle,
     Pressable
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import { Ban, Check } from "lucide-react-native";
 import { type PressableStateCallbackType, StyleSheet, View } from "react-native";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
-import { IconBlock } from "@notivex/ui/Block";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
+import { IconBlock } from "@noteferry/ui/Block";
 import { ResolveTemplateIconData } from "./template-icon";
 import type { RefObject } from "react";
 

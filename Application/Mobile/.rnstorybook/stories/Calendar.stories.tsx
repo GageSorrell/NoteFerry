@@ -1,8 +1,8 @@
 /**
- * Storybook stories for `@notivex/ui`'s `Calendar` primitive, a themed
+ * Storybook stories for `@noteferry/ui`'s `Calendar` primitive, a themed
  * wrapper around `react-native-calendars`.
  *
- * @module notivex/app/.rnstorybook/stories/Calendar
+ * @module noteferry/app/.rnstorybook/stories/Calendar
  *
  * @file      Calendar.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -11,7 +11,7 @@
  */
 
 import * as React from "react";
-import { Calendar, Text } from "@notivex/ui/Primitive";
+import { Calendar, Text } from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 

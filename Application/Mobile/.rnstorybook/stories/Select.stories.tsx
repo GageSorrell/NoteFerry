@@ -1,7 +1,7 @@
 /**
- * Storybook stories for `@notivex/ui`'s `Select` primitive.
+ * Storybook stories for `@noteferry/ui`'s `Select` primitive.
  *
- * @module notivex/app/.rnstorybook/stories/Select
+ * @module noteferry/app/.rnstorybook/stories/Select
  *
  * @file      Select.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -17,7 +17,7 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 const SelectExample = (): React.JSX.Element =>

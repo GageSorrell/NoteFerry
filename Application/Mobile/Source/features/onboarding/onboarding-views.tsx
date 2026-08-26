@@ -3,7 +3,7 @@
  * modules supply navigation and live service callbacks; Storybook and the
  * development scenario runner can supply deterministic callbacks instead.
  *
- * @module notivex/features/onboarding/onboarding-views
+ * @module noteferry/features/onboarding/onboarding-views
  *
  * @file      onboarding-views.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,7 +12,7 @@
  */
 
 import * as Application from "expo-application";
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import * as MailComposer from "expo-mail-composer";
 import * as React from "react";
 import {
@@ -39,10 +39,10 @@ import {
     Link,
     Pressable,
     ScreenTitle
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react-native";
 import { HeroImage, ResourceIcon } from "@/Component";
-import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
+import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
 import { Boolean } from "effect";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
@@ -104,14 +104,14 @@ const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element =>
         }
 
         const body = Application.nativeApplicationVersion !== null && Application.nativeBuildVersion !== null
-            ? `\n\n—\nNotivex ${ Application.nativeApplicationVersion } `
+            ? `\n\n—\nNoteFerry ${ Application.nativeApplicationVersion } `
                 + `(${ Application.nativeBuildVersion })`
             : undefined;
 
         await MailComposer.composeAsync({
             body,
             recipients: [ "gage@sorrell.sh" ],
-            subject: "Notivex Question"
+            subject: "NoteFerry Question"
         });
     }, [ ]);
 
@@ -121,8 +121,8 @@ const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element =>
                 <View style={ [ Styles.Header, { paddingTop: 64 } ] }>
                     <Image
                         source={ Theme.Mode === "Dark"
-                            ? require("../../../Resource/Logo/NotivexLogoDark.png")
-                            : require("../../../Resource/Logo/NotivexLogoLight.png") }
+                            ? require("../../../Resource/Logo/NoteFerryLogoDark.png")
+                            : require("../../../Resource/Logo/NoteFerryLogoLight.png") }
                         style={ { height: 44, marginBottom: 16, width: 44 } }
                     />
                     <HeroTitle Style={ Styles.HeaderText }>
@@ -169,13 +169,13 @@ const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element =>
                             By continuing, you acknowledge that you understand{"\n"}
                             and agree to the{" "}
                             <Link
-                                Href="https://notivex.sorrell.sh/terms"
+                                Href="https://noteferry.sorrell.sh/terms"
                                 Style={ Styles.CaptionLink }>
                                 Terms &amp; Conditions
                             </Link>
                             {" "}and{" "}
                             <Link
-                                Href="https://notivex.sorrell.sh/privacy"
+                                Href="https://noteferry.sorrell.sh/privacy"
                                 Style={ Styles.CaptionLink }>
                                 Privacy Policy
                             </Link>
@@ -184,7 +184,7 @@ const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element =>
                     <View style={ Styles.FooterDetails }>
                         <View style={ Styles.FooterLinks }>
                             <Link
-                                Href="https://notivex.sorrell.sh"
+                                Href="https://noteferry.sorrell.sh"
                                 Style={ Styles.FooterLink }>Learn more</Link>
                             <Link
                                 OnPress={ HandleNeedHelp }
@@ -232,14 +232,14 @@ const SignInModalView = ({
                     style={ Styles.SafeArea }>
                     <HeroImage Source={ require("../../../Resource/Onboarding/SignInModalStepTwo.png") } />
                     <Body>
-                        First, you’ll sign into Notion and add the Notivex integration to
+                        First, you’ll sign into Notion and add the NoteFerry integration to
                         your workspace.
                     </Body>
                     <Body>
-                        Then, you’ll choose which databases Notivex can see.
+                        Then, you’ll choose which databases NoteFerry can see.
                     </Body>
                     <Body Style={ { color: TipColor, textAlign: "center" } }>
-                        Tip: Giving Notivex access to a page also gives access to all{" "}
+                        Tip: Giving NoteFerry access to a page also gives access to all{" "}
                         databases under that page.
                     </Body>
                     <View style={ Styles.Spacer } />
@@ -296,7 +296,7 @@ export interface SyncViewProps
     readonly Status: NotionSyncStatus;
 }
 
-/** Expandable summary of the regular pages visible to Notivex. */
+/** Expandable summary of the regular pages visible to NoteFerry. */
 const PageAccessDisclosure = ({
     PageCount,
     Pages
@@ -393,9 +393,9 @@ const PageAccessDisclosure = ({
                     <View style={ Styles.HelpSheetHeader }>
                         <ScreenTitle>Pages and databases are different</ScreenTitle>
                         <Description Color={ Token.Semantic.Muted }>
-                            Notivex creates entries in databases, not regular pages.
+                            NoteFerry creates entries in databases, not regular pages.
                             Sharing a page is still useful: any databases beneath that
-                            page are shared with Notivex automatically, so you can add a
+                            page are shared with NoteFerry automatically, so you can add a
                             whole page tree in one step.
                         </Description>
                     </View>
@@ -553,7 +553,7 @@ const DatabaseSelectionView = ({
                         Choose your databases
                     </Heading1>
                     <Description>
-                        Free includes up to three databases. Notivex Pro includes unlimited
+                        Free includes up to three databases. NoteFerry Pro includes unlimited
                         databases, and you can replace a Free selection later.
                     </Description>
                 </View>
@@ -689,7 +689,7 @@ const DelayedSyncLoading = ({ Immediate }: { readonly Immediate: boolean }): Rea
                     color={ Theme.Semantic.Cursor }
                 />
                 <Description Color={ Token.Semantic.Muted }>
-                    Checking what Notivex can access…
+                    Checking what NoteFerry can access…
                 </Description>
             </SafeAreaView>
         )
@@ -727,10 +727,10 @@ const SyncView = ({
         return (
             <AccessOutcomeLayout
                 Subtitle={
-                    "The authorization finished without adding the Notivex "
+                    "The authorization finished without adding the NoteFerry "
                     + "integration to your workspace."
                 }
-                Title="Notivex wasn’t added">
+                Title="NoteFerry wasn’t added">
                 <View style={ { flex: 1, gap: 24, justifyContent: "flex-end" } }>
                     <Button
                         Appearance="Primary"
@@ -754,7 +754,7 @@ const SyncView = ({
         return (
             <AccessOutcomeLayout
                 Subtitle="The integration is installed, but no pages or databases are shared with it yet."
-                Title="Choose what Notivex can see">
+                Title="Choose what NoteFerry can see">
                 <Button
                     Appearance="Primary"
                     Loading={ IsPending }
@@ -777,7 +777,7 @@ const SyncView = ({
             <AccessOutcomeLayout
                 HeroImageAsset={ require("../../../Resource/Onboarding/Empty.png") }
                 Subtitle={
-                    "Notivex can see regular pages, but none of the shared page "
+                    "NoteFerry can see regular pages, but none of the shared page "
                     + "trees contain a database."
                 }
                 Title="No databases found">
@@ -851,7 +851,7 @@ const EnableNotificationsView = ({
     return (
         <OnboardingScreen
             Hero={ require("../../../Resource/Onboarding/Notifications.png") }
-            Subtitle="Get notified when Notivex finishes creating pages you submitted while offline."
+            Subtitle="Get notified when NoteFerry finishes creating pages you submitted while offline."
             Title="Enable Notifications">
             <View style={ Styles.Spacer } />
             <Button
@@ -905,7 +905,7 @@ const DoneView = ({
                 </Heading1>
                 <HeroImage Source={ require("../../../Resource/Onboarding/Grant.png") } />
                 <Description>
-                    You&apos;re all set to start using Notivex. If you&apos;d like, you can
+                    You&apos;re all set to start using NoteFerry. If you&apos;d like, you can
                     edit the properties displayed when creating pages, create aliases
                     for databases, and more.
                 </Description>
@@ -928,7 +928,7 @@ const DoneView = ({
                     Disabled={ AnyPending }
                     Loading={ Pending }
                     OnPress={ OnStart }>
-                    Start using Notivex
+                    Start using NoteFerry
                 </Button>
             </View>
         </SafeAreaView>

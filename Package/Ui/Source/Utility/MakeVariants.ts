@@ -6,7 +6,7 @@
  * prop combination — this is the mechanical equivalent of `cva()` used
  * throughout `@notion-kit/ui`'s `primitives/variants.ts`.
  *
- * @module @notivex/ui/Utility/MakeVariants
+ * @module @noteferry/ui/Utility/MakeVariants
  * @internal
  *
  * @file      MakeVariants.ts

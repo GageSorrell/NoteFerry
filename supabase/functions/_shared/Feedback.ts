@@ -1,14 +1,14 @@
 /**
  * Server-only feedback/bug-report creation (Deno + Effect). Inserting a row
  * fires the `feedback_submissions_notify` Postgres trigger
- * (`supabase/schemas/11_notifications.sql`), which emails Notivex so it can
+ * (`supabase/schemas/11_notifications.sql`), which emails NoteFerry so it can
  * be triaged by hand — nothing else happens here. A `before insert` trigger
  * on the table itself (`private.enforce_feedback_rate_limit`,
  * `supabase/schemas/13_app_feedback_submissions.sql`) enforces a basic
  * per-user rate limit; its rejection is translated into
  * {@link Domain.Error.RateLimitExceeded} below.
  *
- * @module notivex/functions/_shared/Feedback
+ * @module noteferry/functions/_shared/Feedback
  *
  * @file      Feedback.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -16,10 +16,10 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { AdminClient } from "./Database.ts";
 import { Effect } from "effect";
-import type { FeedbackApi } from "@notivex/api";
+import type { FeedbackApi } from "@noteferry/api";
 
 /**
  * Records a feedback or bug-report submission for the current user.

@@ -1,5 +1,5 @@
 /**
- * `StyleSheet.create`-equivalent for `@notivex/ui`, shaped after Fluent UI's
+ * `StyleSheet.create`-equivalent for `@noteferry/ui`, shaped after Fluent UI's
  * `makeStyles` / `mergeClasses` (`@fluentui/react-components`) but adapted
  * for React Native, which has no CSS cascade and no single generic "style"
  * type — every slot is one of `ViewStyle`, `TextStyle`, or `ImageStyle`.
@@ -31,7 +31,7 @@
  * so it's rarely required, but it's here for call sites that need a single
  * merged object instead of an array.
  *
- * @module @notivex/ui/MakeStyles
+ * @module @noteferry/ui/MakeStyles
  *
  * @file      MakeStyles.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -260,7 +260,7 @@ const ResolveSlot = (
         [ Key, IsStyleToken(Value) ? ResolveStyleToken(Value, Mode, HighContrast) : Value ]));
 
 export/**
-       * `StyleSheet.create`-equivalent for `@notivex/ui`. Converts a record of
+       * `StyleSheet.create`-equivalent for `@noteferry/ui`. Converts a record of
        * `ViewStyle`/`TextStyle`/`ImageStyle`-tagged slots (whose color and
        * size-ish properties may hold design tokens in place of literals) into
        * a hook that returns theme-resolved React Native style objects.
@@ -326,7 +326,7 @@ export type Style =
     | RnImageStyle;
 
 export/**
-       * `mergeClasses`-equivalent for `@notivex/ui`. Left-to-right shallow-
+       * `mergeClasses`-equivalent for `@noteferry/ui`. Left-to-right shallow-
        * merges its non-falsy arguments into a single style object (later
        * arguments win), skipping `false`/`null`/`undefined` so conditional
        * styles can be passed inline: `MergeStyles(Styles.Row, Pressed &&

@@ -1,7 +1,7 @@
 /**
  *
  *
- * @module @notivex/icons
+ * @module @noteferry/icons
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

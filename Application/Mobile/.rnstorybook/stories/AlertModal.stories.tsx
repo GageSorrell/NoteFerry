@@ -1,7 +1,7 @@
 /**
- * Storybook stories for `@notivex/ui`'s `AlertModal` primitive.
+ * Storybook stories for `@noteferry/ui`'s `AlertModal` primitive.
  *
- * @module notivex/app/.rnstorybook/stories/AlertModal
+ * @module noteferry/app/.rnstorybook/stories/AlertModal
  *
  * @file      AlertModal.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -10,7 +10,7 @@
  */
 
 import * as React from "react";
-import { AlertModal, Button, Dialog, DialogTrigger } from "@notivex/ui/Primitive";
+import { AlertModal, Button, Dialog, DialogTrigger } from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 
 const AlertModalExample = (): React.JSX.Element => (

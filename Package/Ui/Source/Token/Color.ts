@@ -1,7 +1,7 @@
 /**
  * Tokens for the colors of Notion's palette.
  *
- * @module @notivex/ui/Token/Color
+ * @module @noteferry/ui/Token/Color
  *
  * @file      Color.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,7 +12,7 @@
 import { MakeGetSymbolKey } from "../Utility/index.js";
 import type { ReadonlyRecord } from "effect/Record";
 
-const TypeId = "~notivex/ui/Token/Color" as const;
+const TypeId = "~noteferry/ui/Token/Color" as const;
 
 const GetSymbolKey = MakeGetSymbolKey(TypeId);
 

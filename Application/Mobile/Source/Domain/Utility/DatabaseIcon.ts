@@ -4,7 +4,7 @@
  * `DatabaseCard`'s in-app icon rendering and `QuickActions`' home-screen
  * shortcut icons.
  *
- * @module notivex/Domain/Utility/DatabaseIcon
+ * @module noteferry/Domain/Utility/DatabaseIcon
  *
  * @file      DatabaseIcon.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,7 +12,7 @@
  * @license   MIT
  */
 
-import type { LucideIconName } from "@notivex/ui/Block";
+import type { LucideIconName } from "@noteferry/ui/Block";
 import type { SFSymbol } from "expo-symbols";
 
 export/** Converts Notion's native icon name format to the local Lucide key format. */
@@ -20,8 +20,8 @@ const ToLucideIconName = (Value: string): LucideIconName =>
     Value.trim().toLowerCase().replaceAll("_", "-").replaceAll(" ", "-") as LucideIconName;
 
 /**
- * The closest SF Symbol for each Lucide icon Notivex's curated icon set
- * (`LucideIconMap` in `@notivex/ui/Block`) can render, used to give a
+ * The closest SF Symbol for each Lucide icon NoteFerry's curated icon set
+ * (`LucideIconMap` in `@noteferry/ui/Block`) can render, used to give a
  * database's "Native" (Notion built-in) icon a real icon on iOS home-screen
  * quick actions. Deliberately partial: Lucide names with no faithful SF
  * Symbol equivalent (e.g. `cherry`, `pizza`) are left unmapped so callers

@@ -1,10 +1,10 @@
 /**
  * The `Pages` group: creating a Notion page from a destination. This is the
- * one place the wire contract accepts a Notivex-shaped
+ * one place the wire contract accepts a NoteFerry-shaped
  * {@link Domain.Command.CreatePageCommand} rather than Notion's own request
  * body — only the server-side Notion adapter ever constructs that.
  *
- * @module @notivex/api/PagesApi
+ * @module @noteferry/api/PagesApi
  *
  * @file      PagesApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,7 +12,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
 
 export/**
@@ -49,7 +49,7 @@ const Create = HttpApiEndpoint.post(
 );
 
 export/**
-       * The `Pages` resource group of the Notivex API.
+       * The `Pages` resource group of the NoteFerry API.
        *
        * @category Pages
        * @since 1.0.0

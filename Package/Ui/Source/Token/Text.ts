@@ -1,7 +1,7 @@
 /**
  * Namespaced semantic and common text styles.
  *
- * @module @notivex/ui/Token/Text
+ * @module @noteferry/ui/Token/Text
  *
  * @file      Text.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -11,7 +11,7 @@
 
 import { MakeGetSymbolKey } from "../Utility/index.js";
 
-const TypeId = "~notivex/ui/Token/Text" as const;
+const TypeId = "~noteferry/ui/Token/Text" as const;
 
 type TypeId = typeof TypeId;
 

@@ -2,7 +2,7 @@
  * The `Profile` group: reading the current user's profile and updating their
  * app-wide {@link Domain.Settings.AppSettings}.
  *
- * @module @notivex/api/ProfileApi
+ * @module @noteferry/api/ProfileApi
  *
  * @file      ProfileApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -10,7 +10,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
 
 export/**
@@ -54,7 +54,7 @@ const UpdateSettings = HttpApiEndpoint.patch(
 );
 
 export/**
-       * The `Profile` resource group of the Notivex API.
+       * The `Profile` resource group of the NoteFerry API.
        *
        * @category Profile
        * @since 1.0.0

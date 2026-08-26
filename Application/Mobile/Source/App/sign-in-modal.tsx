@@ -1,7 +1,7 @@
 /**
  * Controller for the sign-in explanation modal and Notion sign-in.
  *
- * @module notivex/app/sign-in-modal
+ * @module noteferry/app/sign-in-modal
  *
  * @file      sign-in-modal.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -10,13 +10,13 @@
  */
 
 import type { EventArg, NavigationAction } from "expo-router/build/react-navigation";
-import { MakeStyles, ViewStyle, useTheme } from "@notivex/ui";
+import { MakeStyles, ViewStyle, useTheme } from "@noteferry/ui";
 import { OnboardingMockTiming, useDevelopmentOnboarding } from "@/features/onboarding/onboarding-development";
 import { Stack, useNavigation } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft } from "lucide-react-native";
 import { ConnectNotion } from "@/Domain/Connection";
-import { Pressable } from "@notivex/ui/Primitive";
+import { Pressable } from "@noteferry/ui/Primitive";
 import type { PressableStateCallbackType } from "react-native";
 import { SignInModalView } from "@/features/onboarding/onboarding-views";
 import { SignInWithOAuth } from "@/Domain/Auth/OAuth";

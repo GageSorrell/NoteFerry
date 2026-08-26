@@ -1,5 +1,5 @@
 /**
- * @module notivex/Storybook/Field
+ * @module noteferry/Storybook/Field
  * @internal
  *
  * @file      Field.stories.tsx
@@ -19,7 +19,7 @@ import {
     FieldLegend,
     FieldSet,
     Input
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 
 const FieldExample = (): React.JSX.Element => (

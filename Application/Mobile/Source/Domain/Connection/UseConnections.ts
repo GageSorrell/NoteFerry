@@ -4,7 +4,7 @@
  * schema and visual metadata remain current; the component tree stays unaware
  * of HTTP and Notion discovery.
  *
- * @module notivex/Domain/Connection/UseConnections
+ * @module noteferry/Domain/Connection/UseConnections
  *
  * @file      UseConnections.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,12 +12,12 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import {
     ListConnections,
     ListDataSources,
     RefreshDataSource
-} from "@/Domain/Runtime/NotivexApi";
+} from "@/Domain/Runtime/NoteFerryApi";
 import { useCallback, useEffect, useState } from "react";
 
 /** The state returned by {@link useConnections}. */

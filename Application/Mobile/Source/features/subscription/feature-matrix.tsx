@@ -1,7 +1,7 @@
 /**
- * Accessible Free versus Notivex Pro feature comparison table.
+ * Accessible Free versus NoteFerry Pro feature comparison table.
  *
- * @module notivex/features/subscription/feature-matrix
+ * @module noteferry/features/subscription/feature-matrix
  *
  * @file      feature-matrix.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,8 +9,8 @@
  * @license   MIT
  */
 
-import { Body, Description, LabelText } from "@notivex/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle } from "@notivex/ui";
+import { Body, Description, LabelText } from "@noteferry/ui/Primitive";
+import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui";
 import { View } from "react-native";
 
 const Rows =
@@ -57,17 +57,17 @@ const FeatureMatrix = (): React.JSX.Element =>
 
     return (
         <View
-            accessibilityLabel="Free and Notivex Pro feature comparison"
+            accessibilityLabel="Free and NoteFerry Pro feature comparison"
             accessibilityRole="summary"
             style={ Styles.Table }>
             <View style={ [ Styles.Row, Styles.Header ] }>
                 <LabelText Style={ [ Styles.Cell, Styles.Feature ] }>Feature</LabelText>
                 <LabelText Style={ Styles.Cell }>Free</LabelText>
-                <LabelText Style={ Styles.Cell }>Notivex Pro</LabelText>
+                <LabelText Style={ Styles.Cell }>NoteFerry Pro</LabelText>
             </View>
             { Rows.map(([ Feature, Free, Pro ]: readonly [ string, string, string ], Index: number) => (
                 <View
-                    accessibilityLabel={ `${Feature}. Free: ${Free}. Notivex Pro: ${Pro}.` }
+                    accessibilityLabel={ `${Feature}. Free: ${Free}. NoteFerry Pro: ${Pro}.` }
                     key={ Feature }
                     style={ [ Styles.Row, Index % 2 === 1 && Styles.Alternate ] }>
                     <Body Style={ [ Styles.Cell, Styles.Feature ] }>{ Feature }</Body>

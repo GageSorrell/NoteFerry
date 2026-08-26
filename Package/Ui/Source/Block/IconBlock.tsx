@@ -22,7 +22,7 @@
  *   `Type: "Emoji"` icon's `Src` is trusted as-is. Nothing in this package
  *   depends on `zod`.
  *
- * @module @notivex/ui/Primitive/IconBlock
+ * @module @noteferry/ui/Primitive/IconBlock
  *
  * @file      IconBlock.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

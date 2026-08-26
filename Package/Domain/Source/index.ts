@@ -1,12 +1,12 @@
 /**
- * Public entry point for `@notivex/domain`.
+ * Public entry point for `@noteferry/domain`.
  *
- * Portable Effect `Schema` definitions shared across Notivex: branded ids,
+ * Portable Effect `Schema` definitions shared across NoteFerry: branded ids,
  * the Notion property/data-source/connection/destination model, local
  * quick-entry drafts, and the tagged error vocabulary. This package must
  * never import Expo, Supabase, or the Notion SDK.
  *
- * @module @notivex/domain
+ * @module @noteferry/domain
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

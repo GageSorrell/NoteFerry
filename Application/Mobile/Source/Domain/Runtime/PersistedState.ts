@@ -3,7 +3,7 @@
  * contains ordinary preferences as well as the encrypted Supabase session;
  * the corresponding session encryption keys live separately in SecureStore.
  *
- * @module notivex/Domain/Runtime/PersistedState
+ * @module noteferry/Domain/Runtime/PersistedState
  *
  * @file      PersistedState.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

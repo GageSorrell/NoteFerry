@@ -4,7 +4,7 @@
  * here `Popup.tsx` plays that role, anchored to `PopoverTrigger`'s
  * measured position via `react-native-popover-view`.
  *
- * @module @notivex/ui/Primitive/Popover
+ * @module @noteferry/ui/Primitive/Popover
  *
  * @file      Popover.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -40,7 +40,7 @@ const usePopoverContext = (): PopoverContextValue =>
 
     if (Value === undefined)
     {
-        throw new Error("[@notivex/ui] A `Popover` part was used outside of `<Popover>`.");
+        throw new Error("[@noteferry/ui] A `Popover` part was used outside of `<Popover>`.");
     }
 
     return Value;

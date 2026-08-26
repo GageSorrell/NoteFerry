@@ -1,5 +1,5 @@
 /**
- * @module @notivex/ui/Utility
+ * @module @noteferry/ui/Utility
  * @internal
  *
  * @file      index.ts

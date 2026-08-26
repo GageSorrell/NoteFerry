@@ -1,7 +1,7 @@
 /**
  * Compact, full-width card for a cached Notion database.
  *
- * @module notivex/Component/DatabaseCard
+ * @module noteferry/Component/DatabaseCard
  *
  * @file      DatabaseCard.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,14 +9,14 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import * as React from "react";
 import { ChevronRight } from "lucide-react-native";
 import { Defs, LinearGradient, Rect, Stop, Svg, SvgXml } from "react-native-svg";
-import { IconBlock } from "@notivex/ui/Block";
+import { IconBlock } from "@noteferry/ui/Block";
 import { ToLucideIconName } from "@/Domain/Utility/DatabaseIcon";
-import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
-import { ItemTitle, Pressable } from "@notivex/ui/Primitive";
+import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
+import { ItemTitle, Pressable } from "@noteferry/ui/Primitive";
 import { Platform, type PressableStateCallbackType, StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
 import type { Thunk } from "@sorrell/effect/Function";

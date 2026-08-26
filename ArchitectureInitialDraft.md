@@ -1,4 +1,4 @@
-I would architect Notivex as a **three-tier system with a shared Effect domain layer**:
+I would architect NoteFerry as a **three-tier system with a shared Effect domain layer**:
 
 ```text
 ┌─────────────────────────────────────────────┐
@@ -10,7 +10,7 @@ I would architect Notivex as a **three-tier system with a shared Effect domain l
 │                  │                          │
 │    ┌─────────────┴──────────────┐           │
 │    │                            │           │
-│ Supabase Auth            Notivex HTTP API   │
+│ Supabase Auth            NoteFerry HTTP API   │
 │ directly                 typed by Effect    │
 └────┬────────────────────────────┬────────────┘
      │                            │
@@ -50,7 +50,7 @@ I would resist the temptation to make Effect Schema the literal source of truth 
 
 | Concern                               | Source of truth                               |
 | ------------------------------------- | --------------------------------------------- |
-| Notivex domain types                  | Effect `Schema`                               |
+| NoteFerry domain types                  | Effect `Schema`                               |
 | HTTP request/response contracts       | Effect `Schema` / `HttpApi`                   |
 | Runtime validation                    | Effect `Schema`                               |
 | Error model                           | `Schema.TaggedErrorClass`                     |
@@ -74,7 +74,7 @@ Effect v4 does have schema-aware SQL facilities such as `SqlSchema`, `SqlModel`,
 Conceptually, I would use something close to:
 
 ```text
-notivex/
+noteferry/
 ├─ apps/
 │  └─ mobile/
 │     ├─ app/                     # Expo Router routes
@@ -121,7 +121,7 @@ notivex/
 │  │     ├─ SecureStorage.ts
 │  │     ├─ LocalDatabase.ts
 │  │     ├─ Session.ts
-│  │     └─ NotivexApiClient.ts
+│  │     └─ NoteFerryApiClient.ts
 │  │
 │  └─ ui/
 │
@@ -258,7 +258,7 @@ Notion API DataSource
 NotionExternalDataSource
         │
         ▼ normalize
-Notivex DataSourceSchema
+NoteFerry DataSourceSchema
         │
         ▼ drives UI
 PropertyInput[]
@@ -303,15 +303,15 @@ PropertyInput
 
 The server-side Notion adapter then translates those into the exact current Notion API format.
 
-That protects the rest of Notivex from changes like the fairly significant 2025 Notion API split between databases and data sources. The old database-query endpoint is now deprecated; the current API version is `2026-03-11`, and querying table contents is done through `/data_sources/{data_source_id}/query`. ([Notion Docs][6])
+That protects the rest of NoteFerry from changes like the fairly significant 2025 Notion API split between databases and data sources. The old database-query endpoint is now deprecated; the current API version is `2026-03-11`, and querying table contents is done through `/data_sources/{data_source_id}/query`. ([Notion Docs][6])
 
 This adapter is also the right place to handle weird provider-specific cases such as a relation target not being shared with the Notion connection. Notion notes that related database schemas may not be returned unless that related database is also shared. ([Notion Docs][7])
 
 ---
 
-# 5. Supabase Auth should identify the Notivex user
+# 5. Supabase Auth should identify the NoteFerry user
 
-I would not use the Notion OAuth installation itself as your Notivex account.
+I would not use the Notion OAuth installation itself as your NoteFerry account.
 
 Instead:
 
@@ -327,15 +327,15 @@ Supabase user
 
 Supabase Auth answers:
 
-> “Who is this Notivex user?”
+> “Who is this NoteFerry user?”
 
 Notion OAuth answers:
 
-> “Which Notion resources has this user authorized Notivex to operate on?”
+> “Which Notion resources has this user authorized NoteFerry to operate on?”
 
 Those are fundamentally different concepts.
 
-This also lets a user disconnect Notion without deleting their Notivex account, connect multiple workspaces, switch Notion accounts, retain subscription/configuration data, or later use Notivex without Notion for some feature.
+This also lets a user disconnect Notion without deleting their NoteFerry account, connect multiple workspaces, switch Notion accounts, retain subscription/configuration data, or later use NoteFerry without Notion for some feature.
 
 Supabase Auth stores users in its protected `auth` schema and issues JWTs that integrate with RLS. ([Supabase][8])
 
@@ -370,7 +370,7 @@ Expo
  │ POST /notion/connections/start
  │ Supabase JWT
  ▼
-Notivex API
+NoteFerry API
  │
  │ Create one-time OAuth state
  │
@@ -402,7 +402,7 @@ Supabase private storage
  │
  ▼
 HTTP redirect to
-notivex://notion/connected
+noteferry://notion/connected
 ```
 
 The critical part is that **Notion redirects to your server first, not directly to a piece of client code that exchanges the authorization code**.
@@ -411,7 +411,7 @@ Notion's token exchange uses the public connection's `CLIENT_ID:CLIENT_SECRET` v
 
 This matches Expo's general OAuth guidance as well: if an authorization-code flow requires a client secret, exchange the code server-side because client application code is not a secure place to hold the secret. ([Expo Documentation][10])
 
-Your server callback should then redirect back into the Expo app using a Notivex custom scheme/universal link.
+Your server callback should then redirect back into the Expo app using a NoteFerry custom scheme/universal link.
 
 ---
 
@@ -514,14 +514,14 @@ I would start approximately here:
 
 | Table                                   | Purpose                                                         |
 | --------------------------------------- | --------------------------------------------------------------- |
-| `app.profiles`                          | Notivex-specific user information not belonging in `auth.users` |
+| `app.profiles`                          | NoteFerry-specific user information not belonging in `auth.users` |
 | `app.notion_connections`                | Non-secret metadata about each authorized Notion connection     |
 | `private.notion_connection_credentials` | Access/refresh credentials                                      |
 | `private.notion_oauth_states`           | Short-lived OAuth state/CSRF records                            |
 | `app.data_sources`                      | Cached Notion data-source metadata                              |
-| `app.destinations`                      | User-configured Notivex destinations/forms                      |
+| `app.destinations`                      | User-configured NoteFerry destinations/forms                      |
 | `app.operations`                        | Page-creation attempts/history/idempotency metadata             |
-| `app.user_preferences`                  | Cross-device Notivex preferences                                |
+| `app.user_preferences`                  | Cross-device NoteFerry preferences                                |
 | `app.devices`                           | Only if you later need device-specific/push data                |
 
 I would **not** replicate all of the user's Notion pages into Supabase.
@@ -542,11 +542,11 @@ Supabase should primarily contain:
 
 ```text
 authorization
-Notivex configuration
+NoteFerry configuration
 cached metadata
 user preferences
 operational state
-history/audit information that Notivex actually needs
+history/audit information that NoteFerry actually needs
 ```
 
 That keeps your liability, synchronization complexity and storage usage dramatically smaller.
@@ -555,7 +555,7 @@ That keeps your liability, synchronization complexity and storage usage dramatic
 
 # 11. Cache Notion data-source schemas
 
-One thing I *would* store from Notion is enough data-source metadata to render Notivex quickly.
+One thing I *would* store from Notion is enough data-source metadata to render NoteFerry quickly.
 
 For example:
 
@@ -596,7 +596,7 @@ launch app
 → refresh in background when stale
 ```
 
-The `property_schema` JSON should not simply be an opaque dump of Notion's response. I'd store your **normalized Notivex schema**.
+The `property_schema` JSON should not simply be an opaque dump of Notion's response. I'd store your **normalized NoteFerry schema**.
 
 That means when Notion changes its API representation, you update one mapper.
 
@@ -747,7 +747,7 @@ OperationRepository
 CurrentUser
 SecureStorage
 LocalDatabase
-NotivexApi
+NoteFerryApi
 Clock
 IdGenerator
 ```
@@ -789,12 +789,12 @@ That's exactly the seam-oriented use of Effect Services/Layers that v4 encourage
 
 # 16. I would use Effect `HttpApi` for your backend contract
 
-For Notivex specifically, I think Effect's typed HTTP API fits very well.
+For NoteFerry specifically, I think Effect's typed HTTP API fits very well.
 
 Define something conceptually like:
 
 ```text
-NotivexApi
+NoteFerryApi
 │
 ├─ Connections
 │  ├─ GET    /
@@ -1027,7 +1027,7 @@ It should **not** submit:
 }
 ```
 
-The first is a **Notivex command**.
+The first is a **NoteFerry command**.
 
 The second is a **Notion API request**.
 
@@ -1039,7 +1039,7 @@ This means that if Notion changes the API representation, you change the backend
 
 # 22. Prefer property IDs internally rather than names
 
-When Notivex stores a configuration like:
+When NoteFerry stores a configuration like:
 
 ```text
 "Due Date"
@@ -1099,11 +1099,11 @@ Cached DataSourceSchema
     └─ url/email…  → specialized text inputs
 ```
 
-You can then layer Notivex-specific configuration on top:
+You can then layer NoteFerry-specific configuration on top:
 
 ```text
 visible?
-required by Notivex?
+required by NoteFerry?
 order
 default value
 quick value
@@ -1137,7 +1137,7 @@ A data source answers:
 
 A destination answers:
 
-> How has this Notivex user configured a quick-entry experience for this data source?
+> How has this NoteFerry user configured a quick-entry experience for this data source?
 
 So:
 
@@ -1158,7 +1158,7 @@ createdAt
 updatedAt
 ```
 
-This avoids turning Notivex itself into just a thin browser over Notion databases.
+This avoids turning NoteFerry itself into just a thin browser over Notion databases.
 
 ---
 
@@ -1258,7 +1258,7 @@ For a relation picker:
 Expo search text
        │
        ▼
-Notivex API
+NoteFerry API
        │
        ▼
 Notion service
@@ -1272,7 +1272,7 @@ Do not give the Expo app credentials and let it query arbitrary related Notion r
 The backend already knows:
 
 ```text
-current Notivex user
+current NoteFerry user
 connection
 target data source
 relation property
@@ -1333,7 +1333,7 @@ Expo → private credentials
     NO
 
 Expo → business operations
-    Notivex Effect API
+    NoteFerry Effect API
 ```
 
 For example, a simple `user_preferences` read could reasonably go through `supabase-js` under RLS.
@@ -1348,7 +1348,7 @@ create a page
 disconnect Notion
 ```
 
-through the Notivex server API.
+through the NoteFerry server API.
 
 Even if you allow direct Data API access, hide `supabase-js` behind an Effect repository:
 
@@ -1444,7 +1444,7 @@ Notion
 
 That is enough of a seam.
 
-The current Notion API has many more endpoints, but your domain layer should represent what **Notivex requires**, not everything Notion happens to offer.
+The current Notion API has many more endpoints, but your domain layer should represent what **NoteFerry requires**, not everything Notion happens to offer.
 
 ---
 
@@ -1455,7 +1455,7 @@ I'd use four categories of Schema.
 | Category        | Example                                           |
 | --------------- | ------------------------------------------------- |
 | Domain          | `Destination`, `PropertyDefinition`, `PageDraft`  |
-| Notivex HTTP    | `CreatePageRequest`, `CreatePageResponse`         |
+| NoteFerry HTTP    | `CreatePageRequest`, `CreatePageResponse`         |
 | Notion external | `NotionDataSourceResponse`, `NotionOAuthResponse` |
 | Persistence     | `DestinationRow`, `ConnectionRow`                 |
 
@@ -1527,7 +1527,7 @@ useCreatePage()
 PageCreationService.Create()
         │
         ├─ LocalDatabase
-        └─ NotivexApi
+        └─ NoteFerryApi
 ```
 
 React remains React.
@@ -1562,7 +1562,7 @@ If I compress the entire architecture into one rule set, it becomes:
 | Shared API               | Effect `HttpApi` + Schema                      |
 | Backend application      | Domain services/use cases                      |
 | Backend infrastructure   | Supabase, Postgres, Notion HTTP API            |
-| PostgreSQL               | durable Notivex state                          |
+| PostgreSQL               | durable NoteFerry state                          |
 | Notion                   | canonical Notion content/schema                |
 
 Dependencies should point inward:
@@ -1592,7 +1592,7 @@ That rule alone will prevent most of the architectural mess that otherwise devel
 
 If I were implementing this from a clean repository, I would do it in this order:
 
-1. Create `@notivex/domain` with branded IDs, `NotionConnection`, `DataSourceSchema`, property definition/input unions, `Destination`, `PageDraft`, and tagged errors. Then create `@notivex/api` with an Effect `HttpApi` defining connections, data sources, destinations and page creation. Set up Supabase Auth in Expo with secure native session persistence. Create the `app` and `private` database schemas and SQL migrations, with RLS on everything client-readable. Implement `Notion` as a server-only Effect service. Build the Notion OAuth start/callback flow and persist connection metadata plus server-only credentials. Add data-source discovery and normalized schema caching. Implement destination configuration. Build schema-driven Expo form rendering. Implement page creation through the Effect API. Finally, add SQLite caching/offline drafts/pending operations and then webhooks/background synchronization if they actually become necessary.
+1. Create `@noteferry/domain` with branded IDs, `NotionConnection`, `DataSourceSchema`, property definition/input unions, `Destination`, `PageDraft`, and tagged errors. Then create `@noteferry/api` with an Effect `HttpApi` defining connections, data sources, destinations and page creation. Set up Supabase Auth in Expo with secure native session persistence. Create the `app` and `private` database schemas and SQL migrations, with RLS on everything client-readable. Implement `Notion` as a server-only Effect service. Build the Notion OAuth start/callback flow and persist connection metadata plus server-only credentials. Add data-source discovery and normalized schema caching. Implement destination configuration. Build schema-driven Expo form rendering. Implement page creation through the Effect API. Finally, add SQLite caching/offline drafts/pending operations and then webhooks/background synchronization if they actually become necessary.
 
 That sequence gives you a usable vertical slice quite early without committing you to synchronization infrastructure before you need it.
 

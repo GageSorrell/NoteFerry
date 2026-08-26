@@ -8,7 +8,7 @@
  * `RetrieveDataSource` and `RefreshAuthorization`. `RevokeAuthorization` lands
  * with a later slice.
  *
- * @module notivex/functions/_shared/Notion
+ * @module noteferry/functions/_shared/Notion
  *
  * @file      Notion.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -23,7 +23,7 @@ const ApiBase = "https://api.notion.com/v1";
 const TokenEndpoint = `${ApiBase}/oauth/token`;
 const AuthorizeEndpoint = `${ApiBase}/oauth/authorize`;
 
-/** The subset of Notion's OAuth token response Notivex persists. */
+/** The subset of Notion's OAuth token response NoteFerry persists. */
 export type NotionOAuthTokens =
 {
     readonly access_token: string;
@@ -178,7 +178,7 @@ export type NotionStatusGroup =
 
 /**
  * A single Notion property as returned by the Data API. Only the fields
- * Notivex maps are typed; the rest of Notion's per-type payloads are ignored.
+ * NoteFerry maps are typed; the rest of Notion's per-type payloads are ignored.
  */
 export type NotionProperty =
 {
@@ -246,7 +246,7 @@ export type NotionParent =
 
 /**
  * One property *value* on a Notion page, as opposed to {@link NotionProperty}
- * (a data source's property *definition*). Only the value shapes Notivex
+ * (a data source's property *definition*). Only the value shapes NoteFerry
  * reads back from a template page are typed; the rest of Notion's per-type
  * payloads are ignored.
  */
@@ -702,7 +702,7 @@ export const SendFileUpload = async (
     return await Response.json() as NotionFileUploadObject;
 };
 
-/** The Notion Create Page request body Notivex sends. */
+/** The Notion Create Page request body NoteFerry sends. */
 export interface NotionCreatePageBody
 {
     readonly children?: ReadonlyArray<unknown>;

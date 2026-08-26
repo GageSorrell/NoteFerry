@@ -1,5 +1,5 @@
 /**
- * Schema-backed tagged errors for every failure mode the rest of Notivex
+ * Schema-backed tagged errors for every failure mode the rest of NoteFerry
  * needs to distinguish. Nothing downstream should ever see a raw exception
  * from Supabase, `fetch`, Deno, or the Notion SDK — adapters translate those
  * into one of these instead, so callers can write
@@ -13,7 +13,7 @@
  * a 500. The annotation is inert metadata everywhere else — the domain stays
  * free of any HTTP dependency.
  *
- * @module @notivex/domain/Error
+ * @module @noteferry/domain/Error
  *
  * @file      Error.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -169,7 +169,7 @@ export class DestinationNotFound extends Schema.TaggedError<DestinationNotFound>
 ) { }
 
 /**
- * A {@link PageDraft.PageDraft} failed Notivex-side validation before it was
+ * A {@link PageDraft.PageDraft} failed NoteFerry-side validation before it was
  * ever sent to Notion.
  *
  * @category Error
@@ -206,7 +206,7 @@ export class NetworkError extends Schema.TaggedError<NetworkError>()(
     { httpApiStatus: 502 }
 ) { }
 
-/** A client attempted to use a feature that requires Notivex Pro. */
+/** A client attempted to use a feature that requires NoteFerry Pro. */
 export class FeatureGateError extends Schema.TaggedError<FeatureGateError>()(
     "FeatureGateError",
     { Feature: Schema.String },

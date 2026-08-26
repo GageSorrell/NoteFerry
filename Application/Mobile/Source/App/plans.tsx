@@ -1,7 +1,7 @@
-/** Free and Notivex Pro comparison, allowance, and purchase entry point. */
+/** Free and NoteFerry Pro comparison, allowance, and purchase entry point. */
 
-import { Body, Button, Description, Heading1, Heading2 } from "@notivex/ui/Primitive";
-import { MakeStyles, Token, ViewStyle } from "@notivex/ui";
+import { Body, Button, Description, Heading1, Heading2 } from "@noteferry/ui/Primitive";
+import { MakeStyles, Token, ViewStyle } from "@noteferry/ui";
 import { ScrollView, View } from "react-native";
 import { FeatureMatrix } from "@/features/subscription/feature-matrix";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,7 +23,7 @@ const PlansScreen = (): React.JSX.Element =>
                 edges={ [ "bottom" ] }
                 style={ Styles.SafeArea }>
                 <ScrollView contentContainerStyle={ Styles.Content }>
-                    <Heading1>Get Notivex™ Premium</Heading1>
+                    <Heading1>Get NoteFerry™ Premium</Heading1>
                     <Description>
                         Free keeps capture, accessibility, reliability, and account controls.
                         Pro unlocks customization, more destinations, and removes advertising.

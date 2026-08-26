@@ -1,15 +1,15 @@
 /**
  * A single scrollable story containing a compact demo of every
- * `@notivex/ui` primitive at once, for eyeballing the whole library on one
+ * `@noteferry/ui` primitive at once, for eyeballing the whole library on one
  * screen. Every primitive still has its own dedicated, interactive story
  * (with controls) elsewhere — this just gives a fast overview, so (per
  * scope) it skips Storybook args/controls and just renders static/locally-
  * stateful demo content directly. Deliberately self-contained (imports only
- * from `@notivex/ui/Primitive`, not from any other `.stories.tsx` file) so
+ * from `@noteferry/ui/Primitive`, not from any other `.stories.tsx` file) so
  * it has no dependency on — and can't be broken by editing — any other
  * story file.
  *
- * @module notivex/app/.rnstorybook/stories/All
+ * @module noteferry/app/.rnstorybook/stories/All
  *
  * @file      All.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -121,7 +121,7 @@ import {
     Tooltip,
     TooltipContent,
     TooltipTrigger
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { ScrollView, View } from "react-native";
 import { Array } from "effect";
@@ -204,7 +204,7 @@ const AllExample = (): React.JSX.Element =>
             } }>
                 <Section Title="Avatar">
                     <Avatar Size={ 40 }>
-                        <AvatarImage Source="https://picsum.photos/seed/notivex/128" />
+                        <AvatarImage Source="https://picsum.photos/seed/noteferry/128" />
                         <AvatarFallback>
                             <Text Variant="Label">NX</Text>
                         </AvatarFallback>

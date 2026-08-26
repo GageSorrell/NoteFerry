@@ -9,7 +9,7 @@ set local search_path = public, extensions;
 select plan(6);
 
 insert into auth.users (id, email)
-values ('40000000-0000-4000-8000-000000000001', 'feedback-test@notivex.invalid');
+values ('40000000-0000-4000-8000-000000000001', 'feedback-test@noteferry.invalid');
 
 select throws_ok(
     $$insert into app.feedback_submissions (user_id, kind, message)

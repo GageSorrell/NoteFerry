@@ -6,7 +6,7 @@
  * approximation. Lower priority than the other tokens; extend as real
  * consumers need finer fidelity.
  *
- * @module @notivex/ui/Token/Shadow
+ * @module @noteferry/ui/Token/Shadow
  *
  * @file      Shadow.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -17,7 +17,7 @@
 import { MakeGetSymbolKey } from "../Utility/index.js";
 import type { ReadonlyRecord } from "effect/Record";
 
-const TypeId = "~notivex/ui/Token/Shadow" as const;
+const TypeId = "~noteferry/ui/Token/Shadow" as const;
 
 type TypeId = typeof TypeId;
 

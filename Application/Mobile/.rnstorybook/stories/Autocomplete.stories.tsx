@@ -1,8 +1,8 @@
 /**
- * Storybook stories for `@notivex/ui`'s `Autocomplete` primitive — the
+ * Storybook stories for `@noteferry/ui`'s `Autocomplete` primitive — the
  * shared filtered-list engine behind `Combobox` and `Command`.
  *
- * @module notivex/app/.rnstorybook/stories/Autocomplete
+ * @module noteferry/app/.rnstorybook/stories/Autocomplete
  *
  * @file      Autocomplete.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -18,7 +18,7 @@ import {
     AutocompleteInput,
     AutocompleteItem,
     AutocompleteList
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 

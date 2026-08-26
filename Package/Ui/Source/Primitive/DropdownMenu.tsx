@@ -7,7 +7,7 @@
  * triggered by its own `DropdownMenuItem` is the fallback for that case.
  * `ContextMenu.tsx` reuses everything here except the trigger gesture.
  *
- * @module @notivex/ui/Primitive/DropdownMenu
+ * @module @noteferry/ui/Primitive/DropdownMenu
  *
  * @file      DropdownMenu.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -55,7 +55,7 @@ const useDropdownMenuContext = (): DropdownMenuContextValue =>
 
     if (Value === undefined)
     {
-        throw new Error("[@notivex/ui] A `DropdownMenu` part was used outside of `<DropdownMenu>`.");
+        throw new Error("[@noteferry/ui] A `DropdownMenu` part was used outside of `<DropdownMenu>`.");
     }
 
     return Value;
@@ -169,7 +169,7 @@ const useDropdownMenuClose = (): (() => void) =>
     if (Close === undefined)
     {
         throw new Error(
-            "[@notivex/ui] A `DropdownMenuItem`-family component was used outside of `<DropdownMenuContent>`."
+            "[@noteferry/ui] A `DropdownMenuItem`-family component was used outside of `<DropdownMenuContent>`."
         );
     }
 

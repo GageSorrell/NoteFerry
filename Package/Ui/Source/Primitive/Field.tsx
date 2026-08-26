@@ -4,7 +4,7 @@
  * `FieldSet`/`FieldLegend` (HTML `<fieldset>`/`<legend>`) collapse into
  * plain `View`/`Text` since RN has no native equivalent.
  *
- * @module @notivex/ui/Primitive/Field
+ * @module @noteferry/ui/Primitive/Field
  *
  * @file      Field.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

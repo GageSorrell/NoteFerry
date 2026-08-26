@@ -1,7 +1,7 @@
 /**
  *
  *
- * @module notivex/Domain/Connection
+ * @module noteferry/Domain/Connection
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

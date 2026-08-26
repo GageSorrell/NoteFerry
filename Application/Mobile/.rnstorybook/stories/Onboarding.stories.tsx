@@ -1,7 +1,7 @@
 /**
  * Exhaustive, side-effect-free onboarding states.
  *
- * @module notivex/Storybook/Onboarding
+ * @module noteferry/Storybook/Onboarding
  * @internal
  *
  * @file      Onboarding.stories.tsx
@@ -37,7 +37,7 @@ const EnableNotifications = action("Enable notifications");
 const SkipNotifications = action("Skip notifications");
 const Retry = action("Retry");
 const SignIn = action("Sign in");
-const Start = action("Start using Notivex");
+const Start = action("Start using NoteFerry");
 const StartOver = action("Start over");
 
 /** Renders a selected scenario using pure onboarding views only. */

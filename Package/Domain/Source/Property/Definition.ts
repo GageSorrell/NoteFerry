@@ -6,7 +6,7 @@
  * Deliberately kept separate from {@link Property.Input} ("what the user
  * wants to put into it") and from Notion's own API representation.
  *
- * @module @notivex/domain/Property/Definition
+ * @module @noteferry/domain/Property/Definition
  *
  * @file      Definition.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -233,7 +233,7 @@ const FilesPropertyDefinition = Schema.Struct({
 export type FilesPropertyDefinition = Schema.Schema.Type<typeof FilesPropertyDefinition>;
 
 export/**
-       * "What this Notion property is" — the normalized, Notivex-owned
+       * "What this Notion property is" — the normalized, NoteFerry-owned
        * representation of a single property on a data source's schema.
        *
        * @category Property

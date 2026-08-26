@@ -3,7 +3,7 @@
  * screen: launch behavior, home screen layout and database order, and
  * contrast.
  *
- * @module notivex/app/general-settings
+ * @module noteferry/app/general-settings
  *
  * @file      general-settings.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -11,7 +11,7 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import {
     Body,
     BottomSheet,
@@ -29,8 +29,8 @@ import {
     Setting,
     SettingsContainer,
     Sortable
-} from "@notivex/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme, useToken } from "@notivex/ui";
+} from "@noteferry/ui/Primitive";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme, useToken } from "@noteferry/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ChevronDown, GripVertical } from "lucide-react-native";
 import { useCallback, useRef } from "react";
@@ -116,7 +116,7 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
     const ShowSettingsGate = useCallback((Message: string): void =>
     {
         Alert.alert(
-            "Available with Notivex Pro",
+            "Available with NoteFerry Pro",
             Message,
             [
                 { style: "cancel", text: "Not now" },
@@ -192,7 +192,7 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
                     style={ Styles.Scroll }>
                     <SettingsContainer>
                         <Setting
-                            Description="What Notivex shows when it opens."
+                            Description="What NoteFerry shows when it opens."
                             Title="On launch">
                             <Pressable
                                 Accessibility={ {
@@ -352,7 +352,7 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
                     <View style={ Styles.SheetHeader }>
                         <BottomSheetTitle>On launch</BottomSheetTitle>
                         <BottomSheetDescription>
-                            Choose what Notivex shows when it opens.
+                            Choose what NoteFerry shows when it opens.
                         </BottomSheetDescription>
                     </View>
                     <MenuGroup Style={ Styles.SheetMenu }>

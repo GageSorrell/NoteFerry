@@ -5,7 +5,7 @@
  * fire-and-forget (`void Placement.MaybeShow()`), never awaited, so ad
  * availability can never delay navigation.
  *
- * @module notivex/Domain/Ads/InterstitialPlacements
+ * @module noteferry/Domain/Ads/InterstitialPlacements
  *
  * @file      InterstitialPlacements.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -29,7 +29,7 @@ const PageCreationInterstitialEveryN = 3;
  *  (interstitial or app open). */
 const MinimumIntervalBetweenInterstitialsMs = 3 * 60_000;
 
-const PageCreationCountStorageKey = "@notivex/ads-page-creation-count" as const;
+const PageCreationCountStorageKey = "@noteferry/ads-page-creation-count" as const;
 
 const CanShowInterstitial = (): boolean =>
     !IsAdFree()

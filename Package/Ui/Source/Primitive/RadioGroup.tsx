@@ -3,7 +3,7 @@
  * this on `@base-ui/react/radio-group`'s context; reimplemented here with a
  * plain `React.Context` since RN has no equivalent.
  *
- * @module @notivex/ui/Primitive/RadioGroup
+ * @module @noteferry/ui/Primitive/RadioGroup
  *
  * @file      RadioGroup.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -89,7 +89,7 @@ const RadioGroupItem = ({
 
     if (Context === undefined)
     {
-        throw new Error("[@notivex/ui] `RadioGroupItem` must be used inside `<RadioGroup>`.");
+        throw new Error("[@noteferry/ui] `RadioGroupItem` must be used inside `<RadioGroup>`.");
     }
 
     const {

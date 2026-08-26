@@ -1,8 +1,8 @@
 {
-  "name": "@notivex/ui",
-  "description": "The UI library of notivex.",
+  "name": "@noteferry/ui",
+  "description": "The UI library of noteferry.",
   "private": false,
-  "homepage": "https://notivex.sorrell.sh",
+  "homepage": "https://noteferry.sorrell.sh",
   "version": "1.0.0",
   "author": {
     "name": "Gage Sorrell",
@@ -10,13 +10,13 @@
     "url": "https://sorrell.sh"
   },
   "bugs": {
-    "url": "https://github.com/GageSorrell/Notivex/issues"
+    "url": "https://github.com/GageSorrell/NoteFerry/issues"
   },
   "license": "MIT",
   "repository": {
     "directory": "Package/Ui",
     "type": "git",
-    "url": "git+https://github.com/GageSorrell/Notivex.git"
+    "url": "git+https://github.com/GageSorrell/NoteFerry.git"
   },
   "engines": {
     "node": "24.19.0",

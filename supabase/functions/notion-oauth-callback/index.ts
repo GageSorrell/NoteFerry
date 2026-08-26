@@ -5,9 +5,9 @@
  *
  * Flow: verify state → exchange code (server-side, with the client secret)
  * → persist connection metadata + server-only credentials → redirect back into
- * the app via the `notivex://` deep link.
+ * the app via the `noteferry://` deep link.
  *
- * @module notivex/functions/notion-oauth-callback
+ * @module noteferry/functions/notion-oauth-callback
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -18,7 +18,7 @@
 import { AdminClient, PrivateSchema } from "../_shared/Database.ts";
 import { ExchangeAuthorizationCode } from "../_shared/Notion.ts";
 
-const AppReturnUrl = "notivex://notion/connected";
+const AppReturnUrl = "noteferry://notion/connected";
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 const RedirectToApp = (Params: Record<string, string>): Response =>

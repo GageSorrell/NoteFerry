@@ -4,7 +4,7 @@
  * Actions/Account settings sub-screens, then review/feedback/bug links and
  * app info.
  *
- * @module notivex/app/settings
+ * @module noteferry/app/settings
  *
  * @file      settings.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -25,8 +25,8 @@ import {
     UserRound,
     Zap
 } from "lucide-react-native";
-import { Button, ButtonLabel, Heading2, LabelText } from "@notivex/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
+import { Button, ButtonLabel, Heading2, LabelText } from "@noteferry/ui/Primitive";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
 import Constants from "expo-constants";
 import { SettingsTable, SettingsTableRow } from "@/Component";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -64,9 +64,9 @@ const SettingsScreen = (): React.JSX.Element =>
 
     const SubscriptionLabel = Status?.Active
         ? Status.Term === "Lifetime"
-            ? "Notivex Pro · Lifetime access"
-            : `Notivex Pro · ${Status.Term ?? "Active"}${Status.Renews ? " · Renews" : " · Expires"}`
-        : "Upgrade to Notivex Pro";
+            ? "NoteFerry Pro · Lifetime access"
+            : `NoteFerry Pro · ${Status.Term ?? "Active"}${Status.Renews ? " · Renews" : " · Expires"}`
+        : "Upgrade to NoteFerry Pro";
 
     const OpenSubscription = useCallback((): void =>
     {
@@ -185,7 +185,7 @@ const SettingsScreen = (): React.JSX.Element =>
                 <ScrollView
                     contentContainerStyle={ Styles.List }
                     style={ Styles.Scroll }>
-                    <Heading2 Style={ Styles.SectionHeading }>Support Notivex</Heading2>
+                    <Heading2 Style={ Styles.SectionHeading }>Support NoteFerry</Heading2>
                     <Button
                         Appearance="Primary"
                         OnPress={ () => void HandleLeaveReview() }
@@ -216,7 +216,7 @@ const SettingsScreen = (): React.JSX.Element =>
 
                     <View style={ Styles.AppInfo }>
                         <LabelText Color={ Token.Semantic.Muted }>
-                            Notivex { Application.nativeApplicationVersion ?? Constants.expoConfig?.version }
+                            NoteFerry { Application.nativeApplicationVersion ?? Constants.expoConfig?.version }
                             { " " }(build { Application.nativeBuildVersion ?? "—" })
                         </LabelText>
                     </View>

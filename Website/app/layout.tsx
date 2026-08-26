@@ -41,8 +41,8 @@ const metadata: Metadata = {
     icons: {
         apple: "/apple-icon.png",
         icon: [
-            { type: "image/svg+xml", url: "/NotivexLogoLight.svg" },
-            { media: "(prefers-color-scheme: dark)", type: "image/svg+xml", url: "/NotivexLogoDark.svg" }
+            { type: "image/svg+xml", url: "/NoteFerryLogoLight.svg" },
+            { media: "(prefers-color-scheme: dark)", type: "image/svg+xml", url: "/NoteFerryLogoDark.svg" }
         ]
     },
     metadataBase: new URL(siteConfig.canonicalUrl),

@@ -1,5 +1,5 @@
 /**
- * @module notivex/Storybook/Meter
+ * @module noteferry/Storybook/Meter
  * @internal
  *
  * @file      Meter.stories.tsx
@@ -9,7 +9,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { MeterBar, MeterRing } from "@notivex/ui/Primitive";
+import { MeterBar, MeterRing } from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 const meta =

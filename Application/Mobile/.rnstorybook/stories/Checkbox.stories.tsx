@@ -1,5 +1,5 @@
 /**
- * @module notivex/Storybook/Checkbox
+ * @module noteferry/Storybook/Checkbox
  * @internal
  *
  * @file      Checkbox.stories.tsx
@@ -9,7 +9,7 @@
  */
 
 import * as React from "react";
-import { Checkbox, type CheckboxProps } from "@notivex/ui/Primitive";
+import { Checkbox, type CheckboxProps } from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 

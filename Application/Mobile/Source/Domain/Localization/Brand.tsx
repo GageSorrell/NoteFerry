@@ -1,5 +1,5 @@
 /**
- * @module notivex/Domain/Localization/Brand
+ * @module noteferry/Domain/Localization/Brand
  *
  * @file      Brand.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -8,17 +8,17 @@
  */
 
 export/**
-       * The Notivex app name.
+       * The NoteFerry app name.
        *
        * @category Localization
        * @since 1.0.0
        */
-const AppName = "Notivex" as const;
+const AppName = "NoteFerry" as const;
 
 export/**
-       * The Notivex app name, with the trademark symbol.
+       * The NoteFerry app name, with the trademark symbol.
        *
        * @category Localization
        * @since 1.0.0
        */
-const AppNameTm = "Notivex™" as const;
+const AppNameTm = "NoteFerry™" as const;

@@ -3,7 +3,7 @@
  * This module intentionally contains no runtime router, auth, or API imports so
  * Storybook can consume it without initializing application side effects.
  *
- * @module notivex/features/onboarding/onboarding-mock-scenarios
+ * @module noteferry/features/onboarding/onboarding-mock-scenarios
  *
  * @file      onboarding-mock-scenarios.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -11,7 +11,7 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import type { Href } from "expo-router";
 import type { NotionSyncStatus } from "@/features/onboarding/use-notion-sync";
 

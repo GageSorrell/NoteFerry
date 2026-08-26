@@ -3,7 +3,7 @@
  * data, or open Notion's own connected-integrations page. Reached from the
  * "Account settings" row on the settings screen.
  *
- * @module notivex/app/account-settings
+ * @module noteferry/app/account-settings
  *
  * @file      account-settings.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -13,12 +13,12 @@
 
 import * as WebBrowser from "expo-web-browser";
 import { Alert, Linking, ScrollView, View } from "react-native";
-import { Button, Description, Heading1, Heading2 } from "@notivex/ui/Primitive";
-import { DeleteAccount, RequestAccountData } from "@/Domain/Runtime/NotivexApi";
-import { MakeStyles, TextStyle, Token, ViewStyle } from "@notivex/ui";
+import { Button, Description, Heading1, Heading2 } from "@noteferry/ui/Primitive";
+import { DeleteAccount, RequestAccountData } from "@/Domain/Runtime/NoteFerryApi";
+import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui";
 import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAuth } from "@/Domain/Auth/NotivexAuthProvider";
+import { useAuth } from "@/Domain/Auth/NoteFerryAuthProvider";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSubscription } from "@/Domain/Subscription";
 import Purchases from "react-native-purchases";
@@ -91,9 +91,9 @@ const AccountSettingsScreen = (): React.JSX.Element =>
 
         Alert.alert(
             "Delete your account?",
-            "This permanently deletes your Notivex account, connections, and "
+            "This permanently deletes your NoteFerry account, connections, and "
                 + "quick-entry destinations. This can't be undone. Deleting your "
-                + "Notivex account does not cancel an App Store or Play Store subscription.",
+                + "NoteFerry account does not cancel an App Store or Play Store subscription.",
             [
                 { style: "cancel", text: "Cancel" },
                 ...(Status?.Active && Status.Term !== "Lifetime"
@@ -128,7 +128,7 @@ const AccountSettingsScreen = (): React.JSX.Element =>
                     <Button
                         Appearance="Cell"
                         OnPress={ () => void HandleManageInNotion() }>
-                        Manage the Notivex connection in Notion
+                        Manage the NoteFerry connection in Notion
                     </Button>
 
                     <Heading2 Style={ Styles.SectionHeading }>Your data</Heading2>

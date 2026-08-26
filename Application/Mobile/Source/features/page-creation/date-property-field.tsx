@@ -1,7 +1,7 @@
 /**
  * Date input for a Notion page property.
  *
- * @module notivex/features/page-creation/date-property-field
+ * @module noteferry/features/page-creation/date-property-field
  *
  * @file      date-property-field.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,7 +9,7 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import {
     Alert,
     Keyboard,
@@ -21,8 +21,8 @@ import {
     type BottomSheet,
     DateSheet,
     Pressable
-} from "@notivex/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
+} from "@noteferry/ui/Primitive";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PropertyLabel } from "@/features/page-creation/property-label";
 import { format } from "date-fns";
@@ -73,7 +73,7 @@ export const DatePropertyField = ({
     {
         Alert.alert(
             "Why aren't reminders available?",
-            "Notion doesn't expose date reminders through its public API, so Notivex can't create or " +
+            "Notion doesn't expose date reminders through its public API, so NoteFerry can't create or " +
             "edit them."
         );
     }, [ ]);

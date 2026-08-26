@@ -2,7 +2,7 @@
 -- their account data (the "Request my data" button on the account-settings
 -- screen). Fulfilled manually today: inserting a row fires the
 -- `notify_account_data_request` trigger (see `11_notifications.sql`), which
--- emails Notivex so the export can be prepared by hand.
+-- emails NoteFerry so the export can be prepared by hand.
 
 create table app.account_data_requests (
     id uuid primary key default gen_random_uuid(),

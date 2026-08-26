@@ -1,10 +1,10 @@
 /**
- * App-wide, cross-device user settings — everything under Notivex's settings
+ * App-wide, cross-device user settings — everything under NoteFerry's settings
  * screen that is not scoped to one destination (contrast `Destination`'s
  * `FieldConfiguration`/`Template`/`PostCreationBehavior`, which are
  * per-database).
  *
- * @module @notivex/domain/Settings
+ * @module @noteferry/domain/Settings
  *
  * @file      Settings.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -17,7 +17,7 @@ import * as Id from "./Id.js";
 import { Schema } from "effect";
 
 /**
- * The maximum number of databases Notivex will expose as
+ * The maximum number of databases NoteFerry will expose as
  * `expo-quick-actions` shortcuts. Both Android and iOS recommend a limit of
  * four, but Android accepts up to `maxCount` (typically ~15); six is a
  * deliberately conservative shared cap.
@@ -43,7 +43,7 @@ export type HomeScreenLayout = Schema.Schema.Type<typeof HomeScreenLayout>;
 export/**
        * The app's contrast setting: `"System"` (the default) follows the
        * OS's own increase-contrast accessibility setting; `"Standard"` and
-       * `"High"` pin `@notivex/ui`'s `ThemeProvider`'s `HighContrast` prop
+       * `"High"` pin `@noteferry/ui`'s `ThemeProvider`'s `HighContrast` prop
        * regardless of the OS setting.
        *
        * @category Settings

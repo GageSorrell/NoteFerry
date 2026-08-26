@@ -2,7 +2,7 @@
  * Corner-radius tokens, reconciled from `@notion-kit/ui`'s `--radius` scale
  * (`--radius: 0.5rem` with `sm/md/lg/xl` derived at ±4px steps).
  *
- * @module @notivex/ui/Token/Radii
+ * @module @noteferry/ui/Token/Radii
  *
  * @file      Radii.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -13,7 +13,7 @@
 import { MakeGetSymbolKey } from "../Utility/index.js";
 import type { ReadonlyRecord } from "effect/Record";
 
-const TypeId = "~notivex/ui/Token/Radii" as const;
+const TypeId = "~noteferry/ui/Token/Radii" as const;
 
 const GetSymbolKey = MakeGetSymbolKey(TypeId);
 

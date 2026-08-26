@@ -1,5 +1,5 @@
 /**
- * Official App Store / Play Store badges. Notivex hasn't shipped to either
+ * Official App Store / Play Store badges. NoteFerry hasn't shipped to either
  * store yet, so both link to placeholder URLs from `content/site-config`'s
  * `storeUrls` — swap those in once the app is published.
  *

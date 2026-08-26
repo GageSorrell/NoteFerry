@@ -1,7 +1,7 @@
 /**
  * Index of the user's selected databases and their quick-entry form settings.
  *
- * @module notivex/app/database-settings
+ * @module noteferry/app/database-settings
  *
  * @file      database-settings.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,16 +9,16 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import { ActivityIndicator, Alert, ScrollView, View } from "react-native";
-import { Body, Button, Description } from "@notivex/ui/Primitive";
-import { MakeStyles, Token, ViewStyle, useTheme } from "@notivex/ui";
+import { Body, Button, Description } from "@noteferry/ui/Primitive";
+import { MakeStyles, Token, ViewStyle, useTheme } from "@noteferry/ui";
 import { useCallback, useEffect, useState } from "react";
 import {
     ListDataSources,
-    RemoveDataSourceFromNotivex,
+    RemoveDataSourceFromNoteFerry,
     SwapFreeActiveDataSource
-} from "@/Domain/Runtime/NotivexApi";
+} from "@/Domain/Runtime/NoteFerryApi";
 import { ResourceIcon } from "@/Component";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDevelopmentOnboarding } from
@@ -109,12 +109,12 @@ const DatabaseSettingsScreen = (): React.JSX.Element =>
     const Remove = useCallback((Source: Domain.DataSource.CachedDataSourceSchema): void =>
     {
         Alert.alert(
-            "Remove from Notivex?",
+            "Remove from NoteFerry?",
             `${Source.Title} stays unchanged in Notion.`,
             [
                 { style: "cancel", text: "Cancel" },
                 {
-                    onPress: () => void RemoveDataSourceFromNotivex(Source.DataSourceId).then(Load),
+                    onPress: () => void RemoveDataSourceFromNoteFerry(Source.DataSourceId).then(Load),
                     style: "destructive",
                     text: "Remove"
                 }

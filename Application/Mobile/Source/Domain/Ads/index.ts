@@ -1,5 +1,5 @@
 /**
- * @module notivex/Domain/Ads
+ * @module noteferry/Domain/Ads
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

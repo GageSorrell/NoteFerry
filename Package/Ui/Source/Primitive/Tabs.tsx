@@ -6,7 +6,7 @@
  * `Select`/`RadioGroup`) — source's `TabValue` generic parameter wasn't
  * carried over.
  *
- * @module @notivex/ui/Primitive/Tabs
+ * @module @noteferry/ui/Primitive/Tabs
  *
  * @file      Tabs.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -39,7 +39,7 @@ const useTabsContext = (): TabsContextValue =>
 
     if (Value === undefined)
     {
-        throw new Error("[@notivex/ui] A `Tabs` part was used outside of `<Tabs>`.");
+        throw new Error("[@noteferry/ui] A `Tabs` part was used outside of `<Tabs>`.");
     }
 
     return Value;

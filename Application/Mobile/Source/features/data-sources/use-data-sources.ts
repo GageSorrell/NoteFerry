@@ -5,7 +5,7 @@
  * cache. Thin wrapper over the typed API client; the component stays unaware
  * of HTTP.
  *
- * @module notivex/features/data-sources/use-data-sources
+ * @module noteferry/features/data-sources/use-data-sources
  *
  * @file      use-data-sources.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -13,8 +13,8 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
-import { ListDataSources, RefreshDataSource, SearchDataSources } from "@/Domain/Runtime/NotivexApi";
+import type * as Domain from "@noteferry/domain";
+import { ListDataSources, RefreshDataSource, SearchDataSources } from "@/Domain/Runtime/NoteFerryApi";
 import { useCallback, useEffect, useState } from "react";
 
 /** The state returned by {@link useDataSources}. */

@@ -8,7 +8,7 @@
  * Backspace-to-remove-the-last-tag is wired through `TextInput`'s
  * `onKeyPress` (RN's analogue of source's `onKeyDown` check).
  *
- * @module @notivex/ui/Primitive/TagsInput
+ * @module @noteferry/ui/Primitive/TagsInput
  *
  * @file      TagsInput.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

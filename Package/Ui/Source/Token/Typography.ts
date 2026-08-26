@@ -4,7 +4,7 @@
  * screen chrome, page content, menus, settings, empty states, and supporting
  * copy can share measurements without losing their intent.
  *
- * @module @notivex/ui/Token/Typography
+ * @module @noteferry/ui/Token/Typography
  *
  * @file      Typography.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -14,7 +14,7 @@
 
 import { MakeGetSymbolKey } from "../Utility/index.js";
 
-const TypeId = "~notivex/ui/Token/Typography" as const;
+const TypeId = "~noteferry/ui/Token/Typography" as const;
 
 type TypeId = typeof TypeId;
 
@@ -269,7 +269,7 @@ export type FontWeight =
     | "700";
 
 /**
- * The collection of style properties used to style text in `@notivex/ui`.
+ * The collection of style properties used to style text in `@noteferry/ui`.
  *
  * @category Token
  * @since 1.0.0

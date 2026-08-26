@@ -1,5 +1,5 @@
 /**
- * @module notivex/Storybook/Textarea
+ * @module noteferry/Storybook/Textarea
  * @internal
  *
  * @file      Textarea.stories.tsx
@@ -10,7 +10,7 @@
 
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { Textarea, type TextareaProps } from "@notivex/ui/Primitive";
+import { Textarea, type TextareaProps } from "@noteferry/ui/Primitive";
 
 const ControlledTextarea = (Props: TextareaProps): React.JSX.Element =>
 {

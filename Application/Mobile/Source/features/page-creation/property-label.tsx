@@ -1,7 +1,7 @@
 /**
  * Shared icon-and-name label for page-creation properties.
  *
- * @module notivex/features/page-creation/property-label
+ * @module noteferry/features/page-creation/property-label
  *
  * @file      property-label.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,7 +9,7 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import {
     CalendarDays,
     CircleDot,
@@ -27,8 +27,8 @@ import {
     Type,
     Users
 } from "lucide-react-native";
-import { MakeStyles, TextStyle, ViewStyle, useTheme } from "@notivex/ui";
-import { LabelText } from "@notivex/ui/Primitive";
+import { MakeStyles, TextStyle, ViewStyle, useTheme } from "@noteferry/ui";
+import { LabelText } from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 const PropertyTypeIcon:

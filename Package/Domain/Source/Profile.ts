@@ -1,9 +1,9 @@
 /**
- * `Profile` — Notivex-specific information about a user that does not belong
+ * `Profile` — NoteFerry-specific information about a user that does not belong
  * in Supabase's own `auth.users` table, including their cross-device
  * {@link Settings.AppSettings}.
  *
- * @module @notivex/domain/Profile
+ * @module @noteferry/domain/Profile
  *
  * @file      Profile.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -16,7 +16,7 @@ import * as Settings from "./Settings.js";
 import { Schema } from "effect";
 
 export/**
-       * A Notivex user's profile: display metadata plus their app-wide
+       * A NoteFerry user's profile: display metadata plus their app-wide
        * settings.
        *
        * @category Profile

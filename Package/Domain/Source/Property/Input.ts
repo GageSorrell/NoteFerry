@@ -1,10 +1,10 @@
 /**
  * `PropertyInput` — "what the user wants to put into it". A parallel,
  * smaller union to {@link Property.Definition}: only the property types a
- * Notivex form can actually collect a value for, and only the fields needed
+ * NoteFerry form can actually collect a value for, and only the fields needed
  * to express that value — never Notion's request-body shape.
  *
- * @module @notivex/domain/Property/Input
+ * @module @noteferry/domain/Property/Input
  *
  * @file      Input.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -228,7 +228,7 @@ const FilesPropertyInput = Schema.Struct({
 export type FilesPropertyInput = Schema.Schema.Type<typeof FilesPropertyInput>;
 
 export/**
-       * "What the user wants to put into it" — the value a Notivex form collects
+       * "What the user wants to put into it" — the value a NoteFerry form collects
        * for a single property, before it is translated into a Notion API request
        * body.
        *

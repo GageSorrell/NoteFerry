@@ -5,7 +5,7 @@
  * `bg-blue/10`-style opacity modifiers, which have no RN equivalent — the
  * resolved token value has to be blended by hand instead.
  *
- * @module @notivex/ui/Utility/WithAlpha
+ * @module @noteferry/ui/Utility/WithAlpha
  * @internal
  *
  * @file      WithAlpha.ts

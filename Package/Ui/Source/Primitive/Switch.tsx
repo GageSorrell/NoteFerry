@@ -3,7 +3,7 @@
  * `translate-x-full` transition becomes an `Animated.Value`-driven
  * `translateX`.
  *
- * @module @notivex/ui/Primitive/Switch
+ * @module @noteferry/ui/Primitive/Switch
  *
  * @file      Switch.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

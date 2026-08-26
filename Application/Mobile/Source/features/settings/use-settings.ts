@@ -3,7 +3,7 @@
  * read (home-screen ordering, quick actions, launch behavior). Thin wrapper
  * over the typed API client, mirroring `use-destinations.ts`.
  *
- * @module notivex/features/settings/use-settings
+ * @module noteferry/features/settings/use-settings
  *
  * @file      use-settings.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -11,8 +11,8 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
-import { GetProfile, NoSessionError, UpdateProfileSettings } from "@/Domain/Runtime/NotivexApi";
+import * as Domain from "@noteferry/domain";
+import { GetProfile, NoSessionError, UpdateProfileSettings } from "@/Domain/Runtime/NoteFerryApi";
 import { useCallback, useEffect, useState } from "react";
 
 /** The state returned by {@link useSettings}. */

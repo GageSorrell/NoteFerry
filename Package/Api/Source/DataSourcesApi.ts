@@ -1,8 +1,8 @@
 /**
  * The `DataSources` group: reading and refreshing the normalized, cached
- * Notion data-source schemas that drive Notivex's quick-add forms.
+ * Notion data-source schemas that drive NoteFerry's quick-add forms.
  *
- * @module @notivex/api/DataSourcesApi
+ * @module @noteferry/api/DataSourcesApi
  *
  * @file      DataSourcesApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -10,7 +10,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
 import { Schema } from "effect";
 
@@ -187,7 +187,7 @@ const Remove = HttpApiEndpoint.post("Remove", "/:DataSourceId/Remove", {
 });
 
 export/**
-       * The `DataSources` resource group of the Notivex API.
+       * The `DataSources` resource group of the NoteFerry API.
        *
        * @category DataSources
        * @since 1.0.0

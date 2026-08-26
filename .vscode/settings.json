@@ -3,7 +3,7 @@
     {
     },
     "eslint.options": {
-        "overrideConfigFile": "/Notivex/Configuration/eslint.config.js"
+        "overrideConfigFile": "/NoteFerry/Configuration/eslint.config.js"
     },
     "eslint.enable": true,
     "eslint.nodePath": "node_modules",

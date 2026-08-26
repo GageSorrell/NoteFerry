@@ -4,7 +4,7 @@
  * DOM-agnostic (it only touches `React.Ref`, never the DOM directly), so
  * this is a direct port with PascalCase naming.
  *
- * @module @notivex/ui/Utility/ComposeRefs
+ * @module @noteferry/ui/Utility/ComposeRefs
  * @internal
  *
  * @file      ComposeRefs.ts

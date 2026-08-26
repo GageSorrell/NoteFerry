@@ -1,14 +1,14 @@
 /**
- * Server-only page creation (Deno + Effect). Translates a Notivex-shaped
+ * Server-only page creation (Deno + Effect). Translates a NoteFerry-shaped
  * `CreatePageCommand` into Notion's Create Page request and records the attempt
  * in `app.operations` for idempotency: the row is written `pending` before
  * Notion is called, so a retried `OperationId` whose first attempt already
  * succeeded returns the same page instead of creating a duplicate.
  *
- * This is the single Notivex → Notion page mapper: domain `PropertyInput`s
+ * This is the single NoteFerry → Notion page mapper: domain `PropertyInput`s
  * become Notion property values here and nowhere else.
  *
- * @module notivex/functions/_shared/Pages
+ * @module noteferry/functions/_shared/Pages
  *
  * @file      Pages.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -16,14 +16,14 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import * as Notion from "./Notion.ts";
 import { CallNotionData, type ConnectionTokens, LoadConnectionTokens, RateLimited } from "./NotionAuth.ts";
 import { AdminClient, PrivateSchema } from "./Database.ts";
 import { Effect } from "effect";
 
-/** The page-creation input, typed in `@notivex/domain` identity (see the note
- * in `Destinations.ts` about not reusing the inlined `@notivex/api` payload). */
+/** The page-creation input, typed in `@noteferry/domain` identity (see the note
+ * in `Destinations.ts` about not reusing the inlined `@noteferry/api` payload). */
 export interface CreatePageInput
 {
     readonly Body?: string | undefined;
@@ -35,7 +35,7 @@ export interface CreatePageInput
     readonly Values: readonly Domain.PageDraft.PropertyInputValue[];
 }
 
-/* Translates one Notivex property input into its Notion property value. */
+/* Translates one NoteFerry property input into its Notion property value. */
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 const MapValueToNotion = (Value: Domain.Property.PropertyInput): unknown =>
 {
@@ -200,7 +200,7 @@ interface StoredConfiguration
 }
 
 /**
- * Creates a Notion page for a destination from a Notivex command, recording the
+ * Creates a Notion page for a destination from a NoteFerry command, recording the
  * attempt for idempotent retries.
  *
  * @category Pages

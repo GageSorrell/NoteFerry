@@ -1,7 +1,7 @@
 /**
- * Storybook stories for `@notivex/ui`'s `ScrollArea` primitive.
+ * Storybook stories for `@noteferry/ui`'s `ScrollArea` primitive.
  *
- * @module notivex/app/.rnstorybook/stories/ScrollArea
+ * @module noteferry/app/.rnstorybook/stories/ScrollArea
  *
  * @file      ScrollArea.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -11,7 +11,7 @@
 
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { ScrollArea, Text } from "@notivex/ui/Primitive";
+import { ScrollArea, Text } from "@noteferry/ui/Primitive";
 import { Array } from "effect";
 import { View } from "react-native";
 

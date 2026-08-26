@@ -3,7 +3,7 @@
  * `Token/Size` for that).  A flat numeric scale plus semantic aliases for
  * the handful of spacing decisions that recur across the whole library.
  *
- * @module @notivex/ui/Token/Spacing
+ * @module @noteferry/ui/Token/Spacing
  *
  * @file      Spacing.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -14,7 +14,7 @@
 import { MakeGetSymbolKey } from "../Utility/index.js";
 import type { ReadonlyRecord } from "effect/Record";
 
-const TypeId = "~notivex/ui/Token/Spacing" as const;
+const TypeId = "~noteferry/ui/Token/Spacing" as const;
 
 const GetSymbolKey = MakeGetSymbolKey(TypeId);
 

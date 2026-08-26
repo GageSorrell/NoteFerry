@@ -4,7 +4,7 @@
  * values in light vs. dark mode (see the value table below), whereas
  * `Token/Color` is theme-invariant.
  *
- * @module @notivex/ui/Token/Semantic
+ * @module @noteferry/ui/Token/Semantic
  *
  * @file      Semantic.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -15,7 +15,7 @@
 import { MakeGetSymbolKey } from "../Utility/index.js";
 import type { ReadonlyRecord } from "effect/Record";
 
-const TypeId = "~notivex/ui/Token/Semantic" as const;
+const TypeId = "~noteferry/ui/Token/Semantic" as const;
 
 type TypeId = typeof TypeId;
 

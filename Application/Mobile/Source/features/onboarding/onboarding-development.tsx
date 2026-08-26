@@ -1,8 +1,8 @@
 /**
  * In-memory development scenarios for exercising onboarding without invoking
- * OAuth, Notion, or the Notivex API. State deliberately resets on app reload.
+ * OAuth, Notion, or the NoteFerry API. State deliberately resets on app reload.
  *
- * @module notivex/features/onboarding/onboarding-development
+ * @module noteferry/features/onboarding/onboarding-development
  *
  * @file      onboarding-development.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

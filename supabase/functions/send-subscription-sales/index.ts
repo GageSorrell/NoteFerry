@@ -137,7 +137,7 @@ Deno.serve(async (Request_: Request): Promise<Response> =>
                 body: Sale.data.copy,
                 data: { campaignId: Sale.data.campaign_id, url: Sale.data.deep_link },
                 sound: "default",
-                title: "Notivex Pro sale",
+                title: "NoteFerry Pro sale",
                 to: Device.push_token
             }))),
             headers: { "Content-Type": "application/json" },

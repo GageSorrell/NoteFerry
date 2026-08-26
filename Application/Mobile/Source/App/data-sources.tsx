@@ -4,7 +4,7 @@
  * its schema) for later quick-entry. Reached from a connection row on the home
  * screen.
  *
- * @module notivex/app/data-sources
+ * @module noteferry/app/data-sources
  *
  * @file      data-sources.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,10 +12,10 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import { ActivityIndicator, Alert, ScrollView, View } from "react-native";
-import { Body, Button, Description, Heading1, LabelText } from "@notivex/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
+import { Body, Button, Description, Heading1, LabelText } from "@noteferry/ui/Primitive";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDataSources } from "@/features/data-sources/use-data-sources";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
@@ -182,7 +182,7 @@ const DataSourcesScreen = () =>
                             ? (
                                 <Description>
                                     No data sources found. Make sure this workspace has databases
-                                    shared with the Notivex integration.
+                                    shared with the NoteFerry integration.
                                 </Description>
                             )
                             : Discovered.map((Source: Domain.DataSource.DiscoveredDataSource) =>

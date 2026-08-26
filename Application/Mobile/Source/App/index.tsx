@@ -1,5 +1,5 @@
 /**
- * @module notivex/app
+ * @module noteferry/app
  *
  * @file      index.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -7,7 +7,7 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import {
     ActivityIndicator,
     Alert,
@@ -19,9 +19,9 @@ import {
     View
 } from "react-native";
 import { AddWorkspace, ResolveCurrentConnection, useConnections } from "@/Domain/Connection";
-import { Body, Button, Description, MeterBar, Pressable } from "@notivex/ui/Primitive";
+import { Body, Button, Description, MeterBar, Pressable } from "@noteferry/ui/Primitive";
 import { CircleFadingArrowUp, HelpCircle, Settings, UserRound } from "lucide-react-native";
-import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
+import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
 import { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DatabaseCard } from "@/Component/DatabaseCard";
@@ -42,7 +42,7 @@ import { useSubscription } from "@/Domain/Subscription";
  * so it survives remounts but resets on a fresh JS bundle (app restart). */
 let HasAppliedLaunchBehavior = false;
 
-const PlansLastOpenedStoragePrefix = "notivex:plans-last-opened:";
+const PlansLastOpenedStoragePrefix = "noteferry:plans-last-opened:";
 const PlansReminderIntervalMilliseconds = 5 * 24 * 60 * 60 * 1000;
 
 /** The `create-page` destination for tapping a given database's card. */

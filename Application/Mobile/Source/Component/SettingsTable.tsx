@@ -5,7 +5,7 @@
  * icon, a title, and a trailing chevron, inside one rounded, bordered
  * container with a hairline divider between rows.
  *
- * @module notivex/Component/SettingsTable
+ * @module noteferry/Component/SettingsTable
  *
  * @file      SettingsTable.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -14,8 +14,8 @@
  */
 
 import * as React from "react";
-import { ItemTitle, Pressable } from "@notivex/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
+import { ItemTitle, Pressable } from "@noteferry/ui/Primitive";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
 import { ChevronRight } from "lucide-react-native";
 import { View } from "react-native";
 

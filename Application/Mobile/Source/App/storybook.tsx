@@ -11,7 +11,7 @@
  * This route builds its own `StorybookUIRoot` from the same
  * `storybook.requires` instead, with no such side effect.
  *
- * @module notivex/app/storybook
+ * @module noteferry/app/storybook
  *
  * @file      storybook.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

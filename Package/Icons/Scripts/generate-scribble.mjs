@@ -10,7 +10,7 @@
  *
  * Usage: `node Scripts/generate-scribble.mjs` (run from the Icons package root).
  *
- * @module @notivex/icons/scripts/generate-scribble
+ * @module @noteferry/icons/scripts/generate-scribble
  *
  * @file      generate-scribble.mjs
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -188,7 +188,7 @@ const renderModule = (componentName, jsx, used) => `/**
  * Auto-generated from "${componentName}" — do not edit by hand.
  * Regenerate with \`node Scripts/generate-scribble.mjs\`.
  *
- * @module @notivex/icons/Scribble/${componentName}
+ * @module @noteferry/icons/Scribble/${componentName}
  *
  * @file      ${componentName}.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -200,9 +200,9 @@ const renderModule = (componentName, jsx, used) => `/**
 
 import { ${orderImports(used).join(", ")} } from "react-native-svg";
 import type { JSX } from "react";
-import type { NotivexIconProps } from "../Icon.Types";
+import type { NoteFerryIconProps } from "../Icon.Types";
 
-export const ${componentName} = ({ color = "#231F20", ...Tail }: NotivexIconProps): JSX.Element =>
+export const ${componentName} = ({ color = "#231F20", ...Tail }: NoteFerryIconProps): JSX.Element =>
 (
 ${jsx.replace(/^(\s*)<Svg([^>]*)>/, "$1<Svg$2 { ...Tail }>")}
 );
@@ -213,7 +213,7 @@ const renderBarrel = (names) => `/**
  * Barrel of every Scribble icon. Auto-generated — do not edit by hand.
  * Regenerate with \`node Scripts/generate-scribble.mjs\`.
  *
- * @module @notivex/icons/Scribble
+ * @module @noteferry/icons/Scribble
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

@@ -10,7 +10,7 @@
  * the form loads and edits that one instead of always creating a new one —
  * needed so template hide/reorder/default-select persist against a real row.
  *
- * @module notivex/app/destination-config
+ * @module noteferry/app/destination-config
  *
  * @file      destination-config.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -18,7 +18,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 import {
     Body,
@@ -29,11 +29,11 @@ import {
     Heading2,
     Input,
     LabelText
-} from "@notivex/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
+} from "@noteferry/ui/Primitive";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
 import { useCallback, useEffect, useState } from "react";
 import { BehaviorPicker } from "@/Component/BehaviorPicker";
-import { GetDataSource, RefreshDataSource } from "@/Domain/Runtime/NotivexApi";
+import { GetDataSource, RefreshDataSource } from "@/Domain/Runtime/NoteFerryApi";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TemplateSection } from "@/features/templates/template-section";
 import { useConnections } from "@/Domain/Connection";

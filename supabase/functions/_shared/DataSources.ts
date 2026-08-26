@@ -1,16 +1,16 @@
 /**
  * Server-only data-source discovery, caching and refresh (Deno + Effect). This
- * is the single Notion → Notivex mapper: it translates Notion's live property
+ * is the single Notion → NoteFerry mapper: it translates Notion's live property
  * DTOs into the normalized `PropertyDefinition` union and persists a
  * `CachedDataSourceSchema`, so a later Notion API change only touches this
  * file.
  *
  * Each exported operation is an `Effect` whose error channel is a subset of the
- * `@notivex/domain` tagged errors declared on the matching `DataSources`
+ * `@noteferry/domain` tagged errors declared on the matching `DataSources`
  * endpoint. Notion access tokens are read from the `private` schema and, on a
  * 401, refreshed once and retried.
  *
- * @module notivex/functions/_shared/DataSources
+ * @module noteferry/functions/_shared/DataSources
  *
  * @file      DataSources.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -18,7 +18,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import * as Destinations from "./Destinations.ts";
 import * as Notion from "./Notion.ts";
 import { CallNotionData, type ConnectionTokens, LoadConnectionTokens, RateLimited } from "./NotionAuth.ts";
@@ -73,7 +73,7 @@ const MapStatusGroups = (
 
 /**
  * Maps one Notion property to its `PropertyDefinition`, or `null` for property
- * types Notivex does not let a user fill in a quick-add form (formula, rollup,
+ * types NoteFerry does not let a user fill in a quick-add form (formula, rollup,
  * created_time, and other read-only/derived types), which are dropped.
  */
 /* eslint-disable-next-line jsdoc/require-jsdoc */
@@ -131,11 +131,11 @@ const MapProperty = (Property: Notion.NotionProperty): Domain.Property.PropertyD
 };
 
 /**
- * Maps one Notion page property *value* back to a Notivex `PropertyInput`,
+ * Maps one Notion page property *value* back to a NoteFerry `PropertyInput`,
  * the inverse of `Pages.ts`'s `MapValueToNotion`. Used only to snapshot a
  * template page's own values for `CachedDataSourceTemplate.Properties` — not
  * part of the normal page-creation path, which only ever writes to Notion.
- * Returns `null` for an unset value, or a type Notivex can't safely
+ * Returns `null` for an unset value, or a type NoteFerry can't safely
  * reproduce from a snapshot (`Files`, `Relation`, `People` — Notion-hosted
  * file URLs aren't stable external links, and relation/people values are
  * already excluded from quick-entry forms).
@@ -244,7 +244,7 @@ export const MapTemplateProperties = (
 
 /**
  * Normalizes Notion's property map (keyed by display name) into the ordered,
- * Notivex-owned `PropertyDefinition[]`, dropping unsupported property types.
+ * NoteFerry-owned `PropertyDefinition[]`, dropping unsupported property types.
  *
  * @category DataSources
  * @since 1.0.0
@@ -1075,13 +1075,13 @@ export const SwapFreeActiveForUser = (
     });
 };
 
-/** Removes a database from Notivex without deleting anything in Notion. */
+/** Removes a database from NoteFerry without deleting anything in Notion. */
 export const RemoveForUser = (UserId: string, DataSourceId: string) =>
 {
     return Effect.gen(function* ()
     {
         const { data, error } = yield* Effect.promise(async () =>
-            await PrivateSchema.rpc("remove_data_source_from_notivex", {
+            await PrivateSchema.rpc("remove_data_source_from_noteferry", {
                 p_data_source_id: DataSourceId,
                 p_user_id: UserId
             }));

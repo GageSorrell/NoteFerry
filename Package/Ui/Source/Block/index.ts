@@ -1,7 +1,7 @@
 /**
  *
  *
- * @module @notivex/ui/Block
+ * @module @noteferry/ui/Block
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

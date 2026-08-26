@@ -6,7 +6,7 @@
  * preloaded across navigations, and destroys it upon unmount to release
  * native resources.
  *
- * @module notivex/Component/Ads/NativeDatabaseAdCard
+ * @module noteferry/Component/Ads/NativeDatabaseAdCard
  *
  * @file      NativeDatabaseAdCard.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -14,8 +14,8 @@
  * @license   MIT
  */
 
-import { Description, ItemTitle } from "@notivex/ui/Primitive";
-import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
+import { Description, ItemTitle } from "@noteferry/ui/Primitive";
+import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
 import {
     NativeAd,
     NativeAdView,

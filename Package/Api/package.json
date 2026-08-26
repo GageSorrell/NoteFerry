@@ -1,8 +1,8 @@
 {
-  "name": "@notivex/api",
-  "description": "The API with which Notivex interacts with the backend.",
+  "name": "@noteferry/api",
+  "description": "The API with which NoteFerry interacts with the backend.",
   "private": true,
-  "homepage": "https://notivex.sorrell.sh",
+  "homepage": "https://noteferry.sorrell.sh",
   "version": "1.0.0",
   "author": {
     "name": "Gage Sorrell",
@@ -10,13 +10,13 @@
     "url": "https://sorrell.sh"
   },
   "bugs": {
-    "url": "https://github.com/GageSorrell/Notivex/issues"
+    "url": "https://github.com/GageSorrell/NoteFerry/issues"
   },
   "license": "MIT",
   "repository": {
     "directory": "Package/Api",
     "type": "git",
-    "url": "git+https://github.com/GageSorrell/Notivex.git"
+    "url": "git+https://github.com/GageSorrell/NoteFerry.git"
   },
   "engines": {
     "node": "24.19.0",
@@ -50,7 +50,7 @@
     "build": "tsc -p ./tsconfig.json"
   },
   "dependencies": {
-    "@notivex/domain": "1.0.0",
+    "@noteferry/domain": "1.0.0",
     "effect": "4.0.0-rc.109"
   },
   "devDependencies": {

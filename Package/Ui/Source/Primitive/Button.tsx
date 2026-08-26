@@ -4,7 +4,7 @@
  * axes become `Variant`/`Size`; colors are resolved live via `useTheme`
  * (rather than baked into a static stylesheet) since they're theme-aware.
  *
- * @module @notivex/ui/Primitive/Button
+ * @module @noteferry/ui/Primitive/Button
  *
  * @file      Button.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

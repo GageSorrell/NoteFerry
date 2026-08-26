@@ -1,9 +1,9 @@
 /**
- * Storybook stories for `@notivex/ui`'s `Toast` primitive. `<Toaster>` must
+ * Storybook stories for `@noteferry/ui`'s `Toast` primitive. `<Toaster>` must
  * be mounted once; each story mounts its own instance rather than relying
  * on a real one at the app root, since these stories run standalone.
  *
- * @module notivex/app/.rnstorybook/stories/Toast
+ * @module noteferry/app/.rnstorybook/stories/Toast
  *
  * @file      Toast.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,7 +12,7 @@
  */
 
 import * as React from "react";
-import { Button, Toast, Toaster } from "@notivex/ui/Primitive";
+import { Button, Toast, Toaster } from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 

@@ -9,7 +9,7 @@
  * listen for `RewardedAdEventType.EARNED_REWARD` at that call site, without
  * touching this file.
  *
- * @module notivex/Domain/Ads/FullScreenAdController
+ * @module noteferry/Domain/Ads/FullScreenAdController
  *
  * @file      FullScreenAdController.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

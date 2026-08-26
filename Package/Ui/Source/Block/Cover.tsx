@@ -10,7 +10,7 @@
  * has no sheet to own, so wiring `CoverPicker`'s `Ref`/`OnDismiss` is left to
  * whichever screen renders both.
  *
- * @module @notivex/ui/Primitive/Cover
+ * @module @noteferry/ui/Primitive/Cover
  *
  * @file      Cover.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

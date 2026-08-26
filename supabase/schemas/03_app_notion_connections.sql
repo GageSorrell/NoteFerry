@@ -1,8 +1,8 @@
--- `app.notion_connections` — the non-secret metadata Notivex keeps about each
--- authorized Notion connection. Mirrors `@notivex/domain` NotionConnection.ts;
+-- `app.notion_connections` — the non-secret metadata NoteFerry keeps about each
+-- authorized Notion connection. Mirrors `@noteferry/domain` NotionConnection.ts;
 -- access/refresh tokens live only in `private` (ArchitectureInitialDraft.md §8).
 --
--- `id` is Notivex-generated (NotionConnectionId). Notion-origin identifiers
+-- `id` is NoteFerry-generated (NotionConnectionId). Notion-origin identifiers
 -- (bot, workspace) are opaque strings from Notion and are stored as text.
 
 create table app.notion_connections (

@@ -1,7 +1,7 @@
 /**
  * Privacy Policy content for the `/privacy` route.
  *
- * This is the real, final Privacy Policy for Notivex — not scaffolding.
+ * This is the real, final Privacy Policy for NoteFerry — not scaffolding.
  * It was drafted by AI at the site owner's direction and grounded directly
  * in the app's Supabase schema and edge functions (what's actually stored,
  * for how long, and who it's shared with — including that submitted page
@@ -26,9 +26,9 @@ const privacySections: ReadonlyArray<LegalSection> = [
         heading: "1. Overview and Scope",
         id: "overview",
         paragraphs: [
-            "This Privacy Policy explains how Notivex (the \"App\"), a companion "
+            "This Privacy Policy explains how NoteFerry (the \"App\"), a companion "
             + "mobile app for Notion, and this website collect, use, share, and "
-            + "protect information. Notivex is operated by Gage Sorrell (\"we,\" "
+            + "protect information. NoteFerry is operated by Gage Sorrell (\"we,\" "
             + "\"us,\" or \"our\"). By using the App or this website, you agree to "
             + "the practices described here. This Policy should be read together "
             + "with our Terms of Service."
@@ -48,7 +48,7 @@ const privacySections: ReadonlyArray<LegalSection> = [
             + "Notion's OAuth flow, so the App can act on your behalf without "
             + "requiring you to sign in every time.",
             "Notion database structure — when you pick a Notion database to use "
-            + "with Notivex, we cache its schema (its title, icon, and property/"
+            + "with NoteFerry, we cache its schema (its title, icon, and property/"
             + "field definitions) so the App can build a quick-entry form without "
             + "querying Notion every time. We do not cache the rows or page "
             + "content already inside that database.",
@@ -67,7 +67,7 @@ const privacySections: ReadonlyArray<LegalSection> = [
             "Purchase information — RevenueCat, Apple, and Google process purchases. "
             + "We receive product and subscription identifiers, transaction metadata, "
             + "purchase and expiration dates, entitlement and renewal state, store, and "
-            + "a pseudonymous identifier based on your Notivex account. We never receive "
+            + "a pseudonymous identifier based on your NoteFerry account. We never receive "
             + "your complete payment-card details.",
             "Notification information — if you separately opt in to subscription-sale "
             + "notifications, we store your Expo push token, device and platform "
@@ -91,7 +91,7 @@ const privacySections: ReadonlyArray<LegalSection> = [
             + "you opt in; and serve advertising to confirmed Free accounts through "
             + "Google AdMob.",
             "We do not use the content of the Notion pages you create through "
-            + "Notivex for any purpose other than creating the page you asked us "
+            + "NoteFerry for any purpose other than creating the page you asked us "
             + "to create."
         ]
     },
@@ -99,7 +99,7 @@ const privacySections: ReadonlyArray<LegalSection> = [
         heading: "4. Notion Account Data",
         id: "notion-account-data",
         paragraphs: [
-            "Notivex connects to Notion through Notion's official OAuth flow. We "
+            "NoteFerry connects to Notion through Notion's official OAuth flow. We "
             + "never receive, see, or store your Notion password. The App only "
             + "requests the minimum Notion API scopes needed to browse your "
             + "databases and create pages on your behalf."
@@ -109,7 +109,7 @@ const privacySections: ReadonlyArray<LegalSection> = [
         heading: "5. Supabase (Backend Infrastructure)",
         id: "supabase",
         paragraphs: [
-            "Notivex uses Supabase, a third-party backend provider, for "
+            "NoteFerry uses Supabase, a third-party backend provider, for "
             + "authentication, database storage, and the server-side functions "
             + "described in this Policy, including the Notion OAuth token "
             + "exchange. Supabase processes this data on our behalf and maintains "
@@ -120,7 +120,7 @@ const privacySections: ReadonlyArray<LegalSection> = [
         heading: "6. Advertising",
         id: "advertising",
         paragraphs: [
-            "Notivex is offered free of charge and is supported by advertising "
+            "NoteFerry is offered free of charge and is supported by advertising "
             + "served through Google AdMob. AdMob and its partners may collect "
             + "device and advertising identifiers, IP address, and other "
             + "technical information to serve and measure ads, in accordance with "
@@ -146,7 +146,7 @@ const privacySections: ReadonlyArray<LegalSection> = [
         id: "data-sharing",
         paragraphs: [
             "We do not sell your personal information.",
-            "We share information only as needed to operate Notivex: with Notion, "
+            "We share information only as needed to operate NoteFerry: with Notion, "
             + "to create pages on your behalf; with Supabase, our backend "
             + "infrastructure provider; with Google AdMob, to serve ads to Free "
             + "accounts; with RevenueCat, Apple, and Google, to process purchases "
@@ -176,7 +176,7 @@ const privacySections: ReadonlyArray<LegalSection> = [
         heading: "10. Data Retention and Deletion",
         id: "retention",
         paragraphs: [
-            "You can disconnect your Notion workspace, or delete your Notivex "
+            "You can disconnect your Notion workspace, or delete your NoteFerry "
             + "account entirely, at any time from the App's account settings.",
             "Deleting your account is immediate and permanent: it removes your "
             + "profile, Notion connection and credentials, cached data-source "
@@ -220,7 +220,7 @@ const privacySections: ReadonlyArray<LegalSection> = [
         heading: "12. Children's Privacy",
         id: "childrens-privacy",
         paragraphs: [
-            "Notivex is not directed at children under 13, and we do not "
+            "NoteFerry is not directed at children under 13, and we do not "
             + "knowingly collect personal information from children under 13. If "
             + "you believe a child has provided us with personal information, "
             + "please contact us so we can remove it."
@@ -230,7 +230,7 @@ const privacySections: ReadonlyArray<LegalSection> = [
         heading: "13. International Data Transfers",
         id: "international-transfers",
         paragraphs: [
-            "Notivex's backend infrastructure (Supabase) is hosted in the United "
+            "NoteFerry's backend infrastructure (Supabase) is hosted in the United "
             + "States. If you access the App from outside the United States, "
             + "your information will be transferred to, stored, and processed in "
             + "the United States, which may have different data protection laws "

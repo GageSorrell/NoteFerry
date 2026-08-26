@@ -1,5 +1,5 @@
 {
-  "name": "@notivex/windows",
+  "name": "@noteferry/windows",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -40,8 +40,8 @@
   },
   "react-native-windows": {
     "init-windows": {
-      "name": "NotivexWindows",
-      "namespace": "NotivexWindows",
+      "name": "NoteFerryWindows",
+      "namespace": "NoteFerryWindows",
       "template": "cpp-app"
     }
   }

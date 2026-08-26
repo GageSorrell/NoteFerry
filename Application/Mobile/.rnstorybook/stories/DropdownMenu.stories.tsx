@@ -1,8 +1,8 @@
 /**
- * Storybook stories for `@notivex/ui`'s `DropdownMenu` primitive (and the
+ * Storybook stories for `@noteferry/ui`'s `DropdownMenu` primitive (and the
  * `Menu` building blocks it composes: `MenuItem`, `MenuLabel`, ...).
  *
- * @module notivex/app/.rnstorybook/stories/DropdownMenu
+ * @module noteferry/app/.rnstorybook/stories/DropdownMenu
  *
  * @file      DropdownMenu.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -23,7 +23,7 @@ import {
     DropdownMenuRadioItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 
 const DropdownMenuExample = (): React.JSX.Element =>

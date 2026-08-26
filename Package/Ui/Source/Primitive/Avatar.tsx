@@ -5,7 +5,7 @@
  * free is reimplemented here via a small internal context). Uses
  * `expo-image` for the image itself.
  *
- * @module @notivex/ui/Primitive/Avatar
+ * @module @noteferry/ui/Primitive/Avatar
  *
  * @file      Avatar.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -41,7 +41,7 @@ const useAvatarContext = (): AvatarContextValue =>
 
     if (Value === undefined)
     {
-        throw new Error("[@notivex/ui] `AvatarImage`/`AvatarFallback` must be used inside `<Avatar>`.");
+        throw new Error("[@noteferry/ui] `AvatarImage`/`AvatarFallback` must be used inside `<Avatar>`.");
     }
 
     return Value;

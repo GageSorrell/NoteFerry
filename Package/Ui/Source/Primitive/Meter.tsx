@@ -5,7 +5,7 @@
  * meaningfully reused elsewhere in source, so only those are ported as
  * first-class components here.
  *
- * @module @notivex/ui/Primitive/Meter
+ * @module @noteferry/ui/Primitive/Meter
  *
  * @file      Meter.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

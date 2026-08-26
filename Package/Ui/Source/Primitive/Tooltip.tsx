@@ -9,7 +9,7 @@
  * called. There's no `TooltipProvider` — a shared open/delay group had no
  * clean RN equivalent and no in-scope consumer needed it.
  *
- * @module @notivex/ui/Primitive/Tooltip
+ * @module @noteferry/ui/Primitive/Tooltip
  *
  * @file      Tooltip.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -47,7 +47,7 @@ const useTooltipContext = (): TooltipContextValue =>
 
     if (Value === undefined)
     {
-        throw new Error("[@notivex/ui] A `Tooltip` part was used outside of `<Tooltip>`.");
+        throw new Error("[@noteferry/ui] A `Tooltip` part was used outside of `<Tooltip>`.");
     }
 
     return Value;

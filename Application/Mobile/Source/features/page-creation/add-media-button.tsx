@@ -4,7 +4,7 @@
  * and disappears once its corresponding value is set (the screen simply
  * stops rendering it), mirroring Notion's "Add icon"/"Add cover" controls.
  *
- * @module notivex/features/page-creation/add-media-button
+ * @module noteferry/features/page-creation/add-media-button
  *
  * @file      add-media-button.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,8 +12,8 @@
  * @license   MIT
  */
 
-import { Body, Pressable } from "@notivex/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
+import { Body, Pressable } from "@noteferry/ui/Primitive";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
 import type { LucideIcon } from "lucide-react-native";
 import { type PressableStateCallbackType } from "react-native";
 import type { Thunk } from "@sorrell/effect/Function";

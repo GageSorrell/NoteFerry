@@ -1,7 +1,7 @@
 /**
  * Terms of Service content for the `/terms` route.
  *
- * This is the real, final Terms of Service for Notivex — not scaffolding.
+ * This is the real, final Terms of Service for NoteFerry — not scaffolding.
  * It was drafted by AI at the site owner's direction and grounded in how
  * the app actually works (Notion OAuth via a Supabase Edge Function,
  * Google AdMob advertising and store-processed purchases), but it is not a substitute for
@@ -24,10 +24,10 @@ const termsSections: ReadonlyArray<LegalSection> = [
         heading: "1. Acceptance of Terms",
         id: "acceptance",
         paragraphs: [
-            "By downloading, installing, or using Notivex (the \"App\"), you agree to be "
+            "By downloading, installing, or using NoteFerry (the \"App\"), you agree to be "
             + "bound by these Terms of Service (\"Terms\"). These Terms form a binding "
             + "agreement between you and Gage Sorrell, an individual doing business as "
-            + "Notivex (\"we,\" \"us,\" or \"our\"). If you do not agree to these Terms, "
+            + "NoteFerry (\"we,\" \"us,\" or \"our\"). If you do not agree to these Terms, "
             + "do not download, access, or use the App.",
             "We may update these Terms from time to time to reflect changes to the App "
             + "or applicable law. If we make material changes, we will update the "
@@ -40,19 +40,19 @@ const termsSections: ReadonlyArray<LegalSection> = [
         heading: "2. Description of Service",
         id: "description",
         paragraphs: [
-            "Notivex is a companion mobile application for Notion. It lets you quickly "
+            "NoteFerry is a companion mobile application for Notion. It lets you quickly "
             + "create new pages in Notion databases you already own or have access to, "
             + "using a streamlined \"quick-entry\" form, home-screen quick actions, and "
             + "per-database destination settings that let you control which fields "
             + "appear and which are required.",
-            "Notivex requires an active Notion account and workspace access to "
+            "NoteFerry requires an active Notion account and workspace access to "
             + "function. The App offers a limited, advertising-supported Free tier and "
-            + "one paid Notivex Pro entitlement. Free currently includes three active "
+            + "one paid NoteFerry Pro entitlement. Free currently includes three active "
             + "databases and five page creations in each rolling thirty-minute window. "
             + "Pro removes those product-level limits, removes ads, and unlocks the "
             + "customization features identified in the App's plan comparison. Security, "
             + "accessibility, core Notion properties, and account controls are available "
-            + "on both tiers. Notivex is not affiliated "
+            + "on both tiers. NoteFerry is not affiliated "
             + "with, endorsed by, or sponsored by Notion Labs, Inc. \"Notion\" is a "
             + "trademark of Notion Labs, Inc."
         ]
@@ -61,11 +61,11 @@ const termsSections: ReadonlyArray<LegalSection> = [
         heading: "3. Eligibility and Accounts",
         id: "eligibility",
         paragraphs: [
-            "You must be at least 13 years old to use Notivex. If you are between 13 "
+            "You must be at least 13 years old to use NoteFerry. If you are between 13 "
             + "and 18 years old, you may only use the App with the involvement and "
             + "consent of a parent or legal guardian, who agrees to be bound by these "
             + "Terms on your behalf.",
-            "To use Notivex, you must connect a Notion account in good standing. You "
+            "To use NoteFerry, you must connect a Notion account in good standing. You "
             + "are responsible for maintaining the security of that Notion account and "
             + "of the device on which the App is installed, and for all activity that "
             + "occurs through your connected account, whether initiated by you or by "
@@ -76,14 +76,14 @@ const termsSections: ReadonlyArray<LegalSection> = [
         heading: "4. Notion Integration and Third-Party Services",
         id: "third-party-services",
         paragraphs: [
-            "Notivex connects to your Notion workspace using Notion's official OAuth "
+            "NoteFerry connects to your Notion workspace using Notion's official OAuth "
             + "authorization flow. The token exchange happens server-side through a "
             + "Supabase Edge Function we operate — the App itself never receives, "
             + "transmits, or stores your Notion password or any other Notion account "
             + "credentials.",
-            "Notivex uses Supabase, a third-party backend provider, for "
+            "NoteFerry uses Supabase, a third-party backend provider, for "
             + "authentication, session management, and the infrastructure that runs "
-            + "this OAuth exchange. Your use of Notivex is also subject to Notion's "
+            + "this OAuth exchange. Your use of NoteFerry is also subject to Notion's "
             + "and Supabase's own terms of service and privacy policies for any data "
             + "those platforms process on our behalf, and we are not responsible for "
             + "their acts or omissions.",
@@ -93,24 +93,24 @@ const termsSections: ReadonlyArray<LegalSection> = [
         ]
     },
     {
-        heading: "5. Notivex Pro Purchases",
+        heading: "5. NoteFerry Pro Purchases",
         id: "purchases",
         paragraphs: [
-            "Notivex Pro is offered as an automatically renewing monthly subscription, "
+            "NoteFerry Pro is offered as an automatically renewing monthly subscription, "
             + "an automatically renewing yearly subscription, or a lifetime one-time "
             + "purchase. Prices shown in the App are localized store prices and may "
             + "include or exclude taxes as determined by Apple or Google. Apple or "
             + "Google bills you, controls payment methods, and applies its purchase and "
-            + "refund rules; Notivex does not receive your complete payment-card details.",
+            + "refund rules; NoteFerry does not receive your complete payment-card details.",
             "Monthly and yearly plans renew automatically unless canceled through your "
             + "App Store or Google Play account before renewal. A cancellation remains "
             + "active through the paid period. Billing grace periods and restoration are "
             + "handled through the store and our purchase processor. You can restore "
-            + "eligible purchases in the App. Deleting your Notivex account or deleting "
+            + "eligible purchases in the App. Deleting your NoteFerry account or deleting "
             + "the App does not cancel an external store subscription; cancel it in your "
             + "store account first.",
-            "A lifetime purchase means access for the supported lifetime of the Notivex "
-            + "service, not your lifetime and not a promise that Notivex will operate "
+            "A lifetime purchase means access for the supported lifetime of the NoteFerry "
+            + "service, not your lifetime and not a promise that NoteFerry will operate "
             + "forever. We may change future prices or features, subject to store rules "
             + "and applicable notice requirements. Existing paid access will be honored "
             + "through its then-current paid period, grace period, or valid lifetime term."
@@ -137,12 +137,12 @@ const termsSections: ReadonlyArray<LegalSection> = [
         id: "user-content",
         paragraphs: [
             "You retain full ownership of the content and pages you create in Notion "
-            + "through the App. Notivex acts only as a capture tool: it transmits the "
-            + "page data you submit to the Notion API on your behalf. Notivex also stores "
+            + "through the App. NoteFerry acts only as a capture tool: it transmits the "
+            + "page data you submit to the Notion API on your behalf. NoteFerry also stores "
             + "the submitted operation payload, status, and resulting Notion page id as "
             + "operation history until the account is deleted or a disclosed retention "
             + "period applies, as described in the Privacy Policy.",
-            "You are solely responsible for the content you create through Notivex, "
+            "You are solely responsible for the content you create through NoteFerry, "
             + "including ensuring that it complies with Notion's own content and "
             + "acceptable-use policies, and with any other legal obligations that "
             + "apply to you."
@@ -152,7 +152,7 @@ const termsSections: ReadonlyArray<LegalSection> = [
         heading: "8. Acceptable Use",
         id: "acceptable-use",
         paragraphs: [
-            "You agree not to use Notivex to: violate any applicable law or "
+            "You agree not to use NoteFerry to: violate any applicable law or "
             + "regulation; infringe the intellectual property, privacy, or other "
             + "rights of any third party; interfere with, disrupt, or attempt to gain "
             + "unauthorized access to the App or the systems it relies on (including "
@@ -168,12 +168,12 @@ const termsSections: ReadonlyArray<LegalSection> = [
         heading: "9. Intellectual Property",
         id: "intellectual-property",
         paragraphs: [
-            "The Notivex name, logo, and the App's design, look, and feel are the "
+            "The NoteFerry name, logo, and the App's design, look, and feel are the "
             + "property of Gage Sorrell. Except for the limited license to use the "
             + "App as intended, these Terms do not grant you any rights to our "
             + "trademarks, logos, or other intellectual property.",
             "\"Notion\" and the Notion logo are trademarks of Notion Labs, Inc., "
-            + "referenced here solely to describe Notivex's integration with Notion "
+            + "referenced here solely to describe NoteFerry's integration with Notion "
             + "and not to imply any endorsement, affiliation, or sponsorship."
         ]
     },
@@ -181,7 +181,7 @@ const termsSections: ReadonlyArray<LegalSection> = [
         heading: "10. Termination",
         id: "termination",
         paragraphs: [
-            "You may stop using Notivex and disconnect your Notion workspace at any "
+            "You may stop using NoteFerry and disconnect your Notion workspace at any "
             + "time from the App's account settings, and may delete the App from your "
             + "device at any time. Account or app deletion does not cancel a store "
             + "subscription.",
@@ -197,7 +197,7 @@ const termsSections: ReadonlyArray<LegalSection> = [
         heading: "11. Disclaimers and Warranties",
         id: "disclaimers",
         paragraphs: [
-            "Notivex is provided \"as is\" and \"as available,\" without warranties "
+            "NoteFerry is provided \"as is\" and \"as available,\" without warranties "
             + "of any kind, whether express, implied, or statutory, including implied "
             + "warranties of merchantability, fitness for a particular purpose, "
             + "title, and non-infringement.",
@@ -205,7 +205,7 @@ const termsSections: ReadonlyArray<LegalSection> = [
             + "or error-free, that any content submitted through the App will reach "
             + "Notion successfully in every case, or that the App will continue to "
             + "function if Notion, Supabase, or Google AdMob change or discontinue "
-            + "the services Notivex relies on."
+            + "the services NoteFerry relies on."
         ]
     },
     {
@@ -221,7 +221,7 @@ const termsSections: ReadonlyArray<LegalSection> = [
             "To the fullest extent permitted by applicable law, our total aggregate "
             + "liability to you for any claim arising out of or relating to these "
             + "Terms or the App will not exceed the greater of fifty U.S. dollars "
-            + "($50) or the amounts you paid for Notivex during the twelve months "
+            + "($50) or the amounts you paid for NoteFerry during the twelve months "
             + "immediately preceding the event giving rise to the claim."
         ]
     },
@@ -243,7 +243,7 @@ const termsSections: ReadonlyArray<LegalSection> = [
             "We may revise these Terms at any time. Material changes will be "
             + "reflected by an updated effective date at the top of this page, and "
             + "where practical, we will provide additional notice within the App. "
-            + "Your continued use of Notivex after a revision takes effect means you "
+            + "Your continued use of NoteFerry after a revision takes effect means you "
             + "accept the updated Terms."
         ]
     },
@@ -274,7 +274,7 @@ const termsSections: ReadonlyArray<LegalSection> = [
         id: "entire-agreement",
         paragraphs: [
             "These Terms, together with our Privacy Policy, constitute the entire "
-            + "agreement between you and Gage Sorrell regarding your use of Notivex, "
+            + "agreement between you and Gage Sorrell regarding your use of NoteFerry, "
             + "and supersede any prior agreements between you and us regarding the "
             + "App."
         ]

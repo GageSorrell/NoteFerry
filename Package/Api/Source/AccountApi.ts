@@ -1,7 +1,7 @@
 /**
  * The `Account` group: permanently deleting the current user's account.
  *
- * @module @notivex/api/AccountApi
+ * @module @noteferry/api/AccountApi
  *
  * @file      AccountApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,7 +9,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
 
 export/**
@@ -32,7 +32,7 @@ const Delete = HttpApiEndpoint.delete(
 );
 
 export/**
-       * The `Account` resource group of the Notivex API.
+       * The `Account` resource group of the NoteFerry API.
        *
        * @category Account
        * @since 1.0.0

@@ -1,19 +1,19 @@
-# Notivex Auth Setup (Notion identity)
+# NoteFerry Auth Setup (Notion identity)
 
 Manual / external configuration for sign-in. The app code is wired; these steps
 live in dashboards and portals only you can complete.
 
-**Notivex signs in with the user's Notion account** — Notion is enabled as a
-Supabase Auth provider. Granting the Notivex **content** integration access to
+**NoteFerry signs in with the user's Notion account** — Notion is enabled as a
+Supabase Auth provider. Granting the NoteFerry **content** integration access to
 pages is a **separate** step (the existing `notion-oauth-callback` flow). These
 are two distinct Notion OAuth authorizations (see §2 vs §3).
 
-**Project:** `Notivex` — ref `mbstkyukxldzhwmnsall`
+**Project:** `NoteFerry` — ref `mbstkyukxldzhwmnsall`
 **Supabase auth callback (identity provider redirects here):**
 `https://mbstkyukxldzhwmnsall.supabase.co/auth/v1/callback`
 **Content integration callback (page grant redirects here):**
 `https://mbstkyukxldzhwmnsall.supabase.co/functions/v1/notion-oauth-callback`
-**App deep-link scheme:** `notivex://` (set in `app.json`)
+**App deep-link scheme:** `noteferry://` (set in `app.json`)
 
 ---
 
@@ -21,7 +21,7 @@ are two distinct Notion OAuth authorizations (see §2 vs §3).
 
 **Sign in (identity):** `signInWithOAuth({ provider: "notion" })` → in-app browser
 (`expo-web-browser`) → Notion login → Notion redirects to the **Supabase auth
-callback** → Supabase redirects back to the app at `notivex://…` → the app calls
+callback** → Supabase redirects back to the app at `noteferry://…` → the app calls
 `setSession`. Code: `src/Domain/Auth/OAuth.ts`.
 
 **Grant access (content):** a *separate* Notion OAuth via the content integration
@@ -35,9 +35,9 @@ No provider secret lives in the app either way.
 
 ## 1. Supabase → Authentication → URL Configuration  ✅ done
 
-- **Site URL:** `notivex://`
+- **Site URL:** `noteferry://`
 - **Redirect URLs (allow-list):**
-  - `notivex://**`
+  - `noteferry://**`
   - For a dev client over Metro, also the dev URL Metro prints, e.g.
     `exp://192.168.x.x:8081/--/**` (your machine's LAN IP/port).
 
@@ -54,7 +54,7 @@ type **Public**. Under **OAuth Domain & URIs**:
 - Enable, paste the **Client ID** + **Client secret**, save.
 
 > This authorization establishes *who the user is*. Notion always shows a page
-> picker during OAuth; the pages chosen here are **not** what Notivex uses for
+> picker during OAuth; the pages chosen here are **not** what NoteFerry uses for
 > content — that is the separate grant in §3. Keeping the two apart is why sign-in
 > and "Grant access" are two screens.
 
@@ -77,7 +77,7 @@ The existing **content** integration is unchanged. Confirm:
 
 ## 4. Build & run (dev build required)
 
-Native modules (`expo-secure-store`) + the custom `notivex://` scheme mean
+Native modules (`expo-secure-store`) + the custom `noteferry://` scheme mean
 **Expo Go will not work** — use a dev build:
 
 ```
@@ -113,6 +113,6 @@ under §1.
 - Encrypted session persistence (`SecureSessionStore`: AES key in SecureStore,
   ciphertext in AsyncStorage).
 - Token auto-refresh tied to app foreground/background (`AppState`).
-- `NotivexAuthProvider` (React session context) + `UseAuth`.
+- `NoteFerryAuthProvider` (React session context) + `UseAuth`.
 - `CurrentUser` Effect seam for application/business code.
 - Route protection / onboarding gating in `src/app/_layout.tsx`.

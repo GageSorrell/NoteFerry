@@ -23,7 +23,7 @@
  *   labels a full IANA list with a GMT offset via `@date-fns/tz`, which
  *   isn't a dependency here, and the reference screenshots show an
  *   abbreviation rather than a GMT offset regardless.
- * @module @notivex/ui/Primitive/DateSheet
+ * @module @noteferry/ui/Primitive/DateSheet
  *
  * @file      DateSheet.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

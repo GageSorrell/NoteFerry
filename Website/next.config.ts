@@ -1,5 +1,5 @@
 /**
- * Next.js configuration for the Notivex marketing website.
+ * Next.js configuration for the NoteFerry marketing website.
  *
  * The site is fully static (no server actions, no dynamic routes, no
  * environment-dependent data), so no custom `images`/`headers`/`redirects`

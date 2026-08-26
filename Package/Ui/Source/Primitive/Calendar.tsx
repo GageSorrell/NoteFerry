@@ -18,7 +18,7 @@
  * rounded-cap-at-the-ends / flat-band-between visual from those flags) —
  * see `BuildRangeMarkedDates`.
  *
- * @module @notivex/ui/Primitive/Calendar
+ * @module @noteferry/ui/Primitive/Calendar
  *
  * @file      Calendar.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

@@ -5,7 +5,7 @@
  * and dismissal live in `Popup.tsx` and the overlay wrappers that use it.
  * Source's `@deprecated MenuItemSwitch` was not ported.
  *
- * @module @notivex/ui/Primitive/Menu
+ * @module @noteferry/ui/Primitive/Menu
  *
  * @file      Menu.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

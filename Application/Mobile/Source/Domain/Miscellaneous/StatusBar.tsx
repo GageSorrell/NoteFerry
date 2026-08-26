@@ -1,5 +1,5 @@
 /**
- * @module notivex/Domain/Miscellaneous/StatusBar
+ * @module noteferry/Domain/Miscellaneous/StatusBar
  *
  * @file      StatusBar.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,10 +9,10 @@
 
 import * as React from "react";
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
-import { useTheme } from "@notivex/ui";
+import { useTheme } from "@noteferry/ui";
 
 export/**
-       * The status bar, whose style is derived from the NotivexTheme provider.
+       * The status bar, whose style is derived from the NoteFerryTheme provider.
        *
        * @category Component
        * @since 1.0.0

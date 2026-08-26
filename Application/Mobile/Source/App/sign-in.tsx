@@ -3,7 +3,7 @@
  * {@link SignInView}; this route supplies real navigation or a development
  * scenario transition.
  *
- * @module notivex/app/sign-in
+ * @module noteferry/app/sign-in
  *
  * @file      sign-in.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

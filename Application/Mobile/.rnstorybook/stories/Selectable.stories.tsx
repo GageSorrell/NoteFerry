@@ -1,9 +1,9 @@
 /**
- * Storybook stories for `@notivex/ui`'s `Selectable` primitive —
+ * Storybook stories for `@noteferry/ui`'s `Selectable` primitive —
  * long-press-to-enter, tap-to-toggle multi-select over a list of items, the
  * mobile analogue of a desktop file manager's marquee select.
  *
- * @module notivex/app/.rnstorybook/stories/Selectable
+ * @module noteferry/app/.rnstorybook/stories/Selectable
  *
  * @file      Selectable.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -16,7 +16,7 @@ import {
     Body,
     Button,
     Description
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import {
     IconBlock,
     SelectableCheckmark,
@@ -24,7 +24,7 @@ import {
     type SelectableItemState,
     SelectableRoot,
     useSelectable
-} from "@notivex/ui/Block";
+} from "@noteferry/ui/Block";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 

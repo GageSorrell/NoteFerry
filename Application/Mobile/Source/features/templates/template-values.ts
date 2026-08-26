@@ -5,7 +5,7 @@
  * keep/overwrite flow. Also the pure array-reshuffle helper backing the
  * database-settings templates list's drag-to-reorder.
  *
- * @module notivex/features/templates/template-values
+ * @module noteferry/features/templates/template-values
  *
  * @file      template-values.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -13,7 +13,7 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 
 /**
  * A template-sourced value for one of `create-page.tsx`'s form fields —

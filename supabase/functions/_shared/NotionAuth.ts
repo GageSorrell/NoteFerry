@@ -4,7 +4,7 @@
  * and status) and running a call with a one-shot token refresh on 401. Used by
  * both the data-source and page slices.
  *
- * @module notivex/functions/_shared/NotionAuth
+ * @module noteferry/functions/_shared/NotionAuth
  *
  * @file      NotionAuth.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,7 +12,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import * as Notion from "./Notion.ts";
 import { AdminClient, PrivateSchema } from "./Database.ts";
 import { Effect } from "effect";

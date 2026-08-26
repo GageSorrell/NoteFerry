@@ -1,8 +1,8 @@
 {
-  "name": "notivex-monorepo",
-  "description": "The monorepo for the Notivex app and Command Palette extension.",
+  "name": "noteferry-monorepo",
+  "description": "The monorepo for the NoteFerry app and Command Palette extension.",
   "private": true,
-  "homepage": "https://notivex.sorrell.sh",
+  "homepage": "https://noteferry.sorrell.sh",
   "workspaces": [
     "./Application/Mobile",
     "./Application/Windows",
@@ -21,12 +21,12 @@
   },
   "bugs": {
     "email": "gage@sorrell.sh",
-    "url": "https://github.com/GageSorrell/Notivex/issues"
+    "url": "https://github.com/GageSorrell/NoteFerry/issues"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GageSorrell/Notivex.git"
+    "url": "git+https://github.com/GageSorrell/NoteFerry.git"
   },
   "engines": {
     "node": "24.19.0",
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.6",
-    "@notivex/ui": "1.0.0",
+    "@noteferry/ui": "1.0.0",
     "@sorrell/eslint-config": "2.3.0",
     "eslint": "9.39.5",
     "react-native": "0.86.2",

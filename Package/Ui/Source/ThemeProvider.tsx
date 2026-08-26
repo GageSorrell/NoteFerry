@@ -1,5 +1,5 @@
 /**
- * Root theme/token provider for `@notivex/ui`.
+ * Root theme/token provider for `@noteferry/ui`.
  *
  * Internally this resolves every design token (`Token.Color`,
  * `Token.Semantic`, `Token.Size`, `Token.Spacing`, `Token.Radii`,
@@ -15,7 +15,7 @@
  * light/dark mode automatically. Apps wrap with this provider alone and must
  * not additionally mount `expo-router`'s `ThemeProvider`.
  *
- * @module @notivex/ui/ThemeProvider
+ * @module @noteferry/ui/ThemeProvider
  *
  * @file      ThemeProvider.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -175,11 +175,11 @@ export type ResolvedTokenRecord<Token extends ResolvableToken> =
 
 /** The live theme mode, threaded through the resolution program via `Context.Service`. */
 class ThemeModeTag extends
-    Context.Service<ThemeModeTag, ThemeMode>()("@notivex/ui/ThemeProvider/ThemeMode") { }
+    Context.Service<ThemeModeTag, ThemeMode>()("@noteferry/ui/ThemeProvider/ThemeMode") { }
 
 /** The live high-contrast flag, threaded through the resolution program via `Context.Service`. */
 class HighContrastTag extends
-    Context.Service<HighContrastTag, boolean>()("@notivex/ui/ThemeProvider/HighContrast") { }
+    Context.Service<HighContrastTag, boolean>()("@noteferry/ui/ThemeProvider/HighContrast") { }
 
 interface TokenResolver
 {
@@ -232,7 +232,7 @@ const ResolveTokenRecord = <Tokens extends object, Value>(
 
             if (Value === undefined)
             {
-                throw new Error(`[@notivex/ui] Unknown ${ Name } token.`);
+                throw new Error(`[@noteferry/ui] Unknown ${ Name } token.`);
             }
 
             return [ Name, Value ];
@@ -301,7 +301,7 @@ export interface ThemeProviderProps extends React.PropsWithChildren
 }
 
 export/**
-       * Root provider for `@notivex/ui`. Wrap your app once, near the root.
+       * Root provider for `@noteferry/ui`. Wrap your app once, near the root.
        *
        * This also mounts React Navigation's `ThemeProvider` internally, with its
        * `colors.background` bound to the `Semantic.BackgroundMain` token, so the
@@ -372,7 +372,7 @@ const ThemeProvider = ({
      * app-wide navigation background is driven by our `Semantic.BackgroundMain`
      * token (via `NavigationTheme` above). Because of this, apps should NOT mount
      * their own `<ThemeProvider>` from `expo-router` — wrapping in this single
-     * `@notivex/ui` provider is sufficient. */
+     * `@noteferry/ui` provider is sufficient. */
     return (
         <TokenResolverContext.Provider value={ Resolver }>
             <ThemeContext.Provider value={ ThemeValue }>
@@ -390,7 +390,7 @@ const useTokenResolver = (): TokenResolver =>
 
     if (Resolver === undefined)
     {
-        throw new Error("[@notivex/ui] A `Token` hook was used outside of `<ThemeProvider>`.");
+        throw new Error("[@noteferry/ui] A `Token` hook was used outside of `<ThemeProvider>`.");
     }
 
     return Resolver;
@@ -421,7 +421,7 @@ const useTheme = (): Theme =>
 
     if (Value === undefined)
     {
-        throw new Error("[@notivex/ui] `useTheme` was used outside of `<ThemeProvider>`.");
+        throw new Error("[@noteferry/ui] `useTheme` was used outside of `<ThemeProvider>`.");
     }
 
     return Value;
@@ -441,7 +441,7 @@ const ResolveToken = <Token extends ResolvableToken>(
 
     if (Resolved === undefined)
     {
-        throw new Error("[@notivex/ui] Unknown token.");
+        throw new Error("[@noteferry/ui] Unknown token.");
     }
 
     return Resolved as ResolvedTokenValue<Token>;

@@ -13,14 +13,14 @@ export/**
        * the footer.
        */
 const siteConfig = {
-    canonicalUrl: "https://notivex.sorrell.sh",
+    canonicalUrl: "https://noteferry.sorrell.sh",
     contactEmail: "gage@sorrell.sh",
     description:
-        "Notivex turns your phone into a fast capture tool for your Notion "
+        "NoteFerry turns your phone into a fast capture tool for your Notion "
         + "databases. Sign in with Notion, pick a destination, and add a "
         + "new page in seconds.",
-    githubIssuesUrl: "https://github.com/GageSorrell/Notivex/issues",
-    name: "Notivex",
+    githubIssuesUrl: "https://github.com/GageSorrell/NoteFerry/issues",
+    name: "NoteFerry",
     tagline: "Your notes, faster."
 };
 
@@ -43,7 +43,7 @@ const navLinks: ReadonlyArray<NavLink> = [
 ];
 
 export/**
-       * App Store / Play Store destination URLs. Notivex has not shipped
+       * App Store / Play Store destination URLs. NoteFerry has not shipped
        * to either store yet, so both are placeholders — replace with the
        * real listing URLs once the app is published.
        */

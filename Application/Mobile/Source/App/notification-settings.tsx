@@ -2,7 +2,7 @@
  * Notification preferences. Reached from the "Notifications" row on the
  * settings screen.
  *
- * @module notivex/app/notification-settings
+ * @module noteferry/app/notification-settings
  *
  * @file      notification-settings.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -10,8 +10,8 @@
  * @license   MIT
  */
 
-import { MakeStyles, Token, ViewStyle } from "@notivex/ui";
-import { Setting, SettingsContainer, Switch } from "@notivex/ui/Primitive";
+import { MakeStyles, Token, ViewStyle } from "@noteferry/ui";
+import { Setting, SettingsContainer, Switch } from "@noteferry/ui/Primitive";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSettings } from "@/features/settings/use-settings";
 import { Platform, View } from "react-native";
@@ -21,7 +21,7 @@ import Constants from "expo-constants";
 import {
     RegisterSubscriptionSaleDevice,
     RemoveSubscriptionSaleDevice
-} from "@/Domain/Runtime/NotivexApi";
+} from "@/Domain/Runtime/NoteFerryApi";
 import { useCallback } from "react";
 import { useSubscription } from "@/Domain/Subscription";
 
@@ -89,8 +89,8 @@ const NotificationSettingsScreen = (): React.JSX.Element =>
                     </Setting>
                     <Setting
                         Description={ Status?.Active
-                            ? "Disabled while Notivex Pro is active. Expiration will not turn it back on."
-                            : "Optional marketing notifications for limited-time Notivex Pro offers." }
+                            ? "Disabled while NoteFerry Pro is active. Expiration will not turn it back on."
+                            : "Optional marketing notifications for limited-time NoteFerry Pro offers." }
                         Title="Notify me about subscription sales">
                         <Switch
                             Disabled={ Status?.Active === true }

@@ -1,5 +1,5 @@
 /**
- * @module notivex/Domain/Runtime
+ * @module noteferry/Domain/Runtime
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,7 +9,7 @@
 
 export * from "./CurrentUser";
 export * from "./DevelopmentMenu";
-export * from "./NotivexApi";
+export * from "./NoteFerryApi";
 export * from "./PersistedState";
 export * from "./QuickActions";
 export * from "./SecureSessionStore";

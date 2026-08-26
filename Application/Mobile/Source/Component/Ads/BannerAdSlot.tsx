@@ -3,7 +3,7 @@
  * Renders nothing (no wrapper markup, no reserved layout space) whenever it
  * has nothing to show, including after a load failure.
  *
- * @module notivex/Component/Ads/BannerAdSlot
+ * @module noteferry/Component/Ads/BannerAdSlot
  *
  * @file      BannerAdSlot.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

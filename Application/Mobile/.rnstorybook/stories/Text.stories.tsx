@@ -1,5 +1,5 @@
 /**
- * @module notivex/Storybook/Text
+ * @module noteferry/Storybook/Text
  * @internal
  *
  * @file      Text.stories.tsx
@@ -9,7 +9,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { Text } from "@notivex/ui/Primitive";
+import { Text } from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 const meta =

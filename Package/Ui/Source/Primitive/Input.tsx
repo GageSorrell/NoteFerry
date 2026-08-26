@@ -4,7 +4,7 @@
  * itself a thin `lucide-react` wrapper) — the fuller `IconBlock`/`IconMenu`
  * abstraction is ported later, in Phase 4.
  *
- * @module @notivex/ui/Primitive/Input
+ * @module @noteferry/ui/Primitive/Input
  *
  * @file      Input.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -204,7 +204,7 @@ const useStyles = MakeStyles({
     }),
     Input: MakeTextStyle({
         flex: 1,
-        /* Every value rendered through `@notivex/ui`'s `Text` primitives
+        /* Every value rendered through `@noteferry/ui`'s `Text` primitives
          * (Body, PropertyLabel, the picker pills' "Empty" state, …) renders
          * in Inter — but a bare RN `TextInput` has no font applied by
          * default, so it silently falls back to the OS system font (SF Pro

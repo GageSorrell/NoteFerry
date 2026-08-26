@@ -1,5 +1,5 @@
 /**
- * Style/layout + overlay + composite/data primitives for `@notivex/ui`.
+ * Style/layout + overlay + composite/data primitives for `@noteferry/ui`.
  * Phase 1 (style/layout, no overlay complexity), Phase 2 (`BottomSheet`,
  * `Dialog`, `Popover`, `Tooltip`, the `Menu`/`DropdownMenu`/`ContextMenu`
  * family, `Select`, `Toast`), and Phase 3 (`Tabs`, `Autocomplete`,
@@ -18,7 +18,7 @@
  * Each file's own header comment details how it maps back to its
  * `@notion-kit/ui` source and what was deliberately simplified or dropped.
  *
- * @module @notivex/ui/Primitive
+ * @module @noteferry/ui/Primitive
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

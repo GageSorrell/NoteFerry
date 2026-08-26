@@ -3,7 +3,7 @@
  * The source used a CSS `animate-spin` class on an inline SVG; RN has no
  * CSS animations, so this drives the same rotation via `Animated`.
  *
- * @module @notivex/ui/Primitive/Spinner
+ * @module @noteferry/ui/Primitive/Spinner
  *
  * @file      Spinner.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

@@ -12,7 +12,7 @@
  * registry (a `ref` + a version counter to force `SelectValue` to
  * re-render) on mount instead.
  *
- * @module @notivex/ui/Primitive/Select
+ * @module @noteferry/ui/Primitive/Select
  *
  * @file      Select.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -29,7 +29,7 @@ import { ScrollView, type StyleProp, type ViewStyle } from "react-native";
 export { MenuGroup as SelectGroup, MenuLabel as SelectLabel } from "./Menu.js";
 import { Body } from "./Text.js";
 import { ChevronDown } from "lucide-react-native";
-import { NotivexUiError } from "../NotivexUiError.js";
+import { NoteFerryUiError } from "../NoteFerryUiError.js";
 import { Pressable } from "./Pressable.js";
 import type { Thunk } from "@sorrell/effect/Function";
 import { useToken } from "../ThemeProvider.js";
@@ -55,7 +55,7 @@ const useSelectContext = (): SelectContextValue =>
 
     if (Value === undefined)
     {
-        throw new NotivexUiError("A Select part was used outside of Select.");
+        throw new NoteFerryUiError("A Select part was used outside of Select.");
     }
 
     return Value;

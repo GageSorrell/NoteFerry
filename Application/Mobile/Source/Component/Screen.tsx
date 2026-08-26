@@ -1,7 +1,7 @@
 /**
  * A root View for screens.
  *
- * @module notivex/Component/Screen
+ * @module noteferry/Component/Screen
  *
  * @file      Screen.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

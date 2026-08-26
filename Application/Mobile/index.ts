@@ -1,5 +1,5 @@
 /**
- * Custom Metro entrypoint for `notivex`.
+ * Custom Metro entrypoint for `noteferry`.
  *
  * `effect` touches the Web Crypto API and `TextDecoder` at module-evaluation
  * time (see `effect/Random` and `effect/Encoding` in the `effect` v4 beta
@@ -9,7 +9,7 @@
  * `expo-router/entry` as `main` and imports the polyfills first, only
  * side-effect importing the real Expo Router entrypoint afterward.
  *
- * @module notivex
+ * @module noteferry
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

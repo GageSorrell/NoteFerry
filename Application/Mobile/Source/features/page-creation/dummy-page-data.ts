@@ -3,14 +3,14 @@
  * for text-like properties, a random number, a checked checkbox, a random
  * Select/Status option, a random-sized random subset of MultiSelect
  * options, today for Date, and a bundled stock photo for Files. Relation and
- * People are left alone — Notivex's quick-entry form doesn't collect them at
+ * People are left alone — NoteFerry's quick-entry form doesn't collect them at
  * all (`Domain.Destination.IsQuickEntryProperty` excludes both), so there's
  * no reachable value to generate one for.
  *
  * Only ever invoked from the "Fill with dummy data" dev-menu item
  * `create-page.tsx` registers while it has focus.
  *
- * @module notivex/features/page-creation/dummy-page-data
+ * @module noteferry/features/page-creation/dummy-page-data
  *
  * @file      dummy-page-data.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -18,7 +18,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import type { FileMediaValue } from "./file-media-property-field";
 import { Asset } from "expo-asset";
 

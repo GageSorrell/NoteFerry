@@ -6,7 +6,7 @@
  * number), rather than the shared `Input` primitive's smaller default text
  * size.
  *
- * @module notivex/features/page-creation/email-property-field
+ * @module noteferry/features/page-creation/email-property-field
  *
  * @file      email-property-field.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -14,9 +14,9 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
-import { MakeStyles, TextStyle, ViewStyle } from "@notivex/ui";
-import { Input } from "@notivex/ui/Primitive";
+import type * as Domain from "@noteferry/domain";
+import { MakeStyles, TextStyle, ViewStyle } from "@noteferry/ui";
+import { Input } from "@noteferry/ui/Primitive";
 import { PropertyLabel } from "@/features/page-creation/property-label";
 import { View } from "react-native";
 

@@ -4,7 +4,7 @@
  * screen, and the instructions plus interactive elements below it. The graphic
  * is a plain coloured placeholder for now — real artwork lands later.
  *
- * @module notivex/features/onboarding/onboarding-screen
+ * @module noteferry/features/onboarding/onboarding-screen
  *
  * @file      onboarding-screen.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,8 +12,8 @@
  * @license   MIT
  */
 
-import { Description, Heading1 } from "@notivex/ui/Primitive";
-import { MakeStyles, ViewStyle } from "@notivex/ui";
+import { Description, Heading1 } from "@noteferry/ui/Primitive";
+import { MakeStyles, ViewStyle } from "@noteferry/ui";
 import { HeroImage } from "@/Component/HeroImage";
 import type { ImageAsset } from "@/Domain/Utility/Asset";
 import type { ReactNode } from "react";

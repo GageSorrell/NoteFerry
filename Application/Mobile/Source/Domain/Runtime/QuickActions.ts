@@ -11,7 +11,7 @@
  * app, so a database's actual (dynamic, per-user) emoji or uploaded image
  * can't be used. See `ResolveQuickActionIcon`.
  *
- * @module notivex/Domain/Runtime/QuickActions
+ * @module noteferry/Domain/Runtime/QuickActions
  *
  * @file      QuickActions.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -19,7 +19,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import * as QuickActions from "expo-quick-actions";
 import { Platform } from "react-native";
 import { ResolveNativeIconSymbol } from "@/Domain/Utility/DatabaseIcon";
@@ -36,7 +36,7 @@ export interface QuickActionParams
  * `icon` can only reference an icon already compiled into the app -- there's
  * no way to hand it a database's actual (dynamic, per-user) icon at runtime.
  */
-const AndroidFallbackIcon = "notivex_quick_action";
+const AndroidFallbackIcon = "noteferry_quick_action";
 
 /**
  * Generic SF Symbol shown on iOS when a database's icon has no direct
@@ -104,7 +104,7 @@ const ResolveQuickActionDataSources = (
 };
 
 export/**
-       * Sets Notivex's quick action shortcuts from the current data sources and
+       * Sets NoteFerry's quick action shortcuts from the current data sources and
        * settings.
        *
        * @category Runtime

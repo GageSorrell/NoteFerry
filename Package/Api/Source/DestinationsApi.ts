@@ -2,7 +2,7 @@
  * The `Destinations` group: creating, reading, updating and deleting a
  * user's quick-entry destinations.
  *
- * @module @notivex/api/DestinationsApi
+ * @module @noteferry/api/DestinationsApi
  *
  * @file      DestinationsApi.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -10,7 +10,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
 import { Schema } from "effect";
 
@@ -150,7 +150,7 @@ const Delete = HttpApiEndpoint.delete(
 );
 
 export/**
-       * The `Destinations` resource group of the Notivex API.
+       * The `Destinations` resource group of the NoteFerry API.
        *
        * @category Destinations
        * @since 1.0.0

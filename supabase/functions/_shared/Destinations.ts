@@ -9,7 +9,7 @@
  * `DatePropertyInput`, whose wire form (ISO string) differs from its domain
  * form (`Date`), so a raw cast would corrupt it.
  *
- * @module notivex/functions/_shared/Destinations
+ * @module noteferry/functions/_shared/Destinations
  *
  * @file      Destinations.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -17,7 +17,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { Effect, Schema } from "effect";
 import { AdminClient, PrivateSchema } from "./Database.ts";
 
@@ -46,9 +46,9 @@ const EmptyTemplateConfiguration: Domain.Destination.TemplateConfiguration =
 
 /**
  * Normalizes a stored `configuration` blob before it's decoded: a destination
- * saved before Notivex's own default template was decoupled from Notion's may
+ * saved before NoteFerry's own default template was decoupled from Notion's may
  * still carry the legacy `{Type:"Default"}` `Template` value, which no longer
- * exists in `DestinationTemplate`'s schema. Notivex can't recover which
+ * exists in `DestinationTemplate`'s schema. NoteFerry can't recover which
  * Notion template a stored "Default" pointed to, so this normalizes it to
  * `{Type:"None"}` — the same "no explicit selection" state a fresh
  * destination starts from — before `DecodeConfiguration` ever sees it.
@@ -71,11 +71,11 @@ const DecodeStoredConfiguration = (Raw: unknown): Schema.Schema.Type<typeof Conf
 };
 
 /**
- * The create/update inputs, typed in `@notivex/domain` identity so the
+ * The create/update inputs, typed in `@noteferry/domain` identity so the
  * configuration codec below stays on one type identity. The `api` function's
  * decoded HttpApi payloads are structurally the same and are passed straight
  * in (their `.d.ts` inlines the domain schemas, which is why we don't reuse the
- * `@notivex/api` payload *types* here).
+ * `@noteferry/api` payload *types* here).
  */
 export interface DestinationCreateInput
 {
@@ -164,7 +164,7 @@ const DecodeFailed = (DecodeError: unknown): Domain.Error.DatabaseError =>
  * Applies a refreshed Notion property schema and template list to every
  * destination that uses the data source, preserving user settings by stable
  * property/template ID. A `Template` selection pointing at a template Notion
- * no longer returns resets to `{Type:"None"}` — Notivex has nothing sensible
+ * no longer returns resets to `{Type:"None"}` — NoteFerry has nothing sensible
  * left to point it at.
  */
 export const ReconcileForDataSource = (
@@ -367,9 +367,9 @@ export const CreateForUser = (UserId: string, Payload: DestinationCreateInput) =
             ReadonlyArray<Domain.DataSource.CachedDataSourceTemplate>;
         const NotionDefaultTemplate = Templates.find((Template) => Template.IsNotionDefault);
 
-        /* Being a "default template" in Notivex is decoupled from Notion's own
+        /* Being a "default template" in NoteFerry is decoupled from Notion's own
          * default: this is the *only* place Notion's default is snapshotted
-         * into Notivex's — once, at creation, and only when the caller didn't
+         * into NoteFerry's — once, at creation, and only when the caller didn't
          * already express an explicit choice. A later change to Notion's
          * default never reaches an already-created destination. */
         const EffectiveTemplate = IsPro === true

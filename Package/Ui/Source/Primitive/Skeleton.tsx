@@ -2,7 +2,7 @@
  * Ported from `@notion-kit/ui`'s `primitives/skeleton.tsx`. Source's CSS
  * `animate-pulse` becomes an `Animated.loop` opacity pulse.
  *
- * @module @notivex/ui/Primitive/Skeleton
+ * @module @noteferry/ui/Primitive/Skeleton
  *
  * @file      Skeleton.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

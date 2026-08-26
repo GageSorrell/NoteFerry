@@ -1,7 +1,7 @@
 /**
- * Public entry point for `@notivex/ui`.
+ * Public entry point for `@noteferry/ui`.
  *
- * @module @notivex/ui
+ * @module @noteferry/ui
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -14,7 +14,7 @@ export * as Primitive from "./Primitive/index.js";
 /** Public nominal token values and types, grouped by token category. */
 export * as Token from "./Token/index.js";
 
-export { NotivexUiError } from "./NotivexUiError.js";
+export { NoteFerryUiError } from "./NoteFerryUiError.js";
 
 export {
     ImageStyle,

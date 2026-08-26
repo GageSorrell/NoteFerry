@@ -1,5 +1,5 @@
 {
-  "name": "@notivex/icons",
+  "name": "@noteferry/icons",
   "version": "1.0.0",
   "description": "Notion-style icon library for Expo apps, ported from Mary Amato's free icons on Gumroad.",
   "scripts": {

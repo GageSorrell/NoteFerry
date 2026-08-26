@@ -3,14 +3,14 @@
  * the Mobile Ads SDK exactly once. Readiness is exposed as a plain
  * `useSyncExternalStore`-backed hook rather than a Context provider, so this
  * sidesteps the React Compiler Context-propagation issue documented on
- * {@link NotivexAuthProvider} entirely -- there is no provider to opt out of
+ * {@link NoteFerryAuthProvider} entirely -- there is no provider to opt out of
  * memoizing.
  *
  * Unlike {@link Supabase}, this must never throw on missing configuration:
  * ads are a non-critical revenue feature, and a misconfigured or absent
  * AdMob setup should silently disable ads rather than crash the app.
  *
- * @module notivex/Domain/Ads/AdsRuntime
+ * @module noteferry/Domain/Ads/AdsRuntime
  *
  * @file      AdsRuntime.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

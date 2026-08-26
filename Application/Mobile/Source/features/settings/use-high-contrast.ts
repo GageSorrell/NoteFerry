@@ -1,5 +1,5 @@
 /**
- * Resolves whether `@notivex/ui`'s `ThemeProvider` should render in high
+ * Resolves whether `@noteferry/ui`'s `ThemeProvider` should render in high
  * contrast, from the app's `Contrast` setting: `"Standard"`/`"High"` pin the
  * result; the default `"System"` instead follows the OS's own
  * increase-contrast accessibility setting — Android's "High contrast text"
@@ -7,7 +7,7 @@
  * Contrast" (`AccessibilityInfo.isDarkerSystemColorsEnabled`) — read live and
  * kept in sync via `AccessibilityInfo`'s change events.
  *
- * @module notivex/features/settings/use-high-contrast
+ * @module noteferry/features/settings/use-high-contrast
  *
  * @file      use-high-contrast.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -80,7 +80,7 @@ const useSystemHighContrast = (): boolean =>
 };
 
 /**
- * Resolves the boolean `@notivex/ui`'s `ThemeProvider` expects for its
+ * Resolves the boolean `@noteferry/ui`'s `ThemeProvider` expects for its
  * `HighContrast` prop, from the user's `Contrast` app setting — falling back
  * to the OS's own increase-contrast setting while `Contrast` is `"System"`.
  *

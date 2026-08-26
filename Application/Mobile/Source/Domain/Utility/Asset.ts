@@ -1,7 +1,7 @@
 /**
  * Branded types and utilities for using assets, such as images.
  *
- * @module notivex/Domain/Utility/Asset
+ * @module noteferry/Domain/Utility/Asset
  *
  * @file      Asset.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

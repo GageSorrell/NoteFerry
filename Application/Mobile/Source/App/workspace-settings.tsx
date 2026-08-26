@@ -3,7 +3,7 @@
  * workspace's databases together, or just the current workspace's. Reached
  * from the "Workspaces" row on the settings screen.
  *
- * @module notivex/app/workspace-settings
+ * @module noteferry/app/workspace-settings
  *
  * @file      workspace-settings.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -11,8 +11,8 @@
  * @license   MIT
  */
 
-import { MakeStyles, Token, ViewStyle } from "@notivex/ui";
-import { Setting, SettingsContainer, Switch } from "@notivex/ui/Primitive";
+import { MakeStyles, Token, ViewStyle } from "@noteferry/ui";
+import { Setting, SettingsContainer, Switch } from "@noteferry/ui/Primitive";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSettings } from "@/features/settings/use-settings";
 import { View } from "react-native";

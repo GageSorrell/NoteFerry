@@ -1,5 +1,5 @@
 /**
- * @module notivex/Storybook/Skeleton
+ * @module noteferry/Storybook/Skeleton
  * @internal
  *
  * @file      Skeleton.stories.tsx
@@ -9,7 +9,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { Skeleton } from "@notivex/ui/Primitive";
+import { Skeleton } from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 const meta =

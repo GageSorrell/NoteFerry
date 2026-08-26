@@ -2,7 +2,7 @@
  * A full-width image, which is inverted when the theme is dark.
  * Images used with this component should be grayscale and "Notion-themed."
  *
- * @module notivex/Component/HeroImage
+ * @module noteferry/Component/HeroImage
  *
  * @file      HeroImage.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -13,7 +13,7 @@
 import { Image } from "expo-image";
 import type { ImageAsset } from "@/Domain/Utility/Asset";
 import { View } from "react-native";
-import { useTheme } from "@notivex/ui";
+import { useTheme } from "@noteferry/ui";
 
 /** {@inheritDoc HeroImage} */
 export interface HeroImageProps

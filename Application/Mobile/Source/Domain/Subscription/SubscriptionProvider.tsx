@@ -1,7 +1,7 @@
 /**
  * RevenueCat purchase runtime plus server-authoritative entitlement context.
  *
- * @module notivex/Domain/Subscription/SubscriptionProvider
+ * @module noteferry/Domain/Subscription/SubscriptionProvider
  *
  * @file      SubscriptionProvider.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,20 +9,20 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import * as React from "react";
 import {
     GetActiveSubscriptionSale,
     GetCreationAllowance,
     GetSubscriptionStatus,
     RefreshSubscriptionStatus
-} from "@/Domain/Runtime/NotivexApi";
+} from "@/Domain/Runtime/NoteFerryApi";
 import Purchases, { LOG_LEVEL, type PurchasesPackage } from "react-native-purchases";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { InitializeAdsRuntime } from "@/Domain/Ads";
 import { Platform } from "react-native";
 import { SetConfirmedFree } from "@/Domain/Ads/Entitlement";
-import { useAuth } from "@/Domain/Auth/NotivexAuthProvider";
+import { useAuth } from "@/Domain/Auth/NoteFerryAuthProvider";
 
 export interface SubscriptionContextValue
 {
@@ -40,14 +40,14 @@ export interface SubscriptionContextValue
 }
 
 const Context = React.createContext<SubscriptionContextValue | null>(null);
-const PaidStatusCachePrefix = "notivex:verified-pro:";
+const PaidStatusCachePrefix = "noteferry:verified-pro:";
 const PaidAccessGraceMilliseconds = 24 * 60 * 60 * 1000;
 
 export class PurchaseSyncPendingError extends Error
 {
     public constructor()
     {
-        super("Purchase successful—finishing setup. Notivex will keep retrying automatically.");
+        super("Purchase successful—finishing setup. NoteFerry will keep retrying automatically.");
         this.name = "PurchaseSyncPendingError";
     }
 }

@@ -1,10 +1,10 @@
 /**
  * Server-only account-data-request creation (Deno + Effect). Inserting a row
  * fires the `account_data_requests_notify` Postgres trigger
- * (`supabase/schemas/11_notifications.sql`), which emails Notivex so the
+ * (`supabase/schemas/11_notifications.sql`), which emails NoteFerry so the
  * export can be fulfilled by hand — nothing else happens here.
  *
- * @module notivex/functions/_shared/ExportRequests
+ * @module noteferry/functions/_shared/ExportRequests
  *
  * @file      ExportRequests.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,7 +12,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { AdminClient } from "./Database.ts";
 import { Effect } from "effect";
 

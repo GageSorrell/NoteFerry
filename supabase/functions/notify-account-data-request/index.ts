@@ -6,10 +6,10 @@
  * `verify_jwt = false`. Authenticity is instead checked with a shared secret
  * header the trigger and this function both know.
  *
- * Emails Notivex via Resend so the request can be fulfilled by hand; nothing
+ * Emails NoteFerry via Resend so the request can be fulfilled by hand; nothing
  * here writes back to the database.
  *
- * @module notivex/functions/notify-account-data-request
+ * @module noteferry/functions/notify-account-data-request
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -27,7 +27,7 @@ interface AccountDataRequestPayload
 Deno.serve(async (Request: Request) =>
 {
     const ExpectedSecret = Deno.env.get("WEBHOOK_SECRET");
-    const ProvidedSecret = Request.headers.get("x-notivex-webhook-secret");
+    const ProvidedSecret = Request.headers.get("x-noteferry-webhook-secret");
 
     if (!ExpectedSecret || ProvidedSecret !== ExpectedSecret)
     {
@@ -55,11 +55,11 @@ Deno.serve(async (Request: Request) =>
 
     const EmailResponse = await fetch("https://api.resend.com/emails", {
         body: JSON.stringify({
-            from: "Notivex <noreply@notifications.sorrell.sh>",
+            from: "NoteFerry <noreply@notifications.sorrell.sh>",
             html: `<p>User <code>${ Payload.user_id }</code> requested a copy of `
                 + `their account data (request <code>${ Payload.id }</code>, `
                 + `${ Payload.created_at }).</p>`,
-            subject: "Notivex: account data request",
+            subject: "NoteFerry: account data request",
             to: [ NotifyEmail ]
         }),
         headers:

@@ -10,7 +10,7 @@
  * (`Toast(message)`, `Toast.Success(message)`, `Toast.Promise(...)`, ...)
  * so call sites read the same way.
  *
- * @module @notivex/ui/Primitive/Toast
+ * @module @noteferry/ui/Primitive/Toast
  *
  * @file      Toast.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

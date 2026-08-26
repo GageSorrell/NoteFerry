@@ -1,5 +1,5 @@
 /**
- * The Notivex marketing landing page.
+ * The NoteFerry marketing landing page.
  *
  * @file      page.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

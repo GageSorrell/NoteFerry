@@ -1,7 +1,7 @@
 /**
  * Public entry point for the `Property` family of schemas.
  *
- * @module @notivex/domain/Property
+ * @module @noteferry/domain/Property
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

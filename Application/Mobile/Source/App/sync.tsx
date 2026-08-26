@@ -1,7 +1,7 @@
 /**
  * Controller for the post-authorization Notion discovery outcomes.
  *
- * @module notivex/app/sync
+ * @module noteferry/app/sync
  *
  * @file      sync.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,14 +9,14 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import {
     OnboardingMockRegistry,
     OnboardingMockTiming,
     useDevelopmentOnboarding
 } from "@/features/onboarding/onboarding-development";
 import { ConnectNotion } from "@/Domain/Connection";
-import { RefreshDataSource } from "@/Domain/Runtime/NotivexApi";
+import { RefreshDataSource } from "@/Domain/Runtime/NoteFerryApi";
 import { SyncView } from "@/features/onboarding/onboarding-views";
 import { useAuth } from "@/Domain/Auth";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";

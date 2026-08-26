@@ -3,7 +3,7 @@
  * `expo-quick-actions` shortcuts on long-press. Reached from the "Quick
  * Actions" row on the settings screen.
  *
- * @module notivex/app/quick-action-settings
+ * @module noteferry/app/quick-action-settings
  *
  * @file      quick-action-settings.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -11,9 +11,9 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
-import { Checkbox, Description, Setting, SettingsContainer } from "@notivex/ui/Primitive";
-import { MakeStyles, Token, ViewStyle } from "@notivex/ui";
+import type * as Domain from "@noteferry/domain";
+import { Checkbox, Description, Setting, SettingsContainer } from "@noteferry/ui/Primitive";
+import { MakeStyles, Token, ViewStyle } from "@noteferry/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Alert, ScrollView, View } from "react-native";
 import { useCallback } from "react";

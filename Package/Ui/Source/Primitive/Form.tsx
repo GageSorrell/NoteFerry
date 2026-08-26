@@ -10,7 +10,7 @@
  * OnChangeText={field.onChange}`), so there's no wrapper element for it to
  * inject attributes into.
  *
- * @module @notivex/ui/Primitive/Form
+ * @module @noteferry/ui/Primitive/Form
  *
  * @file      Form.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -84,12 +84,12 @@ const useFormField = () =>
 
     if (FieldContext === undefined)
     {
-        throw new Error("[@notivex/ui] `useFormField` was used outside of `<FormField>`.");
+        throw new Error("[@noteferry/ui] `useFormField` was used outside of `<FormField>`.");
     }
 
     if (ItemContext === undefined)
     {
-        throw new Error("[@notivex/ui] `useFormField` was used outside of `<FormItem>`.");
+        throw new Error("[@noteferry/ui] `useFormField` was used outside of `<FormItem>`.");
     }
 
     const FieldState = getFieldState(FieldContext.Name, FormState);

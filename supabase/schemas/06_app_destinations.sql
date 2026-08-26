@@ -1,6 +1,6 @@
--- `app.destinations` — a first-class Notivex concept: how a user has configured
+-- `app.destinations` — a first-class NoteFerry concept: how a user has configured
 -- a quick-entry experience for one Notion data source
--- (ArchitectureInitialDraft.md §24-25). Mirrors `@notivex/domain`
+-- (ArchitectureInitialDraft.md §24-25). Mirrors `@noteferry/domain`
 -- Destination.ts using the §25 hybrid: relational columns for what we query or
 -- constrain, and one schema-versioned JSONB blob for flexible UI config.
 --

@@ -5,7 +5,7 @@
  * `Pressable` prop — including `style` and `children` — passes through
  * unchanged, and the ref is forwarded to the underlying `Pressable`.
  *
- * @module @notivex/ui/Primitive/Pressable
+ * @module @noteferry/ui/Primitive/Pressable
  *
  * @file      Pressable.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

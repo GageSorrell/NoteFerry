@@ -6,7 +6,7 @@
  * unit ID resolves to `null` so callers can no-op instead of requesting an ad
  * with a bad ID.
  *
- * @module notivex/Domain/Ads/AdUnits
+ * @module noteferry/Domain/Ads/AdUnits
  *
  * @file      AdUnits.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

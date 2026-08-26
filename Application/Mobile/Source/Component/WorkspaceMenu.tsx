@@ -4,7 +4,7 @@
  * are shown together, a single link to the Workspaces setting), followed by
  * "Add workspace" and "Log out".
  *
- * @module notivex/Component/WorkspaceMenu
+ * @module noteferry/Component/WorkspaceMenu
  *
  * @file      WorkspaceMenu.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,7 +12,7 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import * as React from "react";
 import {
     DropdownMenu,
@@ -21,11 +21,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
     Pressable
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import { Building2, LogOut, Plus } from "lucide-react-native";
 import { Alert } from "react-native";
 import type { Thunk } from "@sorrell/effect/Function";
-import { useTheme } from "@notivex/ui";
+import { useTheme } from "@noteferry/ui";
 
 /** {@inheritDoc WorkspaceMenu} */
 export interface WorkspaceMenuProps extends React.PropsWithChildren
@@ -76,7 +76,7 @@ const WorkspaceMenu = ({
     {
         Alert.alert(
             "Log out?",
-            "You'll need to sign back in with Notion to use Notivex again.",
+            "You'll need to sign back in with Notion to use NoteFerry again.",
             [
                 { style: "cancel", text: "Cancel" },
                 { onPress: OnLogOut, style: "destructive", text: "Log out" }

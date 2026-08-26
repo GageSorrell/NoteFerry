@@ -5,7 +5,7 @@
  * `SettingsContainer` groups a run of `Setting`s, inserting a hairline
  * `Separator` between each.
  *
- * @module @notivex/ui/Primitive/Setting
+ * @module @noteferry/ui/Primitive/Setting
  *
  * @file      Setting.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

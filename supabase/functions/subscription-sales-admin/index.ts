@@ -5,7 +5,7 @@ import { AdminClient } from "../_shared/Database.ts";
 Deno.serve(async (Request_: Request): Promise<Response> =>
 {
     const Secret = Deno.env.get("SUBSCRIPTION_SALES_ADMIN_SECRET");
-    if (!Secret || Request_.headers.get("x-notivex-admin-secret") !== Secret)
+    if (!Secret || Request_.headers.get("x-noteferry-admin-secret") !== Secret)
     {
         return new Response("Unauthorized", { status: 401 });
     }

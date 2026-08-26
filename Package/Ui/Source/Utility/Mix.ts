@@ -5,7 +5,7 @@
  * behind it — needed where a translucent fill would otherwise stack with a
  * layer below and read as two different shades.
  *
- * @module @notivex/ui/Utility/Mix
+ * @module @noteferry/ui/Utility/Mix
  * @internal
  *
  * @file      Mix.ts

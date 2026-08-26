@@ -1,6 +1,6 @@
-# `notivex.sorrell.sh`
+# `noteferry.sorrell.sh`
 
-The marketing website for [Notivex](https://notivex.sorrell.sh): a landing
+The marketing website for [NoteFerry](https://noteferry.sorrell.sh): a landing
 page plus placeholder `/terms` and `/privacy` pages, built with Next.js
 (App Router), Tailwind CSS v4, and shadcn/ui.
 
@@ -11,7 +11,7 @@ published.
 
 ## Development
 
-Run everything from the **repo root** (`e:\Notivex`), since this workspace
+Run everything from the **repo root** (`e:\NoteFerry`), since this workspace
 is part of the root npm workspace and shares its `package-lock.json`:
 
 ```sh
@@ -52,7 +52,7 @@ lockfile; confirm this on the first deploy's build log.
 
 ### Domain
 
-In **Settings → Domains**, add `notivex.sorrell.sh`. Vercel will present a
+In **Settings → Domains**, add `noteferry.sorrell.sh`. Vercel will present a
 `CNAME` target (typically `cname.vercel-dns.com`) — add that as a `CNAME`
-record for the `notivex` host at whatever DNS provider hosts `sorrell.sh`.
+record for the `noteferry` host at whatever DNS provider hosts `sorrell.sh`.
 This is a manual step outside this repository.

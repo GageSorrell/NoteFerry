@@ -2,7 +2,7 @@
  * Barrel of every Scribble icon. Auto-generated — do not edit by hand.
  * Regenerate with `node Scripts/generate-scribble.mjs`.
  *
- * @module @notivex/icons/Scribble
+ * @module @noteferry/icons/Scribble
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

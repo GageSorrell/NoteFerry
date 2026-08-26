@@ -1,7 +1,7 @@
 /**
- * Style tokens for `@notivex/ui`.  These are resolved by the `ThemeProvider`.
+ * Style tokens for `@noteferry/ui`.  These are resolved by the `ThemeProvider`.
  *
- * @module @notivex/ui/Token
+ * @module @noteferry/ui/Token
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

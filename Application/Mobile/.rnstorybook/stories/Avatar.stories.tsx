@@ -1,5 +1,5 @@
 /**
- * @module notivex/Storybook/Avatar
+ * @module noteferry/Storybook/Avatar
  * @internal
  *
  * @file      Avatar.stories.tsx
@@ -9,13 +9,13 @@
  */
 
 import * as React from "react";
-import { Avatar, AvatarFallback, AvatarImage, type AvatarProps, Text } from "@notivex/ui/Primitive";
+import { Avatar, AvatarFallback, AvatarImage, type AvatarProps, Text } from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 
 const AvatarWithFallback = (props: AvatarProps): React.JSX.Element => (
     <Avatar { ...props }>
-        <AvatarImage Source="https://picsum.photos/seed/notivex/128" />
+        <AvatarImage Source="https://picsum.photos/seed/noteferry/128" />
         <AvatarFallback>
             <Text Variant="Label">NX</Text>
         </AvatarFallback>

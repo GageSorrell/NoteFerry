@@ -1,7 +1,7 @@
 /**
  * Replaces every mutator of `ImperativeRouter` with a function that returns a `Thunk`.
  *
- * @module notivex/Domain/Utility/LazyRouter
+ * @module noteferry/Domain/Utility/LazyRouter
  *
  * @file      LazyRouter.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

@@ -1,11 +1,11 @@
 /**
  * Converts a cached template's (or data source's) Notion icon fields into
- * `@notivex/ui`'s `IconData`, so template rows always render through
+ * `@noteferry/ui`'s `IconData`, so template rows always render through
  * `IconBlock` — including its `Muted` treatment for the hidden-templates
  * list — rather than `DatabaseCard.tsx`'s more ad-hoc per-type rendering,
  * which only routes the "Native" case through `IconBlock`.
  *
- * @module notivex/features/templates/template-icon
+ * @module noteferry/features/templates/template-icon
  *
  * @file      template-icon.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -13,7 +13,7 @@
  * @license   MIT
  */
 
-import type { IconData } from "@notivex/ui/Block";
+import type { IconData } from "@noteferry/ui/Block";
 import { ToLucideIconName } from "@/Domain/Utility/DatabaseIcon";
 
 const IsImageUrl = (Value: string): boolean =>

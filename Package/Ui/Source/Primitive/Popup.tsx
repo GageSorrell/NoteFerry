@@ -8,7 +8,7 @@
  * dismissed. This replaces `@notion-kit/ui`'s shared `positioner()`/
  * `popup()` cva pair (see `design.tsx`), which had no direct RN analogue.
  *
- * @module @notivex/ui/Primitive/Popup
+ * @module @noteferry/ui/Primitive/Popup
  *
  * @file      Popup.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -195,7 +195,7 @@ const Popup = ({
             backgroundColor: PopoverBackground,
             /* react-native-popover-view hard-codes a dark bottom-edge color
              * in its base content style. Override that side explicitly so it
-             * matches the rest of Notivex's themed popup border. */
+             * matches the rest of NoteFerry's themed popup border. */
             borderBottomColor: BorderColor,
             borderColor: BorderColor,
             borderRadius: LargeRadius,

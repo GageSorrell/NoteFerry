@@ -8,7 +8,7 @@
  * keychain/keystore via `expo-secure-store`, and the (much larger) ciphertext
  * is held in `AsyncStorage`. Neither store alone reveals the session.
  *
- * @module notivex/Domain/Runtime/SecureSessionStore
+ * @module noteferry/Domain/Runtime/SecureSessionStore
  *
  * @file      SecureSessionStore.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

@@ -27,7 +27,7 @@ export interface HowItWorksStep
 export/** The four steps, in order. */
 const howItWorksSteps: ReadonlyArray<HowItWorksStep> = [
     {
-        description: "Sign in with Notion OAuth. Notivex never sees your credentials.",
+        description: "Sign in with Notion OAuth. NoteFerry never sees your credentials.",
         icon: LogIn,
         title: "Connect Notion"
     },

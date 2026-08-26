@@ -42,7 +42,7 @@ const BrowserFrame = ({
     src,
     alt,
     label,
-    url = "notivex.sorrell.sh",
+    url = "noteferry.sorrell.sh",
     className
 }: BrowserFrameProps) =>
 {

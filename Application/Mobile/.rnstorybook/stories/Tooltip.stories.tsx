@@ -1,7 +1,7 @@
 /**
- * Storybook stories for `@notivex/ui`'s `Tooltip` primitive.
+ * Storybook stories for `@noteferry/ui`'s `Tooltip` primitive.
  *
- * @module notivex/app/.rnstorybook/stories/Tooltip
+ * @module noteferry/app/.rnstorybook/stories/Tooltip
  * @internal
  *
  * @file      Tooltip.stories.tsx
@@ -12,7 +12,7 @@
 
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { Text, Tooltip, TooltipContent, TooltipPreset, TooltipTrigger } from "@notivex/ui/Primitive";
+import { Text, Tooltip, TooltipContent, TooltipPreset, TooltipTrigger } from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 // `TooltipTrigger` owns the only `Pressable` here deliberately — it needs

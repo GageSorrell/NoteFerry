@@ -3,7 +3,7 @@
  * configured for one cached data source, plus create/delete. Thin wrapper over
  * the typed API client.
  *
- * @module notivex/features/destinations/use-destinations
+ * @module noteferry/features/destinations/use-destinations
  *
  * @file      use-destinations.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -11,7 +11,7 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import {
     CreateDestination,
     type CreateDestinationInput,
@@ -19,7 +19,7 @@ import {
     ListDestinations,
     UpdateDestination,
     type UpdateDestinationInput
-} from "@/Domain/Runtime/NotivexApi";
+} from "@/Domain/Runtime/NoteFerryApi";
 import { useCallback, useEffect, useState } from "react";
 
 /** The state returned by {@link useDestinations}. */

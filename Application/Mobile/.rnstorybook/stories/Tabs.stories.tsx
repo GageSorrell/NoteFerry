@@ -1,7 +1,7 @@
 /**
- * Storybook stories for `@notivex/ui`'s `Tabs` primitive.
+ * Storybook stories for `@noteferry/ui`'s `Tabs` primitive.
  *
- * @module notivex/app/.rnstorybook/stories/Tabs
+ * @module noteferry/app/.rnstorybook/stories/Tabs
  *
  * @file      Tabs.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -17,7 +17,7 @@ import {
     TabsList,
     TabsTrigger,
     Text
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 const TabsExample = (): React.JSX.Element => (

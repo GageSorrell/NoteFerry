@@ -1,9 +1,9 @@
 /**
- * Storybook stories for `@notivex/ui`'s `Command` primitive — the
+ * Storybook stories for `@noteferry/ui`'s `Command` primitive — the
  * command-palette skin over `Autocomplete`, hosted in a `Dialog` via
  * `CommandDialog`.
  *
- * @module notivex/app/.rnstorybook/stories/Command
+ * @module noteferry/app/.rnstorybook/stories/Command
  *
  * @file      Command.stories.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -21,7 +21,7 @@ import {
     CommandItem,
     CommandList,
     CommandSeparator
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 
 const CommandExample = (): React.JSX.Element =>

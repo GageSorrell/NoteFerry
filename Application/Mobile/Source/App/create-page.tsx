@@ -1,7 +1,7 @@
 /**
  * Quick-entry form for creating a page in one selected Notion database.
  *
- * @module notivex/app/create-page
+ * @module noteferry/app/create-page
  *
  * @file      create-page.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,7 +9,7 @@
  * @license   MIT
  */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import * as ImagePicker from "expo-image-picker";
 import {
     ActivityIndicator,
@@ -31,9 +31,9 @@ import {
     Pressable,
     Separator,
     Textarea
-} from "@notivex/ui/Primitive";
+} from "@noteferry/ui/Primitive";
 import { ChevronLeft, ImagePlus, LayoutTemplate, Settings, Smile, Wand2 } from "lucide-react-native";
-import { Cover, IconBlock, type IconData, IconMenu } from "@notivex/ui/Block";
+import { Cover, IconBlock, type IconData, IconMenu } from "@noteferry/ui/Block";
 import {
     CreateDestination,
     CreatePage,
@@ -41,7 +41,7 @@ import {
     ListDestinations,
     RefreshDataSource,
     UpdateDestination
-} from "@/Domain/Runtime/NotivexApi";
+} from "@/Domain/Runtime/NoteFerryApi";
 import type { EventArg, NavigationAction } from "expo-router/build/react-navigation";
 import { FileMediaPropertyField, type FileMediaValue } from
     "@/features/page-creation/file-media-property-field";
@@ -51,7 +51,7 @@ import {
     GetStockPhotoFileValue,
     IsFieldEmpty
 } from "@/features/page-creation/dummy-page-data";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@notivex/ui";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
 import {
     ResolveTemplateFieldValues,
     type TemplateFieldAssignment
@@ -917,7 +917,7 @@ const PageCreateScreen = (): React.JSX.Element =>
     const ShowProPrompt = useCallback((Benefit: string): void =>
     {
         Alert.alert(
-            "Available with Notivex Pro",
+            "Available with NoteFerry Pro",
             Benefit,
             [
                 { style: "cancel", text: "Not now" },

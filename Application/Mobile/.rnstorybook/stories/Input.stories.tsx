@@ -1,5 +1,5 @@
 /**
- * @module notivex/Storybook/Input
+ * @module noteferry/Storybook/Input
  * @internal
  *
  * @file      Input.stories.tsx
@@ -9,7 +9,7 @@
  */
 
 import * as React from "react";
-import { Input, type InputProps } from "@notivex/ui/Primitive";
+import { Input, type InputProps } from "@noteferry/ui/Primitive";
 import type { Meta, StoryObj } from "@storybook/react-native";
 import { View } from "react-native";
 

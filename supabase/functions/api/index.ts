@@ -1,12 +1,12 @@
 /**
- * The authenticated Notivex API (`verify_jwt = true`). Serves the shared
- * `@notivex/api` HttpApi contract via Effect so the app can use a derived,
+ * The authenticated NoteFerry API (`verify_jwt = true`). Serves the shared
+ * `@noteferry/api` HttpApi contract via Effect so the app can use a derived,
  * fully typed client.
  *
  * Every group — `Connections`, `DataSources`, `Destinations` and `Pages` — is
- * implemented against the shared `@notivex/api` contract.
+ * implemented against the shared `@noteferry/api` contract.
  *
- * @module notivex/functions/api
+ * @module noteferry/functions/api
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -17,7 +17,7 @@
 import * as Account from "../_shared/Account.ts";
 import * as DataSources from "../_shared/DataSources.ts";
 import * as Destinations from "../_shared/Destinations.ts";
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import * as ExportRequests from "../_shared/ExportRequests.ts";
 import * as Feedback from "../_shared/Feedback.ts";
 import * as FileSystem from "effect/FileSystem";
@@ -30,7 +30,7 @@ import { Effect, Layer } from "effect";
 import { Etag, HttpPlatform, HttpRouter } from "effect/unstable/http";
 import { BuildAuthorizationUrl } from "../_shared/Notion.ts";
 import { HttpApiBuilder } from "effect/unstable/httpapi";
-import { NotivexApi } from "@notivex/api";
+import { NoteFerryApi } from "@noteferry/api";
 import { RequireUser } from "../_shared/Authentication.ts";
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
@@ -54,7 +54,7 @@ const ToNotionConnection = (Row: Record<string, unknown>): Domain.NotionConnecti
     };
 };
 
-const ConnectionsLive = HttpApiBuilder.group(NotivexApi, "Connections", (Handlers) =>
+const ConnectionsLive = HttpApiBuilder.group(NoteFerryApi, "Connections", (Handlers) =>
     Handlers
         .handle("List", () =>
             Effect.gen(function* ()
@@ -139,7 +139,7 @@ const ConnectionsLive = HttpApiBuilder.group(NotivexApi, "Connections", (Handler
                         .eq("connection_id", ConnectionId));
             })));
 
-const DataSourcesLive = HttpApiBuilder.group(NotivexApi, "DataSources", (Handlers) =>
+const DataSourcesLive = HttpApiBuilder.group(NoteFerryApi, "DataSources", (Handlers) =>
     Handlers
         .handle("Search", (Input) =>
             Effect.gen(function* ()
@@ -198,7 +198,7 @@ const DataSourcesLive = HttpApiBuilder.group(NotivexApi, "DataSources", (Handler
                 yield* DataSources.RemoveForUser(UserId, Input.params.DataSourceId);
             })));
 
-const DestinationsLive = HttpApiBuilder.group(NotivexApi, "Destinations", (Handlers) =>
+const DestinationsLive = HttpApiBuilder.group(NoteFerryApi, "Destinations", (Handlers) =>
     Handlers
         .handle("List", () =>
             Effect.gen(function* ()
@@ -229,7 +229,7 @@ const DestinationsLive = HttpApiBuilder.group(NotivexApi, "Destinations", (Handl
                 yield* Destinations.DeleteForUser(UserId, Input.params.DestinationId);
             })));
 
-const PagesLive = HttpApiBuilder.group(NotivexApi, "Pages", (Handlers) =>
+const PagesLive = HttpApiBuilder.group(NoteFerryApi, "Pages", (Handlers) =>
     Handlers.handle("Create", (Input) =>
         Effect.gen(function* ()
         {
@@ -238,7 +238,7 @@ const PagesLive = HttpApiBuilder.group(NotivexApi, "Pages", (Handlers) =>
             return yield* Pages.CreateForUser(UserId, Input.payload);
         })));
 
-const ProfileLive = HttpApiBuilder.group(NotivexApi, "Profile", (Handlers) =>
+const ProfileLive = HttpApiBuilder.group(NoteFerryApi, "Profile", (Handlers) =>
     Handlers
         .handle("Get", () =>
             Effect.gen(function* ()
@@ -255,7 +255,7 @@ const ProfileLive = HttpApiBuilder.group(NotivexApi, "Profile", (Handlers) =>
                 return yield* Profile.UpdateSettingsForUser(UserId, Input.payload);
             })));
 
-const AccountLive = HttpApiBuilder.group(NotivexApi, "Account", (Handlers) =>
+const AccountLive = HttpApiBuilder.group(NoteFerryApi, "Account", (Handlers) =>
     Handlers.handle("Delete", () =>
         Effect.gen(function* ()
         {
@@ -264,7 +264,7 @@ const AccountLive = HttpApiBuilder.group(NotivexApi, "Account", (Handlers) =>
             yield* Account.DeleteForUser(UserId);
         })));
 
-const ExportRequestsLive = HttpApiBuilder.group(NotivexApi, "ExportRequests", (Handlers) =>
+const ExportRequestsLive = HttpApiBuilder.group(NoteFerryApi, "ExportRequests", (Handlers) =>
     Handlers.handle("Create", () =>
         Effect.gen(function* ()
         {
@@ -273,7 +273,7 @@ const ExportRequestsLive = HttpApiBuilder.group(NotivexApi, "ExportRequests", (H
             yield* ExportRequests.CreateForUser(UserId);
         })));
 
-const FeedbackLive = HttpApiBuilder.group(NotivexApi, "Feedback", (Handlers) =>
+const FeedbackLive = HttpApiBuilder.group(NoteFerryApi, "Feedback", (Handlers) =>
     Handlers.handle("Create", (Input) =>
         Effect.gen(function* ()
         {
@@ -282,7 +282,7 @@ const FeedbackLive = HttpApiBuilder.group(NotivexApi, "Feedback", (Handlers) =>
             yield* Feedback.CreateForUser(UserId, Input.payload);
         })));
 
-const SubscriptionsLive = HttpApiBuilder.group(NotivexApi, "Subscriptions", (Handlers) =>
+const SubscriptionsLive = HttpApiBuilder.group(NoteFerryApi, "Subscriptions", (Handlers) =>
     Handlers
         .handle("Status", () =>
             Effect.gen(function* ()
@@ -340,7 +340,7 @@ const PlatformLayer = Layer.mergeAll(
     HttpPlatform.layer
 ).pipe(Layer.provideMerge(FileSystem.layerNoop({})));
 
-const AppLayer = HttpApiBuilder.layer(NotivexApi).pipe(
+const AppLayer = HttpApiBuilder.layer(NoteFerryApi).pipe(
     Layer.provide(ConnectionsLive),
     Layer.provide(DataSourcesLive),
     Layer.provide(DestinationsLive),

@@ -1,4 +1,4 @@
--- Core Notivex Pro database behavior. Run with `supabase test db` after reset.
+-- Core NoteFerry Pro database behavior. Run with `supabase test db` after reset.
 
 begin;
 
@@ -12,7 +12,7 @@ set enforcement_enabled = true
 where singleton = true;
 
 insert into auth.users (id, email)
-values ('10000000-0000-4000-8000-000000000001', 'subscription-test@notivex.invalid');
+values ('10000000-0000-4000-8000-000000000001', 'subscription-test@noteferry.invalid');
 
 insert into app.notion_connections (
     id, user_id, bot_id, workspace_id, workspace_name

@@ -4,7 +4,7 @@
  * are polled for up to 30 seconds while a positive database result can render
  * immediately.
  *
- * @module notivex/features/onboarding/use-notion-sync
+ * @module noteferry/features/onboarding/use-notion-sync
  *
  * @file      use-notion-sync.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,8 +12,8 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
-import { DiscoverOnboarding, ListConnections } from "@/Domain/Runtime/NotivexApi";
+import type * as Domain from "@noteferry/domain";
+import { DiscoverOnboarding, ListConnections } from "@/Domain/Runtime/NoteFerryApi";
 import { useCallback, useEffect, useState } from "react";
 import type { Thunk } from "@sorrell/effect/Function";
 

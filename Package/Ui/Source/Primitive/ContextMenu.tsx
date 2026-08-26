@@ -6,7 +6,7 @@
  * as-is, since the two are otherwise identical (a menu anchored to a
  * trigger element).
  *
- * @module @notivex/ui/Primitive/ContextMenu
+ * @module @noteferry/ui/Primitive/ContextMenu
  *
  * @file      ContextMenu.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

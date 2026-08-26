@@ -2,7 +2,7 @@
  * Notion-aligned typography primitives for screen chrome, editor content,
  * menus, settings, empty states, controls, and supporting copy.
  *
- * @module @notivex/ui/Primitive/Text
+ * @module @noteferry/ui/Primitive/Text
  *
  * @file      Text.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -70,7 +70,7 @@ export type TextFamily =
     | "Mono";
 
 /**
- * Tracks whether the current render is nested inside a `@notivex/ui` `Text`
+ * Tracks whether the current render is nested inside a `@noteferry/ui` `Text`
  * (or one of its fixed-`Variant` wrappers below) rather than React Native's
  * own `Text`. `Link` reads this via {@link useIsInsideText} to switch its
  * `Subtle` appearance to underlined when used inline within prose.
@@ -79,7 +79,7 @@ const InsideTextContext = React.createContext(false);
 
 export/**
        * Whether the calling component is rendered as a descendant of
-       * `@notivex/ui`'s `Text` component (including any of its fixed-`Variant`
+       * `@noteferry/ui`'s `Text` component (including any of its fixed-`Variant`
        * wrappers, such as `Description` or `Caption`) — as opposed to being
        * unwrapped, or nested only inside React Native's own `Text`.
        *

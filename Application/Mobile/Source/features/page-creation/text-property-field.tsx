@@ -1,7 +1,7 @@
 /**
  * Single-line text input for Notion Rich text properties.
  *
- * @module notivex/features/page-creation/text-property-field
+ * @module noteferry/features/page-creation/text-property-field
  *
  * @file      text-property-field.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -9,10 +9,10 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
-import { MakeStyles, TextStyle, ViewStyle } from "@notivex/ui";
+import type * as Domain from "@noteferry/domain";
+import { MakeStyles, TextStyle, ViewStyle } from "@noteferry/ui";
 import { PropertyLabel } from "@/features/page-creation/property-label";
-import { Textarea } from "@notivex/ui/Primitive";
+import { Textarea } from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 /** Props for a Notion Rich text property field. */

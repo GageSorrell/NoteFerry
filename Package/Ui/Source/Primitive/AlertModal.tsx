@@ -3,7 +3,7 @@
  * of `Dialog` (as opposed to `Modal`).  This renders as a `DialogContent`, so it is
  * meant to be used as a `Dialog`'s child, not mounted as a standalone component.
  *
- * @module @notivex/ui/Primitive/AlertModal
+ * @module @noteferry/ui/Primitive/AlertModal
  *
  * @file      AlertModal.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

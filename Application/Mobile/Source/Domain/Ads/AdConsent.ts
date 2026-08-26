@@ -4,7 +4,7 @@
  * initializes ({@link InitializeAdsRuntime}) so ads are requested with the
  * user's actual consent/tracking choice from the first request onward.
  *
- * @module notivex/Domain/Ads/AdConsent
+ * @module noteferry/Domain/Ads/AdConsent
  *
  * @file      AdConsent.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

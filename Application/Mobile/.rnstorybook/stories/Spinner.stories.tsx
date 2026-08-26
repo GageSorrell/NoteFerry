@@ -1,5 +1,5 @@
 /**
- * @module notivex/Storybook/Spinner
+ * @module noteferry/Storybook/Spinner
  * @internal
  *
  * @file      Spinner.stories.tsx
@@ -9,7 +9,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { Spinner } from "@notivex/ui/Primitive";
+import { Spinner } from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 const meta =

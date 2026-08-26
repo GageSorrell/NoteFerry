@@ -809,13 +809,13 @@ export {
   Subscription_exports as Subscription
 };
 /**
- * Branded string identifiers for every stable identity concept in Notivex.
+ * Branded string identifiers for every stable identity concept in NoteFerry.
  *
  * Every ID in this module is a `string` at runtime but is nominally distinct
  * at the type level, so e.g. a `NotionPageId` can never be passed where a
  * `DestinationId` is expected even though both decode from plain strings.
  *
- * @module @notivex/domain/Id
+ * @module @noteferry/domain/Id
  *
  * @file      Id.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -827,7 +827,7 @@ export {
  * status property, shared between {@link Property.Definition} (what options
  * exist) and {@link Property.Input} (which option a user picked).
  *
- * @module @notivex/domain/Property/Option
+ * @module @noteferry/domain/Property/Option
  *
  * @file      Option.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -842,7 +842,7 @@ export {
  * Deliberately kept separate from {@link Property.Input} ("what the user
  * wants to put into it") and from Notion's own API representation.
  *
- * @module @notivex/domain/Property/Definition
+ * @module @noteferry/domain/Property/Definition
  *
  * @file      Definition.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -852,10 +852,10 @@ export {
 /**
  * `PropertyInput` — "what the user wants to put into it". A parallel,
  * smaller union to {@link Property.Definition}: only the property types a
- * Notivex form can actually collect a value for, and only the fields needed
+ * NoteFerry form can actually collect a value for, and only the fields needed
  * to express that value — never Notion's request-body shape.
  *
- * @module @notivex/domain/Property/Input
+ * @module @noteferry/domain/Property/Input
  *
  * @file      Input.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -865,7 +865,7 @@ export {
 /**
  * Public entry point for the `Property` family of schemas.
  *
- * @module @notivex/domain/Property
+ * @module @noteferry/domain/Property
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -876,7 +876,7 @@ export {
  * Shared "what happens next" choices used by both a destination's
  * post-creation behavior and the app's global launch behavior.
  *
- * @module @notivex/domain/Behavior
+ * @module @noteferry/domain/Behavior
  *
  * @file      Behavior.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -886,9 +886,9 @@ export {
 /**
  * `PageDraft` — local, unsaved quick-entry state: what the user has typed
  * into a destination's form before it becomes a command sent to the
- * Notivex API. This is a Notivex-shaped value, never Notion-shaped JSON.
+ * NoteFerry API. This is a NoteFerry-shaped value, never Notion-shaped JSON.
  *
- * @module @notivex/domain/PageDraft
+ * @module @noteferry/domain/PageDraft
  *
  * @file      PageDraft.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -897,15 +897,15 @@ export {
  */
 /**
  * `CachedDataSourceSchema` — the versioned, normalized representation of a
- * Notion data source's schema that Notivex caches locally so its quick-add
+ * Notion data source's schema that NoteFerry caches locally so its quick-add
  * UI can render without a round trip to Notion on every launch.
  *
  * Notion remains the canonical source of truth; this is deliberately
- * a *normalized* Notivex schema rather than an opaque dump of Notion's API
+ * a *normalized* NoteFerry schema rather than an opaque dump of Notion's API
  * response, so that a future change to Notion's representation only
  * requires updating one mapper.
  *
- * @module @notivex/domain/DataSource
+ * @module @noteferry/domain/DataSource
  *
  * @file      DataSource.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -913,7 +913,7 @@ export {
  * @license   MIT
  */
 /**
- * `NotionConnection` — the user-visible metadata Notivex keeps about one
+ * `NotionConnection` — the user-visible metadata NoteFerry keeps about one
  * authorized Notion connection.
  *
  * This is deliberately **only** the non-secret metadata a Supabase user is
@@ -927,7 +927,7 @@ export {
  * experience?" and {@link DataSource} for "which Notion table/schema is
  * this?".
  *
- * @module @notivex/domain/NotionConnection
+ * @module @noteferry/domain/NotionConnection
  *
  * @file      NotionConnection.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -935,15 +935,15 @@ export {
  * @license   MIT
  */
 /**
- * `Destination` — a first-class Notivex concept: how a user has configured a
+ * `Destination` — a first-class NoteFerry concept: how a user has configured a
  * quick-entry experience for one Notion data source.
  *
- * A `Destination` answers "how has this Notivex user configured a
+ * A `Destination` answers "how has this NoteFerry user configured a
  * quick-entry experience for this data source?" — see
  * {@link NotionConnection} for "which Notion authorization do I use?" and
  * {@link DataSource} for "which Notion table/schema is this?".
  *
- * @module @notivex/domain/Destination
+ * @module @noteferry/domain/Destination
  *
  * @file      Destination.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -951,12 +951,12 @@ export {
  * @license   MIT
  */
 /**
- * App-wide, cross-device user settings — everything under Notivex's settings
+ * App-wide, cross-device user settings — everything under NoteFerry's settings
  * screen that is not scoped to one destination (contrast `Destination`'s
  * `FieldConfiguration`/`Template`/`PostCreationBehavior`, which are
  * per-database).
  *
- * @module @notivex/domain/Settings
+ * @module @noteferry/domain/Settings
  *
  * @file      Settings.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -964,11 +964,11 @@ export {
  * @license   MIT
  */
 /**
- * `Profile` — Notivex-specific information about a user that does not belong
+ * `Profile` — NoteFerry-specific information about a user that does not belong
  * in Supabase's own `auth.users` table, including their cross-device
  * {@link Settings.AppSettings}.
  *
- * @module @notivex/domain/Profile
+ * @module @noteferry/domain/Profile
  *
  * @file      Profile.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -976,12 +976,12 @@ export {
  * @license   MIT
  */
 /**
- * `CreatePageCommand` — a Notivex-shaped request to create a Notion page,
+ * `CreatePageCommand` — a NoteFerry-shaped request to create a Notion page,
  * distinct from both {@link PageDraft.PageDraft} (local, still-editable
  * state) and Notion's own Create Page request body, which only the
  * server-side Notion adapter ever constructs.
  *
- * @module @notivex/domain/Command
+ * @module @noteferry/domain/Command
  *
  * @file      Command.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -989,7 +989,7 @@ export {
  * @license   MIT
  */
 /**
- * Schema-backed tagged errors for every failure mode the rest of Notivex
+ * Schema-backed tagged errors for every failure mode the rest of NoteFerry
  * needs to distinguish. Nothing downstream should ever see a raw exception
  * from Supabase, `fetch`, Deno, or the Notion SDK — adapters translate those
  * into one of these instead, so callers can write
@@ -1003,7 +1003,7 @@ export {
  * a 500. The annotation is inert metadata everywhere else — the domain stays
  * free of any HTTP dependency.
  *
- * @module @notivex/domain/Error
+ * @module @noteferry/domain/Error
  *
  * @file      Error.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -1011,14 +1011,14 @@ export {
  * @license   MIT
  */
 /**
- * Public entry point for `@notivex/domain`.
+ * Public entry point for `@noteferry/domain`.
  *
- * Portable Effect `Schema` definitions shared across Notivex: branded ids,
+ * Portable Effect `Schema` definitions shared across NoteFerry: branded ids,
  * the Notion property/data-source/connection/destination model, local
  * quick-entry drafts, and the tagged error vocabulary. This package must
  * never import Expo, Supabase, or the Notion SDK.
  *
- * @module @notivex/domain
+ * @module @noteferry/domain
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

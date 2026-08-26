@@ -1,6 +1,6 @@
 /** Server-authoritative RevenueCat entitlement snapshots and commercial state. */
 
-import * as Domain from "@notivex/domain";
+import * as Domain from "@noteferry/domain";
 import { AdminClient, PrivateSchema } from "./Database.ts";
 import { Effect } from "effect";
 

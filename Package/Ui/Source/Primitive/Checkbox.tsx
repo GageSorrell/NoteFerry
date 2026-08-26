@@ -1,7 +1,7 @@
 /**
  * Ported from `@notion-kit/ui`'s `primitives/checkbox.tsx`.
  *
- * @module @notivex/ui/Primitive/Checkbox
+ * @module @noteferry/ui/Primitive/Checkbox
  *
  * @file      Checkbox.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

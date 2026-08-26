@@ -1,7 +1,7 @@
 /**
  * Ported from `@notion-kit/ui`'s `primitives/textarea.tsx`.
  *
- * @module @notivex/ui/Primitive/Textarea
+ * @module @noteferry/ui/Primitive/Textarea
  *
  * @file      Textarea.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -95,7 +95,7 @@ const useStyles = MakeStyles({
     Base: MakeTextStyle({
         borderWidth: 1,
         /* Matches `Input`'s own fix: every value rendered through
-         * `@notivex/ui`'s `Text` primitives renders in Inter, but a bare RN
+         * `@noteferry/ui`'s `Text` primitives renders in Inter, but a bare RN
          * `TextInput` has no font applied by default and silently falls
          * back to the OS system font, which reads visibly smaller/larger
          * than Inter at the same nominal `fontSize`. */

@@ -1,5 +1,5 @@
 /**
- * @module notivex/Storybook/Label
+ * @module noteferry/Storybook/Label
  * @internal
  *
  * @file      Label.stories.tsx
@@ -9,7 +9,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { Label } from "@notivex/ui/Primitive";
+import { Label } from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 const meta =

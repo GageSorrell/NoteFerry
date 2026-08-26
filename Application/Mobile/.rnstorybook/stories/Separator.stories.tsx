@@ -1,5 +1,5 @@
 /**
- * @module notivex/Storybook/Separator
+ * @module noteferry/Storybook/Separator
  * @internal
  *
  * @file      Separator.stories.tsx
@@ -9,7 +9,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-native";
-import { Separator, Text } from "@notivex/ui/Primitive";
+import { Separator, Text } from "@noteferry/ui/Primitive";
 import { View } from "react-native";
 
 const meta =

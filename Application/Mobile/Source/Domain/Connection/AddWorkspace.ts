@@ -4,7 +4,7 @@
  * caller can send the user straight into selecting that workspace's
  * databases.
  *
- * @module notivex/Domain/Connection/AddWorkspace
+ * @module noteferry/Domain/Connection/AddWorkspace
  *
  * @file      AddWorkspace.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -12,9 +12,9 @@
  * @license   MIT
  */
 
-import type * as Domain from "@notivex/domain";
+import type * as Domain from "@noteferry/domain";
 import { ConnectNotion } from "@/Domain/Connection/Connect";
-import { ListConnections } from "@/Domain/Runtime/NotivexApi";
+import { ListConnections } from "@/Domain/Runtime/NoteFerryApi";
 
 /**
  * Runs {@link ConnectNotion} and resolves to the connection it created, or

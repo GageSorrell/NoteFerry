@@ -1,7 +1,7 @@
 /**
  *
  *
- * @module @notivex/ui/Utility/Utility
+ * @module @noteferry/ui/Utility/Utility
  * @internal
  *
  * @file      Utility.ts

@@ -3,7 +3,7 @@
  * `Text` wrapper styled as the `Token.Typography.Label` variant in
  * `Semantic.Secondary`.
  *
- * @module @notivex/ui/Primitive/Label
+ * @module @noteferry/ui/Primitive/Label
  *
  * @file      Label.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

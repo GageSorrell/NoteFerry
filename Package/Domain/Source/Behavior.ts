@@ -2,7 +2,7 @@
  * Shared "what happens next" choices used by both a destination's
  * post-creation behavior and the app's global launch behavior.
  *
- * @module @notivex/domain/Behavior
+ * @module @noteferry/domain/Behavior
  *
  * @file      Behavior.ts
  * @author    Gage Sorrell <gage@sorrell.sh>

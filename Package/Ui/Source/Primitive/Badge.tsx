@@ -1,7 +1,7 @@
 /**
  * Ported from `@notion-kit/ui`'s `primitives/badge.tsx`.
  *
- * @module @notivex/ui/Primitive/Badge
+ * @module @noteferry/ui/Primitive/Badge
  *
  * @file      Badge.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

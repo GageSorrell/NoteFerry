@@ -17,7 +17,7 @@
  * decides its own visibility by comparing its `Value`/`Label` against the
  * live query.
  *
- * @module @notivex/ui/Primitive/Autocomplete
+ * @module @noteferry/ui/Primitive/Autocomplete
  *
  * @file      Autocomplete.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -75,7 +75,7 @@ const useAutocompleteContext = (): AutocompleteContextValue =>
 
     if (Value === undefined)
     {
-        throw new Error("[@notivex/ui] An `Autocomplete` part was used outside of `<Autocomplete>`.");
+        throw new Error("[@noteferry/ui] An `Autocomplete` part was used outside of `<Autocomplete>`.");
     }
 
     return Value;
