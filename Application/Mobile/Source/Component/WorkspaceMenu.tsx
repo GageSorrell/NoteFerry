@@ -14,18 +14,15 @@
 
 import type * as Domain from "@noteferry/domain";
 import * as React from "react";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-    Pressable
-} from "@noteferry/ui/Primitive";
-import { Building2, LogOut, Plus } from "lucide-react-native";
+import Building2 from "lucide-react-native/icons/building-2";
+import LogOut from "lucide-react-native/icons/log-out";
+import Plus from "lucide-react-native/icons/plus";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@noteferry/ui/Primitive/DropdownMenu";
+import { Pressable } from "@noteferry/ui/Primitive/Pressable";
 import { Alert } from "react-native";
 import type { Thunk } from "@sorrell/effect/Function";
-import { useTheme } from "@noteferry/ui";
+import { useTheme } from "@noteferry/ui/Core";
+import { useTranslation } from "react-i18next";
 
 /** {@inheritDoc WorkspaceMenu} */
 export interface WorkspaceMenuProps extends React.PropsWithChildren
@@ -60,6 +57,7 @@ const WorkspaceMenu = ({
     "use no memo";
 
     const Theme = useTheme();
+    const { t } = useTranslation("component");
     const OtherWorkspaces = ShowAllWorkspaceDatabases
         ? [ ]
         : [ ...Connections ]
@@ -75,11 +73,11 @@ const WorkspaceMenu = ({
     const HandleLogOut = (): void =>
     {
         Alert.alert(
-            "Log out?",
-            "You'll need to sign back in with Notion to use NoteFerry again.",
+            t("workspaceMenu.logOutConfirm.title"),
+            t("workspaceMenu.logOutConfirm.message"),
             [
-                { style: "cancel", text: "Cancel" },
-                { onPress: OnLogOut, style: "destructive", text: "Log out" }
+                { style: "cancel", text: t("workspaceMenu.logOutConfirm.cancel") },
+                { onPress: OnLogOut, style: "destructive", text: t("workspaceMenu.logOutConfirm.confirm") }
             ]
         );
     };
@@ -87,11 +85,13 @@ const WorkspaceMenu = ({
     return (
         <DropdownMenu>
             <DropdownMenuTrigger AsChild>
-                <Pressable Accessibility={ { Label: "Switch workspace", Role: "button" } }>
+                <Pressable Accessibility={ { Label: t("workspaceMenu.accessibilityLabel"), Role: "button" } }>
                     { children }
                 </Pressable>
             </DropdownMenuTrigger>
-            <DropdownMenuContent MatchTriggerWidth={ false } Style={ { minWidth: 220 } }>
+            <DropdownMenuContent
+                MatchTriggerWidth={ false }
+                Style={ { minWidth: 220 } }>
                 { ShowAllWorkspaceDatabases
                     ? (
                         <DropdownMenuItem
@@ -102,7 +102,7 @@ const WorkspaceMenu = ({
                                     strokeWidth={ 1.8 }
                                 />
                             }
-                            Label="Workspaces"
+                            Label={ t("workspaceMenu.workspaces") }
                             OnSelect={ OnOpenWorkspaceSettings }
                         />
                     )
@@ -122,7 +122,7 @@ const WorkspaceMenu = ({
                             strokeWidth={ 1.8 }
                         />
                     }
-                    Label="Add workspace"
+                    Label={ t("workspaceMenu.addWorkspace") }
                     OnSelect={ OnAddWorkspace }
                 />
                 <DropdownMenuItem
@@ -133,7 +133,7 @@ const WorkspaceMenu = ({
                             strokeWidth={ 1.8 }
                         />
                     }
-                    Label="Log out"
+                    Label={ t("workspaceMenu.logOut") }
                     OnSelect={ HandleLogOut }
                 />
             </DropdownMenuContent>

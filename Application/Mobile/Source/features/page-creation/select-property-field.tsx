@@ -10,8 +10,9 @@
  */
 
 import type * as Domain from "@noteferry/domain";
-import { Body, type BottomSheet } from "@noteferry/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui";
+import { Body } from "@noteferry/ui/Primitive/Text";
+import { type BottomSheet } from "@noteferry/ui/Primitive/BottomSheet";
+import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui/Core";
 import {
     PropertyOptionPill,
     PropertyOptionSheet,
@@ -20,6 +21,7 @@ import {
 import { PropertyLabel } from "@/features/page-creation/property-label";
 import { View } from "react-native";
 import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 /** Props for a single-choice Notion property field. */
 export interface SelectPropertyFieldProps
@@ -41,6 +43,7 @@ export const SelectPropertyField = ({
 }: SelectPropertyFieldProps): React.JSX.Element =>
 {
     const Styles = useStyles();
+    const { t } = useTranslation("pageCreation");
     const SheetRef = useRef<BottomSheet | null>(null);
     const SelectedOption = Property.Options.find(
         (Option: Domain.Property.PropertyOption) => Option.Id === Value
@@ -56,7 +59,7 @@ export const SelectPropertyField = ({
                 OnPress={ () => SheetRef.current?.present() }>
                 { SelectedOption === undefined
                     ? <Body Color={ Token.Semantic.Muted }
-                        Style={ Styles.EmptyValue }>Empty</Body>
+                        Style={ Styles.EmptyValue }>{ t("propertyFields.empty") }</Body>
                     : <PropertyOptionPill Option={ SelectedOption } /> }
             </PropertyOptionSheetTrigger>
             <PropertyOptionSheet

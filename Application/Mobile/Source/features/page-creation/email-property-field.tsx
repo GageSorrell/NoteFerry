@@ -15,10 +15,11 @@
  */
 
 import type * as Domain from "@noteferry/domain";
-import { MakeStyles, TextStyle, ViewStyle } from "@noteferry/ui";
-import { Input } from "@noteferry/ui/Primitive";
+import { MakeStyles, TextStyle, ViewStyle } from "@noteferry/ui/Core";
+import { Input } from "@noteferry/ui/Primitive/Input";
 import { PropertyLabel } from "@/features/page-creation/property-label";
 import { View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 /** Props for a Notion Email property field. */
 export interface EmailPropertyFieldProps
@@ -40,6 +41,7 @@ export const EmailPropertyField = ({
 }: EmailPropertyFieldProps): React.JSX.Element =>
 {
     const Styles = useStyles();
+    const { t } = useTranslation("pageCreation");
 
     return (
         <View style={ [ Styles.Field, Inline && Styles.InlineField ] }>
@@ -48,7 +50,7 @@ export const EmailPropertyField = ({
                 Disabled={ Disabled }
                 KeyboardType="email-address"
                 OnChangeText={ OnValueChange }
-                Placeholder="Empty"
+                Placeholder={ t("propertyFields.empty") }
                 Style={ [ Styles.Input, Inline && Styles.InlineInput ] }
                 TextStyle={ Styles.Text }
                 Value={ Value }

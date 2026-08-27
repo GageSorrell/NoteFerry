@@ -1,0 +1,8 @@
+{
+    "destinationNotFound": "Esta conexión ya no está disponible. Elige otro destino e inténtalo de nuevo.",
+    "pageCreationInProgress": "Esta página ya se está creando. Espera un momento e inténtalo de nuevo.",
+    "rateLimitExceeded": "Enviaste demasiadas solicitudes hace poco. Espera un momento e inténtalo de nuevo.",
+    "freeDatabaseLimitReached": "Las cuentas gratuitas pueden tener hasta {{limit}} bases de datos activas a la vez.",
+    "featureGateError": "Esta función requiere NoteFerry Pro.",
+    "generic": "Algo salió mal. Inténtalo de nuevo."
+}

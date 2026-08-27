@@ -16,7 +16,7 @@
 
 import * as Domain from "@noteferry/domain";
 import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 export/**
        * The kind of submission: open-ended feedback, or a bug report.

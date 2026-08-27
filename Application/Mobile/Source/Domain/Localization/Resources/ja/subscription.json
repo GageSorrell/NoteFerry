@@ -1,0 +1,73 @@
+{
+    "titles": {
+        "plans": "NoteFerry Premium",
+        "subscribe": "NoteFerry Pro"
+    },
+    "purchaseSyncPending": {
+        "title": "購入が完了しました — 設定を仕上げています",
+        "body": "購入の同期が完了し次第、Pro機能が自動的に有効になります。あまり時間はかかりません。"
+    },
+    "subscribe": {
+        "heading": "NoteFerry Pro",
+        "description": "データベースとキャプチャが無制限になり、フルカスタマイズができ、広告も表示されません。",
+        "plan": {
+            "term": {
+                "monthly": "月額",
+                "yearly": "年額",
+                "lifetime": "買い切り"
+            },
+            "accessibilityLabel": "{{term}}、{{price}}",
+            "savePercent": "{{percent}}%オフ",
+            "bestValue": "一番お得",
+            "lifetimeDescription": "一度きりのお支払いです。NoteFerryサービスがサポートされている間、ずっとご利用いただけます。",
+            "renewingDescription": "ストアアカウントでキャンセルしない限り、自動的に更新されます。"
+        },
+        "storeUnavailable": "ストアの商品を利用できません。接続状況を確認して、もう一度お試しください。",
+        "actions": {
+            "continueWith": "{{term}}で続ける",
+            "finishingSetup": "購入が完了しました。設定を仕上げています…",
+            "restore": "購入を復元",
+            "retrySetup": "設定を再試行"
+        },
+        "legalNotice": "購入すると、ストアの請求規約およびNoteFerryのポリシーに同意したものとみなされます。",
+        "terms": "利用規約",
+        "privacy": "プライバシーポリシー",
+        "alerts": {
+            "purchaseSuccess": {
+                "title": "NoteFerry Proの準備ができました",
+                "body": "Pro機能が有効になりました。"
+            },
+            "purchaseNotCompleted": {
+                "title": "購入が完了しませんでした",
+                "body": "もう一度お試しください。"
+            },
+            "restoreSuccess": {
+                "title": "購入を復元しました",
+                "body": "現在のご利用資格を更新しました。"
+            },
+            "restoreFailed": {
+                "title": "復元に失敗しました"
+            },
+            "stillFinishingSetup": {
+                "title": "設定がまだ完了していません",
+                "body": "接続状況を確認して、少し時間をおいてからもう一度お試しください。"
+            }
+        }
+    },
+    "plans": {
+        "heading": "NoteFerry™ Premiumを始めましょう",
+        "description": "無料プランでもキャプチャ、アクセシビリティ、信頼性、アカウント管理はそのまま使えます。Proではカスタマイズや保存先の追加ができ、広告も表示されなくなります。",
+        "usage": {
+            "heading": "現在の利用状況",
+            "description": "直近{{minutes}}分間で{{limit}}ページ中{{used}}ページを使用しました。"
+        },
+        "pricing": {
+            "heading": "プランはひとつ、購入方法は3通り",
+            "fallback": "現地の価格はお支払い画面で表示されます。",
+            "description": "月額プランと年額プランは自動更新されます。買い切りプランは一度きりのお支払いです。"
+        },
+        "actions": {
+            "viewOptions": "サブスクリプションのオプションを見る"
+        }
+    }
+}

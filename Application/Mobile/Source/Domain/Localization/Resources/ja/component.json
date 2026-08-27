@@ -1,0 +1,27 @@
+{
+    "behaviorPicker": {
+        "goToHome": "ホーム画面に移動",
+        "openDatabase": "データベースを開く",
+        "closeApp": "アプリを終了"
+    },
+    "databaseCard": {
+        "createPageAccessibilityLabel": "{{title}}にページを作成"
+    },
+    "workspaceMenu": {
+        "accessibilityLabel": "ワークスペースを切り替え",
+        "workspaces": "ワークスペース",
+        "addWorkspace": "ワークスペースを追加",
+        "logOut": "ログアウト",
+        "logOutConfirm": {
+            "title": "ログアウトしますか?",
+            "message": "NoteFerryをまた使うには、Notionで再度ログインする必要があります。",
+            "cancel": "キャンセル",
+            "confirm": "ログアウト"
+        }
+    },
+    "ads": {
+        "nativeDatabaseAdCard": {
+            "adBadge": "広告"
+        }
+    }
+}

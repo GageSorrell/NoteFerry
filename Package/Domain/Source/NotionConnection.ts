@@ -22,7 +22,7 @@
  */
 
 import * as Id from "./Id.js";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 export/**
        * Whether a connection's Notion authorization is still usable.

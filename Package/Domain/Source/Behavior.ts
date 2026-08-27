@@ -11,7 +11,7 @@
  */
 
 import * as Id from "./Id.js";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 export/**
        * Where the app lands after it launches: the home screen, or straight

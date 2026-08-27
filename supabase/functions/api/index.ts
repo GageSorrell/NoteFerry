@@ -21,6 +21,7 @@ import * as Domain from "@noteferry/domain";
 import * as ExportRequests from "../_shared/ExportRequests.ts";
 import * as Feedback from "../_shared/Feedback.ts";
 import * as FileSystem from "effect/FileSystem";
+import * as Notion from "../_shared/Notion.ts";
 import * as Pages from "../_shared/Pages.ts";
 import * as Path from "effect/Path";
 import * as Profile from "../_shared/Profile.ts";
@@ -52,6 +53,31 @@ const ToNotionConnection = (Row: Record<string, unknown>): Domain.NotionConnecti
         WorkspaceId: Row.workspace_id as Domain.Id.NotionWorkspaceId,
         WorkspaceName: Row.workspace_name as string
     };
+};
+
+/* eslint-disable-next-line jsdoc/require-jsdoc */
+const MapNotionAuthorizationError = (Error_: unknown) =>
+{
+    if (Error_ instanceof Notion.NotionApiError)
+    {
+        if (Error_.Status === 401 || Error_.Status === 403)
+        {
+            return new Domain.Error.NotionUnauthorized({ Message: Error_.Body });
+        }
+
+        if (Error_.Status === 429)
+        {
+            return new Domain.Error.NotionRateLimited({
+                ...(Error_.RetryAfterSeconds === undefined
+                    ? { }
+                    : { RetryAfterSeconds: Error_.RetryAfterSeconds })
+            });
+        }
+
+        return new Domain.Error.NotionUnavailable({ Message: Error_.Body });
+    }
+
+    return new Domain.Error.NetworkError({ Message: String(Error_) });
 };
 
 const ConnectionsLive = HttpApiBuilder.group(NoteFerryApi, "Connections", (Handlers) =>
@@ -106,6 +132,76 @@ const ConnectionsLive = HttpApiBuilder.group(NoteFerryApi, "Connections", (Handl
                         State
                     })
                 };
+            }))
+        .handle("AdoptAuthorization", (Input) =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+                const Bot = yield* Effect.tryPromise({
+                    catch: MapNotionAuthorizationError,
+                    try: async () => await Notion.RetrieveBotUser(Input.payload.ProviderToken)
+                });
+                const { data: Connection, error: ConnectionError } =
+                    yield* Effect.promise(async () => await AdminClient
+                        .from("notion_connections")
+                        .upsert(
+                            {
+                                bot_id: Bot.id,
+                                notion_owner_avatar_url:
+                                    Bot.bot.owner.user?.avatar_url ?? null,
+                                notion_owner_user_id: Bot.bot.owner.user?.id ?? null,
+                                revoked_at: null,
+                                status: "Active",
+                                user_id: UserId,
+                                workspace_id: Bot.bot.workspace_id,
+                                workspace_name: Bot.bot.workspace_name ?? "Notion workspace"
+                            },
+                            { onConflict: "user_id,bot_id" }
+                        )
+                        .select("id")
+                        .single());
+
+                if (ConnectionError || !Connection)
+                {
+                    return yield* Effect.fail(new Domain.Error.DatabaseError({
+                        Message: ConnectionError?.message ?? "Failed to persist the Notion connection."
+                    }));
+                }
+
+                const { data: ExistingCredential, error: ExistingCredentialError } =
+                    yield* Effect.promise(async () => await PrivateSchema
+                        .from("notion_connection_credentials")
+                        .select("refresh_token")
+                        .eq("connection_id", Connection.id)
+                        .maybeSingle());
+
+                if (ExistingCredentialError)
+                {
+                    return yield* Effect.fail(new Domain.Error.DatabaseError({
+                        Message: ExistingCredentialError.message
+                    }));
+                }
+
+                const { error: CredentialError } = yield* Effect.promise(async () =>
+                    await PrivateSchema
+                        .from("notion_connection_credentials")
+                        .upsert(
+                            {
+                                access_token: Input.payload.ProviderToken,
+                                connection_id: Connection.id,
+                                refresh_token: Input.payload.ProviderRefreshToken
+                                    ?? ExistingCredential?.refresh_token
+                                    ?? null
+                            },
+                            { onConflict: "connection_id" }
+                        ));
+
+                if (CredentialError)
+                {
+                    return yield* Effect.fail(new Domain.Error.DatabaseError({
+                        Message: CredentialError.message
+                    }));
+                }
             }))
         .handle("Disconnect", (Input) =>
             Effect.gen(function* ()

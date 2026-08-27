@@ -19,22 +19,28 @@ import {
     View
 } from "react-native";
 import { AddWorkspace, ResolveCurrentConnection, useConnections } from "@/Domain/Connection";
-import { Body, Button, Description, MeterBar, Pressable } from "@noteferry/ui/Primitive";
-import { CircleFadingArrowUp, HelpCircle, Settings, UserRound } from "lucide-react-native";
-import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
+import { Body, Description } from "@noteferry/ui/Primitive/Text";
+import { Button } from "@noteferry/ui/Primitive/Button";
+import { MeterBar } from "@noteferry/ui/Primitive/Meter";
+import { Pressable } from "@noteferry/ui/Primitive/Pressable";
+import CircleFadingArrowUp from "lucide-react-native/icons/circle-fading-arrow-up";
+import HelpCircle from "lucide-react-native/icons/circle-question-mark";
+import Settings from "lucide-react-native/icons/settings";
+import UserRound from "lucide-react-native/icons/user-round";
+import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
 import { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DatabaseCard } from "@/Component/DatabaseCard";
 import { Image } from "expo-image";
 import { RegisterQuickActions } from "@/Domain/Runtime/QuickActions";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { SymbolView } from "expo-symbols";
 import { WorkspaceMenu } from "@/Component/WorkspaceMenu";
 import { useAuth } from "@/Domain/Auth";
 import { useFocusEffect } from "expo-router";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSettings } from "@/features/settings/use-settings";
 import { useSubscription } from "@/Domain/Subscription";
+import { useTranslation } from "react-i18next";
 
 /* Only the *first* home-screen mount of an app session should honor
  * `LaunchBehavior`; a returning visit from inside the app (e.g. back from
@@ -99,6 +105,7 @@ const NotionAvatar = ({ Name, Uri }: NotionAvatarProps): React.JSX.Element =>
 
     const Theme = useTheme();
     const Styles = useStyles();
+    const { t } = useTranslation("home");
     const [ HasImageError, SetHasImageError ] = useState(false);
     const CanDisplayImage = Uri !== undefined
         && (Uri.startsWith("https://") || Uri.startsWith("http://"))
@@ -107,7 +114,7 @@ const NotionAvatar = ({ Name, Uri }: NotionAvatarProps): React.JSX.Element =>
 
     return (
         <View
-            accessibilityLabel={ `Notion profile for ${ Name }` }
+            accessibilityLabel={ t("avatarAccessibilityLabel", { name: Name }) }
             accessible
             style={ Styles.Avatar }>
             { CanDisplayImage
@@ -163,6 +170,7 @@ const HomeScreen = () =>
     const Router = useLazyRouter();
     const Theme = useTheme();
     const Styles = useStyles();
+    const { t } = useTranslation("home");
     const CurrentConnection = ResolveCurrentConnection(Connections, AppSettings.SelectedConnectionId);
     const AvatarUri = CurrentConnection?.NotionOwnerAvatarUrl
         ?? CurrentConnection?.WorkspaceIconUrl;
@@ -229,20 +237,19 @@ const HomeScreen = () =>
         if (Source.Access === "Locked")
         {
             Alert.alert(
-                "Unlock this database with Pro",
-                "Free includes three active databases.  Upgrade for unlimited databases, " +
-                "or replace an active database in Database settings.",
+                t("lockedDatabase.title"),
+                t("lockedDatabase.message"),
                 [
-                    { style: "cancel", text: "Not now" },
-                    { onPress: Router.push("/plans"), text: "Compare plans" },
-                    { onPress: Router.push("/subscribe"), text: "Upgrade" }
+                    { style: "cancel", text: t("lockedDatabase.cancel") },
+                    { onPress: Router.push("/plans"), text: t("lockedDatabase.comparePlans") },
+                    { onPress: Router.push("/subscribe"), text: t("lockedDatabase.upgrade") }
                 ]
             );
             return;
         }
 
         Router.push(CreatePageHref(Source))();
-    }, [ Router ]);
+    }, [ Router, t ]);
 
     useFocusEffect(useCallback(() =>
     {
@@ -402,8 +409,8 @@ const HomeScreen = () =>
                                 <Pressable
                                     Accessibility={ {
                                         Label: ShowPlansBadge
-                                            ? "Compare plans, new"
-                                            : "Compare plans",
+                                            ? t("header.comparePlansNew")
+                                            : t("header.comparePlans"),
                                         Role: "button"
                                     } }
                                     OnPress={ OpenPlans }
@@ -412,21 +419,11 @@ const HomeScreen = () =>
                                         { backgroundColor: ControlBackground },
                                         pressed && Styles.ControlPressed
                                     ] }>
-                                    { Platform.OS === "ios"
-                                        ? (
-                                            <SymbolView
-                                                name="arrow.up.circle"
-                                                size={ 20 }
-                                                tintColor="#8C8786"
-                                            />
-                                        )
-                                        : (
-                                            <CircleFadingArrowUp
-                                                color="#8C8786"
-                                                size={ 20 }
-                                                strokeWidth={ 1.8 }
-                                            />
-                                        ) }
+                                    <CircleFadingArrowUp
+                                        color="#8C8786"
+                                        size={ 20 }
+                                        strokeWidth={ 1.8 }
+                                    />
                                     { ShowPlansBadge
                                         ? <View style={ Styles.NotificationBadge } />
                                         : null }
@@ -435,7 +432,7 @@ const HomeScreen = () =>
                             : null }
                         <Pressable
                             Accessibility={ {
-                                Label: "Settings",
+                                Label: t("header.settings"),
                                 Role: "button"
                             } }
                             OnPress={ Router.push("/settings") }
@@ -459,12 +456,12 @@ const HomeScreen = () =>
                     <Description
                         Style={ Styles.SectionTitle }
                         Weight="500">
-                        Databases
+                        { t("databases.title") }
                     </Description>
                     { IsLoading
                         ? <ActivityIndicator color={ Theme.Semantic.Cursor } />
                         : OrderedDataSources.length === 0
-                            ? <Body>No databases found yet.</Body>
+                            ? <Body>{ t("databases.empty") }</Body>
                             : AppSettings.HomeScreenLayout === "2"
                                 ? (
                                     /* `flexWrap` + `justifyContent: "flex-start"` (the
@@ -515,12 +512,12 @@ const HomeScreen = () =>
                                     }) }
                                     style={ Styles.SaleCopy }>
                                     <Body Weight="600">{ Sale.Copy }</Body>
-                                    <Description>View the limited-time offer</Description>
+                                    <Description>{ t("sale.viewOffer") }</Description>
                                 </Pressable>
                                 <Button
                                     Appearance="Link"
                                     OnPress={ DismissSale }>
-                                    Dismiss
+                                    { t("sale.dismiss") }
                                 </Button>
                             </View>
                         )
@@ -530,9 +527,9 @@ const HomeScreen = () =>
                         ? (
                             <View style={ Styles.UsagePanel }>
                                 <View style={ Styles.UsageHeading }>
-                                    <Body Weight="600">Free page allowance</Body>
+                                    <Body Weight="600">{ t("usage.title") }</Body>
                                     <Pressable
-                                        Accessibility={ { Label: "Compare Free and Pro", Role: "button" } }
+                                        Accessibility={ { Label: t("usage.compareAccessibilityLabel"), Role: "button" } }
                                         OnPress={ Router.push("/plans") }>
                                         <HelpCircle
                                             color={ Theme.Semantic.IconSecondary }
@@ -545,20 +542,25 @@ const HomeScreen = () =>
                                     Value={ Allowance.Used }
                                 />
                                 <Description>
-                                    { Allowance.Used } of { Allowance.Limit } pages used in the last
-                                    { ` ${Allowance.WindowMinutes} minutes.` }
+                                    { t("usage.summary", {
+                                        limit: Allowance.Limit,
+                                        minutes: Allowance.WindowMinutes,
+                                        used: Allowance.Used
+                                    }) }
                                 </Description>
                                 { Allowance.NextAvailableAt
                                     ? (
                                         <Description>
-                                            Next slot at { Allowance.NextAvailableAt.toLocaleTimeString([], {
-                                                hour: "numeric",
-                                                minute: "2-digit"
-                                            }) }.
+                                            { t("usage.nextSlot", {
+                                                time: Allowance.NextAvailableAt.toLocaleTimeString([], {
+                                                    hour: "numeric",
+                                                    minute: "2-digit"
+                                                })
+                                            }) }
                                         </Description>
                                     )
                                     : null }
-                                <Button OnPress={ Router.push("/subscribe") }>Upgrade</Button>
+                                <Button OnPress={ Router.push("/subscribe") }>{ t("usage.upgrade") }</Button>
                             </View>
                         )
                         : null }

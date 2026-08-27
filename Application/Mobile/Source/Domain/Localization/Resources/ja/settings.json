@@ -1,0 +1,218 @@
+{
+    "titles": {
+        "settings": "設定",
+        "general": "一般",
+        "notifications": "通知",
+        "quickActions": "クイックアクション",
+        "workspaces": "ワークスペース",
+        "databaseSettings": "データベース設定"
+    },
+    "general": {
+        "onLaunch": {
+            "title": "起動時",
+            "description": "NoteFerryを開いたときに表示される画面です。",
+            "sheetDescription": "NoteFerryを開いたときに表示する画面を選んでください。",
+            "accessibilityLabel": "起動時: {{label}}",
+            "homeScreen": "ホーム画面",
+            "placeholder": "データベースを選択してください"
+        },
+        "homeScreenLayout": {
+            "title": "ホーム画面のレイアウト",
+            "description": "1行に1つのデータベース、または1行に正方形のカードを2つ表示します。",
+            "oneColumn": "1行に1つのデータベース",
+            "twoColumn": "1行に正方形のカードを2つ"
+        },
+        "highContrast": {
+            "title": "コントラストを上げる",
+            "description": "区切り線、枠線、スイッチのコントラストを上げます。",
+            "sheetDescription": "区切り線、枠線、スイッチに使うコントラストの度合いを選んでください。",
+            "accessibilityLabel": "コントラストを上げる: {{label}}",
+            "system": "システム設定を使う",
+            "standard": "標準のコントラスト",
+            "high": "コントラストを上げる",
+            "systemShort": "システム",
+            "standardShort": "オフ",
+            "highShort": "オン"
+        },
+        "homeScreenOrder": {
+            "title": "ホーム画面の順序",
+            "description": "ホーム画面に表示されるデータベースの順序は、ドラッグして変更できます。"
+        },
+        "proGate": {
+            "title": "NoteFerry Proで利用できます",
+            "cancel": "あとで",
+            "comparePlans": "プランを比較",
+            "upgrade": "アップグレード",
+            "layoutMessage": "Proなら2列レイアウトとデータベースの並べ替えが使えるようになります。",
+            "launchMessage": "Proなら選択したデータベースへ直接起動できます。",
+            "orderMessage": "Proならホーム画面のデータベースの順序を自由に設定できます。"
+        },
+        "language": {
+            "title": "言語",
+            "description": "NoteFerryを表示する言語を選んでください。",
+            "sheetDescription": "言語を選ぶか、デバイスの設定に従います。",
+            "accessibilityLabel": "言語: {{label}}",
+            "system": "システムの言語",
+            "names": {
+                "en-US": "English (US)",
+                "es-419": "Español (Latinoamérica)",
+                "ko": "한국어",
+                "ja": "日本語",
+                "de": "Deutsch"
+            }
+        }
+    },
+    "hub": {
+        "subscription": {
+            "upgrade": "NoteFerry Proにアップグレード",
+            "lifetime": "NoteFerry Pro · 永久ライセンス",
+            "activeLabel": "NoteFerry Pro · {{term}} · {{status}}",
+            "termMonthly": "月額",
+            "termYearly": "年額",
+            "termActive": "有効",
+            "renews": "自動更新",
+            "expires": "期限切れ予定"
+        },
+        "rows": {
+            "general": "一般",
+            "databases": "データベース",
+            "workspaces": "ワークスペース",
+            "notifications": "通知",
+            "quickActions": "クイックアクション",
+            "accountSettings": "アカウント設定"
+        },
+        "support": {
+            "heading": "NoteFerryを応援する",
+            "leaveReview": "レビューを書く",
+            "submitFeedback": "フィードバックを送る",
+            "reportBug": "不具合を報告する"
+        },
+        "appInfo": "NoteFerry {{version}}(ビルド {{build}})"
+    },
+    "accountSettings": {
+        "back": "戻る",
+        "title": "アカウント設定",
+        "notion": {
+            "heading": "Notion",
+            "manageButton": "NotionでNoteFerryとの連携を管理する"
+        },
+        "yourData": {
+            "heading": "あなたのデータ",
+            "requestButton": "アカウントデータをリクエストする",
+            "requesting": "リクエスト中…"
+        },
+        "dangerZone": {
+            "heading": "危険ゾーン",
+            "description": "アカウントとそれに関連するすべてのデータが完全に削除されます。ストアのサブスクリプションは別途キャンセルが必要です。",
+            "deleteButton": "アカウントを削除",
+            "deleting": "削除中…"
+        },
+        "requestData": {
+            "successTitle": "リクエストを送信しました",
+            "successMessage": "アカウントデータのコピーの準備ができ次第、メールでお送りします。"
+        },
+        "errorGeneric": {
+            "title": "問題が発生しました",
+            "message": "もう一度お試しください。"
+        },
+        "deleteConfirm": {
+            "title": "アカウントを削除しますか?",
+            "message": "NoteFerryアカウント、連携、クイック入力先がすべて完全に削除されます。この操作は取り消せません。NoteFerryアカウントを削除しても、App StoreやPlay Storeのサブスクリプションは解約されません。",
+            "cancel": "キャンセル",
+            "manageSubscription": "サブスクリプションを管理",
+            "confirm": "アカウントを削除"
+        }
+    },
+    "notificationSettings": {
+        "offline": {
+            "title": "オンラインに戻ったら通知する",
+            "description": "オフライン中にページが作成された場合に通知します。"
+        },
+        "sales": {
+            "title": "サブスクリプションのセール情報を通知する",
+            "descriptionActive": "NoteFerry Proの利用中はオフになります。有効期限が切れても自動ではオンになりません。",
+            "descriptionInactive": "期間限定のNoteFerry Proキャンペーンに関する任意の通知です。"
+        }
+    },
+    "quickActionSettings": {
+        "description": "無料版ではデータベースのショートカットを1つ、Proでは最大6つまで使えます。アプリアイコンを長押しして使用してください。保存した選択内容は、再度アップグレードすると復元されます。",
+        "proGate": {
+            "title": "Proでクイックアクションをもっと追加",
+            "message": "無料版ではホーム画面のデータベースショートカットを1つまで使えます。Proでは最大6つまで使えます。",
+            "cancel": "あとで",
+            "comparePlans": "プランを比較",
+            "upgrade": "アップグレード"
+        }
+    },
+    "workspaceSettings": {
+        "showAll": {
+            "title": "すべてのワークスペースのデータベースをまとめて表示",
+            "description": "現在のワークスペースのデータベースだけでなく、連携しているすべてのワークスペースのデータベースをホーム画面にまとめて表示します。"
+        }
+    },
+    "dataSources": {
+        "back": "‹ 戻る",
+        "title": "データソース",
+        "subtitle": "クイック入力に使うNotionのデータソースを選んでください。",
+        "searching": "検索中…",
+        "searchAgain": "もう一度検索",
+        "empty": "データソースが見つかりませんでした。このワークスペースにNoteFerryとの連携で共有されているデータベースがあるか確認してください。",
+        "entryStatus": {
+            "locked": "ロック中",
+            "saved": "保存済み"
+        },
+        "entryMeta": "{{status}} · フィールド{{count}}個",
+        "configure": "設定",
+        "saving": "保存中…",
+        "update": "更新",
+        "save": "保存",
+        "proUpsell": {
+            "title": "Proでデータベースを無制限に追加",
+            "message": "無料版ではアクティブなデータベースを3つまで使えます。データベース設定から1つを入れ替えられます。",
+            "cancel": "あとで",
+            "comparePlans": "プランを比較",
+            "upgrade": "アップグレード"
+        },
+        "customizeGate": {
+            "title": "Proでデータベースをカスタマイズ",
+            "message": "Proではエイリアス、フォーム設定、テンプレート、作成後の動作まで設定できます。",
+            "cancel": "あとで",
+            "comparePlans": "プランを比較",
+            "upgrade": "アップグレード"
+        },
+        "errorGeneric": {
+            "title": "問題が発生しました",
+            "message": "もう一度お試しください。"
+        }
+    },
+    "databaseSettings": {
+        "description": "無料版ではアクティブなデータベースを3つまで使えます。ロックされたデータベースと保存済みのPro設定はそのまま保持され、入れ替えや削除をしてもNotion側は一切変更されません。",
+        "replacePanel": {
+            "title": "アクティブなデータベースを入れ替える",
+            "description": "{{title}}と入れ替える無料枠を選んでください。",
+            "replaceButton": "{{title}}と入れ替える",
+            "cancel": "キャンセル"
+        },
+        "empty": "選択したデータベースがここに表示されます。",
+        "status": {
+            "locked": "ロック中",
+            "active": "アクティブ"
+        },
+        "replaceActive": "アクティブなものと入れ替える",
+        "customize": "カスタマイズ",
+        "remove": "削除",
+        "customizeGate": {
+            "title": "Proでフォームをカスタマイズ",
+            "message": "Proではエイリアス、表示/非表示、必須項目、並び順、初期値まで変更できます。",
+            "cancel": "あとで",
+            "comparePlans": "プランを比較",
+            "upgrade": "アップグレード"
+        },
+        "removeConfirm": {
+            "title": "NoteFerryから削除しますか?",
+            "message": "{{title}}はNotion側では変更されません。",
+            "cancel": "キャンセル",
+            "confirm": "削除"
+        }
+    }
+}

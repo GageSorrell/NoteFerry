@@ -16,18 +16,18 @@ import type * as Domain from "@noteferry/domain";
 import { ConnectNotion } from "@/Domain/Connection/Connect";
 import { ListConnections } from "@/Domain/Runtime/NoteFerryApi";
 
-/**
- * Runs {@link ConnectNotion} and resolves to the connection it created, or
- * `null` if the user cancelled or the flow otherwise did not complete. The
- * new connection is identified by diffing a fresh connection list against
- * `ExistingConnections`; if nothing is new (the user re-authorized an
- * existing workspace, which upserts its row in place server-side rather than
- * inserting one), the most recently connected row is used instead.
- *
- * @category Connections
- * @since 1.0.0
- */
-export const AddWorkspace = async (
+export/**
+       * Runs {@link ConnectNotion} and resolves to the connection it created, or
+       * `null` if the user cancelled or the flow otherwise did not complete. The
+       * new connection is identified by diffing a fresh connection list against
+       * `ExistingConnections`; if nothing is new (the user re-authorized an
+       * existing workspace, which upserts its row in place server-side rather than
+       * inserting one), the most recently connected row is used instead.
+       *
+       * @category Connections
+       * @since 1.0.0
+       */
+const AddWorkspace = async (
     ExistingConnections: ReadonlyArray<Domain.NotionConnection.NotionConnection>
 ): Promise<Domain.NotionConnection.NotionConnection | null> =>
 {

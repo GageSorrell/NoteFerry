@@ -9,7 +9,7 @@
 
 import * as React from "react";
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
-import { useTheme } from "@noteferry/ui";
+import { useTheme } from "@noteferry/ui/Core";
 
 export/**
        * The status bar, whose style is derived from the NoteFerryTheme provider.

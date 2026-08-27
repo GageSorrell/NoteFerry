@@ -1,5 +1,3 @@
-@AGENTS.md
-
 # agent-device
 
 Use agent-device only for app/device automation tasks.

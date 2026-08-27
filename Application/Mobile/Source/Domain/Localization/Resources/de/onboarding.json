@@ -1,0 +1,127 @@
+{
+    "titles": {
+        "signInModal": "Das erwartet dich: Zwei Schritte"
+    },
+    "signIn": {
+        "heroTitle": "Deine Notizen, schneller.",
+        "heroSubtitle": "Melde dich mit deinem Notion-Konto an",
+        "continueWithNotion": "Mit Notion fortfahren",
+        "noAccount": "Du hast noch kein Notion-Konto?",
+        "signUp": "Registrieren",
+        "legal": {
+            "line1": "Wenn du fortfährst,",
+            "line2": "akzeptierst du unsere",
+            "terms": "Nutzungsbedingungen",
+            "and": "und unsere",
+            "privacy": "Datenschutzrichtlinie"
+        },
+        "learnMore": "Mehr erfahren",
+        "needHelp": "Brauchst du Hilfe?",
+        "copyright": "© 2026 Gage Sorrell. Alle Rechte vorbehalten.",
+        "mail": {
+            "unavailableTitle": "Keine Mail-App verfügbar",
+            "unavailableMessage": "Richte ein E-Mail-Konto auf diesem Gerät ein, um Feedback zu senden.",
+            "subject": "Frage zu NoteFerry",
+            "body": "\n\n—\nNoteFerry {{version}} ({{build}})"
+        }
+    },
+    "signInModal": {
+        "step1": "Zuerst meldest du dich bei Notion an und fügst deinem Workspace die NoteFerry-Integration hinzu.",
+        "step2": "Danach wählst du aus, welche Datenbanken NoteFerry sehen darf.",
+        "tip": "Tipp: Wenn du NoteFerry Zugriff auf eine Seite gibst, erhält es auch Zugriff auf alle Datenbanken unter dieser Seite.",
+        "logInWithNotion": "Mit Notion anmelden",
+        "backToWelcome": "Zurück zum Willkommensbildschirm"
+    },
+    "sync": {
+        "helpLink": "Mehr über Drittanbieter-Verbindungen in Notion erfahren",
+        "loading": {
+            "accessibilityLabel": "Notion-Zugriff wird geprüft",
+            "message": "Es wird geprüft, worauf NoteFerry zugreifen kann…"
+        },
+        "noIntegration": {
+            "title": "NoteFerry wurde nicht hinzugefügt",
+            "subtitle": "Die Autorisierung wurde abgeschlossen, ohne die NoteFerry-Integration zu deinem Workspace hinzuzufügen.",
+            "action": "Zurückgehen und neu starten"
+        },
+        "noAccess": {
+            "title": "Wähle aus, was NoteFerry sehen darf",
+            "subtitle": "Die Integration ist installiert, aber es sind noch keine Seiten oder Datenbanken damit geteilt.",
+            "action": "Seiten in Notion auswählen"
+        },
+        "pagesOnly": {
+            "title": "Keine Datenbanken gefunden",
+            "subtitle": "NoteFerry kann normale Seiten sehen, aber keiner der geteilten Seitenbäume enthält eine Datenbank.",
+            "action": "Zugriff in Notion ändern"
+        },
+        "error": {
+            "title": "Es gab ein Problem",
+            "subtitle": "Wir konnten die Prüfung deines Notion-Zugriffs nicht abschließen. Überprüfe deine Verbindung und versuch es erneut.",
+            "action": "Erneut versuchen"
+        },
+        "pageAccessDisclosure": {
+            "pagesFound_one": "{{count}} Seite gefunden",
+            "pagesFound_other": "{{count}} Seiten gefunden",
+            "whyShown": "Warum Seiten angezeigt werden",
+            "helpGlyph": "?",
+            "noPages": "Keine normalen Seiten sichtbar.",
+            "andMore": "und {{count}} weitere",
+            "sheetTitle": "Seiten und Datenbanken sind unterschiedlich",
+            "sheetBody": "NoteFerry erstellt Einträge in Datenbanken, nicht in normalen Seiten. Eine Seite zu teilen ist trotzdem nützlich: Alle Datenbanken unter dieser Seite werden automatisch mit NoteFerry geteilt, sodass du einen ganzen Seitenbaum in einem Schritt hinzufügen kannst.",
+            "gotIt": "Verstanden"
+        },
+        "databaseSelection": {
+            "title": "Wähle deine Datenbanken",
+            "subtitle": "Free umfasst bis zu drei Datenbanken. NoteFerry Pro bietet unbegrenzt viele Datenbanken, und du kannst eine Free-Auswahl später ersetzen.",
+            "searchPlaceholder": "Datenbanken durchsuchen",
+            "selectedCount_one": "{{count}} Datenbank ausgewählt",
+            "selectedCount_other": "{{count}} Datenbanken ausgewählt",
+            "selectDatabase": "{{title}} auswählen",
+            "moreThan100Pages": ">100 Seiten",
+            "pageCount_one": "{{count}} Seite",
+            "pageCount_other": "{{count}} Seiten",
+            "noResults": "Keine Datenbanken passen zu „{{query}}“.",
+            "selectAtLeastOne": "Wähle mindestens eine Datenbank aus",
+            "continueWith_one": "Mit {{count}} Datenbank fortfahren",
+            "continueWith_other": "Mit {{count}} Datenbanken fortfahren",
+            "proGate": {
+                "title": "Mit Pro unbegrenzt Datenbanken hinzufügen",
+                "message": "Free umfasst drei aktive Datenbanken. Du kannst sie später ersetzen, ohne etwas in Notion zu ändern.",
+                "cancel": "Nicht jetzt",
+                "comparePlans": "Tarife vergleichen",
+                "upgrade": "Upgrade"
+            }
+        }
+    },
+    "enableNotifications": {
+        "title": "Benachrichtigungen aktivieren",
+        "subtitle": "Erhalte eine Benachrichtigung, wenn NoteFerry die Erstellung deiner offline übermittelten Seiten abgeschlossen hat.",
+        "enable": "Benachrichtigungen aktivieren",
+        "notNow": "Nicht jetzt"
+    },
+    "done": {
+        "title": "Du bist startklar!",
+        "description": "Du kannst jetzt loslegen und NoteFerry nutzen. Wenn du möchtest, kannst du die beim Erstellen von Seiten angezeigten Eigenschaften bearbeiten, Aliasse für Datenbanken erstellen und mehr.",
+        "viewDatabaseSettings": "Datenbankeinstellungen ansehen",
+        "addWorkspace": "Weiteren Workspace hinzufügen",
+        "start": "NoteFerry starten"
+    },
+    "oauthCallback": {
+        "accessibilityLabel": "Notion-Autorisierung wird abgeschlossen"
+    },
+    "destinationConfig": {
+        "back": "‹ Zurück",
+        "defaultTitle": "Konfigurieren",
+        "subtitle": "Richte ein Schnelleingabeziel für diese Datenquelle ein.",
+        "name": "Name",
+        "namePlaceholder": "Name des Ziels",
+        "fields": "Felder",
+        "visible": "Sichtbar",
+        "required": "Erforderlich",
+        "afterCreatingPage": "Nach dem Erstellen einer Seite",
+        "saving": "Wird gespeichert…",
+        "saveChanges": "Änderungen speichern",
+        "saveDestination": "Ziel speichern",
+        "configured": "Konfiguriert",
+        "delete": "Löschen"
+    }
+}

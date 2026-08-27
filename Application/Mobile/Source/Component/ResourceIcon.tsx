@@ -14,9 +14,10 @@
  */
 
 import * as React from "react";
-import { ImageStyle, MakeStyles, TextStyle, ViewStyle } from "@noteferry/ui";
-import { IconBlock, type LucideIconName } from "@noteferry/ui/Block";
-import { ItemTitle, Skeleton } from "@noteferry/ui/Primitive";
+import { ImageStyle, MakeStyles, TextStyle, ViewStyle } from "@noteferry/ui/Core";
+import { IconBlock, type LucideIconName } from "@noteferry/ui/Block/IconBlock";
+import { ItemTitle } from "@noteferry/ui/Primitive/Text";
+import { Skeleton } from "@noteferry/ui/Primitive/Skeleton";
 import { Image } from "expo-image";
 import { SvgUri } from "react-native-svg";
 

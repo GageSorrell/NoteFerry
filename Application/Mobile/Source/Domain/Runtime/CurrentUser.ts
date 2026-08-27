@@ -12,7 +12,8 @@
  */
 
 import * as Domain from "@noteferry/domain";
-import { Context, Effect } from "effect";
+import * as Context from "effect/Context";
+import * as Effect from "effect/Effect";
 import { Supabase } from "./Supabase";
 import type { UserResponse } from "@supabase/supabase-js";
 

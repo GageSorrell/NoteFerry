@@ -94,12 +94,7 @@ const Textarea = ({
 const useStyles = MakeStyles({
     Base: MakeTextStyle({
         borderWidth: 1,
-        /* Matches `Input`'s own fix: every value rendered through
-         * `@noteferry/ui`'s `Text` primitives renders in Inter, but a bare RN
-         * `TextInput` has no font applied by default and silently falls
-         * back to the OS system font, which reads visibly smaller/larger
-         * than Inter at the same nominal `fontSize`. */
-        fontFamily: "Inter_400Regular",
+        fontFamily: "Roboto Flex",
         fontSize: 14,
         lineHeight: 20,
         padding: 10,

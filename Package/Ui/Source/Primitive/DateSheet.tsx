@@ -42,7 +42,8 @@ import {
     BottomSheetScrollView
 } from "./BottomSheet.js";
 import { Calendar, type CalendarRange } from "./Calendar.js";
-import { ChevronDown, HelpCircle } from "lucide-react-native";
+import ChevronDown from "lucide-react-native/icons/chevron-down";
+import HelpCircle from "lucide-react-native/icons/circle-question-mark";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./Dialog.js";
 import { MakeStyles, ViewStyle as MakeViewStyle, TextStyle } from "../MakeStyles.js";
 import { MenuItem, MenuItemCheck, MenuItemSelect } from "./Menu.js";
@@ -62,7 +63,8 @@ import { Separator } from "./Separator.js";
 import { Switch } from "./Switch.js";
 import type { Thunk } from "@sorrell/effect/Function";
 import { WithAlpha } from "../Utility/index.js";
-import { format } from "date-fns";
+import { format } from "date-fns/format";
+import type { Locale } from "date-fns";
 import { useToken } from "../ThemeProvider.js";
 
 /**
@@ -97,23 +99,84 @@ interface OptionEntry<A extends string>
     readonly Label: string;
 }
 
-/** Exact labels/values from `NotionKit/.../date/common/date-format-menu.tsx`. */
-const DateFormatOptions: ReadonlyArray<OptionEntry<DateSheetDateFormat>> =
+/**
+ * Every string `DateSheet` renders, overridable by a caller (the app layer
+ * owns translation — this package stays i18n-library-agnostic). Every field
+ * is optional; omitted ones fall back to {@link DefaultDateSheetLabels}, so
+ * existing callers that pass no `Labels` at all keep today's English text.
+ *
+ * @category Input
+ * @since 1.0.0
+ */
+export interface DateSheetLabels
+{
+    readonly SelectDate?: string;
+    readonly SelectTime?: string;
+    readonly Cancel?: string;
+    readonly Done?: string;
+    readonly Help?: string;
+    readonly EndDate?: string;
+    readonly DateFormat?: string;
+    readonly DateFormatFull?: string;
+    readonly DateFormatShort?: string;
+    readonly DateFormatMonthDayYear?: string;
+    readonly DateFormatDayMonthYear?: string;
+    readonly DateFormatYearMonthDay?: string;
+    readonly DateFormatRelative?: string;
+    readonly IncludeTime?: string;
+    readonly TimeFormat?: string;
+    readonly TimeFormatHidden?: string;
+    readonly TimeFormatTwelveHour?: string;
+    readonly TimeFormatTwentyFourHour?: string;
+    readonly Timezone?: string;
+    readonly Clear?: string;
+    /** Sunday-first, e.g. `["Su","Mo","Tu","We","Th","Fr","Sa"]`. */
+    readonly WeekdayLabels?: ReadonlyArray<string>;
+    readonly PreviousMonth?: string;
+    readonly NextMonth?: string;
+}
+
+const DefaultDateSheetLabels: Required<DateSheetLabels> = {
+    Cancel: "Cancel",
+    Clear: "Clear",
+    DateFormat: "Date format",
+    DateFormatDayMonthYear: "Day/Month/Year",
+    DateFormatFull: "Full date",
+    DateFormatMonthDayYear: "Month/Day/Year",
+    DateFormatRelative: "Relative",
+    DateFormatShort: "Short date",
+    DateFormatYearMonthDay: "Year/Month/Day",
+    Done: "Done",
+    EndDate: "End date",
+    Help: "Help",
+    IncludeTime: "Include time",
+    NextMonth: "Next month",
+    PreviousMonth: "Previous month",
+    SelectDate: "Select a date",
+    SelectTime: "Select a time",
+    TimeFormat: "Time format",
+    TimeFormatHidden: "Hidden",
+    TimeFormatTwelveHour: "12 hour",
+    TimeFormatTwentyFourHour: "24 hour",
+    Timezone: "Timezone",
+    WeekdayLabels: [ "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa" ]
+};
+
+const BuildDateFormatOptions = (L: Required<DateSheetLabels>): ReadonlyArray<OptionEntry<DateSheetDateFormat>> =>
     [
-        { Label: "Full date", Value: "Full" },
-        { Label: "Short date", Value: "Short" },
-        { Label: "Month/Day/Year", Value: "MonthDayYear" },
-        { Label: "Day/Month/Year", Value: "DayMonthYear" },
-        { Label: "Year/Month/Day", Value: "YearMonthDay" },
-        { Label: "Relative", Value: "Relative" }
+        { Label: L.DateFormatFull, Value: "Full" },
+        { Label: L.DateFormatShort, Value: "Short" },
+        { Label: L.DateFormatMonthDayYear, Value: "MonthDayYear" },
+        { Label: L.DateFormatDayMonthYear, Value: "DayMonthYear" },
+        { Label: L.DateFormatYearMonthDay, Value: "YearMonthDay" },
+        { Label: L.DateFormatRelative, Value: "Relative" }
     ];
 
-/** Exact labels/values from `NotionKit/.../date/common/time-format-menu.tsx`. */
-const TimeFormatOptions: ReadonlyArray<OptionEntry<DateSheetTimeFormat>> =
+const BuildTimeFormatOptions = (L: Required<DateSheetLabels>): ReadonlyArray<OptionEntry<DateSheetTimeFormat>> =>
     [
-        { Label: "Hidden", Value: "Hidden" },
-        { Label: "12 hour", Value: "TwelveHour" },
-        { Label: "24 hour", Value: "TwentyFourHour" }
+        { Label: L.TimeFormatHidden, Value: "Hidden" },
+        { Label: L.TimeFormatTwelveHour, Value: "TwelveHour" },
+        { Label: L.TimeFormatTwentyFourHour, Value: "TwentyFourHour" }
     ];
 
 const FallbackTimezones: ReadonlyArray<string> =
@@ -201,8 +264,10 @@ const NormalizeNativeDatePickerValue = (Value: Date): Date =>
         : Value;
 
 /** Deliberately independent of `DateFormat` — see the file header comment. */
-const FormatChipDate = (Value: Date | undefined): string =>
-    Value === undefined ? "Select a date" : format(Value, "MM/dd/yyyy");
+const FormatChipDate = (Value: Date | undefined, SelectDateLabel: string, Locale: Locale | undefined): string =>
+    Value === undefined
+        ? SelectDateLabel
+        : format(Value, "MM/dd/yyyy", Locale === undefined ? { } : { locale: Locale });
 
 /**
  * The `Value`/`DefaultValue`/`OnValueChange` controlled/uncontrolled triple
@@ -318,9 +383,10 @@ interface DateSheetTimeSegmentProps
     readonly OnPress: Thunk;
     readonly Value: Date | undefined;
     readonly TimeFormat: DateSheetTimeFormat;
+    readonly Locale: Locale | undefined;
 }
 
-const DateSheetTimeSegment = ({ OnPress, Value, TimeFormat }: DateSheetTimeSegmentProps) =>
+const DateSheetTimeSegment = ({ OnPress, Value, TimeFormat, Locale }: DateSheetTimeSegmentProps) =>
 {
     const Styles = useStyles();
     const Pattern = GetTimeFormatPattern(TimeFormat);
@@ -328,7 +394,7 @@ const DateSheetTimeSegment = ({ OnPress, Value, TimeFormat }: DateSheetTimeSegme
 
     return (
         <DateSheetChipSegment
-            Label={ format(Reference, Pattern) }
+            Label={ format(Reference, Pattern, Locale === undefined ? { } : { locale: Locale }) }
             OnPress={ OnPress }
             Style={ Styles.TimeSegment }
         />
@@ -347,6 +413,7 @@ interface NativePickerRequest
 interface DateSheetNativePickerProps
 {
     readonly AccentColor: string;
+    readonly Labels: Required<DateSheetLabels>;
     readonly MaxDate: Date | undefined;
     readonly MinDate: Date | undefined;
     readonly OnDismiss: Thunk;
@@ -358,6 +425,7 @@ interface DateSheetNativePickerProps
 
 const DateSheetNativePicker = ({
     AccentColor,
+    Labels,
     MaxDate,
     MinDate,
     OnDismiss,
@@ -369,7 +437,7 @@ const DateSheetNativePicker = ({
 {
     const Styles = useStyles();
     const [ DraftValue, SetDraftValue ] = React.useState(Request.Value);
-    const Title = Request.Mode === "date" ? "Select a date" : "Select a time";
+    const Title = Request.Mode === "date" ? Labels.SelectDate : Labels.SelectTime;
 
     const Picker = (
         <NativeDateTimePicker
@@ -383,7 +451,7 @@ const DateSheetNativePicker = ({
             { ...(Request.Mode === "date" && MinDate !== undefined
                 ? { minimumDate: MinDate }
                 : { }) }
-            negativeButton={ { label: "Cancel" } }
+            negativeButton={ { label: Labels.Cancel } }
             onDismiss={ OnDismiss }
             onValueChange={ (_Event: unknown, Value: Date) =>
             {
@@ -396,7 +464,7 @@ const DateSheetNativePicker = ({
                     SetDraftValue(Value);
                 }
             } }
-            positiveButton={ { label: "Done" } }
+            positiveButton={ { label: Labels.Done } }
             presentation="dialog"
             style={ Platform.OS === "ios" ? Styles.NativePicker : undefined }
             timeZoneName={ Timezone }
@@ -430,13 +498,13 @@ const DateSheetNativePicker = ({
                         Appearance="Hint"
                         OnPress={ OnDismiss }
                         Size="Small">
-                        Cancel
+                        { Labels.Cancel }
                     </Button>
                     <Button
                         Appearance="Blue"
                         OnPress={ () => OnValueChange(DraftValue) }
                         Size="Small">
-                        Done
+                        { Labels.Done }
                     </Button>
                 </DialogFooter>
             </DialogContent>
@@ -453,6 +521,8 @@ interface DateSheetFieldRowProps
     readonly ActiveField: "Start" | "End";
     readonly TimeFormat: DateSheetTimeFormat;
     readonly OnOpenPicker: (Field: "Start" | "End", Mode: NativePickerMode) => void;
+    readonly Labels: Required<DateSheetLabels>;
+    readonly Locale: Locale | undefined;
 }
 
 const DateSheetFieldRow = ({
@@ -462,7 +532,9 @@ const DateSheetFieldRow = ({
     IncludeTime,
     ActiveField,
     TimeFormat,
-    OnOpenPicker
+    OnOpenPicker,
+    Labels,
+    Locale
 }: DateSheetFieldRowProps): React.JSX.Element =>
 {
     const Styles = useStyles();
@@ -476,7 +548,7 @@ const DateSheetFieldRow = ({
                 Highlighted={ ActiveField === "Start" && Value !== undefined }
                 Style={ ShowEndDate ? Styles.ChipFull : Styles.ChipFlex }>
                 <DateSheetChipSegment
-                    Label={ FormatChipDate(Value) }
+                    Label={ FormatChipDate(Value, Labels.SelectDate, Locale) }
                     OnPress={ () => OnOpenPicker("Start", "date") }
                     Style={ Styles.DateSegment }
                 />
@@ -487,6 +559,7 @@ const DateSheetFieldRow = ({
                             Style={ Styles.ChipDivider }
                         />
                         <DateSheetTimeSegment
+                            Locale={ Locale }
                             OnPress={ () => OnOpenPicker("Start", "time") }
                             TimeFormat={ TimeFormat }
                             Value={ Value }
@@ -499,7 +572,7 @@ const DateSheetFieldRow = ({
                     Highlighted={ ActiveField === "End" && EndValue !== undefined }
                     Style={ Styles.ChipFull }>
                     <DateSheetChipSegment
-                        Label={ FormatChipDate(EndValue) }
+                        Label={ FormatChipDate(EndValue, Labels.SelectDate, Locale) }
                         OnPress={ () => OnOpenPicker("End", "date") }
                         Style={ Styles.DateSegment }
                     />
@@ -510,6 +583,7 @@ const DateSheetFieldRow = ({
                                 Style={ Styles.ChipDivider }
                             />
                             <DateSheetTimeSegment
+                                Locale={ Locale }
                                 OnPress={ () => OnOpenPicker("End", "time") }
                                 TimeFormat={ TimeFormat }
                                 Value={ EndValue }
@@ -635,6 +709,10 @@ export interface DateSheetProps extends Pick<BottomSheetProps, "OnDismiss" | "Re
     readonly TestID?: string | undefined;
     /** Heading displayed at the top of the sheet. */
     readonly Title?: string | undefined;
+    /** `date-fns` locale used to format the date/time chips — defaults to US English. */
+    readonly Locale?: Locale | undefined;
+    /** Overrides for every string this component renders — see {@link DateSheetLabels}. */
+    readonly Labels?: DateSheetLabels | undefined;
 }
 
 export/**
@@ -678,10 +756,15 @@ const DateSheet = ({
     OnHelpPress,
     OnClear,
     TestID,
-    Title = "Date"
+    Title = "Date",
+    Locale,
+    Labels: LabelOverrides
 }: DateSheetProps): React.JSX.Element =>
 {
     const Styles = useStyles();
+    const Labels: Required<DateSheetLabels> = { ...DefaultDateSheetLabels, ...LabelOverrides };
+    const DateFormatOptions = React.useMemo(() => BuildDateFormatOptions(Labels), [ Labels ]);
+    const TimeFormatOptions = React.useMemo(() => BuildTimeFormatOptions(Labels), [ Labels ]);
     const [ CurrentValue, SetValue ] =
         useControllable<Date | undefined>(Value, DefaultValue, OnValueChange);
     const [ CurrentEndValue, SetEndValue ] =
@@ -895,7 +978,7 @@ const DateSheet = ({
                     <View style={ Styles.Header }>
                         { OnHelpPress
                             ? <Button
-                                AccessibilityLabel="Help"
+                                AccessibilityLabel={ Labels.Help }
                                 Appearance="NavIcon"
                                 OnPress={ OnHelpPress }
                                 Size="Circle">
@@ -916,6 +999,8 @@ const DateSheet = ({
                                 ActiveField={ CurrentActiveField }
                                 EndValue={ CurrentEndValue }
                                 IncludeTime={ CurrentIncludeTime }
+                                Labels={ Labels }
+                                Locale={ Locale }
                                 OnOpenPicker={ HandleOpenNativePicker }
                                 ShowEndDate={ CurrentShowEndDate }
                                 TimeFormat={ CurrentTimeFormat }
@@ -931,30 +1016,36 @@ const DateSheet = ({
                                         MaxDate={ MaxDate }
                                         MinDate={ MinDate }
                                         Mode="Range"
+                                        NextMonthLabel={ Labels.NextMonth }
                                         OnActiveEndpointChange={ SetActiveField }
                                         OnValueChange={ HandleRangeChange }
+                                        PreviousMonthLabel={ Labels.PreviousMonth }
                                         Style={ Styles.Calendar }
                                         Value={ { End: CurrentEndValue, Start: CurrentValue } }
+                                        WeekdayLabels={ Labels.WeekdayLabels }
                                     />
                                     : <Calendar
                                         Appearance="DateSheet"
                                         MaxDate={ MaxDate }
                                         MinDate={ MinDate }
+                                        NextMonthLabel={ Labels.NextMonth }
                                         OnValueChange={ HandleSingleDayChange }
+                                        PreviousMonthLabel={ Labels.PreviousMonth }
                                         Style={ Styles.Calendar }
                                         Value={ CurrentValue }
+                                        WeekdayLabels={ Labels.WeekdayLabels }
                                     /> }
                             </View>
                         </View>
                         <View style={ CardStyle }>
                             <DateSheetSwitchRow
-                                Label="End date"
+                                Label={ Labels.EndDate }
                                 OnValueChange={ HandleShowEndDateChange }
                                 Value={ CurrentShowEndDate }
                             />
                             <Separator />
                             <MenuItem
-                                Label="Date format"
+                                Label={ Labels.DateFormat }
                                 OnPress={ () => SetIsDateFormatOpen(true) }
                                 Style={ Styles.SwitchRow }
                                 ref={ DateFormatAnchorRef }>
@@ -972,7 +1063,7 @@ const DateSheet = ({
                             />
                             <Separator />
                             <DateSheetSwitchRow
-                                Label="Include time"
+                                Label={ Labels.IncludeTime }
                                 OnValueChange={ SetIncludeTime }
                                 Value={ CurrentIncludeTime }
                             />
@@ -980,7 +1071,7 @@ const DateSheet = ({
                                 <>
                                     <Separator />
                                     <MenuItem
-                                        Label="Time format"
+                                        Label={ Labels.TimeFormat }
                                         OnPress={ () => SetIsTimeFormatOpen(true) }
                                         Style={ Styles.SwitchRow }
                                         ref={ TimeFormatAnchorRef }>
@@ -998,7 +1089,7 @@ const DateSheet = ({
                                     />
                                     <Separator />
                                     <MenuItem
-                                        Label="Timezone"
+                                        Label={ Labels.Timezone }
                                         OnPress={ () => SetIsTimezoneOpen(true) }
                                         Style={ Styles.SwitchRow }
                                         ref={ TimezoneAnchorRef }>
@@ -1023,7 +1114,7 @@ const DateSheet = ({
                         </View>
                         <View style={ CardStyle }>
                             <MenuItem
-                                Label="Clear"
+                                Label={ Labels.Clear }
                                 OnPress={ HandleClear }
                                 Style={ Styles.SwitchRow }
                             />
@@ -1034,6 +1125,7 @@ const DateSheet = ({
             { NativePicker !== undefined && (
                 <DateSheetNativePicker
                     AccentColor={ AccentColor }
+                    Labels={ Labels }
                     MaxDate={ MaxDate }
                     MinDate={ MinDate }
                     OnDismiss={ HandleNativePickerDismiss }

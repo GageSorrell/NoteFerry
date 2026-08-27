@@ -14,13 +14,15 @@
 
 import type * as Domain from "@noteferry/domain";
 import { ActivityIndicator, Alert, ScrollView, View } from "react-native";
-import { Body, Button, Description, Heading1, LabelText } from "@noteferry/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
+import { Body, Description, Heading1, LabelText } from "@noteferry/ui/Primitive/Text";
+import { Button } from "@noteferry/ui/Primitive/Button";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDataSources } from "@/features/data-sources/use-data-sources";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useLocalSearchParams } from "expo-router";
 import { useSubscription } from "@/Domain/Subscription";
+import { useTranslation } from "react-i18next";
 
 /** True when Notion supplied an emoji rather than an image URL. */
 const IsEmoji = (Icon: string | undefined): Icon is string =>
@@ -65,6 +67,7 @@ const DataSourcesScreen = () =>
     const Params = useLocalSearchParams<{ connectionId: string; workspaceName?: string }>();
     const ConnectionId = Params.connectionId as Domain.Id.NotionConnectionId;
     const { HasProAccess } = useSubscription();
+    const { t } = useTranslation("settings");
 
     const { Discovered, Cached, GlobalActiveCount, IsSearching, BusyId, Search, Cache } =
         useDataSources(ConnectionId);
@@ -78,12 +81,12 @@ const DataSourcesScreen = () =>
     const ShowProUpsell = (): void =>
     {
         Alert.alert(
-            "Add unlimited databases with Pro",
-            "Free includes three active databases. You can replace one from Database settings.",
+            t("dataSources.proUpsell.title"),
+            t("dataSources.proUpsell.message"),
             [
-                { style: "cancel", text: "Not now" },
-                { onPress: Router.push("/plans"), text: "Compare plans" },
-                { onPress: Router.push("/subscribe"), text: "Upgrade" }
+                { style: "cancel", text: t("dataSources.proUpsell.cancel") },
+                { onPress: Router.push("/plans"), text: t("dataSources.proUpsell.comparePlans") },
+                { onPress: Router.push("/subscribe"), text: t("dataSources.proUpsell.upgrade") }
             ]
         );
     };
@@ -118,7 +121,7 @@ const DataSourcesScreen = () =>
             {
                 /* eslint-disable-next-line no-console */
                 console.error("Failed to cache data source", Error_);
-                Alert.alert("Something went wrong", "Please try again.");
+                Alert.alert(t("dataSources.errorGeneric.title"), t("dataSources.errorGeneric.message"));
             }
         }
     };
@@ -127,12 +130,12 @@ const DataSourcesScreen = () =>
         if (!HasProAccess)
         {
             Alert.alert(
-                "Customize databases with Pro",
-                "Pro unlocks aliases, form settings, templates, and post-creation behavior.",
+                t("dataSources.customizeGate.title"),
+                t("dataSources.customizeGate.message"),
                 [
-                    { style: "cancel", text: "Not now" },
-                    { onPress: Router.push("/plans"), text: "Compare plans" },
-                    { onPress: Router.push("/subscribe"), text: "Upgrade" }
+                    { style: "cancel", text: t("dataSources.customizeGate.cancel") },
+                    { onPress: Router.push("/plans"), text: t("dataSources.customizeGate.comparePlans") },
+                    { onPress: Router.push("/subscribe"), text: t("dataSources.customizeGate.upgrade") }
                 ]
             );
             return;
@@ -155,14 +158,14 @@ const DataSourcesScreen = () =>
                     Appearance="Link"
                     OnPress={ Router.back }
                     Style={ Styles.Back }>
-                    ‹ Back
+                    { t("dataSources.back") }
                 </Button>
 
                 <Heading1>
-                    { Params.workspaceName ?? "Data sources" }
+                    { Params.workspaceName ?? t("dataSources.title") }
                 </Heading1>
                 <Description Style={ Styles.Subtitle }>
-                    Choose a Notion data source to enable quick entry.
+                    { t("dataSources.subtitle") }
                 </Description>
 
                 <Button
@@ -170,7 +173,7 @@ const DataSourcesScreen = () =>
                     Disabled={ IsSearching }
                     OnPress={ Search }
                     Style={ Styles.SearchButton }>
-                    { IsSearching ? "Searching…" : "Search again" }
+                    { IsSearching ? t("dataSources.searching") : t("dataSources.searchAgain") }
                 </Button>
 
                 <ScrollView
@@ -181,8 +184,7 @@ const DataSourcesScreen = () =>
                         : Discovered.length === 0
                             ? (
                                 <Description>
-                                    No data sources found. Make sure this workspace has databases
-                                    shared with the NoteFerry integration.
+                                    { t("dataSources.empty") }
                                 </Description>
                             )
                             : Discovered.map((Source: Domain.DataSource.DiscoveredDataSource) =>
@@ -205,8 +207,12 @@ const DataSourcesScreen = () =>
                                                 { Entry
                                                     ? (
                                                         <LabelText Style={ Styles.Meta }>
-                                                            { Entry.Access === "Locked" ? "Locked" : "Saved" }
-                                                            { ` · ${Entry.Properties.length} fields` }
+                                                            { t("dataSources.entryMeta", {
+                                                                count: Entry.Properties.length,
+                                                                status: Entry.Access === "Locked"
+                                                                    ? t("dataSources.entryStatus.locked")
+                                                                    : t("dataSources.entryStatus.saved")
+                                                            }) }
                                                         </LabelText>
                                                     )
                                                     : null }
@@ -219,7 +225,7 @@ const DataSourcesScreen = () =>
                                                     <Button
                                                         Appearance="Link"
                                                         OnPress={ () => Configure(Source) }>
-                                                        Configure
+                                                        { t("dataSources.configure") }
                                                     </Button>
                                                 )
                                                 : null }
@@ -227,7 +233,11 @@ const DataSourcesScreen = () =>
                                                 Appearance={ Entry ? "Cell" : "Primary" }
                                                 Disabled={ Busy }
                                                 OnPress={ () => void Save(Source.DataSourceId) }>
-                                                { Busy ? "Saving…" : Entry ? "Update" : "Save" }
+                                                { Busy
+                                                    ? t("dataSources.saving")
+                                                    : Entry
+                                                        ? t("dataSources.update")
+                                                        : t("dataSources.save") }
                                             </Button>
                                         </View>
                                     </View>

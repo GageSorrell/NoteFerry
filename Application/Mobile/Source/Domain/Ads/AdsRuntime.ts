@@ -18,8 +18,7 @@
  * @license   MIT
  */
 
-import { GatherConsent, RequestTrackingIfNeeded } from "./AdConsent";
-import mobileAds from "react-native-google-mobile-ads";
+import { LoadGoogleMobileAds } from "./GoogleMobileAds";
 import { useSyncExternalStore } from "react";
 
 let Ready = false;
@@ -57,6 +56,11 @@ const InitializeAdsRuntime = (): Promise<void> =>
     {
         InitPromise = (async (): Promise<void> =>
         {
+            const [ { GatherConsent, RequestTrackingIfNeeded }, { default: mobileAds } ] = await Promise.all([
+                import("./AdConsent"),
+                LoadGoogleMobileAds()
+            ]);
+
             await GatherConsent();
             await RequestTrackingIfNeeded();
 

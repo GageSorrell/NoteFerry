@@ -12,7 +12,7 @@
  */
 
 import * as Id from "../Id.js";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 export/**
        * Notion's fixed set of semantic tag colors.

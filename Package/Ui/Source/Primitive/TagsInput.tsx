@@ -30,9 +30,9 @@ import {
 } from "react-native";
 import { Description } from "./Text.js";
 import { Pressable } from "./Pressable.js";
-import { String } from "effect";
+import * as String from "effect/String";
 import { WithAlpha } from "../Utility/index.js";
-import { X } from "lucide-react-native";
+import X from "lucide-react-native/icons/x";
 import { useToken } from "../ThemeProvider.js";
 
 /** {@inheritDoc TagsInput} */

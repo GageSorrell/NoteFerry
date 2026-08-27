@@ -10,8 +10,9 @@
  */
 
 import type * as Domain from "@noteferry/domain";
-import { Body, type BottomSheet } from "@noteferry/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui";
+import { Body } from "@noteferry/ui/Primitive/Text";
+import { type BottomSheet } from "@noteferry/ui/Primitive/BottomSheet";
+import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui/Core";
 import {
     PropertyOptionPill,
     PropertyOptionSheet,
@@ -20,6 +21,7 @@ import {
 import { PropertyLabel } from "@/features/page-creation/property-label";
 import { View } from "react-native";
 import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 const EmptySelectedOptionIds:
 ReadonlyArray<Domain.Id.NotionOptionId> = Object.freeze([ ]);
@@ -46,6 +48,7 @@ export const MultiSelectPropertyField = ({
 }: MultiSelectPropertyFieldProps): React.JSX.Element =>
 {
     const Styles = useStyles();
+    const { t } = useTranslation("pageCreation");
     const SheetRef = useRef<BottomSheet | null>(null);
     const SelectedIds = new Set(Value);
     const SelectedOptions = Property.Options.filter(
@@ -70,7 +73,7 @@ export const MultiSelectPropertyField = ({
                 OnPress={ () => SheetRef.current?.present() }>
                 { SelectedOptions.length === 0
                     ? <Body Color={ Token.Semantic.Muted }
-                        Style={ Styles.EmptyValue }>Empty</Body>
+                        Style={ Styles.EmptyValue }>{ t("propertyFields.empty") }</Body>
                     : SelectedOptions.map((Option: Domain.Property.PropertyOption) => (
                         <PropertyOptionPill Option={ Option }
                             key={ Option.Id } />

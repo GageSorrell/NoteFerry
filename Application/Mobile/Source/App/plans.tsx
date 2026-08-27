@@ -1,21 +1,33 @@
-/** Free and NoteFerry Pro comparison, allowance, and purchase entry point. */
+/**
+ * Free and NoteFerry Pro comparison, allowance, and purchase entry point.
+ *
+ * @module noteferry/App/plans
+ *
+ * @file      plans.tsx
+ * @author    Gage Sorrell <gage@sorrell.sh>
+ * @copyright (c) 2026 Gage Sorrell
+ * @license   MIT
+ */
 
-import { Body, Button, Description, Heading1, Heading2 } from "@noteferry/ui/Primitive";
-import { MakeStyles, Token, ViewStyle } from "@noteferry/ui";
+import { Body, Description, Heading1, Heading2 } from "@noteferry/ui/Primitive/Text";
+import { Button } from "@noteferry/ui/Primitive/Button";
+import { MakeStyles, Token, ViewStyle } from "@noteferry/ui/Core";
 import { ScrollView, View } from "react-native";
 import { FeatureMatrix } from "@/features/subscription/feature-matrix";
+import type { PurchasesPackage } from "react-native-purchases";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useSubscription } from "@/Domain/Subscription";
-import type { PurchasesPackage } from "react-native-purchases";
+import { useTranslation } from "react-i18next";
 
 const PlansScreen = (): React.JSX.Element =>
 {
     const Styles = useStyles();
     const { Allowance, Packages, Status } = useSubscription();
+    const { t } = useTranslation("subscription");
     const PriceSummary = Packages.length > 0
         ? Packages.map((Package: PurchasesPackage) => Package.product.priceString).join(" · ")
-        : "Localized store pricing appears at checkout.";
+        : t("plans.pricing.fallback");
 
     return (
         <View style={ Styles.Container }>
@@ -23,19 +35,21 @@ const PlansScreen = (): React.JSX.Element =>
                 edges={ [ "bottom" ] }
                 style={ Styles.SafeArea }>
                 <ScrollView contentContainerStyle={ Styles.Content }>
-                    <Heading1>Get NoteFerry™ Premium</Heading1>
+                    <Heading1>{ t("plans.heading") }</Heading1>
                     <Description>
-                        Free keeps capture, accessibility, reliability, and account controls.
-                        Pro unlocks customization, more destinations, and removes advertising.
+                        { t("plans.description") }
                     </Description>
 
                     { Status?.EnforcementEnabled && !Status.Active && Allowance
                         ? (
                             <View style={ Styles.Usage }>
-                                <Heading2>Your current usage</Heading2>
+                                <Heading2>{ t("plans.usage.heading") }</Heading2>
                                 <Body>
-                                    { Allowance.Used } of { Allowance.Limit } pages used in the
-                                    last { Allowance.WindowMinutes } minutes.
+                                    { t("plans.usage.description", {
+                                        limit: Allowance.Limit,
+                                        minutes: Allowance.WindowMinutes,
+                                        used: Allowance.Used
+                                    }) }
                                 </Body>
                             </View>
                         )
@@ -44,15 +58,15 @@ const PlansScreen = (): React.JSX.Element =>
                     <FeatureMatrix />
 
                     <View style={ Styles.Pricing }>
-                        <Heading2>One tier, three ways to buy</Heading2>
+                        <Heading2>{ t("plans.pricing.heading") }</Heading2>
                         <Body>{ PriceSummary }</Body>
                         <Description>
-                            Monthly and yearly renew automatically. Lifetime is a one-time purchase.
+                            { t("plans.pricing.description") }
                         </Description>
                     </View>
 
                     <Button OnPress={ () => router.push("/subscribe") }>
-                        View subscription options
+                        { t("plans.actions.viewOptions") }
                     </Button>
                 </ScrollView>
             </SafeAreaView>

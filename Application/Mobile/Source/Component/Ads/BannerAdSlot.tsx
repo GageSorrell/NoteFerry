@@ -11,9 +11,11 @@
  * @license   MIT
  */
 
-import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
-import { type BannerPlacement, ResolveAdUnitId, useAdsReady, useIsAdFree } from "@/Domain/Ads";
-import { useState } from "react";
+import { type BannerPlacement, ResolveAdUnitId } from "@/Domain/Ads/AdUnits";
+import { useAdsReady } from "@/Domain/Ads/AdsRuntime";
+import { useEffect, useState } from "react";
+import { useIsAdFree } from "@/Domain/Ads/Entitlement";
+import { LoadGoogleMobileAds, type GoogleMobileAdsModule } from "@/Domain/Ads/GoogleMobileAds";
 
 /** {@inheritDoc BannerAdSlot} */
 export interface BannerAdSlotProps
@@ -32,12 +34,33 @@ const BannerAdSlot = ({ Placement }: BannerAdSlotProps): React.JSX.Element | nul
     const IsAdFree = useIsAdFree();
     const IsAdsReady = useAdsReady();
     const [ HasError, SetHasError ] = useState(false);
+    const [ AdsModule, SetAdsModule ] = useState<GoogleMobileAdsModule | null>(null);
     const UnitId = ResolveAdUnitId(Placement);
 
-    if (IsAdFree || !IsAdsReady || UnitId === null || HasError)
+    useEffect(() =>
+    {
+        if (IsAdFree || !IsAdsReady)
+        {
+            return;
+        }
+
+        let Cancelled = false;
+        void LoadGoogleMobileAds()
+            .then((Module) =>
+            {
+                if (!Cancelled) SetAdsModule(Module);
+            })
+            .catch(() => SetHasError(true));
+
+        return () => { Cancelled = true; };
+    }, [ IsAdFree, IsAdsReady ]);
+
+    if (IsAdFree || !IsAdsReady || UnitId === null || HasError || AdsModule === null)
     {
         return null;
     }
+
+    const { BannerAd, BannerAdSize } = AdsModule;
 
     return (
         <BannerAd

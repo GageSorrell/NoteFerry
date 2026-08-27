@@ -11,8 +11,9 @@
 
 import type * as Domain from "@noteferry/domain";
 import { ActivityIndicator, Alert, ScrollView, View } from "react-native";
-import { Body, Button, Description } from "@noteferry/ui/Primitive";
-import { MakeStyles, Token, ViewStyle, useTheme } from "@noteferry/ui";
+import { Body, Description } from "@noteferry/ui/Primitive/Text";
+import { Button } from "@noteferry/ui/Primitive/Button";
+import { MakeStyles, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
 import { useCallback, useEffect, useState } from "react";
 import {
     ListDataSources,
@@ -25,6 +26,7 @@ import { useDevelopmentOnboarding } from
     "@/features/onboarding/onboarding-development";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSubscription } from "@/Domain/Subscription";
+import { useTranslation } from "react-i18next";
 
 const DatabaseSettingsScreen = (): React.JSX.Element =>
 {
@@ -33,6 +35,7 @@ const DatabaseSettingsScreen = (): React.JSX.Element =>
     const Theme = useTheme();
     const Styles = useStyles();
     const { HasProAccess } = useSubscription();
+    const { t } = useTranslation("settings");
     const [ DataSources, SetDataSources ] =
         useState<readonly Domain.DataSource.CachedDataSourceSchema[]>([ ]);
     const [ IsLoading, SetIsLoading ] = useState(!Development.Active);
@@ -68,15 +71,15 @@ const DatabaseSettingsScreen = (): React.JSX.Element =>
     const ShowCustomizationGate = useCallback((): void =>
     {
         Alert.alert(
-            "Customize forms with Pro",
-            "Pro lets you change aliases, visibility, required fields, order, and defaults.",
+            t("databaseSettings.customizeGate.title"),
+            t("databaseSettings.customizeGate.message"),
             [
-                { style: "cancel", text: "Not now" },
-                { onPress: Router.push("/plans"), text: "Compare plans" },
-                { onPress: Router.push("/subscribe"), text: "Upgrade" }
+                { style: "cancel", text: t("databaseSettings.customizeGate.cancel") },
+                { onPress: Router.push("/plans"), text: t("databaseSettings.customizeGate.comparePlans") },
+                { onPress: Router.push("/subscribe"), text: t("databaseSettings.customizeGate.upgrade") }
             ]
         );
-    }, [ Router ]);
+    }, [ Router, t ]);
 
     const Configure = useCallback((Source: Domain.DataSource.CachedDataSourceSchema): void =>
     {
@@ -109,45 +112,43 @@ const DatabaseSettingsScreen = (): React.JSX.Element =>
     const Remove = useCallback((Source: Domain.DataSource.CachedDataSourceSchema): void =>
     {
         Alert.alert(
-            "Remove from NoteFerry?",
-            `${Source.Title} stays unchanged in Notion.`,
+            t("databaseSettings.removeConfirm.title"),
+            t("databaseSettings.removeConfirm.message", { title: Source.Title }),
             [
-                { style: "cancel", text: "Cancel" },
+                { style: "cancel", text: t("databaseSettings.removeConfirm.cancel") },
                 {
                     onPress: () => void RemoveDataSourceFromNoteFerry(Source.DataSourceId).then(Load),
                     style: "destructive",
-                    text: "Remove"
+                    text: t("databaseSettings.removeConfirm.confirm")
                 }
             ]
         );
-    }, [ Load ]);
+    }, [ Load, t ]);
 
     return (
         <View style={ Styles.Container }>
             <SafeAreaView style={ Styles.SafeArea }>
                 <Description>
-                    Free includes three active databases. Locked databases and saved
-                    Pro configuration are retained; replacing or removing one never
-                    changes anything in Notion.
+                    { t("databaseSettings.description") }
                 </Description>
 
                 { ReplaceTarget
                     ? (
                         <View style={ Styles.ReplacePanel }>
-                            <Body Weight="600">Replace an active database</Body>
+                            <Body Weight="600">{ t("databaseSettings.replacePanel.title") }</Body>
                             <Description>
-                                Choose the Free slot to replace with { ReplaceTarget.Title }.
+                                { t("databaseSettings.replacePanel.description", { title: ReplaceTarget.Title }) }
                             </Description>
                             { DataSources.filter((Source) => Source.Access === "Available")
                                 .map((Source) => (
                                     <Button
                                         key={ Source.DataSourceId }
                                         OnPress={ () => void Replace(Source) }>
-                                        Replace { Source.Title }
+                                        { t("databaseSettings.replacePanel.replaceButton", { title: Source.Title }) }
                                     </Button>
                                 )) }
                             <Button Appearance="Link" OnPress={ () => SetReplaceTarget(null) }>
-                                Cancel
+                                { t("databaseSettings.replacePanel.cancel") }
                             </Button>
                         </View>
                     )
@@ -161,7 +162,7 @@ const DatabaseSettingsScreen = (): React.JSX.Element =>
                         : DataSources.length === 0
                             ? (
                                 <Description>
-                                    Your selected databases will appear here.
+                                    { t("databaseSettings.empty") }
                                 </Description>
                             )
                             : (
@@ -173,7 +174,9 @@ const DatabaseSettingsScreen = (): React.JSX.Element =>
                                                 <View style={ Styles.DatabaseText }>
                                                     <Body NumberOfLines={ 1 }>{ Source.Title }</Body>
                                                     <Description>
-                                                        { Source.Access === "Locked" ? "Locked" : "Active" }
+                                                        { Source.Access === "Locked"
+                                                            ? t("databaseSettings.status.locked")
+                                                            : t("databaseSettings.status.active") }
                                                     </Description>
                                                 </View>
                                             </View>
@@ -181,12 +184,16 @@ const DatabaseSettingsScreen = (): React.JSX.Element =>
                                                 { Source.Access === "Locked"
                                                     ? (
                                                         <Button OnPress={ () => SetReplaceTarget(Source) }>
-                                                            Replace active
+                                                            { t("databaseSettings.replaceActive") }
                                                         </Button>
                                                     )
-                                                    : <Button OnPress={ () => Configure(Source) }>Customize</Button> }
+                                                    : (
+                                                        <Button OnPress={ () => Configure(Source) }>
+                                                            { t("databaseSettings.customize") }
+                                                        </Button>
+                                                    ) }
                                                 <Button Appearance="Link" OnPress={ () => Remove(Source) }>
-                                                    Remove
+                                                    { t("databaseSettings.remove") }
                                                 </Button>
                                             </View>
                                         </View>

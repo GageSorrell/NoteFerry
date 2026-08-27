@@ -13,7 +13,8 @@
  * @license   MIT
  */
 
-import { Schema, pipe } from "effect";
+import * as Schema from "effect/Schema";
+import { pipe } from "effect/Function";
 
 export/**
        * Identifies a NoteFerry user (mirrors the Supabase Auth user id).

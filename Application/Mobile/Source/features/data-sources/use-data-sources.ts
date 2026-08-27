@@ -16,6 +16,7 @@
 import type * as Domain from "@noteferry/domain";
 import { ListDataSources, RefreshDataSource, SearchDataSources } from "@/Domain/Runtime/NoteFerryApi";
 import { useCallback, useEffect, useState } from "react";
+import type { AsyncThunk } from "@sorrell/effect/Function";
 
 /** The state returned by {@link useDataSources}. */
 export interface UseDataSources
@@ -25,7 +26,7 @@ export interface UseDataSources
 
     /**
      * The number of active databases across *every* connection, not just
-     * this one — the free-tier cap is enforced per-user, not per-workspace,
+     * this one.  The free-tier cap is enforced per-user, not per-workspace,
      * so a paywall check scoped to {@link Cached} alone would miss databases
      * already active in another workspace.
      */
@@ -33,18 +34,18 @@ export interface UseDataSources
     readonly IsSearching: boolean;
     readonly IsLoadingCache: boolean;
     readonly BusyId: Domain.Id.NotionDataSourceId | null;
-    readonly Search: () => Promise<void>;
+    readonly Search: AsyncThunk;
     readonly Cache: (DataSourceId: Domain.Id.NotionDataSourceId) => Promise<void>;
 }
 
-/**
- * Loads a connection's discovered and cached data sources on mount, and exposes
- * a re-search plus a per-data-source cache action.
- *
- * @category DataSources
- * @since 1.0.0
- */
-export const useDataSources = (ConnectionId: Domain.Id.NotionConnectionId): UseDataSources =>
+export/**
+       * Loads a connection's discovered and cached data sources on mount, and exposes
+       * a re-search plus a per-data-source cache action.
+       *
+       * @category DataSources
+       * @since 1.0.0
+       */
+const useDataSources = (ConnectionId: Domain.Id.NotionConnectionId): UseDataSources =>
 {
     const [ Discovered, SetDiscovered ] =
         useState<ReadonlyArray<Domain.DataSource.DiscoveredDataSource>>([ ]);

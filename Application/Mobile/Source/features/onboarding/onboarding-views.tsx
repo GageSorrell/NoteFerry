@@ -18,41 +18,31 @@ import * as React from "react";
 import {
     ActivityIndicator,
     Alert,
-    Platform,
     ScrollView,
     View
 } from "react-native";
-import {
-    AuthButton,
-    Body,
-    BottomSheet,
-    BottomSheetView,
-    Button,
-    ButtonLabel,
-    Caption,
-    Checkbox,
-    Description,
-    Heading1,
-    HeroTitle,
-    Input,
-    ItemTitle,
-    Link,
-    Pressable,
-    ScreenTitle
-} from "@noteferry/ui/Primitive";
-import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react-native";
+import { AuthButton, Button } from "@noteferry/ui/Primitive/Button";
+import { Body, ButtonLabel, Caption, Description, Heading1, HeroTitle, ItemTitle, ScreenTitle } from "@noteferry/ui/Primitive/Text";
+import { BottomSheet, BottomSheetView } from "@noteferry/ui/Primitive/BottomSheet";
+import { Checkbox } from "@noteferry/ui/Primitive/Checkbox";
+import { Input } from "@noteferry/ui/Primitive/Input";
+import { Link } from "@noteferry/ui/Primitive/Link";
+import { Pressable } from "@noteferry/ui/Primitive/Pressable";
+import ChevronDown from "lucide-react-native/icons/chevron-down";
+import ChevronUp from "lucide-react-native/icons/chevron-up";
+import ExternalLink from "lucide-react-native/icons/external-link";
 import { HeroImage, ResourceIcon } from "@/Component";
-import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
-import { Boolean } from "effect";
+import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
+import * as Boolean from "effect/Boolean";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
 import type { ImageAsset } from "@/Domain/Utility";
 import type { NotionSyncStatus } from "@/features/onboarding/use-notion-sync";
 import { OnboardingScreen } from "@/features/onboarding/onboarding-screen";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { SymbolView } from "expo-symbols";
 import type { Thunk } from "@sorrell/effect/Function";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 /** Props shared by views with a single primary action. */
 export interface OnboardingActionProps
@@ -88,6 +78,7 @@ const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element =>
 {
     const Theme = useTheme();
     const Styles = useSignInStyles();
+    const { t } = useTranslation("onboarding");
 
     const HandleNeedHelp = React.useCallback(async () =>
     {
@@ -96,24 +87,26 @@ const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element =>
         if (!IsAvailable)
         {
             Alert.alert(
-                "No mail app available",
-                "Set up a mail account on this device to send feedback."
+                t("signIn.mail.unavailableTitle"),
+                t("signIn.mail.unavailableMessage")
             );
 
             return;
         }
 
         const body = Application.nativeApplicationVersion !== null && Application.nativeBuildVersion !== null
-            ? `\n\n—\nNoteFerry ${ Application.nativeApplicationVersion } `
-                + `(${ Application.nativeBuildVersion })`
+            ? t("signIn.mail.body", {
+                build: Application.nativeBuildVersion,
+                version: Application.nativeApplicationVersion
+            })
             : undefined;
 
         await MailComposer.composeAsync({
             body,
             recipients: [ "gage@sorrell.sh" ],
-            subject: "NoteFerry Question"
+            subject: t("signIn.mail.subject")
         });
-    }, [ ]);
+    }, [ t ]);
 
     return (
         <OnboardingScreen
@@ -126,19 +119,19 @@ const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element =>
                         style={ { height: 44, marginBottom: 16, width: 44 } }
                     />
                     <HeroTitle Style={ Styles.HeaderText }>
-                        Your notes, faster.
+                        { t("signIn.heroTitle") }
                     </HeroTitle>
                     <HeroTitle
                         Color="#9D9A99"
-                        Style={ [ Styles.HeaderText, { fontFamily: "Roboto", fontWeight: "bold" } ] }
+                        Style={ [ Styles.HeaderText, { fontFamily: "Roboto Flex", fontWeight: "bold" } ] }
                         Weight="600">
-                        Log in with your Notion account
+                        { t("signIn.heroSubtitle") }
                     </HeroTitle>
                 </View>
             }
             Hero={ undefined }
-            Subtitle="Log in with your Notion account"
-            Title="Your notes, faster.">
+            Subtitle={ t("signIn.heroSubtitle") }
+            Title={ t("signIn.heroTitle") }>
             <View style={ Styles.BottomContent }>
                 <AuthButton
                     Icon={
@@ -149,51 +142,46 @@ const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element =>
                     }
                     OnPress={ OnContinue }
                     Style={ Styles.Cta }>
-                    Continue with Notion
+                    { t("signIn.continueWithNotion") }
                 </AuthButton>
-                {/* <View style={ Styles.FooterSpacer } /> */}
                 <View style={ Styles.Footer }>
-                    <View style={ { gap: 32, marginTop: 16 } }>
-                        <View style={ { flexDirection: "row", justifyContent: "center" } }>
-                            <Description Style={ { fontSize: 14 } }>
-                                Don’t have a Notion account?{"  "}
-                            </Description>
-                            <Link
-                                Appearance="Subtle"
-                                Href="https://app.notion.com/signup"
-                                Style={ { fontSize: 14, textDecorationLine: "underline" } }>
-                                Sign up
-                            </Link>
-                        </View>
-                        <Caption Style={ Styles.LegalCopy }>
-                            By continuing, you acknowledge that you understand{"\n"}
-                            and agree to the{" "}
-                            <Link
-                                Href="https://noteferry.sorrell.sh/terms"
-                                Style={ Styles.CaptionLink }>
-                                Terms &amp; Conditions
-                            </Link>
-                            {" "}and{" "}
-                            <Link
-                                Href="https://noteferry.sorrell.sh/privacy"
-                                Style={ Styles.CaptionLink }>
-                                Privacy Policy
-                            </Link>
-                        </Caption>
-                    </View>
-                    <View style={ Styles.FooterDetails }>
-                        <View style={ Styles.FooterLinks }>
-                            <Link
-                                Href="https://noteferry.sorrell.sh"
-                                Style={ Styles.FooterLink }>Learn more</Link>
-                            <Link
-                                OnPress={ HandleNeedHelp }
-                                Style={ Styles.FooterLink }>Need help?</Link>
-                        </View>
-                        <Description Style={ Styles.Copyright }>
-                            © 2026 Gage Sorrell.  All Rights Reserved.
+                    <View style={ Styles.AccountPrompt }>
+                        <Description Style={ { fontSize: 14 } }>
+                            { t("signIn.noAccount") }{"  "}
                         </Description>
+                        <Link
+                            Appearance="Subtle"
+                            Href="https://app.notion.com/signup"
+                            Style={ { fontSize: 14, textDecorationLine: "underline" } }>
+                            { t("signIn.signUp") }
+                        </Link>
                     </View>
+                    <Caption Style={ Styles.LegalCopy }>
+                        { t("signIn.legal.line1") }{"\n"}
+                        { t("signIn.legal.line2") }{" "}
+                        <Link
+                            Href="https://noteferry.sorrell.sh/terms"
+                            Style={ Styles.CaptionLink }>
+                            { t("signIn.legal.terms") }
+                        </Link>
+                        {" "}{ t("signIn.legal.and") }{" "}
+                        <Link
+                            Href="https://noteferry.sorrell.sh/privacy"
+                            Style={ Styles.CaptionLink }>
+                            { t("signIn.legal.privacy") }
+                        </Link>
+                    </Caption>
+                    <View style={ Styles.FooterLinks }>
+                        <Link
+                            Href="https://noteferry.sorrell.sh"
+                            Style={ Styles.FooterLink }>{ t("signIn.learnMore") }</Link>
+                        <Link
+                            OnPress={ HandleNeedHelp }
+                            Style={ Styles.FooterLink }>{ t("signIn.needHelp") }</Link>
+                    </View>
+                    <Description Style={ Styles.Copyright }>
+                        { t("signIn.copyright") }
+                    </Description>
                 </View>
             </View>
         </OnboardingScreen>
@@ -222,6 +210,7 @@ const SignInModalView = ({
     const Theme = useTheme();
     const Styles = useModalStyles();
     const TipColor = Theme.Semantic.Secondary;
+    const { t } = useTranslation("onboarding");
 
     return (
         <View style={ Styles.Container }>
@@ -232,15 +221,13 @@ const SignInModalView = ({
                     style={ Styles.SafeArea }>
                     <HeroImage Source={ require("../../../Resource/Onboarding/SignInModalStepTwo.png") } />
                     <Body>
-                        First, you’ll sign into Notion and add the NoteFerry integration to
-                        your workspace.
+                        { t("signInModal.step1") }
                     </Body>
                     <Body>
-                        Then, you’ll choose which databases NoteFerry can see.
+                        { t("signInModal.step2") }
                     </Body>
                     <Body Style={ { color: TipColor, textAlign: "center" } }>
-                        Tip: Giving NoteFerry access to a page also gives access to all{" "}
-                        databases under that page.
+                        { t("signInModal.tip") }
                     </Body>
                     <View style={ Styles.Spacer } />
                     <Button
@@ -248,23 +235,13 @@ const SignInModalView = ({
                         OnPress={ OnSignIn }
                         Style={ Styles.FullWidthCta }>
                         <ButtonLabel Color={ Token.Semantic.Primary }>
-                            Log in with Notion
+                            { t("signInModal.logInWithNotion") }
                         </ButtonLabel>
-                        { Platform.OS === "ios"
-                            ? (
-                                <SymbolView
-                                    name="arrow.up.right.square"
-                                    size={ 16 }
-                                    tintColor={ Theme.Semantic.Primary }
-                                />
-                            )
-                            : (
-                                <ExternalLink
-                                    color={ Theme.Semantic.Primary }
-                                    size={ 16 }
-                                    strokeWidth={ 1.8 }
-                                />
-                            ) }
+                        <ExternalLink
+                            color={ Theme.Semantic.Primary }
+                            size={ 16 }
+                            strokeWidth={ 1.8 }
+                        />
                     </Button>
                 </ScrollView>
             </SafeAreaView>
@@ -311,6 +288,7 @@ const PageAccessDisclosure = ({
     const Styles = useOnboardingResultStyles();
     const OnboardingStyles = useOnboardingStyles();
     const NumRemaining = Math.max(0, PageCount - Pages.length);
+    const { t } = useTranslation("onboarding");
 
     return (
         <View style={ Styles.DisclosureSection }>
@@ -325,17 +303,17 @@ const PageAccessDisclosure = ({
                     style={ Styles.DisclosureTrigger }>
                     <View style={ { alignItems: "center", flexDirection: "row", gap: 8 } }>
                         <Body Weight="600">
-                            { PageCount } { PageCount === 1 ? "page" : "pages" } found
+                            { t("sync.pageAccessDisclosure.pagesFound", { count: PageCount }) }
                         </Body>
                         <Pressable
                             Accessibility={ {
-                                Label: "Why pages are shown",
+                                Label: t("sync.pageAccessDisclosure.whyShown"),
                                 Role: "button"
                             } }
                             OnPress={ () => HelpSheet.current?.present() }
                             hitSlop={ 8 }
                             style={ Styles.HelpButton }>
-                            <Description Weight="600">?</Description>
+                            <Description Weight="600">{ t("sync.pageAccessDisclosure.helpGlyph") }</Description>
                         </Pressable>
                     </View>
                     <View
@@ -360,7 +338,7 @@ const PageAccessDisclosure = ({
                         { Pages.length === 0
                             ? (
                                 <Description Color={ Token.Semantic.Muted }>
-                                    No regular pages are visible.
+                                    { t("sync.pageAccessDisclosure.noPages") }
                                 </Description>
                             )
                             : Pages.slice(0, 25).map((
@@ -380,7 +358,7 @@ const PageAccessDisclosure = ({
                         { NumRemaining > 0
                             ? (
                                 <Description Color={ Token.Semantic.Muted }>
-                                    and { NumRemaining } more
+                                    { t("sync.pageAccessDisclosure.andMore", { count: NumRemaining }) }
                                 </Description>
                             )
                             : null }
@@ -391,19 +369,16 @@ const PageAccessDisclosure = ({
             <BottomSheet Ref={ HelpSheet }>
                 <BottomSheetView style={ Styles.HelpSheet }>
                     <View style={ Styles.HelpSheetHeader }>
-                        <ScreenTitle>Pages and databases are different</ScreenTitle>
+                        <ScreenTitle>{ t("sync.pageAccessDisclosure.sheetTitle") }</ScreenTitle>
                         <Description Color={ Token.Semantic.Muted }>
-                            NoteFerry creates entries in databases, not regular pages.
-                            Sharing a page is still useful: any databases beneath that
-                            page are shared with NoteFerry automatically, so you can add a
-                            whole page tree in one step.
+                            { t("sync.pageAccessDisclosure.sheetBody") }
                         </Description>
                     </View>
                     <Button
                         Appearance="Primary"
                         OnPress={ () => HelpSheet.current?.dismiss() }
                         Style={ OnboardingStyles.Cta }>
-                        Got it
+                        { t("sync.pageAccessDisclosure.gotIt") }
                     </Button>
                 </BottomSheetView>
             </BottomSheet>
@@ -464,6 +439,7 @@ const DatabaseSelectionView = ({
 {
     const [ Search, SetSearch ] = React.useState("");
     const Styles = useOnboardingResultStyles();
+    const { t } = useTranslation("onboarding");
     const SortedDatabases: ReadonlyArray<Domain.DataSource.OnboardingDatabase> =
         React.useMemo(
             () => [ ...Data.Databases ]
@@ -516,13 +492,12 @@ const DatabaseSelectionView = ({
                 if (Current.size >= 3)
                 {
                     Alert.alert(
-                        "Add unlimited databases with Pro",
-                        "Free includes three active databases.  " +
-                        "You can replace them later without changing Notion.",
+                        t("sync.databaseSelection.proGate.title"),
+                        t("sync.databaseSelection.proGate.message"),
                         [
-                            { style: "cancel", text: "Not now" },
-                            { onPress: () => router.push("/plans"), text: "Compare plans" },
-                            { onPress: () => router.push("/subscribe"), text: "Upgrade" }
+                            { style: "cancel", text: t("sync.databaseSelection.proGate.cancel") },
+                            { onPress: () => router.push("/plans"), text: t("sync.databaseSelection.proGate.comparePlans") },
+                            { onPress: () => router.push("/subscribe"), text: t("sync.databaseSelection.proGate.upgrade") }
                         ]
                     );
                     return Current;
@@ -533,7 +508,7 @@ const DatabaseSelectionView = ({
 
             return Next;
         });
-    }, [ ]);
+    }, [ t ]);
     const Continue = React.useCallback((): void =>
     {
         OnContinue(Data.Databases.filter((
@@ -550,11 +525,10 @@ const DatabaseSelectionView = ({
                 showsVerticalScrollIndicator={ false }>
                 <View style={ Styles.OutcomeHeader }>
                     <Heading1>
-                        Choose your databases
+                        { t("sync.databaseSelection.title") }
                     </Heading1>
                     <Description>
-                        Free includes up to three databases. NoteFerry Pro includes unlimited
-                        databases, and you can replace a Free selection later.
+                        { t("sync.databaseSelection.subtitle") }
                     </Description>
                 </View>
 
@@ -564,7 +538,7 @@ const DatabaseSelectionView = ({
                             Clear
                             OnCancel={ () => SetSearch("") }
                             OnChangeText={ SetSearch }
-                            Placeholder="Search databases"
+                            Placeholder={ t("sync.databaseSelection.searchPlaceholder") }
                             Search
                             Size="Large"
                             Value={ Search }
@@ -582,9 +556,7 @@ const DatabaseSelectionView = ({
                         importantForAccessibility={ SelectedIds.size === 0
                             ? "no-hide-descendants"
                             : "auto" }>
-                        { SelectedIds.size } { SelectedIds.size === 1
-                            ? "database"
-                            : "databases" } selected
+                        { t("sync.databaseSelection.selectedCount", { count: SelectedIds.size }) }
                     </Description>
 
                     <View
@@ -602,7 +574,7 @@ const DatabaseSelectionView = ({
                                     Index < Databases.length - 1 && Styles.DatabaseRowDivider
                                 ] }>
                                 <Checkbox
-                                    AccessibilityLabel={ `Select ${ Database.Title }` }
+                                    AccessibilityLabel={ t("sync.databaseSelection.selectDatabase", { title: Database.Title }) }
                                     Checked={ SelectedIds.has(Database.DataSourceId) }
                                     Disabled={ IsPending }
                                     OnCheckedChange={ () =>
@@ -618,10 +590,8 @@ const DatabaseSelectionView = ({
                                     Color={ Token.Semantic.Muted }
                                     Style={ Styles.DatabaseCount }>
                                     { Database.HasMoreThan100Pages
-                                        ? ">100 pages"
-                                        : `${ Database.PageCount } ${
-                                            Database.PageCount === 1 ? "page" : "pages"
-                                        }` }
+                                        ? t("sync.databaseSelection.moreThan100Pages")
+                                        : t("sync.databaseSelection.pageCount", { count: Database.PageCount }) }
                                 </Description>
                             </View>
                         )) }
@@ -633,7 +603,7 @@ const DatabaseSelectionView = ({
                         <Description
                             Color={ Token.Semantic.Muted }
                             Style={ Styles.NoSearchResults }>
-                            No databases match “{ Search }”.
+                            { t("sync.databaseSelection.noResults", { query: Search }) }
                         </Description>
                     )
                     : null }
@@ -649,10 +619,8 @@ const DatabaseSelectionView = ({
                     Loading={ IsPending }
                     OnPress={ Continue }>
                     { SelectedIds.size === 0
-                        ? "Select at least one database"
-                        : `Continue with ${ SelectedIds.size } ${
-                            SelectedIds.size === 1 ? "database" : "databases"
-                        }` }
+                        ? t("sync.databaseSelection.selectAtLeastOne")
+                        : t("sync.databaseSelection.continueWith", { count: SelectedIds.size }) }
                 </Button>
             </ScrollView>
         </SafeAreaView>
@@ -665,6 +633,7 @@ const DelayedSyncLoading = ({ Immediate }: { readonly Immediate: boolean }): Rea
     const Theme = useTheme();
     const Styles = useOnboardingResultStyles();
     const [ IsVisible, SetIsVisible ] = React.useState(Immediate);
+    const { t } = useTranslation("onboarding");
 
     React.useEffect(() =>
     {
@@ -685,11 +654,11 @@ const DelayedSyncLoading = ({ Immediate }: { readonly Immediate: boolean }): Rea
         ? (
             <SafeAreaView style={ Styles.Loading }>
                 <ActivityIndicator
-                    accessibilityLabel="Checking Notion access"
+                    accessibilityLabel={ t("sync.loading.accessibilityLabel") }
                     color={ Theme.Semantic.Cursor }
                 />
                 <Description Color={ Token.Semantic.Muted }>
-                    Checking what NoteFerry can access…
+                    { t("sync.loading.message") }
                 </Description>
             </SafeAreaView>
         )
@@ -716,6 +685,7 @@ const SyncView = ({
 {
     const OnboardingStyles = useOnboardingStyles();
     const Styles = useOnboardingResultStyles();
+    const { t } = useTranslation("onboarding");
 
     if (Status === "Syncing")
     {
@@ -726,23 +696,20 @@ const SyncView = ({
     {
         return (
             <AccessOutcomeLayout
-                Subtitle={
-                    "The authorization finished without adding the NoteFerry "
-                    + "integration to your workspace."
-                }
-                Title="NoteFerry wasn’t added">
+                Subtitle={ t("sync.noIntegration.subtitle") }
+                Title={ t("sync.noIntegration.title") }>
                 <View style={ { flex: 1, gap: 24, justifyContent: "flex-end" } }>
                     <Button
                         Appearance="Primary"
                         Loading={ IsPending }
                         OnPress={ OnStartOver }
                         Style={ { alignSelf: "stretch" } }>
-                        Go back and start over
+                        { t("sync.noIntegration.action") }
                     </Button>
                     <Link
                         Href={ NotionConnectionsHelpUrl }
                         Style={ Styles.HelpLink }>
-                        Learn about third-party connections in Notion
+                        { t("sync.helpLink") }
                     </Link>
                 </View>
             </AccessOutcomeLayout>
@@ -753,19 +720,19 @@ const SyncView = ({
     {
         return (
             <AccessOutcomeLayout
-                Subtitle="The integration is installed, but no pages or databases are shared with it yet."
-                Title="Choose what NoteFerry can see">
+                Subtitle={ t("sync.noAccess.subtitle") }
+                Title={ t("sync.noAccess.title") }>
                 <Button
                     Appearance="Primary"
                     Loading={ IsPending }
                     OnPress={ OnAuthorize }
                     Style={ OnboardingStyles.Cta }>
-                    Choose pages in Notion
+                    { t("sync.noAccess.action") }
                 </Button>
                 <Link
                     Href={ NotionConnectionsHelpUrl }
                     Style={ Styles.HelpLink }>
-                    Learn about third-party connections in Notion
+                    { t("sync.helpLink") }
                 </Link>
             </AccessOutcomeLayout>
         );
@@ -776,11 +743,8 @@ const SyncView = ({
         return (
             <AccessOutcomeLayout
                 HeroImageAsset={ require("../../../Resource/Onboarding/Empty.png") }
-                Subtitle={
-                    "NoteFerry can see regular pages, but none of the shared page "
-                    + "trees contain a database."
-                }
-                Title="No databases found">
+                Subtitle={ t("sync.pagesOnly.subtitle") }
+                Title={ t("sync.pagesOnly.title") }>
                 <PageAccessDisclosure
                     PageCount={ Data.PageCount }
                     Pages={ Data.Pages }
@@ -790,12 +754,12 @@ const SyncView = ({
                     Loading={ IsPending }
                     OnPress={ OnAuthorize }
                     Style={ OnboardingStyles.Cta }>
-                    Change access in Notion
+                    { t("sync.pagesOnly.action") }
                 </Button>
                 <Link
                     Href={ NotionConnectionsHelpUrl }
                     Style={ Styles.HelpLink }>
-                    Learn about third-party connections in Notion
+                    { t("sync.helpLink") }
                 </Link>
             </AccessOutcomeLayout>
         );
@@ -812,14 +776,14 @@ const SyncView = ({
 
     return (
         <AccessOutcomeLayout
-            Subtitle="We couldn’t finish checking your Notion access. Check your connection and try again."
-            Title="We hit a snag">
+            Subtitle={ t("sync.error.subtitle") }
+            Title={ t("sync.error.title") }>
             <Button
                 Appearance="Primary"
                 Loading={ IsPending }
                 OnPress={ OnRetry }
                 Style={ OnboardingStyles.Cta }>
-                Try again
+                { t("sync.error.action") }
             </Button>
         </AccessOutcomeLayout>
     );
@@ -847,25 +811,26 @@ const EnableNotificationsView = ({
 }: EnableNotificationsViewProps): React.JSX.Element =>
 {
     const Styles = useOnboardingStyles();
+    const { t } = useTranslation("onboarding");
 
     return (
         <OnboardingScreen
             Hero={ require("../../../Resource/Onboarding/Notifications.png") }
-            Subtitle="Get notified when NoteFerry finishes creating pages you submitted while offline."
-            Title="Enable Notifications">
+            Subtitle={ t("enableNotifications.subtitle") }
+            Title={ t("enableNotifications.title") }>
             <View style={ Styles.Spacer } />
             <Button
                 Appearance="Blue"
                 Loading={ Pending }
                 OnPress={ OnEnable }
                 Style={ { alignSelf: "stretch" } }>
-                Enable notifications
+                { t("enableNotifications.enable") }
             </Button>
             <Button
                 Disabled={ Pending }
                 OnPress={ OnSkip }
                 Style={ { alignSelf: "stretch" } }>
-                Not now
+                { t("enableNotifications.notNow") }
             </Button>
         </OnboardingScreen>
     );
@@ -896,18 +861,17 @@ const DoneView = ({
 {
     const Styles = useCustomizeFormsStyles();
     const AnyPending = Pending || IsAddingWorkspace;
+    const { t } = useTranslation("onboarding");
 
     return (
         <SafeAreaView style={ Styles.SafeArea }>
             <View style={ Styles.Header }>
                 <Heading1>
-                    You&apos;re all set!
+                    { t("done.title") }
                 </Heading1>
                 <HeroImage Source={ require("../../../Resource/Onboarding/Grant.png") } />
                 <Description>
-                    You&apos;re all set to start using NoteFerry. If you&apos;d like, you can
-                    edit the properties displayed when creating pages, create aliases
-                    for databases, and more.
+                    { t("done.description") }
                 </Description>
             </View>
             <View style={ { flex: 1 } } />
@@ -915,20 +879,20 @@ const DoneView = ({
                 <Button
                     Disabled={ AnyPending }
                     OnPress={ OnCustomize }>
-                    View database settings
+                    { t("done.viewDatabaseSettings") }
                 </Button>
                 <Button
                     Disabled={ AnyPending }
                     Loading={ IsAddingWorkspace }
                     OnPress={ OnAddWorkspace }>
-                    Add another workspace
+                    { t("done.addWorkspace") }
                 </Button>
                 <Button
                     Appearance="Blue"
                     Disabled={ AnyPending }
                     Loading={ Pending }
                     OnPress={ OnStart }>
-                    Start using NoteFerry
+                    { t("done.start") }
                 </Button>
             </View>
         </SafeAreaView>
@@ -1134,6 +1098,11 @@ const useModalStyles = MakeStyles({
 });
 
 const useSignInStyles = MakeStyles({
+    AccountPrompt: ViewStyle({
+        flexDirection: "row",
+        justifyContent: "center",
+        marginBottom: 8
+    }),
     AuthIcon: ImageStyle({
         height: 24,
         width: 24
@@ -1155,11 +1124,8 @@ const useSignInStyles = MakeStyles({
     }),
     Footer: ViewStyle({
         alignItems: "center",
-        gap: 64
-    }),
-    FooterDetails: ViewStyle({
-        alignItems: "center",
-        gap: 14
+        gap: 16,
+        marginTop: 16
     }),
     FooterLink: TextStyle({
         fontSize: 12,
@@ -1170,9 +1136,6 @@ const useSignInStyles = MakeStyles({
         flexDirection: "row",
         gap: 20,
         justifyContent: "center"
-    }),
-    FooterSpacer: ViewStyle({
-        flex: 1.5
     }),
     Header: ViewStyle({
         alignItems: "center",

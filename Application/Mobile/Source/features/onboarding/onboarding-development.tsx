@@ -1,6 +1,6 @@
 /**
  * In-memory development scenarios for exercising onboarding without invoking
- * OAuth, Notion, or the NoteFerry API. State deliberately resets on app reload.
+ * OAuth, Notion, or the NoteFerry API.  State deliberately resets on app reload.
  *
  * @module noteferry/features/onboarding/onboarding-development
  *
@@ -65,8 +65,8 @@ const DevelopmentOnboardingContext = React.createContext<DevelopmentOnboardingSt
     Transition: () => { }
 });
 
-/** Provides a development-only, non-persistent onboarding mock session. */
-export const DevelopmentOnboardingProvider = ({ children }: React.PropsWithChildren) =>
+export/** Provides a development-only, non-persistent onboarding mock session. */
+const DevelopmentOnboardingProvider = ({ children }: React.PropsWithChildren) =>
 {
     const [ Session, SetSession ] = React.useState<MockSession | null>(null);
     const Timers = React.useRef<Set<ReturnType<typeof setTimeout>>>(new Set());

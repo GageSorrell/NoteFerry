@@ -15,23 +15,23 @@
  */
 
 import type * as Domain from "@noteferry/domain";
-import {
-    Body,
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-    Heading2,
-    LabelText,
-    Pressable,
-    Sortable
-} from "@noteferry/ui/Primitive";
-import { Ban, Check, ChevronDown, ChevronUp, EllipsisVertical, Eye, EyeOff, Star } from "lucide-react-native";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme, useToken } from "@noteferry/ui";
-import { IconBlock } from "@noteferry/ui/Block";
-import { ApplyVisibleReorder } from "./template-values";
-import { ResolveTemplateIconData } from "./template-icon";
+import Ban from "lucide-react-native/icons/ban";
+import Check from "lucide-react-native/icons/check";
+import ChevronDown from "lucide-react-native/icons/chevron-down";
+import ChevronUp from "lucide-react-native/icons/chevron-up";
+import EllipsisVertical from "lucide-react-native/icons/ellipsis-vertical";
+import Eye from "lucide-react-native/icons/eye";
+import EyeOff from "lucide-react-native/icons/eye-off";
+import Star from "lucide-react-native/icons/star";
+import { Body, Heading2, LabelText } from "@noteferry/ui/Primitive/Text";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@noteferry/ui/Primitive/DropdownMenu";
+import { Pressable } from "@noteferry/ui/Primitive/Pressable";
+import { Sortable } from "@noteferry/ui/Primitive/Sortable";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme, useToken } from "@noteferry/ui/Core";
 import { useCallback, useState } from "react";
+import { ApplyVisibleReorder } from "./template-values";
+import { IconBlock } from "@noteferry/ui/Block/IconBlock";
+import { ResolveTemplateIconData } from "./template-icon";
 import { View } from "react-native";
 
 const Semantic = Token.Semantic;
@@ -56,7 +56,12 @@ interface TemplateRowProps
     readonly Template: Domain.DataSource.CachedDataSourceTemplate;
 }
 
-const TemplateRow = ({ IsSelected, OnHide, OnSelectDefault, Template }: TemplateRowProps): React.JSX.Element =>
+const TemplateRow = ({
+    IsSelected,
+    OnHide,
+    OnSelectDefault,
+    Template
+}: TemplateRowProps): React.JSX.Element =>
 {
     const Styles = useStyles();
 
@@ -121,10 +126,12 @@ const TemplateSection = ({
     const [ IsHiddenExpanded, SetIsHiddenExpanded ] = useState(false);
     const { [Semantic.Muted]: MutedColor } = useToken(Semantic.Muted);
 
-    const TemplateById = new Map(Templates.map((Entry) => [ Entry.TemplateId, Entry ] as const));
-    const VisibleIds = TemplateConfiguration.TemplateOrder.filter((Id) =>
+    const TemplateById = new Map(Templates.map(
+        (Entry: Domain.DataSource.CachedDataSourceTemplate) => [ Entry.TemplateId, Entry ] as const)
+    );
+    const VisibleIds = TemplateConfiguration.TemplateOrder.filter((Id: Domain.Id.NotionTemplateId) =>
         !TemplateConfiguration.Hidden.includes(Id) && TemplateById.has(Id));
-    const HiddenIds = TemplateConfiguration.TemplateOrder.filter((Id) =>
+    const HiddenIds = TemplateConfiguration.TemplateOrder.filter((Id: Domain.Id.NotionTemplateId) =>
         TemplateConfiguration.Hidden.includes(Id) && TemplateById.has(Id));
 
     const Reorder = useCallback((NextVisibleOrder: ReadonlyArray<string>) =>
@@ -151,7 +158,7 @@ const TemplateSection = ({
     {
         OnTemplateConfigurationChange({
             ...TemplateConfiguration,
-            Hidden: TemplateConfiguration.Hidden.filter((Id) => Id !== TemplateId)
+            Hidden: TemplateConfiguration.Hidden.filter((Id: Domain.Id.NotionTemplateId) => Id !== TemplateId)
         });
     }, [ OnTemplateConfigurationChange, TemplateConfiguration ]);
 
@@ -181,7 +188,7 @@ const TemplateSection = ({
                 OnValueChange={ Reorder }
                 Value={ VisibleIds }>
                 <Sortable.List>
-                    { VisibleIds.map((Id) =>
+                    { VisibleIds.map((Id: Domain.Id.NotionTemplateId) =>
                     {
                         const Entry = TemplateById.get(Id);
 
@@ -197,7 +204,9 @@ const TemplateSection = ({
                                 <TemplateRow
                                     IsSelected={ Template.Type === "Specific" && Template.TemplateId === Id }
                                     OnHide={ () => Hide(Id) }
-                                    OnSelectDefault={ () => OnTemplateChange({ TemplateId: Id, Type: "Specific" }) }
+                                    OnSelectDefault={
+                                        () => OnTemplateChange({ TemplateId: Id, Type: "Specific" })
+                                    }
                                     Template={ Entry }
                                 />
                             </Sortable.Item>
@@ -215,18 +224,28 @@ const TemplateSection = ({
                                 Role: "button",
                                 State: { expanded: IsHiddenExpanded }
                             } }
-                            OnPress={ () => SetIsHiddenExpanded((Current) => !Current) }
+                            OnPress={ () => SetIsHiddenExpanded((Current: boolean) => !Current) }
                             style={ Styles.DisclosureTrigger }>
                             <LabelText Color={ Semantic.Muted }>
                                 Hidden templates ({ HiddenIds.length })
                             </LabelText>
                             { IsHiddenExpanded
-                                ? <ChevronUp color={ MutedColor } size={ 16 } />
-                                : <ChevronDown color={ MutedColor } size={ 16 } /> }
+                                ? (
+                                    <ChevronUp
+                                        color={ MutedColor }
+                                        size={ 16 }
+                                    />
+                                )
+                                : (
+                                    <ChevronDown
+                                        color={ MutedColor }
+                                        size={ 16 }
+                                    />
+                                ) }
                         </Pressable>
 
                         { IsHiddenExpanded
-                            ? HiddenIds.map((Id) =>
+                            ? HiddenIds.map((Id: Domain.Id.NotionTemplateId) =>
                             {
                                 const Entry = TemplateById.get(Id);
 

@@ -10,8 +10,9 @@
  * @license   MIT
  */
 
-import { Body, Button, Description, Heading1 } from "@noteferry/ui/Primitive";
-import { MakeStyles, Token, ViewStyle } from "@noteferry/ui";
+import { Body, Description, Heading1 } from "@noteferry/ui/Primitive/Text";
+import { Button } from "@noteferry/ui/Primitive/Button";
+import { MakeStyles, Token, ViewStyle } from "@noteferry/ui/Core";
 import {
     OnboardingMockRegistry,
     OnboardingMockScenarios,

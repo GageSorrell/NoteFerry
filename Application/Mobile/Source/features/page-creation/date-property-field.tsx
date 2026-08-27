@@ -16,16 +16,18 @@ import {
     type PressableStateCallbackType,
     View
 } from "react-native";
-import {
-    Body,
-    type BottomSheet,
-    DateSheet,
-    Pressable
-} from "@noteferry/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
+import { Body } from "@noteferry/ui/Primitive/Text";
+import { type BottomSheet } from "@noteferry/ui/Primitive/BottomSheet";
+import { DateSheet } from "@noteferry/ui/Primitive/DateSheet";
+import { Pressable } from "@noteferry/ui/Primitive/Pressable";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PropertyLabel } from "@/features/page-creation/property-label";
-import { format } from "date-fns";
+import { ResolveCalendarLocaleNames, ResolveDateFnsLocale } from "@/Domain/Localization";
+import type { DateSheetLabels } from "@noteferry/ui/Primitive/DateSheet";
+import { format } from "date-fns/format";
+import type { SupportedLocale } from "@/Domain/Localization";
+import { useTranslation } from "react-i18next";
 
 /** Props for a Notion date property field. */
 export interface DatePropertyFieldProps
@@ -39,8 +41,8 @@ export interface DatePropertyFieldProps
     readonly Value?: Domain.Property.DatePropertyInput | undefined;
 }
 
-const FormatDate = (Value: Date, IncludeTime: boolean): string =>
-    format(Value, IncludeTime ? "MMMM d, yyyy h:mm a" : "MMMM d, yyyy");
+const FormatDate = (Value: Date, IncludeTime: boolean, Locale: ReturnType<typeof ResolveDateFnsLocale>): string =>
+    format(Value, IncludeTime ? "PPp" : "PP", { locale: Locale });
 
 /** Opens the shared date sheet and displays its selected date or range. */
 export const DatePropertyField = ({
@@ -53,6 +55,36 @@ export const DatePropertyField = ({
 {
     const Theme = useTheme();
     const Styles = useStyles();
+    const { i18n, t } = useTranslation("pageCreation");
+    const Locale = ResolveDateFnsLocale(i18n.language as SupportedLocale);
+    const DateSheetLabels_: DateSheetLabels = useMemo(() => ({
+        Cancel: t("dateSheet.cancel"),
+        Clear: t("dateSheet.clear"),
+        DateFormat: t("dateSheet.dateFormat"),
+        DateFormatDayMonthYear: t("dateSheet.dateFormatDayMonthYear"),
+        DateFormatFull: t("dateSheet.dateFormatFull"),
+        DateFormatMonthDayYear: t("dateSheet.dateFormatMonthDayYear"),
+        DateFormatRelative: t("dateSheet.dateFormatRelative"),
+        DateFormatShort: t("dateSheet.dateFormatShort"),
+        DateFormatYearMonthDay: t("dateSheet.dateFormatYearMonthDay"),
+        Done: t("dateSheet.done"),
+        EndDate: t("dateSheet.endDate"),
+        Help: t("dateSheet.help"),
+        IncludeTime: t("dateSheet.includeTime"),
+        NextMonth: t("dateSheet.nextMonth"),
+        PreviousMonth: t("dateSheet.previousMonth"),
+        SelectDate: t("dateSheet.selectDate"),
+        SelectTime: t("dateSheet.selectTime"),
+        TimeFormat: t("dateSheet.timeFormat"),
+        TimeFormatHidden: t("dateSheet.timeFormatHidden"),
+        TimeFormatTwelveHour: t("dateSheet.timeFormatTwelveHour"),
+        TimeFormatTwentyFourHour: t("dateSheet.timeFormatTwentyFourHour"),
+        Timezone: t("dateSheet.timezone"),
+        /* `DateSheetCalendarHeader` is a *custom* header — it renders this array
+         * directly rather than reading react-native-calendars' own `LocaleConfig`
+         * (that system only drives the library's default, non-custom header). */
+        WeekdayLabels: ResolveCalendarLocaleNames(i18n.language as SupportedLocale).DayNamesShort
+    }), [ i18n.language, t ]);
     const SheetRef = useRef<BottomSheet | null>(null);
     const LatestValueRef = useRef(Value);
     const [ IncludeTime, SetIncludeTime ] = useState(false);
@@ -72,11 +104,10 @@ export const DatePropertyField = ({
     const HandleHelpPress = useCallback((): void =>
     {
         Alert.alert(
-            "Why aren't reminders available?",
-            "Notion doesn't expose date reminders through its public API, so NoteFerry can't create or " +
-            "edit them."
+            t("propertyFields.date.helpTitle"),
+            t("propertyFields.date.helpMessage")
         );
-    }, [ ]);
+    }, [ t ]);
 
     const CommitValue = useCallback((
         NextValue: Domain.Property.DatePropertyInput | undefined
@@ -136,12 +167,12 @@ export const DatePropertyField = ({
             return undefined;
         }
 
-        const Start = FormatDate(Value.Start, IncludeTime);
+        const Start = FormatDate(Value.Start, IncludeTime, Locale);
 
         return Value.End === undefined
             ? Start
-            : `${ Start } → ${ FormatDate(Value.End, IncludeTime) }`;
-    }, [ IncludeTime, Value ]);
+            : `${ Start } → ${ FormatDate(Value.End, IncludeTime, Locale) }`;
+    }, [ IncludeTime, Locale, Value ]);
 
     return (
         <View style={ [ Styles.Field, Inline && Styles.InlineField ] }>
@@ -165,12 +196,14 @@ export const DatePropertyField = ({
                         ? Theme.Semantic.Muted
                         : undefined }
                     Style={ Styles.Value }>
-                    { DisplayValue ?? "Empty" }
+                    { DisplayValue ?? t("propertyFields.empty") }
                 </Body>
             </Pressable>
             <DateSheet
                 EndValue={ Value?.End }
                 IncludeTime={ IncludeTime }
+                Labels={ DateSheetLabels_ }
+                Locale={ Locale }
                 OnEndValueChange={ HandleEndChange }
                 OnHelpPress={ HandleHelpPress }
                 OnIncludeTimeChange={ SetIncludeTime }

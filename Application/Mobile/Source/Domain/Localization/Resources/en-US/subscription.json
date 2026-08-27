@@ -1,0 +1,73 @@
+{
+    "titles": {
+        "plans": "NoteFerry Premium",
+        "subscribe": "NoteFerry Pro"
+    },
+    "purchaseSyncPending": {
+        "title": "Purchase successful — finishing setup",
+        "body": "Your Pro features will activate automatically as soon as your purchase finishes syncing. This won't take long."
+    },
+    "subscribe": {
+        "heading": "NoteFerry Pro",
+        "description": "Unlimited databases and capture, full customization, and no ads.",
+        "plan": {
+            "term": {
+                "monthly": "Monthly",
+                "yearly": "Yearly",
+                "lifetime": "Lifetime"
+            },
+            "accessibilityLabel": "{{term}}, {{price}}",
+            "savePercent": "Save {{percent}}%",
+            "bestValue": "Best value",
+            "lifetimeDescription": "One-time purchase. Access lasts for the supported lifetime of the NoteFerry service.",
+            "renewingDescription": "Auto-renews unless canceled through your store account."
+        },
+        "storeUnavailable": "Store products are unavailable. Check your connection and try again.",
+        "actions": {
+            "continueWith": "Continue with {{term}}",
+            "finishingSetup": "Purchase successful—finishing setup…",
+            "restore": "Restore purchases",
+            "retrySetup": "Retry setup"
+        },
+        "legalNotice": "By purchasing, you agree to the store billing terms and NoteFerry policies.",
+        "terms": "Terms",
+        "privacy": "Privacy",
+        "alerts": {
+            "purchaseSuccess": {
+                "title": "NoteFerry Pro is ready",
+                "body": "Your Pro features are now active."
+            },
+            "purchaseNotCompleted": {
+                "title": "Purchase not completed",
+                "body": "Please try again."
+            },
+            "restoreSuccess": {
+                "title": "Purchases restored",
+                "body": "Your current entitlement has been refreshed."
+            },
+            "restoreFailed": {
+                "title": "Restore failed"
+            },
+            "stillFinishingSetup": {
+                "title": "Still finishing setup",
+                "body": "Check your connection and try again shortly."
+            }
+        }
+    },
+    "plans": {
+        "heading": "Get NoteFerry™ Premium",
+        "description": "Free keeps capture, accessibility, reliability, and account controls. Pro unlocks customization, more destinations, and removes advertising.",
+        "usage": {
+            "heading": "Your current usage",
+            "description": "{{used}} of {{limit}} pages used in the last {{minutes}} minutes."
+        },
+        "pricing": {
+            "heading": "One tier, three ways to buy",
+            "fallback": "Localized store pricing appears at checkout.",
+            "description": "Monthly and yearly renew automatically. Lifetime is a one-time purchase."
+        },
+        "actions": {
+            "viewOptions": "View subscription options"
+        }
+    }
+}

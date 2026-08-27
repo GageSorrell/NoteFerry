@@ -1,0 +1,27 @@
+{
+    "behaviorPicker": {
+        "goToHome": "홈 화면으로 이동",
+        "openDatabase": "데이터베이스 열기",
+        "closeApp": "앱 종료"
+    },
+    "databaseCard": {
+        "createPageAccessibilityLabel": "{{title}}에 페이지 만들기"
+    },
+    "workspaceMenu": {
+        "accessibilityLabel": "워크스페이스 전환",
+        "workspaces": "워크스페이스",
+        "addWorkspace": "워크스페이스 추가",
+        "logOut": "로그아웃",
+        "logOutConfirm": {
+            "title": "로그아웃할까요?",
+            "message": "NoteFerry를 다시 사용하려면 Notion으로 다시 로그인해야 해요.",
+            "cancel": "취소",
+            "confirm": "로그아웃"
+        }
+    },
+    "ads": {
+        "nativeDatabaseAdCard": {
+            "adBadge": "광고"
+        }
+    }
+}

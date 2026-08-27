@@ -1,0 +1,44 @@
+{
+    "titles": {
+        "feedback": "피드백 보내기",
+        "bugReport": "버그 신고"
+    },
+    "subtitle": {
+        "feedback": "무엇이 잘 되고 있는지, 무엇이 안 되는지, 어떤 걸 보고 싶은지 알려주세요.",
+        "bugReport": "무엇이 잘못됐는지 알려주세요. 재현 방법을 알려주시면 큰 도움이 돼요."
+    },
+    "message": {
+        "accessibilityLabel": {
+            "feedback": "피드백",
+            "bugReport": "버그 신고"
+        },
+        "placeholder": {
+            "feedback": "여기에 피드백을 입력하세요…",
+            "bugReport": "무슨 일이 있었나요? 대신 어떤 결과를 기대했나요?"
+        },
+        "hint": {
+            "belowMinimum": "최소 {{min}}자 필요해요 ({{count}}/{{min}}).",
+            "atMinimum": "{{count}}자예요."
+        }
+    },
+    "shareContact": {
+        "accessibilityLabel": "연락처 정보 공유하기",
+        "label": "NoteFerry가 답변할 수 있도록 제 연락처 정보를 공유해요"
+    },
+    "submit": "제출",
+    "alert": {
+        "success": {
+            "title": "감사해요!",
+            "feedback": "피드백이 전송됐어요.",
+            "bugReport": "버그 신고가 전송됐어요."
+        },
+        "rateLimit": {
+            "title": "천천히 해주세요",
+            "message": "최근에 몇 번 보내셨어요. 잠시 후 다시 시도해 주세요."
+        },
+        "failure": {
+            "title": "문제가 발생했어요",
+            "message": "다시 시도해 주세요."
+        }
+    }
+}

@@ -100,6 +100,9 @@ export const GetAllowanceForUser = (UserId: string) =>
 
         if (!Row)
         {
+            /* Diagnostic detail only — DatabaseError.Message is never shown to a
+             * user (the client only ever branches on `_tag`, falling back to a
+             * generic client-side message otherwise), so this stays untranslated. */
             return yield* Effect.fail(new Domain.Error.DatabaseError({
                 Message: "Creation allowance returned no row."
             }));
@@ -263,6 +266,9 @@ export const RefreshFromRevenueCat = (UserId: string) =>
 
         if (!Secret)
         {
+            /* Diagnostic detail only — NetworkError.Message is never shown to a
+             * user (the client only ever branches on `_tag`, falling back to a
+             * generic client-side message otherwise), so this stays untranslated. */
             return yield* Effect.fail(new Domain.Error.NetworkError({
                 Message: "RevenueCat server configuration is unavailable."
             }));

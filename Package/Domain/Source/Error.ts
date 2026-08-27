@@ -22,7 +22,7 @@
  */
 
 import * as Id from "./Id.js";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 /**
  * No Supabase session is present, or it could not be verified.
@@ -182,6 +182,21 @@ export class InvalidPageDraft extends Schema.TaggedError<InvalidPageDraft>()(
 ) { }
 
 /**
+ * This exact page-creation operation (matched by its idempotency key) is
+ * already being processed by a concurrent or very recent request. Distinct
+ * from {@link NotionUnavailable} — Notion itself is reachable, the operation
+ * is just already in flight.
+ *
+ * @category Error
+ * @since 1.0.0
+ */
+export class PageCreationInProgress extends Schema.TaggedError<PageCreationInProgress>()(
+    "PageCreationInProgress",
+    { },
+    { httpApiStatus: 409 }
+) { }
+
+/**
  * A Postgres/Supabase operation failed.
  *
  * @category Error
@@ -260,6 +275,7 @@ const DomainError = Schema.Union([
     DataSourceSchemaChanged,
     DestinationNotFound,
     InvalidPageDraft,
+    PageCreationInProgress,
     DatabaseError,
     NetworkError,
     FeatureGateError,

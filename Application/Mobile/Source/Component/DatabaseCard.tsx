@@ -11,15 +11,17 @@
 
 import type * as Domain from "@noteferry/domain";
 import * as React from "react";
-import { ChevronRight } from "lucide-react-native";
 import { Defs, LinearGradient, Rect, Stop, Svg, SvgXml } from "react-native-svg";
-import { IconBlock } from "@noteferry/ui/Block";
-import { ToLucideIconName } from "@/Domain/Utility/DatabaseIcon";
-import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
-import { ItemTitle, Pressable } from "@noteferry/ui/Primitive";
+import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
+import { ItemTitle } from "@noteferry/ui/Primitive/Text";
+import { Pressable } from "@noteferry/ui/Primitive/Pressable";
 import { Platform, type PressableStateCallbackType, StyleSheet, View } from "react-native";
+import ChevronRight from "lucide-react-native/icons/chevron-right";
+import { IconBlock } from "@noteferry/ui/Block/IconBlock";
 import { Image } from "expo-image";
 import type { Thunk } from "@sorrell/effect/Function";
+import { ToLucideIconName } from "@/Domain/Utility/DatabaseIcon";
+import { useTranslation } from "react-i18next";
 
 /** {@inheritDoc DatabaseCard} */
 export interface DatabaseCardProps
@@ -276,6 +278,7 @@ const DatabaseCard = ({ OnPress, Source, Square = false }: DatabaseCardProps): R
 {
     const Theme = useTheme();
     const Styles = useStyles();
+    const { t } = useTranslation("component");
     const CoverIsSvg = Source.CoverUrl ? IsSvgUrl(Source.CoverUrl) : false;
     const RippleColor = Theme.Mode === "Dark"
         ? "rgba(255, 255, 255, 0.16)"
@@ -287,7 +290,7 @@ const DatabaseCard = ({ OnPress, Source, Square = false }: DatabaseCardProps): R
     return (
         <Pressable
             Accessibility={ {
-                Label: `Create a page in ${ Source.Title }`,
+                Label: t("databaseCard.createPageAccessibilityLabel", { title: Source.Title }),
                 Role: "button"
             } }
             OnPress={ OnPress }

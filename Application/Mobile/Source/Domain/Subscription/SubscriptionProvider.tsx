@@ -17,13 +17,20 @@ import {
     GetSubscriptionStatus,
     RefreshSubscriptionStatus
 } from "@/Domain/Runtime/NoteFerryApi";
-import Purchases, { LOG_LEVEL, type PurchasesPackage } from "react-native-purchases";
+import type { PurchasesPackage } from "react-native-purchases";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { InitializeAdsRuntime } from "@/Domain/Ads";
+import { InitializeAdsRuntime } from "@/Domain/Ads/AdsRuntime";
 import { Platform } from "react-native";
 import { SetConfirmedFree } from "@/Domain/Ads/Entitlement";
 import { useAuth } from "@/Domain/Auth/NoteFerryAuthProvider";
+import { LoadPurchases } from "./Purchases";
 
+/**
+ * The subscription state and actions exposed to the mobile application.
+ *
+ * @category Subscription
+ * @since 1.0.0
+ */
 export interface SubscriptionContextValue
 {
     readonly Allowance: Domain.Subscription.CreationAllowance | null;
@@ -43,11 +50,20 @@ const Context = React.createContext<SubscriptionContextValue | null>(null);
 const PaidStatusCachePrefix = "noteferry:verified-pro:";
 const PaidAccessGraceMilliseconds = 24 * 60 * 60 * 1000;
 
+/**
+ * Indicates that a successful purchase is still waiting for server-side
+ * entitlement synchronization. Carries no user-facing text — this is a
+ * domain-layer tag only; the UI layer (`App/subscribe.tsx`) owns the copy
+ * shown for it via `t("subscription:purchaseSyncPending.title"/".body")`.
+ *
+ * @category Subscription
+ * @since 1.0.0
+ */
 export class PurchaseSyncPendingError extends Error
 {
     public constructor()
     {
-        super("Purchase successful—finishing setup. NoteFerry will keep retrying automatically.");
+        super("PurchaseSyncPending");
         this.name = "PurchaseSyncPendingError";
     }
 }
@@ -120,7 +136,14 @@ const WaitForServerPro = async (): Promise<Domain.Subscription.SubscriptionStatu
     return Last ?? await GetSubscriptionStatus();
 };
 
-export const SubscriptionProvider = (
+export/**
+       * Provides subscription state, purchase actions, and server-authoritative
+       * entitlement synchronization to descendant components.
+       *
+       * @category Subscription
+       * @since 1.0.0
+       */
+const SubscriptionProvider = (
     { children }: React.PropsWithChildren
 ): React.JSX.Element =>
 {
@@ -136,6 +159,7 @@ export const SubscriptionProvider = (
     const [ IsStoreAvailable, SetIsStoreAvailable ] = React.useState(false);
     const OfferingIds = React.useRef<ReadonlySet<string>>(new Set());
     const CurrentUserId = React.useRef(Session?.user.id);
+    const PurchasesUserId = React.useRef<string | null>(null);
 
     React.useEffect(() =>
     {
@@ -177,6 +201,7 @@ export const SubscriptionProvider = (
 
         try
         {
+            const { default: Purchases } = await LoadPurchases();
             if (Platform.OS !== "web" && await Purchases.isConfigured())
             {
                 const Offerings = await Purchases.getOfferings();
@@ -211,13 +236,19 @@ export const SubscriptionProvider = (
 
         if (!Session)
         {
-            void Purchases.isConfigured().then((Configured: boolean) =>
+            if (PurchasesUserId.current !== null)
             {
-                if (Configured)
-                {
-                    return Purchases.logOut();
-                }
-            }).catch(() => undefined);
+                PurchasesUserId.current = null;
+                void LoadPurchases()
+                    .then(async ({ default: Purchases }) =>
+                    {
+                        if (await Purchases.isConfigured())
+                        {
+                            await Purchases.logOut();
+                        }
+                    })
+                    .catch(() => undefined);
+            }
             SetConfirmedFree(null);
             void Promise.resolve().then(() =>
             {
@@ -261,6 +292,7 @@ export const SubscriptionProvider = (
 
                 if (ApiKey && Platform.OS !== "web")
                 {
+                    const { default: Purchases, LOG_LEVEL } = await LoadPurchases();
                     Purchases.setLogLevel(__DEV__ ? LOG_LEVEL.DEBUG : LOG_LEVEL.WARN);
 
                     if (!await Purchases.isConfigured())
@@ -271,6 +303,7 @@ export const SubscriptionProvider = (
                     {
                         await Purchases.logIn(Session.user.id);
                     }
+                    PurchasesUserId.current = Session.user.id;
                 }
 
                 await Refresh();
@@ -364,12 +397,14 @@ export const SubscriptionProvider = (
 
     const Purchase = React.useCallback(async (Package: PurchasesPackage): Promise<void> =>
     {
+        const { default: Purchases } = await LoadPurchases();
         await Purchases.purchasePackage(Package);
         await FinishPurchase(true);
     }, [ FinishPurchase ]);
 
     const Restore = React.useCallback(async (): Promise<void> =>
     {
+        const { default: Purchases } = await LoadPurchases();
         await Purchases.restorePurchases();
         await FinishPurchase(false);
     }, [ FinishPurchase ]);
@@ -406,7 +441,13 @@ export const SubscriptionProvider = (
     );
 };
 
-export const useSubscription = (): SubscriptionContextValue =>
+export/**
+       * Reads the subscription context provided by {@link SubscriptionProvider}.
+       *
+       * @category Subscription
+       * @since 1.0.0
+       */
+const useSubscription = (): SubscriptionContextValue =>
 {
     const Value = React.useContext(Context);
 

@@ -29,15 +29,15 @@ export interface UseConnections
     readonly Refetch: () => Promise<void>;
 }
 
-/**
- * Loads the current user's Notion connections and selected databases on mount.
- * Only those selected databases are refreshed so discovery cannot silently add
- * databases the user left unchecked during onboarding.
- *
- * @category Connections
- * @since 1.0.0
- */
-export const useConnections = (): UseConnections =>
+export/**
+       * Loads the current user's Notion connections and selected databases on mount.
+       * Only those selected databases are refreshed so discovery cannot silently add
+       * databases the user left unchecked during onboarding.
+       *
+       * @category Connections
+       * @since 1.0.0
+       */
+const useConnections = (): UseConnections =>
 {
     const [ Connections, SetConnections ] =
         useState<ReadonlyArray<Domain.NotionConnection.NotionConnection>>([ ]);

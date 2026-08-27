@@ -20,17 +20,11 @@
 
 import * as Domain from "@noteferry/domain";
 import { ActivityIndicator, ScrollView, View } from "react-native";
-import {
-    Body,
-    Button,
-    Checkbox,
-    Description,
-    Heading1,
-    Heading2,
-    Input,
-    LabelText
-} from "@noteferry/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
+import { Body, Description, Heading1, Heading2, LabelText } from "@noteferry/ui/Primitive/Text";
+import { Button } from "@noteferry/ui/Primitive/Button";
+import { Checkbox } from "@noteferry/ui/Primitive/Checkbox";
+import { Input } from "@noteferry/ui/Primitive/Input";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
 import { useCallback, useEffect, useState } from "react";
 import { BehaviorPicker } from "@/Component/BehaviorPicker";
 import { GetDataSource, RefreshDataSource } from "@/Domain/Runtime/NoteFerryApi";
@@ -40,6 +34,7 @@ import { useConnections } from "@/Domain/Connection";
 import { useDestinations } from "@/features/destinations/use-destinations";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useLocalSearchParams } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 /** Per-field UI toggles held while the form is open. */
 interface FieldSetting
@@ -56,6 +51,7 @@ const DestinationConfigScreen = () =>
     const Router = useLazyRouter();
     const Theme = useTheme();
     const Styles = useStyles();
+    const { t } = useTranslation("onboarding");
     const Params = useLocalSearchParams<{
         connectionId: string;
         dataSourceId: string;
@@ -255,14 +251,14 @@ const DestinationConfigScreen = () =>
                     Appearance="Link"
                     OnPress={ Router.back }
                     Style={ Styles.Back }>
-                    ‹ Back
+                    { t("destinationConfig.back") }
                 </Button>
 
                 <Heading1>
-                    { Params.title ?? "Configure" }
+                    { Params.title ?? t("destinationConfig.defaultTitle") }
                 </Heading1>
                 <Description Style={ Styles.Subtitle }>
-                    Set up a quick-entry destination for this data source.
+                    { t("destinationConfig.subtitle") }
                 </Description>
 
                 { DataSource === null
@@ -271,10 +267,10 @@ const DestinationConfigScreen = () =>
                         <ScrollView
                             contentContainerStyle={ Styles.Form }
                             style={ Styles.Scroll }>
-                            <LabelText>Name</LabelText>
+                            <LabelText>{ t("destinationConfig.name") }</LabelText>
                             <Input
                                 OnChangeText={ SetName }
-                                Placeholder="Destination name"
+                                Placeholder={ t("destinationConfig.namePlaceholder") }
                                 Value={ Name }
                             />
 
@@ -286,18 +282,18 @@ const DestinationConfigScreen = () =>
                                 Templates={ DataSource.Templates }
                             />
 
-                            <Heading2 Style={ Styles.SectionHeading }>Fields</Heading2>
+                            <Heading2 Style={ Styles.SectionHeading }>{ t("destinationConfig.fields") }</Heading2>
                             <View style={ Styles.FieldHeaderRow }>
                                 <View style={ Styles.FieldNameCol } />
                                 <LabelText
                                     NumberOfLines={ 1 }
                                     Style={ Styles.ToggleLabel }>
-                                    Visible
+                                    { t("destinationConfig.visible") }
                                 </LabelText>
                                 <LabelText
                                     NumberOfLines={ 1 }
                                     Style={ Styles.ToggleLabel }>
-                                    Required
+                                    { t("destinationConfig.required") }
                                 </LabelText>
                             </View>
                             { DataSource.Properties.map(
@@ -327,7 +323,7 @@ const DestinationConfigScreen = () =>
                                 )) }
 
                             <Heading2 Style={ Styles.SectionHeading }>
-                                After creating a page
+                                { t("destinationConfig.afterCreatingPage") }
                             </Heading2>
                             <BehaviorPicker
                                 AllowCloseApp
@@ -342,16 +338,16 @@ const DestinationConfigScreen = () =>
                                 OnPress={ HandleSave }
                                 Style={ Styles.Save }>
                                 { Saving
-                                    ? "Saving…"
+                                    ? t("destinationConfig.saving")
                                     : ExistingDestination
-                                        ? "Save changes"
-                                        : "Save destination" }
+                                        ? t("destinationConfig.saveChanges")
+                                        : t("destinationConfig.saveDestination") }
                             </Button>
 
                             { Destinations.length > 0
                                 ? (
                                     <>
-                                        <Heading2 Style={ Styles.SectionHeading }>Configured</Heading2>
+                                        <Heading2 Style={ Styles.SectionHeading }>{ t("destinationConfig.configured") }</Heading2>
                                         { Destinations.map((Destination: Domain.Destination.Destination) => (
                                             <View
                                                 key={ Destination.Id }
@@ -360,7 +356,7 @@ const DestinationConfigScreen = () =>
                                                 <Button
                                                     Appearance="Link"
                                                     OnPress={ () => void Remove(Destination.Id) }>
-                                                    Delete
+                                                    { t("destinationConfig.delete") }
                                                 </Button>
                                             </View>
                                         )) }

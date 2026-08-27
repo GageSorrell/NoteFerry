@@ -14,7 +14,7 @@
 
 import * as Id from "./Id.js";
 import { PropertyInputValue } from "./PageDraft.js";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 export const PageIconInput = Schema.Union([
     Schema.Struct({ Emoji: Schema.String, Type: Schema.tag("Emoji") }),

@@ -1,0 +1,84 @@
+{
+    "propertyFields": {
+        "empty": "未入力",
+        "date": {
+            "helpTitle": "リマインダーが使えないのはなぜですか？",
+            "helpMessage": "Notionは公開APIで日付のリマインダー機能を提供していないため、NoteFerryではリマインダーの作成や編集ができません。"
+        }
+    },
+    "dateSheet": {
+        "selectDate": "日付を選択",
+        "selectTime": "時刻を選択",
+        "cancel": "キャンセル",
+        "done": "完了",
+        "help": "ヘルプ",
+        "endDate": "終了日",
+        "dateFormat": "日付の形式",
+        "dateFormatFull": "完全な日付",
+        "dateFormatShort": "短い日付",
+        "dateFormatMonthDayYear": "月/日/年",
+        "dateFormatDayMonthYear": "日/月/年",
+        "dateFormatYearMonthDay": "年/月/日",
+        "dateFormatRelative": "相対表示",
+        "includeTime": "時刻を含める",
+        "timeFormat": "時刻の形式",
+        "timeFormatHidden": "非表示",
+        "timeFormatTwelveHour": "12時間制",
+        "timeFormatTwentyFourHour": "24時間制",
+        "timezone": "タイムゾーン",
+        "clear": "クリア",
+        "previousMonth": "前の月",
+        "nextMonth": "次の月"
+    },
+    "createPage": {
+        "databaseFallback": "データベース",
+        "settingsFor": "{{database}}の設定",
+        "populateDummyData": "ダミーデータでフォームを入力",
+        "useTemplate": "テンプレートを使う",
+        "changeIcon": "ページアイコンを変更",
+        "goBack": "戻る",
+        "addIcon": "アイコンを追加",
+        "addCover": "カバーを追加",
+        "titlePlaceholder": "無題",
+        "pageBody": {
+            "accessibilityLabel": "ページ本文",
+            "placeholder": "何か入力してください…"
+        },
+        "submit": "ページを作成",
+        "discard": {
+            "title": "このページを破棄しますか？",
+            "message": "未保存の変更があります。戻ると失われます。",
+            "keepEditing": "編集を続ける",
+            "discard": "破棄"
+        },
+        "databaseSettingsGate": {
+            "title": "Proでフォームをカスタマイズ",
+            "message": "Proならエイリアス、表示設定、必須項目、順序、初期値、作成後の動作を変更できます。"
+        },
+        "proPrompt": {
+            "title": "NoteFerry Proで利用できます",
+            "notNow": "あとで",
+            "comparePlans": "プランを比較",
+            "upgrade": "アップグレード",
+            "iconBenefit": "キャプチャするページに分かりやすいアイコンを追加できます。",
+            "coverBenefit": "キャプチャするページにカバー画像を追加できます。"
+        },
+        "template": {
+            "applyTitle": "「{{name}}」を適用しますか？",
+            "applyMessage": "すでに入力した項目の一部にも、このテンプレートの値が設定されています。",
+            "cancel": "キャンセル",
+            "keepMine": "自分の入力を保持",
+            "overwrite": "上書き"
+        },
+        "freeLimit": {
+            "title": "無料ページの上限に達しました",
+            "message": "下書きは保存されています。次の利用可能時刻は{{time}}です。",
+            "keepEditing": "編集を続ける",
+            "upgrade": "アップグレード"
+        },
+        "errors": {
+            "loadFailed": "このページフォームを読み込めませんでした。もう一度お試しください。",
+            "titleRequired": "ページを作成する前にタイトルを入力してください。"
+        }
+    }
+}

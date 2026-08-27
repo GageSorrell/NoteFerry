@@ -5,7 +5,7 @@
  * @module @noteferry/domain/Subscription
  */
 
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 export const ProEntitlementId = "pro";
 export const FreeCreationLimit = 5;

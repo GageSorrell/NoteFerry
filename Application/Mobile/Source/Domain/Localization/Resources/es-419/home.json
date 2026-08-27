@@ -1,0 +1,30 @@
+{
+    "avatarAccessibilityLabel": "Perfil de Notion de {{name}}",
+    "header": {
+        "comparePlans": "Comparar planes",
+        "comparePlansNew": "Comparar planes, novedad",
+        "settings": "Configuración"
+    },
+    "databases": {
+        "title": "Bases de datos",
+        "empty": "Aún no se encontraron bases de datos."
+    },
+    "lockedDatabase": {
+        "title": "Desbloquea esta base de datos con Pro",
+        "message": "Free incluye tres bases de datos activas. Mejora tu plan para tener bases de datos ilimitadas, o reemplaza una base de datos activa en la configuración de la base de datos.",
+        "cancel": "Ahora no",
+        "comparePlans": "Comparar planes",
+        "upgrade": "Mejorar plan"
+    },
+    "sale": {
+        "viewOffer": "Ver la oferta por tiempo limitado",
+        "dismiss": "Descartar"
+    },
+    "usage": {
+        "title": "Asignación gratuita de páginas",
+        "compareAccessibilityLabel": "Comparar Free y Pro",
+        "summary": "{{used}} de {{limit}} páginas usadas en los últimos {{minutes}} minutos.",
+        "nextSlot": "Próximo turno a las {{time}}.",
+        "upgrade": "Mejorar plan"
+    }
+}

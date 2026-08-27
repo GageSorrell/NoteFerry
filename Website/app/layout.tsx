@@ -1,6 +1,6 @@
 /**
- * The root layout: HTML shell, the Inter font, theme provider, and the
- * shared navbar/footer chrome around every route.
+ * The root layout: HTML shell, the Roboto Flex font, theme provider, and
+ * the shared navbar/footer chrome around every route.
  *
  * @file      layout.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -11,16 +11,32 @@
 import "./globals.css";
 import type * as React from "react";
 import { Footer } from "@/components/site/footer";
-import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import { Navbar } from "@/components/site/navbar";
+import { Roboto_Flex } from "next/font/google";
 import { ThemeProvider } from "@/components/site/theme-provider";
 import { siteConfig } from "@/content/site-config";
 
-const inter = Inter({
+/*
+ * Roboto Flex, loaded as a true variable font rather than fixed static
+ * weights: `weight: "variable"` keeps the `wght` axis continuous (so
+ * Tailwind's `font-normal`/`font-medium`/`font-semibold`/`font-bold`
+ * utilities — 400/500/600/700, the same weight stops the mobile app's
+ * Notion-modeled typography tokens use — resolve to their exact
+ * instances instead of snapping to the nearest static cut). The `opsz`
+ * axis is opted in too, since letting optical size track font size
+ * automatically is the one Roboto Flex axis with a real native-UI
+ * analog: it's what keeps small captions and large titles both reading
+ * cleanly without hand-tuning stroke weight per size, the same job
+ * San Francisco/Inter's optical sizing does in Notion's own apps. `wdth`
+ * and `GRAD` are deliberately left at their defaults (100/0) — Notion's
+ * type is set at normal width and grade, not condensed or bolded-by-grade.
+ */
+const robotoFlex = Roboto_Flex({
+    axes: [ "opsz" ],
     subsets: [ "latin" ],
-    variable: "--font-inter",
-    weight: [ "400", "500", "600", "700" ]
+    variable: "--font-roboto-flex",
+    weight: "variable"
 });
 
 export/** Site-wide default metadata, inherited by every route. */
@@ -67,7 +83,7 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) =>
     return (
         <html lang="en"
             suppressHydrationWarning>
-            <body className={ `${ inter.variable } font-sans antialiased` }>
+            <body className={ `${ robotoFlex.variable } font-sans antialiased` }>
                 <ThemeProvider>
                     <div className="flex min-h-svh flex-col">
                         <Navbar />

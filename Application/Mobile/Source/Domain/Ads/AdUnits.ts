@@ -15,7 +15,6 @@
  */
 
 import { Platform } from "react-native";
-import { TestIds } from "react-native-google-mobile-ads";
 
 /** {@inheritDoc AdPlacement} */
 export type AppOpenPlacement = "AppOpen";
@@ -33,12 +32,20 @@ export type AdPlacement =
     | InterstitialPlacement
     | NativePlacement;
 
-const TestUnitId: Record<AdPlacement, string> = {
-    AppOpen: TestIds.APP_OPEN,
-    HomeBanner: TestIds.BANNER,
-    HomeNativeAd: TestIds.NATIVE,
-    OnboardingInterstitial: TestIds.INTERSTITIAL,
-    PageCreationInterstitial: TestIds.INTERSTITIAL
+const AndroidTestUnitId: Record<AdPlacement, string> = {
+    AppOpen: "ca-app-pub-3940256099942544/9257395921",
+    HomeBanner: "ca-app-pub-3940256099942544/6300978111",
+    HomeNativeAd: "ca-app-pub-3940256099942544/2247696110",
+    OnboardingInterstitial: "ca-app-pub-3940256099942544/1033173712",
+    PageCreationInterstitial: "ca-app-pub-3940256099942544/1033173712"
+};
+
+const IosTestUnitId: Record<AdPlacement, string> = {
+    AppOpen: "ca-app-pub-3940256099942544/5575463023",
+    HomeBanner: "ca-app-pub-3940256099942544/2934735716",
+    HomeNativeAd: "ca-app-pub-3940256099942544/3986624511",
+    OnboardingInterstitial: "ca-app-pub-3940256099942544/4411468910",
+    PageCreationInterstitial: "ca-app-pub-3940256099942544/4411468910"
 };
 
 interface ProductionUnitIdByPlatform
@@ -85,7 +92,7 @@ const ResolveAdUnitId = (Placement: AdPlacement): string | null =>
 {
     if (__DEV__)
     {
-        return TestUnitId[Placement];
+        return (Platform.OS === "ios" ? IosTestUnitId : AndroidTestUnitId)[Placement];
     }
 
     const ById = ProductionUnitId[Placement];

@@ -9,8 +9,8 @@
  * @license   MIT
  */
 
-import { Body, Description, LabelText } from "@noteferry/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui";
+import { Body, Description, LabelText } from "@noteferry/ui/Primitive/Text";
+import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui/Core";
 import { View } from "react-native";
 
 const Rows =

@@ -1,0 +1,5 @@
+{
+    "ios": {
+        "NSUserTrackingUsageDescription": "Diese Kennung wird verwendet, um personalisierte Werbung anzuzeigen und deren Wirksamkeit zu messen."
+    }
+}

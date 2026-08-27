@@ -14,9 +14,10 @@
  */
 
 import * as React from "react";
-import { ItemTitle, Pressable } from "@noteferry/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
-import { ChevronRight } from "lucide-react-native";
+import { ItemTitle } from "@noteferry/ui/Primitive/Text";
+import { Pressable } from "@noteferry/ui/Primitive/Pressable";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
+import ChevronRight from "lucide-react-native/icons/chevron-right";
 import { View } from "react-native";
 
 /** {@inheritDoc SettingsTable} */

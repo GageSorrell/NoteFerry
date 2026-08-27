@@ -13,9 +13,11 @@
  */
 
 import type * as Domain from "@noteferry/domain";
-import { Body, LabelText, RadioGroup, RadioGroupItem } from "@noteferry/ui/Primitive";
-import { MakeStyles, Token, ViewStyle, useTheme } from "@noteferry/ui";
+import { Body, LabelText } from "@noteferry/ui/Primitive/Text";
+import { RadioGroup, RadioGroupItem } from "@noteferry/ui/Primitive/RadioGroup";
+import { MakeStyles, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
 import { Platform, ScrollView, View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 /** {@inheritDoc BehaviorPicker} */
 export interface BehaviorPickerProps
@@ -48,6 +50,7 @@ const BehaviorPicker = ({
 {
     const Theme = useTheme();
     const Styles = useStyles();
+    const { t } = useTranslation("component");
     const CanCloseApp = AllowCloseApp && Platform.OS === "android";
 
     return (
@@ -79,17 +82,17 @@ const BehaviorPicker = ({
                 Value={ Value.Type }>
                 <View style={ Styles.Row }>
                     <RadioGroupItem Value={ HomeValue } />
-                    <Body>Go to the home screen</Body>
+                    <Body>{ t("behaviorPicker.goToHome") }</Body>
                 </View>
                 <View style={ Styles.Row }>
                     <RadioGroupItem Value={ SelectedDatabaseValue } />
-                    <Body>Open a database</Body>
+                    <Body>{ t("behaviorPicker.openDatabase") }</Body>
                 </View>
                 { CanCloseApp
                     ? (
                         <View style={ Styles.Row }>
                             <RadioGroupItem Value={ CloseAppValue } />
-                            <Body>Close the app</Body>
+                            <Body>{ t("behaviorPicker.closeApp") }</Body>
                         </View>
                     )
                     : null }

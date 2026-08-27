@@ -12,10 +12,10 @@
  * @license   MIT
  */
 
-import { AdsConsent, AdsConsentDebugGeography } from "react-native-google-mobile-ads";
 import { getTrackingPermissionsAsync, requestTrackingPermissionsAsync } from
     "expo-tracking-transparency";
 import { Platform } from "react-native";
+import { LoadGoogleMobileAds } from "./GoogleMobileAds";
 
 /** {@inheritDoc GatherConsent} */
 export interface ConsentResult
@@ -34,6 +34,8 @@ export/**
        */
 const GatherConsent = async (): Promise<ConsentResult> =>
 {
+    const { AdsConsent, AdsConsentDebugGeography } = await LoadGoogleMobileAds();
+
     try
     {
         await AdsConsent.requestInfoUpdate({

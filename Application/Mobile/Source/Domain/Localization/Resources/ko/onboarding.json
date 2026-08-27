@@ -1,0 +1,127 @@
+{
+    "titles": {
+        "signInModal": "앞으로 남은 두 단계"
+    },
+    "signIn": {
+        "heroTitle": "노트 정리, 더 빠르게.",
+        "heroSubtitle": "Notion 계정으로 로그인하세요",
+        "continueWithNotion": "Notion으로 계속하기",
+        "noAccount": "Notion 계정이 없으신가요?",
+        "signUp": "가입하기",
+        "legal": {
+            "line1": "계속 진행하면",
+            "line2": "다음 내용을 이해하고 동의하는 것으로 간주돼요:",
+            "terms": "이용약관",
+            "and": "및",
+            "privacy": "개인정보처리방침"
+        },
+        "learnMore": "더 알아보기",
+        "needHelp": "도움이 필요하신가요?",
+        "copyright": "© 2026 Gage Sorrell. 모든 권리 보유.",
+        "mail": {
+            "unavailableTitle": "사용할 수 있는 메일 앱이 없어요",
+            "unavailableMessage": "피드백을 보내려면 이 기기에 메일 계정을 설정해 주세요.",
+            "subject": "NoteFerry 문의",
+            "body": "\n\n—\nNoteFerry {{version}} ({{build}})"
+        }
+    },
+    "signInModal": {
+        "step1": "먼저 Notion에 로그인하고 워크스페이스에 NoteFerry 통합을 추가할 거예요.",
+        "step2": "그다음 NoteFerry가 볼 수 있는 데이터베이스를 선택할 거예요.",
+        "tip": "팁: NoteFerry에 페이지 접근 권한을 주면 그 페이지 아래에 있는 모든 데이터베이스에도 접근 권한이 주어져요.",
+        "logInWithNotion": "Notion으로 로그인",
+        "backToWelcome": "환영 화면으로 돌아가기"
+    },
+    "sync": {
+        "helpLink": "Notion의 타사 연결에 대해 알아보기",
+        "loading": {
+            "accessibilityLabel": "Notion 접근 권한 확인 중",
+            "message": "NoteFerry가 접근할 수 있는 항목을 확인하고 있어요…"
+        },
+        "noIntegration": {
+            "title": "NoteFerry가 추가되지 않았어요",
+            "subtitle": "인증은 완료됐지만 워크스페이스에 NoteFerry 통합이 추가되지 않았어요.",
+            "action": "돌아가서 다시 시작하기"
+        },
+        "noAccess": {
+            "title": "NoteFerry가 볼 수 있는 항목 선택하기",
+            "subtitle": "통합은 설치됐지만 아직 공유된 페이지나 데이터베이스가 없어요.",
+            "action": "Notion에서 페이지 선택하기"
+        },
+        "pagesOnly": {
+            "title": "데이터베이스를 찾을 수 없어요",
+            "subtitle": "NoteFerry가 일반 페이지는 볼 수 있지만, 공유된 페이지 트리에 데이터베이스가 없어요.",
+            "action": "Notion에서 접근 권한 변경하기"
+        },
+        "error": {
+            "title": "문제가 발생했어요",
+            "subtitle": "Notion 접근 권한 확인을 완료하지 못했어요. 연결 상태를 확인하고 다시 시도해 주세요.",
+            "action": "다시 시도"
+        },
+        "pageAccessDisclosure": {
+            "pagesFound_one": "{{count}}개 페이지 발견",
+            "pagesFound_other": "{{count}}개 페이지 발견",
+            "whyShown": "페이지가 표시되는 이유",
+            "helpGlyph": "?",
+            "noPages": "표시되는 일반 페이지가 없어요.",
+            "andMore": "외 {{count}}개 더",
+            "sheetTitle": "페이지와 데이터베이스는 달라요",
+            "sheetBody": "NoteFerry는 일반 페이지가 아니라 데이터베이스에 항목을 만들어요. 그래도 페이지를 공유하는 건 유용해요. 그 페이지 아래에 있는 데이터베이스는 자동으로 NoteFerry와 공유되기 때문에, 페이지 트리 전체를 한 번에 추가할 수 있어요.",
+            "gotIt": "확인했어요"
+        },
+        "databaseSelection": {
+            "title": "데이터베이스 선택하기",
+            "subtitle": "무료 플랜은 최대 3개의 데이터베이스를 포함해요. NoteFerry Pro는 데이터베이스 개수 제한이 없고, 무료 플랜에서 선택한 항목은 나중에 바꿀 수 있어요.",
+            "searchPlaceholder": "데이터베이스 검색",
+            "selectedCount_one": "{{count}}개 선택됨",
+            "selectedCount_other": "{{count}}개 선택됨",
+            "selectDatabase": "{{title}} 선택",
+            "moreThan100Pages": "100개 초과",
+            "pageCount_one": "{{count}}개 페이지",
+            "pageCount_other": "{{count}}개 페이지",
+            "noResults": "“{{query}}”에 맞는 데이터베이스가 없어요.",
+            "selectAtLeastOne": "최소 하나의 데이터베이스를 선택하세요",
+            "continueWith_one": "{{count}}개 데이터베이스로 계속하기",
+            "continueWith_other": "{{count}}개 데이터베이스로 계속하기",
+            "proGate": {
+                "title": "Pro로 데이터베이스를 무제한 추가하세요",
+                "message": "무료 플랜은 활성 데이터베이스 3개를 포함해요. Notion을 바꾸지 않고도 나중에 다른 데이터베이스로 바꿀 수 있어요.",
+                "cancel": "나중에",
+                "comparePlans": "요금제 비교",
+                "upgrade": "업그레이드"
+            }
+        }
+    },
+    "enableNotifications": {
+        "title": "알림 켜기",
+        "subtitle": "오프라인 상태에서 제출한 페이지 생성이 끝나면 알림을 받아보세요.",
+        "enable": "알림 켜기",
+        "notNow": "나중에"
+    },
+    "done": {
+        "title": "모두 준비됐어요!",
+        "description": "이제 NoteFerry를 사용할 준비가 다 됐어요. 원하신다면 페이지 생성 시 표시되는 속성을 수정하거나, 데이터베이스에 별칭을 만드는 등 다양한 설정을 할 수 있어요.",
+        "viewDatabaseSettings": "데이터베이스 설정 보기",
+        "addWorkspace": "워크스페이스 추가하기",
+        "start": "NoteFerry 시작하기"
+    },
+    "oauthCallback": {
+        "accessibilityLabel": "Notion 인증 마무리 중"
+    },
+    "destinationConfig": {
+        "back": "‹ 뒤로",
+        "defaultTitle": "설정",
+        "subtitle": "이 데이터 소스의 빠른 입력 대상을 설정하세요.",
+        "name": "이름",
+        "namePlaceholder": "대상 이름",
+        "fields": "필드",
+        "visible": "표시",
+        "required": "필수",
+        "afterCreatingPage": "페이지 생성 후",
+        "saving": "저장 중…",
+        "saveChanges": "변경사항 저장",
+        "saveDestination": "대상 저장",
+        "configured": "설정됨",
+        "delete": "삭제"
+    }
+}

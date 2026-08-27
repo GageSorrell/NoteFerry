@@ -20,7 +20,7 @@ import * as Behavior from "./Behavior.js";
 import * as Id from "./Id.js";
 import type { PropertyDefinition } from "./Property/Definition.js";
 import { PropertyInput } from "./Property/Input.js";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 export/**
        * Which Notion page template, if any, a destination applies when

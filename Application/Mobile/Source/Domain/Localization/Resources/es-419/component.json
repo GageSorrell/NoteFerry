@@ -1,0 +1,27 @@
+{
+    "behaviorPicker": {
+        "goToHome": "Ir a la pantalla de inicio",
+        "openDatabase": "Abrir una base de datos",
+        "closeApp": "Cerrar la app"
+    },
+    "databaseCard": {
+        "createPageAccessibilityLabel": "Crear una página en {{title}}"
+    },
+    "workspaceMenu": {
+        "accessibilityLabel": "Cambiar de espacio de trabajo",
+        "workspaces": "Espacios de trabajo",
+        "addWorkspace": "Agregar espacio de trabajo",
+        "logOut": "Cerrar sesión",
+        "logOutConfirm": {
+            "title": "¿Cerrar sesión?",
+            "message": "Tendrás que iniciar sesión de nuevo con Notion para volver a usar NoteFerry.",
+            "cancel": "Cancelar",
+            "confirm": "Cerrar sesión"
+        }
+    },
+    "ads": {
+        "nativeDatabaseAdCard": {
+            "adBadge": "Anuncio"
+        }
+    }
+}

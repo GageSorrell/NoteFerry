@@ -10,8 +10,8 @@
  */
 
 import type * as Domain from "@noteferry/domain";
-import { MakeStyles, ViewStyle } from "@noteferry/ui";
-import { Checkbox } from "@noteferry/ui/Primitive";
+import { MakeStyles, ViewStyle } from "@noteferry/ui/Core";
+import { Checkbox } from "@noteferry/ui/Primitive/Checkbox";
 import { PropertyLabel } from "@/features/page-creation/property-label";
 import { View } from "react-native";
 

@@ -10,8 +10,9 @@
  */
 
 import type * as Domain from "@noteferry/domain";
-import { Body, type BottomSheet } from "@noteferry/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui";
+import { Body } from "@noteferry/ui/Primitive/Text";
+import { type BottomSheet } from "@noteferry/ui/Primitive/BottomSheet";
+import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui/Core";
 import {
     PropertyOptionPill,
     PropertyOptionSheet,

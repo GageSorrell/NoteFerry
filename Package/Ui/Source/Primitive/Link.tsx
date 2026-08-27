@@ -63,7 +63,14 @@ export/**
        * @category Component
        * @since 1.0.0
        */
-const Link = ({ Appearance = "Primary", Href, OnPress, Style, children, ...RestProps }: LinkProps): React.JSX.Element =>
+const Link = ({
+    Appearance = "Primary",
+    Href,
+    OnPress,
+    Style,
+    children,
+    ...RestProps
+}: LinkProps): React.JSX.Element =>
 {
     const Styles = useStyles();
     const { [ Semantic.Default ]: DefaultColor } = useToken(Semantic.Default);

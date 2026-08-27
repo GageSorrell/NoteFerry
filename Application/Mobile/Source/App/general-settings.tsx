@@ -12,33 +12,27 @@
  */
 
 import type * as Domain from "@noteferry/domain";
-import {
-    Body,
-    BottomSheet,
-    BottomSheetDescription,
-    BottomSheetTitle,
-    BottomSheetView,
-    Description,
-    Heading2,
-    MenuGroup,
-    MenuItem,
-    MenuItemCheck,
-    Pressable,
-    RadioGroup,
-    RadioGroupItem,
-    Setting,
-    SettingsContainer,
-    Sortable
-} from "@noteferry/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme, useToken } from "@noteferry/ui";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ChevronDown, GripVertical } from "lucide-react-native";
-import { useCallback, useRef } from "react";
-import { useSettings } from "@/features/settings/use-settings";
 import { Alert, ScrollView, View } from "react-native";
+import { Body, Description, Heading2 } from "@noteferry/ui/Primitive/Text";
+import { BottomSheet, BottomSheetDescription, BottomSheetTitle, BottomSheetView } from "@noteferry/ui/Primitive/BottomSheet";
+import { MenuGroup, MenuItem, MenuItemCheck } from "@noteferry/ui/Primitive/Menu";
+import { Pressable } from "@noteferry/ui/Primitive/Pressable";
+import { RadioGroup, RadioGroupItem } from "@noteferry/ui/Primitive/RadioGroup";
+import { Setting, SettingsContainer } from "@noteferry/ui/Primitive/Setting";
+import { Sortable } from "@noteferry/ui/Primitive/Sortable";
+import ChevronDown from "lucide-react-native/icons/chevron-down";
+import GripVertical from "lucide-react-native/icons/grip-vertical";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme, useToken } from "@noteferry/ui/Core";
+import { useCallback, useRef } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { SupportedLocales } from "@/Domain/Localization";
+import type { SupportedLocale } from "@/Domain/Localization";
 import { useConnections } from "@/Domain/Connection";
-import { useSubscription } from "@/Domain/Subscription";
+import { useLanguage } from "@/features/settings/use-language";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { useSettings } from "@/features/settings/use-settings";
+import { useSubscription } from "@/Domain/Subscription";
+import { useTranslation } from "react-i18next";
 
 const SortableItemExtent = 44;
 
@@ -48,11 +42,6 @@ interface LayoutOption
     readonly Value: Domain.Settings.HomeScreenLayout;
 }
 
-const LayoutOptions: readonly LayoutOption[] = [
-    { AccessibilityLabel: "One database per row", Value: "1" },
-    { AccessibilityLabel: "Two square cards per row", Value: "2" }
-];
-
 interface ContrastOption
 {
     readonly Label: string;
@@ -60,18 +49,19 @@ interface ContrastOption
     readonly Value: Domain.Settings.Contrast;
 }
 
-const ContrastOptions: readonly ContrastOption[] = [
-    { Label: "Use system setting", ShortLabel: "System", Value: "System" },
-    { Label: "Standard contrast", ShortLabel: "Disabled", Value: "Standard" },
-    { Label: "High contrast", ShortLabel: "Enabled", Value: "High" }
-];
-
 interface LaunchOption
 {
     /** `"Home"`, or the target database's id — also the selection key. */
     readonly Key: string;
     readonly Label: string;
     readonly Value: Domain.Behavior.LaunchBehavior;
+}
+
+interface LanguageOption
+{
+    /** `null` clears the override and follows the device's own locale. */
+    readonly Value: SupportedLocale | null;
+    readonly Label: string;
 }
 
 const GeneralSettingsScreen = (): React.JSX.Element =>
@@ -82,13 +72,45 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
     const { DataSources } = useConnections();
     const Router = useLazyRouter();
     const Theme = useTheme();
+    const { t } = useTranslation("settings");
+    const { Current: CurrentLanguage, SetLanguage } = useLanguage();
     const ContrastSheetRef = useRef<BottomSheet | null>(null);
     const LaunchSheetRef = useRef<BottomSheet | null>(null);
+    const LanguageSheetRef = useRef<BottomSheet | null>(null);
     const { [Token.Semantic.Muted]: MutedColor } = useToken(Token.Semantic.Muted);
+
+    const LayoutOptions: ReadonlyArray<LayoutOption> = [
+        { AccessibilityLabel: t("general.homeScreenLayout.oneColumn"), Value: "1" },
+        { AccessibilityLabel: t("general.homeScreenLayout.twoColumn"), Value: "2" }
+    ];
+
+    const ContrastOptions: ReadonlyArray<ContrastOption> = [
+        { Label: t("general.highContrast.system"), ShortLabel: t("general.highContrast.systemShort"), Value: "System" },
+        { Label: t("general.highContrast.standard"), ShortLabel: t("general.highContrast.standardShort"), Value: "Standard" },
+        { Label: t("general.highContrast.high"), ShortLabel: t("general.highContrast.highShort"), Value: "High" }
+    ];
 
     const SelectedContrast =
         ContrastOptions.find((Option: ContrastOption) => Option.Value === AppSettings.Contrast)
             ?? ContrastOptions[ 0 ];
+
+    const LanguageNames: Record<SupportedLocale, string> = {
+        de: t("general.language.names.de"),
+        "en-US": t("general.language.names.en-US"),
+        "es-419": t("general.language.names.es-419"),
+        ja: t("general.language.names.ja"),
+        ko: t("general.language.names.ko")
+    };
+    const LanguageOptions: ReadonlyArray<LanguageOption> = [
+        { Label: t("general.language.system"), Value: null },
+        ...SupportedLocales.map((Locale: SupportedLocale): LanguageOption => ({
+            Label: LanguageNames[ Locale ],
+            Value: Locale
+        }))
+    ];
+    const SelectedLanguage =
+        LanguageOptions.find((Option: LanguageOption) => Option.Value === CurrentLanguage)
+            ?? LanguageOptions[ 0 ];
 
     const DatabaseOrder = AppSettings.DatabaseOrder.length > 0
         ? AppSettings.DatabaseOrder
@@ -97,8 +119,8 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
         Source: Domain.DataSource.CachedDataSourceSchema
     ) => [ Source.DataSourceId, Source ] as const));
 
-    const LaunchOptions: readonly LaunchOption[] = [
-        { Key: "Home", Label: "Home screen", Value: { Type: "Home" } },
+    const LaunchOptions: ReadonlyArray<LaunchOption> = [
+        { Key: "Home", Label: t("general.onLaunch.homeScreen"), Value: { Type: "Home" } },
         ...DataSources.map((Source: Domain.DataSource.CachedDataSourceSchema): LaunchOption => ({
             Key: Source.DataSourceId,
             Label: Source.Title,
@@ -111,31 +133,31 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
         : AppSettings.LaunchBehavior.DataSourceId;
     const SelectedLaunchLabel =
         LaunchOptions.find((Option: LaunchOption) => Option.Key === SelectedLaunchKey)?.Label
-            ?? "Select a database";
+            ?? t("general.onLaunch.placeholder");
 
     const ShowSettingsGate = useCallback((Message: string): void =>
     {
         Alert.alert(
-            "Available with NoteFerry Pro",
+            t("general.proGate.title"),
             Message,
             [
-                { style: "cancel", text: "Not now" },
-                { onPress: Router.push("/plans"), text: "Compare plans" },
-                { onPress: Router.push("/subscribe"), text: "Upgrade" }
+                { style: "cancel", text: t("general.proGate.cancel") },
+                { onPress: Router.push("/plans"), text: t("general.proGate.comparePlans") },
+                { onPress: Router.push("/subscribe"), text: t("general.proGate.upgrade") }
             ]
         );
-    }, [ Router ]);
+    }, [ Router, t ]);
 
     const SetHomeScreenLayout = useCallback((Value: Domain.Settings.HomeScreenLayout) =>
     {
         if (Value !== "1" && !HasProAccess)
         {
-            ShowSettingsGate("Pro unlocks the two-column layout and custom database ordering.");
+            ShowSettingsGate(t("general.proGate.layoutMessage"));
             return;
         }
 
         void Update({ HomeScreenLayout: Value });
-    }, [ HasProAccess, ShowSettingsGate, Update ]);
+    }, [ HasProAccess, ShowSettingsGate, Update, t ]);
 
     const SetContrast = useCallback((Value: Domain.Settings.Contrast) =>
     {
@@ -153,6 +175,17 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
         ContrastSheetRef.current?.dismiss();
     }, [ SetContrast ]);
 
+    const OpenLanguageMenu = useCallback((): void =>
+    {
+        LanguageSheetRef.current?.present();
+    }, []);
+
+    const SelectLanguage = useCallback((Value: SupportedLocale | null): void =>
+    {
+        void SetLanguage(Value);
+        LanguageSheetRef.current?.dismiss();
+    }, [ SetLanguage ]);
+
     const OpenLaunchMenu = useCallback((): void =>
     {
         LaunchSheetRef.current?.present();
@@ -164,25 +197,25 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
 
         if (Value.Type !== "Home" && !HasProAccess)
         {
-            ShowSettingsGate("Pro can launch directly into a selected database.");
+            ShowSettingsGate(t("general.proGate.launchMessage"));
             return;
         }
 
         void Update({ LaunchBehavior: Value });
-    }, [ HasProAccess, ShowSettingsGate, Update ]);
+    }, [ HasProAccess, ShowSettingsGate, Update, t ]);
 
     const HandleReorder = useCallback((NextOrder: ReadonlyArray<string>) =>
     {
         if (!HasProAccess)
         {
-            ShowSettingsGate("Pro lets you set a custom home-screen database order.");
+            ShowSettingsGate(t("general.proGate.orderMessage"));
             return;
         }
 
         void Update({
             DatabaseOrder: NextOrder as ReadonlyArray<Domain.Id.NotionDataSourceId>
         });
-    }, [ HasProAccess, ShowSettingsGate, Update ]);
+    }, [ HasProAccess, ShowSettingsGate, Update, t ]);
 
     return (
         <View style={ Styles.Container }>
@@ -192,11 +225,11 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
                     style={ Styles.Scroll }>
                     <SettingsContainer>
                         <Setting
-                            Description="What NoteFerry shows when it opens."
-                            Title="On launch">
+                            Description={ t("general.onLaunch.description") }
+                            Title={ t("general.onLaunch.title") }>
                             <Pressable
                                 Accessibility={ {
-                                    Label: `On launch: ${ SelectedLaunchLabel }`,
+                                    Label: t("general.onLaunch.accessibilityLabel", { label: SelectedLaunchLabel }),
                                     Role: "button"
                                 } }
                                 OnPress={ OpenLaunchMenu }
@@ -209,8 +242,8 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
                             </Pressable>
                         </Setting>
                         <Setting
-                            Description="Show one database per row, or two square cards per row."
-                            Title="Home screen layout">
+                            Description={ t("general.homeScreenLayout.description") }
+                            Title={ t("general.homeScreenLayout.title") }>
                             { /* `RadioGroupItem` is decorative only (`pointerEvents="none"`) —
                                  the outer `Pressable` covers the preview *and* the dot, so
                                  tapping either registers the same selection. */ }
@@ -258,11 +291,11 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
                             </RadioGroup>
                         </Setting>
                         <Setting
-                            Description="Increase the contrast of dividers, borders, and switches."
-                            Title="High contrast">
+                            Description={ t("general.highContrast.description") }
+                            Title={ t("general.highContrast.title") }>
                             <Pressable
                                 Accessibility={ {
-                                    Label: `High contrast: ${ SelectedContrast.Label }`,
+                                    Label: t("general.highContrast.accessibilityLabel", { label: SelectedContrast.Label }),
                                     Role: "button"
                                 } }
                                 OnPress={ OpenContrastMenu }
@@ -274,14 +307,31 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
                                 />
                             </Pressable>
                         </Setting>
+                        <Setting
+                            Description={ t("general.language.description") }
+                            Title={ t("general.language.title") }>
+                            <Pressable
+                                Accessibility={ {
+                                    Label: t("general.language.accessibilityLabel", { label: SelectedLanguage.Label }),
+                                    Role: "button"
+                                } }
+                                OnPress={ OpenLanguageMenu }
+                                style={ Styles.MenuTrigger }>
+                                <Body NumberOfLines={ 1 }>{ SelectedLanguage.Label }</Body>
+                                <ChevronDown
+                                    color={ MutedColor }
+                                    size={ 16 }
+                                />
+                            </Pressable>
+                        </Setting>
                     </SettingsContainer>
 
                     { DataSources.length > 1
                         ? (
                             <View>
-                                <Heading2 Style={ Styles.SectionHeading }>Home screen order</Heading2>
+                                <Heading2 Style={ Styles.SectionHeading }>{ t("general.homeScreenOrder.title") }</Heading2>
                                 <Description Style={ Styles.SectionSubtitle }>
-                                    Drag to reorder the databases shown on the home screen.
+                                    { t("general.homeScreenOrder.description") }
                                 </Description>
                                 <Sortable.Root
                                     ItemExtent={ SortableItemExtent }
@@ -323,9 +373,9 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
                 TestId="contrast-options-sheet">
                 <BottomSheetView style={ Styles.Sheet }>
                     <View style={ Styles.SheetHeader }>
-                        <BottomSheetTitle>High contrast</BottomSheetTitle>
+                        <BottomSheetTitle>{ t("general.highContrast.title") }</BottomSheetTitle>
                         <BottomSheetDescription>
-                            Choose how much contrast to use for dividers, borders, and switches.
+                            { t("general.highContrast.sheetDescription") }
                         </BottomSheetDescription>
                     </View>
                     <MenuGroup Style={ Styles.SheetMenu }>
@@ -334,8 +384,8 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
                                 AccessibilityLabel={ Option.Label }
                                 Label={ Option.Label }
                                 OnPress={ () => SelectContrast(Option.Value) }
-                                key={ Option.Value }
-                                Style={ Styles.SheetMenuOption }>
+                                Style={ Styles.SheetMenuOption }
+                                key={ Option.Value }>
                                 { AppSettings.Contrast === Option.Value
                                     ? <MenuItemCheck />
                                     : null }
@@ -350,9 +400,9 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
                 TestId="launch-options-sheet">
                 <BottomSheetView style={ Styles.Sheet }>
                     <View style={ Styles.SheetHeader }>
-                        <BottomSheetTitle>On launch</BottomSheetTitle>
+                        <BottomSheetTitle>{ t("general.onLaunch.title") }</BottomSheetTitle>
                         <BottomSheetDescription>
-                            Choose what NoteFerry shows when it opens.
+                            { t("general.onLaunch.sheetDescription") }
                         </BottomSheetDescription>
                     </View>
                     <MenuGroup Style={ Styles.SheetMenu }>
@@ -361,9 +411,36 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
                                 AccessibilityLabel={ Option.Label }
                                 Label={ Option.Label }
                                 OnPress={ () => SelectLaunch(Option.Value) }
-                                key={ Option.Key }
-                                Style={ Styles.SheetMenuOption }>
+                                Style={ Styles.SheetMenuOption }
+                                key={ Option.Key }>
                                 { SelectedLaunchKey === Option.Key
+                                    ? <MenuItemCheck />
+                                    : null }
+                            </MenuItem>
+                        )) }
+                    </MenuGroup>
+                </BottomSheetView>
+            </BottomSheet>
+            <BottomSheet
+                Ref={ LanguageSheetRef }
+                SnapPoints={ [ "50%" ] }
+                TestId="language-options-sheet">
+                <BottomSheetView style={ Styles.Sheet }>
+                    <View style={ Styles.SheetHeader }>
+                        <BottomSheetTitle>{ t("general.language.title") }</BottomSheetTitle>
+                        <BottomSheetDescription>
+                            { t("general.language.sheetDescription") }
+                        </BottomSheetDescription>
+                    </View>
+                    <MenuGroup Style={ Styles.SheetMenu }>
+                        { LanguageOptions.map((Option: LanguageOption) => (
+                            <MenuItem
+                                AccessibilityLabel={ Option.Label }
+                                Label={ Option.Label }
+                                OnPress={ () => SelectLanguage(Option.Value) }
+                                Style={ Styles.SheetMenuOption }
+                                key={ Option.Value ?? "system" }>
+                                { SelectedLanguage.Value === Option.Value
                                     ? <MenuItemCheck />
                                     : null }
                             </MenuItem>

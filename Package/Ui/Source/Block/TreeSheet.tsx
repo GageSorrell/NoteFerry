@@ -49,7 +49,8 @@ import {
     type BottomSheetProps,
     BottomSheetScrollView
 } from "../Primitive/BottomSheet.js";
-import { ChevronDown, ChevronRight } from "lucide-react-native";
+import ChevronDown from "lucide-react-native/icons/chevron-down";
+import ChevronRight from "lucide-react-native/icons/chevron-right";
 import { IconBlock, type IconData } from "./IconBlock.js";
 import { MakeStyles, TextStyle, ViewStyle } from "../MakeStyles.js";
 import { MenuItem, MenuItemCheck } from "../Primitive/Menu.js";

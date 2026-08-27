@@ -1,0 +1,73 @@
+{
+    "titles": {
+        "plans": "NoteFerry Premium",
+        "subscribe": "NoteFerry Pro"
+    },
+    "purchaseSyncPending": {
+        "title": "Compra exitosa — finalizando la configuración",
+        "body": "Tus funciones Pro se activarán automáticamente en cuanto tu compra termine de sincronizarse. No tardará mucho."
+    },
+    "subscribe": {
+        "heading": "NoteFerry Pro",
+        "description": "Bases de datos y capturas ilimitadas, personalización completa y sin anuncios.",
+        "plan": {
+            "term": {
+                "monthly": "Mensual",
+                "yearly": "Anual",
+                "lifetime": "De por vida"
+            },
+            "accessibilityLabel": "{{term}}, {{price}}",
+            "savePercent": "Ahorra {{percent}}%",
+            "bestValue": "Mejor valor",
+            "lifetimeDescription": "Compra única. El acceso dura mientras NoteFerry siga en funcionamiento.",
+            "renewingDescription": "Se renueva automáticamente a menos que lo canceles desde tu cuenta de la tienda."
+        },
+        "storeUnavailable": "Los productos de la tienda no están disponibles. Revisa tu conexión e inténtalo de nuevo.",
+        "actions": {
+            "continueWith": "Continuar con {{term}}",
+            "finishingSetup": "Compra exitosa: finalizando la configuración…",
+            "restore": "Restaurar compras",
+            "retrySetup": "Reintentar configuración"
+        },
+        "legalNotice": "Al comprar, aceptas los términos de facturación de la tienda y las políticas de NoteFerry.",
+        "terms": "Términos",
+        "privacy": "Privacidad",
+        "alerts": {
+            "purchaseSuccess": {
+                "title": "NoteFerry Pro ya está listo",
+                "body": "Tus funciones Pro ya están activas."
+            },
+            "purchaseNotCompleted": {
+                "title": "Compra no completada",
+                "body": "Inténtalo de nuevo."
+            },
+            "restoreSuccess": {
+                "title": "Compras restauradas",
+                "body": "Tu suscripción actual se actualizó."
+            },
+            "restoreFailed": {
+                "title": "No se pudo restaurar"
+            },
+            "stillFinishingSetup": {
+                "title": "Aún finalizando la configuración",
+                "body": "Revisa tu conexión e inténtalo de nuevo en unos momentos."
+            }
+        }
+    },
+    "plans": {
+        "heading": "Obtén NoteFerry™ Premium",
+        "description": "El plan Gratis conserva la captura, la accesibilidad, la confiabilidad y los controles de cuenta. Pro desbloquea la personalización, más destinos y elimina la publicidad.",
+        "usage": {
+            "heading": "Tu uso actual",
+            "description": "{{used}} de {{limit}} páginas usadas en los últimos {{minutes}} minutos."
+        },
+        "pricing": {
+            "heading": "Un solo plan, tres formas de comprarlo",
+            "fallback": "El precio localizado de la tienda aparece al finalizar la compra.",
+            "description": "Mensual y anual se renuevan automáticamente. De por vida es una compra única."
+        },
+        "actions": {
+            "viewOptions": "Ver opciones de suscripción"
+        }
+    }
+}

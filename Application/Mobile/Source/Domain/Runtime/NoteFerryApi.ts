@@ -15,7 +15,8 @@
  */
 
 import type * as Domain from "@noteferry/domain";
-import { Effect, pipe } from "effect";
+import * as Effect from "effect/Effect";
+import { pipe } from "effect/Function";
 import { FetchHttpClient, HttpClient, HttpClientRequest } from "effect/unstable/http";
 import { HttpApiClient } from "effect/unstable/httpapi";
 import { NoteFerryApi } from "@noteferry/api";
@@ -99,6 +100,38 @@ const StartNotionAuthorization = async (): Promise<string> =>
             const Result = yield* Client.Connections.StartAuthorization();
 
             return Result.AuthorizationUrl;
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
+};
+
+export/**
+       * Moves the Notion provider credentials returned by Supabase Auth into
+       * the server-only connection store. This completes first-run connection
+       * setup without opening Notion's authorization page a second time.
+       *
+       * @category Api
+       * @since 1.0.0
+       */
+const AdoptNotionAuthorization = async (
+    ProviderToken: string,
+    ProviderRefreshToken?: string
+): Promise<void> =>
+{
+    const Token = await GetAccessToken();
+
+    await Effect.runPromise(pipe(
+        Effect.gen(function* ()
+        {
+            const Client = yield* MakeClient(Token);
+
+            yield* Client.Connections.AdoptAuthorization({
+                payload:
+                {
+                    ProviderToken,
+                    ...(ProviderRefreshToken === undefined ? { } : { ProviderRefreshToken })
+                }
+            });
         }),
         Effect.provide(FetchHttpClient.layer)
     ));
@@ -247,7 +280,13 @@ const GetDataSource = async (
     ));
 };
 
-export const SwapFreeActiveDataSource = async (
+export/**
+       * Activates one data source and locks another for the current user.
+       *
+       * @category Api
+       * @since 1.0.0
+       */
+const SwapFreeActiveDataSource = async (
     ActivateDataSourceId: Domain.Id.NotionDataSourceId,
     LockDataSourceId: Domain.Id.NotionDataSourceId
 ): Promise<ReadonlyArray<Domain.DataSource.CachedDataSourceSchema>> =>
@@ -267,7 +306,13 @@ export const SwapFreeActiveDataSource = async (
     ));
 };
 
-export const RemoveDataSourceFromNoteFerry = async (
+export/**
+       * Removes a data source from the current user's NoteFerry cache.
+       *
+       * @category Api
+       * @since 1.0.0
+       */
+const RemoveDataSourceFromNoteFerry = async (
     DataSourceId: Domain.Id.NotionDataSourceId
 ): Promise<void> =>
 {
@@ -524,7 +569,9 @@ const RequestAccountData = async (): Promise<void> =>
 /** The fields the client supplies to submit feedback or a bug report. */
 export interface SubmitFeedbackInput
 {
-    readonly Kind: "BugReport" | "Feedback";
+    readonly Kind:
+        | "BugReport"
+        | "Feedback";
     readonly Message: string;
     readonly ShareContact: boolean;
 }
@@ -552,7 +599,13 @@ const SubmitFeedback = async (Input: SubmitFeedbackInput): Promise<void> =>
     ));
 };
 
-export const GetSubscriptionStatus = async ():
+export/**
+       * Returns the current user's subscription status.
+       *
+       * @category Api
+       * @since 1.0.0
+       */
+const GetSubscriptionStatus = async ():
 Promise<Domain.Subscription.SubscriptionStatus> =>
 {
     const Token = await GetAccessToken();
@@ -568,7 +621,13 @@ Promise<Domain.Subscription.SubscriptionStatus> =>
     ));
 };
 
-export const GetCreationAllowance = async ():
+export/**
+       * Returns the current user's remaining creation allowance.
+       *
+       * @category Api
+       * @since 1.0.0
+       */
+const GetCreationAllowance = async ():
 Promise<Domain.Subscription.CreationAllowance> =>
 {
     const Token = await GetAccessToken();
@@ -584,7 +643,13 @@ Promise<Domain.Subscription.CreationAllowance> =>
     ));
 };
 
-export const RefreshSubscriptionStatus = async ():
+export/**
+       * Refreshes and returns the current user's subscription status.
+       *
+       * @category Api
+       * @since 1.0.0
+       */
+const RefreshSubscriptionStatus = async ():
 Promise<Domain.Subscription.SubscriptionStatus> =>
 {
     const Token = await GetAccessToken();
@@ -600,7 +665,13 @@ Promise<Domain.Subscription.SubscriptionStatus> =>
     ));
 };
 
-export const GetActiveSubscriptionSale = async (): Promise<Domain.Subscription.ActiveSale | null> =>
+export/**
+       * Returns the currently active subscription sale, if one is available.
+       *
+       * @category Api
+       * @since 1.0.0
+       */
+const GetActiveSubscriptionSale = async (): Promise<Domain.Subscription.ActiveSale | null> =>
 {
     const Token = await GetAccessToken();
 
@@ -616,7 +687,13 @@ export const GetActiveSubscriptionSale = async (): Promise<Domain.Subscription.A
     ));
 };
 
-export const RegisterSubscriptionSaleDevice = async (Input: {
+export/**
+       * Registers the current device for subscription sale notifications.
+       *
+       * @category Api
+       * @since 1.0.0
+       */
+const RegisterSubscriptionSaleDevice = async (Input: {
     readonly DeviceId: string;
     readonly Platform: Domain.Subscription.DevicePlatform;
     readonly PushToken: string;
@@ -635,7 +712,13 @@ export const RegisterSubscriptionSaleDevice = async (Input: {
     ));
 };
 
-export const RemoveSubscriptionSaleDevice = async (DeviceId: string): Promise<void> =>
+export/**
+       * Removes a device from subscription sale notifications.
+       *
+       * @category Api
+       * @since 1.0.0
+       */
+const RemoveSubscriptionSaleDevice = async (DeviceId: string): Promise<void> =>
 {
     const Token = await GetAccessToken();
 

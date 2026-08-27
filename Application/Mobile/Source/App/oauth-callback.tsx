@@ -1,7 +1,7 @@
 /**
  * Recovers an OAuth callback that cold-started or recreated the application.
  *
- * @module notivex/app/oauth-callback
+ * @module noteferry/app/oauth-callback
  *
  * @file      oauth-callback.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -13,15 +13,16 @@ import { ActivityIndicator, View } from "react-native";
 import {
     ClearPendingInitialOAuthCallback,
     CompleteSignInFromUrl,
-    GetPendingInitialOAuthCallback,
     GetOAuthCallbackKind,
+    GetPendingInitialOAuthCallback,
     useAuth
 } from "@/Domain/Auth";
-import { ConnectNotion } from "@/Domain/Connection";
 import { useEffect, useState } from "react";
-import { useRouter } from "expo-router";
+import { AdoptNotionAuthorization } from "@/Domain/Runtime/NoteFerryApi";
 import { useOnboarding } from "@/features/onboarding/onboarding-context";
-import { useTheme } from "@notivex/ui";
+import { useRouter } from "expo-router";
+import { useTheme } from "@noteferry/ui/Core";
+import { useTranslation } from "react-i18next";
 
 type RecoveryResult =
     | { readonly Destination: "SignIn"; }
@@ -63,17 +64,32 @@ const RecoverCallback = (
 
         if (Kind === "Identity")
         {
-            const Session = await CompleteSignInFromUrl(ReturnUrl);
+            const SignIn = await CompleteSignInFromUrl(ReturnUrl);
 
-            if (Session === null)
+            if (SignIn === null)
             {
                 return { Destination: "SignIn" };
             }
 
-            return {
-                Destination: "Sync",
-                Succeeded: await ConnectNotion()
-            };
+            try
+            {
+                await AdoptNotionAuthorization(
+                    SignIn.ProviderToken,
+                    SignIn.ProviderRefreshToken
+                );
+
+                return { Destination: "Sync", Succeeded: true };
+            }
+            catch (Error)
+            {
+                /* The Supabase session is valid even if adopting its transient
+                 * provider token fails. Keep the user in onboarding so they can
+                 * retry explicitly instead of launching another browser here. */
+                /* eslint-disable-next-line no-console */
+                console.error("Failed to save the Notion authorization", Error);
+
+                return { Destination: "Sync", Succeeded: false };
+            }
         }
 
         if (Kind === "NotionConnection")
@@ -92,6 +108,7 @@ const RecoverCallback = (
         return { Destination: "SignIn" };
     })().catch((Error: unknown): RecoveryResult =>
     {
+        /* eslint-disable-next-line no-console */
         console.error("Failed to recover the OAuth callback", Error);
 
         return { Destination: "SignIn" };
@@ -106,8 +123,9 @@ const OAuthCallbackScreen = (): React.JSX.Element =>
 {
     const Theme = useTheme();
     const Router = useRouter();
+    const { t } = useTranslation("onboarding");
     const { IsLoading, Session } = useAuth();
-    const { Complete, RecordAuthorizationResult } = useOnboarding();
+    const { Begin, Complete, RecordAuthorizationResult } = useOnboarding();
     const [ ReturnUrl ] = useState(GetPendingInitialOAuthCallback);
     const [ HadRestoredSession ] = useState(Session !== null);
     const [ Result, SetResult ] = useState<RecoveryResult | null>(() => ReturnUrl === null
@@ -123,19 +141,28 @@ const OAuthCallbackScreen = (): React.JSX.Element =>
 
         let Cancelled = false;
 
-        void RecoverCallback(ReturnUrl, HadRestoredSession).then((Next: RecoveryResult) =>
+        const Run = async (): Promise<void> =>
         {
+            if (GetOAuthCallbackKind(ReturnUrl) === "Identity")
+            {
+                await Begin();
+            }
+
+            const Next = await RecoverCallback(ReturnUrl, HadRestoredSession);
+
             if (!Cancelled)
             {
                 SetResult(Next);
             }
-        });
+        };
+
+        void Run();
 
         return () =>
         {
             Cancelled = true;
         };
-    }, [ HadRestoredSession, IsLoading, ReturnUrl ]);
+    }, [ Begin, HadRestoredSession, IsLoading, ReturnUrl ]);
 
     useEffect(() =>
     {
@@ -165,14 +192,17 @@ const OAuthCallbackScreen = (): React.JSX.Element =>
 
     return (
         <View
-            accessibilityLabel="Finishing Notion authorization"
+            accessibilityLabel={ t("oauthCallback.accessibilityLabel") }
             style={ {
                 alignItems: "center",
                 backgroundColor: Theme.Semantic.BackgroundMain,
                 flex: 1,
                 justifyContent: "center"
             } }>
-            <ActivityIndicator color={ Theme.Semantic.Cursor } size="large" />
+            <ActivityIndicator
+                color={ Theme.Semantic.Cursor }
+                size="large"
+            />
         </View>
     );
 };

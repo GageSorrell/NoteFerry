@@ -8,29 +8,34 @@
  */
 
 import * as Notifications from "expo-notifications";
-import type { Action } from "expo-quick-actions";
-import type { Href } from "expo-router";
-import { Stack, router } from "expo-router";
-import { ActivityIndicator, View } from "react-native";
-import { useCallback, useEffect } from "react";
 import * as React from "react";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Function } from "@sorrell/effect";
-import { ThemeProvider as NoteFerryThemeProvider, useTheme } from "@noteferry/ui";
-import { useQuickActionCallback } from "expo-quick-actions/hooks";
-import { RegisterDevelopmentMenu } from "@/Domain/Runtime/DevelopmentMenu";
-import { NoteFerryAuthProvider, useAuth } from "@/Domain/Auth/NoteFerryAuthProvider";
-import { StatusBar } from "@/Domain/Miscellaneous/StatusBar";
-import { SubscriptionProvider } from "@/Domain/Subscription";
+import * as SplashScreen from "expo-splash-screen";
+import { ActivityIndicator, View } from "react-native";
 import {
     DevelopmentOnboardingProvider,
     OnboardingMockRegistry,
     useDevelopmentOnboarding
 } from "@/features/onboarding/onboarding-development";
-import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { NoteFerryAuthProvider, useAuth } from "@/Domain/Auth/NoteFerryAuthProvider";
+import { ThemeProvider as NoteFerryThemeProvider, useTheme } from "@noteferry/ui/Core";
 import { OnboardingProvider, useOnboarding } from "@/features/onboarding/onboarding-context";
+import { Stack, router } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import type { Action } from "expo-quick-actions";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { Function } from "@sorrell/effect";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import type { Href } from "expo-router";
+import { InitializeI18n, SyncCalendarLocales } from "@/Domain/Localization";
+import { RegisterDevelopmentMenu } from "@/Domain/Runtime/DevelopmentMenu";
+import { StatusBar } from "@/Domain/Miscellaneous/StatusBar";
+import { SubscriptionProvider } from "@/Domain/Subscription";
 import { useHighContrast } from "@/features/settings/use-high-contrast";
+import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { useQuickActionCallback } from "expo-quick-actions/hooks";
+import { useTranslation } from "react-i18next";
+
+void SplashScreen.preventAutoHideAsync();
 
 const HandledNotificationIds = new Set<string>();
 
@@ -138,6 +143,7 @@ const RootNavigator = () =>
     const Development = useDevelopmentOnboarding();
     const Router = useLazyRouter();
     const Theme = useTheme();
+    const { t } = useTranslation([ "settings", "common", "subscription", "onboarding" ]);
 
     const IsAuthenticated = Session !== null;
     const MockStage = Development.Scenario === null
@@ -179,14 +185,17 @@ const RootNavigator = () =>
     {
         return (
             <View
-                accessibilityLabel="Loading NoteFerry"
+                accessibilityLabel={ t("common:loading") }
                 style={ {
                     alignItems: "center",
                     backgroundColor: Theme.Semantic.BackgroundMain,
                     flex: 1,
                     justifyContent: "center"
                 } }>
-                <ActivityIndicator color={ Theme.Semantic.Cursor } size="large" />
+                <ActivityIndicator
+                    color={ Theme.Semantic.Cursor }
+                    size="large"
+                />
             </View>
         );
     }
@@ -196,7 +205,7 @@ const RootNavigator = () =>
             headerShown: false,
             headerTitleAlign: "center",
             headerTitleStyle: {
-                fontFamily: "Inter_600SemiBold",
+                fontFamily: "Roboto Flex",
                 fontSize: 16,
                 fontWeight: "600"
             }
@@ -209,7 +218,7 @@ const RootNavigator = () =>
                         headerShown: true,
                         headerStyle: { backgroundColor: Theme.Semantic.BackgroundModal },
                         presentation: "modal",
-                        title: "What’s Ahead: Two Steps"
+                        title: t("onboarding:titles.signInModal")
                     } } />
             </Stack.Protected>
             <Stack.Protected guard={ IsInOnboarding }>
@@ -224,31 +233,31 @@ const RootNavigator = () =>
                     options={ {
                         headerShown: true,
                         headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
-                        title: "Settings"
+                        title: t("settings:titles.settings")
                     } } />
                 <Stack.Screen name="general-settings"
                     options={ {
                         headerShown: true,
                         headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
-                        title: "General"
+                        title: t("settings:titles.general")
                     } } />
                 <Stack.Screen name="notification-settings"
                     options={ {
                         headerShown: true,
                         headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
-                        title: "Notifications"
+                        title: t("settings:titles.notifications")
                     } } />
                 <Stack.Screen name="quick-action-settings"
                     options={ {
                         headerShown: true,
                         headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
-                        title: "Quick Actions"
+                        title: t("settings:titles.quickActions")
                     } } />
                 <Stack.Screen name="workspace-settings"
                     options={ {
                         headerShown: true,
                         headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
-                        title: "Workspaces"
+                        title: t("settings:titles.workspaces")
                     } } />
                 <Stack.Screen name="account-settings" />
                 <Stack.Screen name="feedback"
@@ -270,25 +279,24 @@ const RootNavigator = () =>
                     options={ {
                         headerShown: true,
                         headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
-                        title: "NoteFerry Premium"
+                        title: t("subscription:titles.plans")
                     } } />
                 <Stack.Screen name="subscribe"
                     options={ {
                         headerShown: true,
                         headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
-                        title: "NoteFerry Pro"
+                        title: t("subscription:titles.subscribe")
                     } } />
                 <Stack.Screen name="database-settings"
                     options={ {
                         headerShown: true,
                         headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
-                        title: "Database settings"
+                        title: t("settings:titles.databaseSettings")
                     } } />
                 <Stack.Screen name="destination-config" />
             </Stack.Protected>
             <Stack.Protected guard={ __DEV__ }>
                 <Stack.Screen name="onboarding-scenarios" />
-                <Stack.Screen name="storybook" />
             </Stack.Protected>
         </Stack>
     );
@@ -296,7 +304,36 @@ const RootNavigator = () =>
 
 const RootLayout = () =>
 {
+    const [ IsI18nReady, SetIsI18nReady ] = useState(false);
+
     useRootRegistration();
+
+    useEffect(() =>
+    {
+        let Cancelled = false;
+
+        void InitializeI18n()
+            .catch((Error_: unknown) => console.error("i18n initialization failed:", Error_))
+            .then(() =>
+            {
+                if (!Cancelled)
+                {
+                    SyncCalendarLocales();
+                    SetIsI18nReady(true);
+                    void SplashScreen.hideAsync();
+                }
+            });
+
+        return () =>
+        {
+            Cancelled = true;
+        };
+    }, [ ]);
+
+    if (!IsI18nReady)
+    {
+        return null;
+    }
 
     return (
         <Providers>

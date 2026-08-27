@@ -10,25 +10,23 @@
  */
 
 import type * as Domain from "@noteferry/domain";
-import {
-    CalendarDays,
-    CircleDot,
-    GitBranch,
-    Hash,
-    Link,
-    ListTodo,
-    type LucideIcon,
-    Mail,
-    Paperclip,
-    Phone,
-    SquareCheck,
-    Tags,
-    Text,
-    Type,
-    Users
-} from "lucide-react-native";
-import { MakeStyles, TextStyle, ViewStyle, useTheme } from "@noteferry/ui";
-import { LabelText } from "@noteferry/ui/Primitive";
+import CalendarDays from "lucide-react-native/icons/calendar-days";
+import CircleDot from "lucide-react-native/icons/circle-dot";
+import GitBranch from "lucide-react-native/icons/git-branch";
+import Hash from "lucide-react-native/icons/hash";
+import Link from "lucide-react-native/icons/link";
+import ListTodo from "lucide-react-native/icons/list-todo";
+import Mail from "lucide-react-native/icons/mail";
+import Paperclip from "lucide-react-native/icons/paperclip";
+import Phone from "lucide-react-native/icons/phone";
+import SquareCheck from "lucide-react-native/icons/square-check";
+import Tags from "lucide-react-native/icons/tags";
+import Text from "lucide-react-native/icons/text-align-start";
+import Type from "lucide-react-native/icons/type";
+import Users from "lucide-react-native/icons/users";
+import type { LucideIcon } from "lucide-react-native";
+import { MakeStyles, TextStyle, ViewStyle, useTheme } from "@noteferry/ui/Core";
+import { LabelText } from "@noteferry/ui/Primitive/Text";
 import { View } from "react-native";
 
 const PropertyTypeIcon:

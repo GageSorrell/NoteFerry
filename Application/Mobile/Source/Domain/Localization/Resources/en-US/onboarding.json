@@ -1,0 +1,127 @@
+{
+    "titles": {
+        "signInModal": "What’s Ahead: Two Steps"
+    },
+    "signIn": {
+        "heroTitle": "Your notes, faster.",
+        "heroSubtitle": "Log in with your Notion account",
+        "continueWithNotion": "Continue with Notion",
+        "noAccount": "Don’t have a Notion account?",
+        "signUp": "Sign up",
+        "legal": {
+            "line1": "By continuing, you acknowledge that you understand",
+            "line2": "and agree to the",
+            "terms": "Terms & Conditions",
+            "and": "and",
+            "privacy": "Privacy Policy"
+        },
+        "learnMore": "Learn more",
+        "needHelp": "Need help?",
+        "copyright": "© 2026 Gage Sorrell. All Rights Reserved.",
+        "mail": {
+            "unavailableTitle": "No mail app available",
+            "unavailableMessage": "Set up a mail account on this device to send feedback.",
+            "subject": "NoteFerry Question",
+            "body": "\n\n—\nNoteFerry {{version}} ({{build}})"
+        }
+    },
+    "signInModal": {
+        "step1": "First, you’ll sign into Notion and add the NoteFerry integration to your workspace.",
+        "step2": "Then, you’ll choose which databases NoteFerry can see.",
+        "tip": "Tip: Giving NoteFerry access to a page also gives access to all databases under that page.",
+        "logInWithNotion": "Log in with Notion",
+        "backToWelcome": "Back to welcome"
+    },
+    "sync": {
+        "helpLink": "Learn about third-party connections in Notion",
+        "loading": {
+            "accessibilityLabel": "Checking Notion access",
+            "message": "Checking what NoteFerry can access…"
+        },
+        "noIntegration": {
+            "title": "NoteFerry wasn’t added",
+            "subtitle": "The authorization finished without adding the NoteFerry integration to your workspace.",
+            "action": "Go back and start over"
+        },
+        "noAccess": {
+            "title": "Choose what NoteFerry can see",
+            "subtitle": "The integration is installed, but no pages or databases are shared with it yet.",
+            "action": "Choose pages in Notion"
+        },
+        "pagesOnly": {
+            "title": "No databases found",
+            "subtitle": "NoteFerry can see regular pages, but none of the shared page trees contain a database.",
+            "action": "Change access in Notion"
+        },
+        "error": {
+            "title": "We hit a snag",
+            "subtitle": "We couldn’t finish checking your Notion access. Check your connection and try again.",
+            "action": "Try again"
+        },
+        "pageAccessDisclosure": {
+            "pagesFound_one": "{{count}} page found",
+            "pagesFound_other": "{{count}} pages found",
+            "whyShown": "Why pages are shown",
+            "helpGlyph": "?",
+            "noPages": "No regular pages are visible.",
+            "andMore": "and {{count}} more",
+            "sheetTitle": "Pages and databases are different",
+            "sheetBody": "NoteFerry creates entries in databases, not regular pages. Sharing a page is still useful: any databases beneath that page are shared with NoteFerry automatically, so you can add a whole page tree in one step.",
+            "gotIt": "Got it"
+        },
+        "databaseSelection": {
+            "title": "Choose your databases",
+            "subtitle": "Free includes up to three databases. NoteFerry Pro includes unlimited databases, and you can replace a Free selection later.",
+            "searchPlaceholder": "Search databases",
+            "selectedCount_one": "{{count}} database selected",
+            "selectedCount_other": "{{count}} databases selected",
+            "selectDatabase": "Select {{title}}",
+            "moreThan100Pages": ">100 pages",
+            "pageCount_one": "{{count}} page",
+            "pageCount_other": "{{count}} pages",
+            "noResults": "No databases match “{{query}}”.",
+            "selectAtLeastOne": "Select at least one database",
+            "continueWith_one": "Continue with {{count}} database",
+            "continueWith_other": "Continue with {{count}} databases",
+            "proGate": {
+                "title": "Add unlimited databases with Pro",
+                "message": "Free includes three active databases. You can replace them later without changing Notion.",
+                "cancel": "Not now",
+                "comparePlans": "Compare plans",
+                "upgrade": "Upgrade"
+            }
+        }
+    },
+    "enableNotifications": {
+        "title": "Enable Notifications",
+        "subtitle": "Get notified when NoteFerry finishes creating pages you submitted while offline.",
+        "enable": "Enable notifications",
+        "notNow": "Not now"
+    },
+    "done": {
+        "title": "You’re all set!",
+        "description": "You’re all set to start using NoteFerry. If you’d like, you can edit the properties displayed when creating pages, create aliases for databases, and more.",
+        "viewDatabaseSettings": "View database settings",
+        "addWorkspace": "Add another workspace",
+        "start": "Start using NoteFerry"
+    },
+    "oauthCallback": {
+        "accessibilityLabel": "Finishing Notion authorization"
+    },
+    "destinationConfig": {
+        "back": "‹ Back",
+        "defaultTitle": "Configure",
+        "subtitle": "Set up a quick-entry destination for this data source.",
+        "name": "Name",
+        "namePlaceholder": "Destination name",
+        "fields": "Fields",
+        "visible": "Visible",
+        "required": "Required",
+        "afterCreatingPage": "After creating a page",
+        "saving": "Saving…",
+        "saveChanges": "Save changes",
+        "saveDestination": "Save destination",
+        "configured": "Configured",
+        "delete": "Delete"
+    }
+}

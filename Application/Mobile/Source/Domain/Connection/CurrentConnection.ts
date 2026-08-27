@@ -13,18 +13,18 @@
 import type * as Domain from "@noteferry/domain";
 import { Predicate } from "@sorrell/effect";
 
-/**
- * Prefers the explicitly selected connection, falling back to the first
- * `Active` connection (then simply the first connection) when there is no
- * selection or the selected one is no longer present — e.g. it was revoked
- * or disconnected since it was chosen. This fallback is the same heuristic
- * the home screen used before per-workspace selection existed, so an unset
- * or stale `SelectedConnectionId` behaves exactly as it did before.
- *
- * @category Connections
- * @since 1.0.0
- */
-export const ResolveCurrentConnection = (
+export/**
+       * Prefers the explicitly selected connection, falling back to the first
+       * `Active` connection (then simply the first connection) when there is no
+       * selection or the selected one is no longer present — e.g. it was revoked
+       * or disconnected since it was chosen. This fallback is the same heuristic
+       * the home screen used before per-workspace selection existed, so an unset
+       * or stale `SelectedConnectionId` behaves exactly as it did before.
+       *
+       * @category Connections
+       * @since 1.0.0
+       */
+const ResolveCurrentConnection = (
     Connections: ReadonlyArray<Domain.NotionConnection.NotionConnection>,
     SelectedConnectionId: Domain.Id.NotionConnectionId | undefined
 ): Domain.NotionConnection.NotionConnection | undefined =>

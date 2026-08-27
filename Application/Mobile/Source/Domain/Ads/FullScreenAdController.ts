@@ -17,11 +17,17 @@
  * @license   MIT
  */
 
-import { AdEventType } from "react-native-google-mobile-ads";
+import type { AdEventType } from "react-native-google-mobile-ads";
 import { RecordFullScreenAdShown } from "./AdActivity";
 
-/** The subset of InterstitialAd/AppOpenAd/RewardedAd's instance API this
- *  controller needs -- deliberately format-agnostic. */
+const LoadedEvent = "loaded" as AdEventType;
+const ErrorEvent = "error" as AdEventType;
+const ClosedEvent = "closed" as AdEventType;
+
+/**
+ * The subset of InterstitialAd/AppOpenAd/RewardedAd's instance API this
+ * controller needs; is deliberately format-agnostic.
+ */
 export interface FullScreenAdLike
 {
     readonly addAdEventListener: (Type: AdEventType, Callback: () => void) => unknown;
@@ -46,9 +52,11 @@ export interface FullScreenAdController
 
 type FullScreenAdState = "Idle" | "Loading" | "Loaded" | "Showing";
 
-/** An ad is discarded and silently reloaded rather than shown once it's this
- *  stale, matching Google's own guidance on full-screen ad object lifetime. */
-const MaxAdAgeMs = 4 * 60 * 60 * 1000;
+/**
+ * An ad is discarded and silently reloaded rather than shown once it's this
+ * stale, matching Google's own guidance on full-screen ad object lifetime.
+ */
+const MaxAdAgeMs = 4 * 60 * 60 * 1_000;
 
 export/**
        * Builds one independent load/show/auto-reload controller. Create one
@@ -82,16 +90,16 @@ const CreateFullScreenAdController = (
 
         const Ad = CreateAd(UnitId);
 
-        Ad.addAdEventListener(AdEventType.LOADED, () =>
+        Ad.addAdEventListener(LoadedEvent, () =>
         {
             State = "Loaded";
             LoadedAt = Date.now();
         });
-        Ad.addAdEventListener(AdEventType.ERROR, () =>
+        Ad.addAdEventListener(ErrorEvent, () =>
         {
             State = "Idle";
         });
-        Ad.addAdEventListener(AdEventType.CLOSED, () =>
+        Ad.addAdEventListener(ClosedEvent, () =>
         {
             State = "Idle";
             LoadedAt = null;

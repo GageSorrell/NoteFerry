@@ -12,10 +12,12 @@
  */
 
 import type * as Domain from "@noteferry/domain";
-import { Body, Input } from "@noteferry/ui/Primitive";
-import { MakeStyles, Token, ViewStyle } from "@noteferry/ui";
+import { Body } from "@noteferry/ui/Primitive/Text";
+import { Input } from "@noteferry/ui/Primitive/Input";
+import { MakeStyles, Token, ViewStyle } from "@noteferry/ui/Core";
 import { PropertyLabel } from "@/features/page-creation/property-label";
 import { View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 interface NumberUnit
 {
@@ -87,6 +89,7 @@ export const NumberPropertyField = ({
 }: NumberPropertyFieldProps): React.JSX.Element =>
 {
     const Styles = useStyles();
+    const { t } = useTranslation("pageCreation");
     const Unit = NumberUnits[Property.Format];
     const HasValue = (Value ?? "").trim() !== "";
 
@@ -101,7 +104,7 @@ export const NumberPropertyField = ({
                     Disabled={ Disabled }
                     KeyboardType="numeric"
                     OnChangeText={ OnValueChange }
-                    Placeholder="Empty"
+                    Placeholder={ t("propertyFields.empty") }
                     Style={ Styles.Input }
                     Value={ Value }
                     Variant={ Inline ? "Flat" : "Default" }

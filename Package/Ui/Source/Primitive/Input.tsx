@@ -16,7 +16,8 @@ import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { MakeStyles, TextStyle as MakeTextStyle, ViewStyle as MakeViewStyle } from "../MakeStyles.js";
-import { Search, X } from "lucide-react-native";
+import Search from "lucide-react-native/icons/search";
+import X from "lucide-react-native/icons/x";
 import {
     type StyleProp,
     TextInput,
@@ -204,21 +205,9 @@ const useStyles = MakeStyles({
     }),
     Input: MakeTextStyle({
         flex: 1,
-        /* Every value rendered through `@noteferry/ui`'s `Text` primitives
-         * (Body, PropertyLabel, the picker pills' "Empty" state, …) renders
-         * in Inter — but a bare RN `TextInput` has no font applied by
-         * default, so it silently falls back to the OS system font (SF Pro
-         * / Roboto). At the same nominal `fontSize`, that fallback's metrics
-         * read visibly smaller than Inter, which is what made the "Empty"
-         * placeholder in Input-based fields look undersized next to
-         * Text-based ones despite matching point sizes. */
-        fontFamily: "Inter_400Regular",
+        fontFamily: "Roboto Flex",
         margin: 0,
         padding: 0,
-        /* Android's `TextInput` defaults to top-aligned text regardless of
-         * the row's `alignItems: "center"` — without this it sits visibly
-         * above center whenever the box is taller than one text line. iOS
-         * already centers by default, so this is a no-op there. */
         textAlignVertical: "center"
     }),
     LeadingIcon: MakeViewStyle({

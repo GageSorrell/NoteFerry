@@ -12,22 +12,24 @@
  * @license   MIT
  */
 
-import type { LucideIconName } from "@noteferry/ui/Block";
-import type { SFSymbol } from "expo-symbols";
+import type { LucideIconName } from "@noteferry/ui/Block/IconBlock";
+import type { Action } from "expo-quick-actions";
+
+type QuickActionIcon = NonNullable<Action["icon"]>;
 
 export/** Converts Notion's native icon name format to the local Lucide key format. */
 const ToLucideIconName = (Value: string): LucideIconName =>
     Value.trim().toLowerCase().replaceAll("_", "-").replaceAll(" ", "-") as LucideIconName;
 
-/**
- * The closest SF Symbol for each Lucide icon NoteFerry's curated icon set
- * (`LucideIconMap` in `@noteferry/ui/Block`) can render, used to give a
- * database's "Native" (Notion built-in) icon a real icon on iOS home-screen
- * quick actions. Deliberately partial: Lucide names with no faithful SF
- * Symbol equivalent (e.g. `cherry`, `pizza`) are left unmapped so callers
- * fall back to a generic icon instead of a misleading one.
- */
-export const LucideToSfSymbol: Partial<Record<LucideIconName, SFSymbol>> =
+export/**
+       * The closest SF Symbol for each Lucide icon NoteFerry's curated icon set
+       * (`LucideIconMap` in `@noteferry/ui/Block`) can render, used to give a
+       * database's "Native" (Notion built-in) icon a real icon on iOS home-screen
+       * quick actions. Deliberately partial: Lucide names with no faithful SF
+       * Symbol equivalent (e.g. `cherry`, `pizza`) are left unmapped so callers
+       * fall back to a generic icon instead of a misleading one.
+       */
+const LucideToSfSymbol: Partial<Record<LucideIconName, QuickActionIcon>> =
     Object.freeze({
         archive: "archivebox",
         atom: "atom",
@@ -208,7 +210,7 @@ export/**
        * @category Utility
        * @since 1.0.0
        */
-const ResolveNativeIconSymbol = (RawIconName: string): SFSymbol | undefined =>
+const ResolveNativeIconSymbol = (RawIconName: string): QuickActionIcon | undefined =>
 {
     const LucideName = ToLucideIconName(RawIconName);
 

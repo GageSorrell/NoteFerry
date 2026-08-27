@@ -14,19 +14,17 @@
  * @license   MIT
  */
 
-import { Description, ItemTitle } from "@noteferry/ui/Primitive";
-import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
-import {
-    NativeAd,
-    NativeAdView,
-    NativeAsset,
-    NativeAssetType,
-    NativeMediaView
-} from "react-native-google-mobile-ads";
-import { ResolveAdUnitId, useAdsReady, useIsAdFree } from "@/Domain/Ads";
+import { Description, ItemTitle } from "@noteferry/ui/Primitive/Text";
+import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
+import type { NativeAd } from "react-native-google-mobile-ads";
+import { ResolveAdUnitId } from "@/Domain/Ads/AdUnits";
+import { useAdsReady } from "@/Domain/Ads/AdsRuntime";
+import { useIsAdFree } from "@/Domain/Ads/Entitlement";
+import { LoadGoogleMobileAds, type GoogleMobileAdsModule } from "@/Domain/Ads/GoogleMobileAds";
 import { useEffect, useState } from "react";
 import { Image } from "expo-image";
 import { View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 export/**
        * Renders one native ad in the home database list, or nothing while
@@ -39,17 +37,19 @@ const NativeDatabaseAdCard = (): React.JSX.Element | null =>
 {
     const Theme = useTheme();
     const Styles = useStyles();
+    const { t } = useTranslation("component");
     const IsAdFree = useIsAdFree();
     const IsAdsReady = useAdsReady();
-    const [ Ad, SetAd ] = useState<NativeAd | null>(null);
+    const [ LoadedAd, SetLoadedAd ] = useState<{
+        readonly Ad: NativeAd;
+        readonly Module: GoogleMobileAdsModule;
+    } | null>(null);
     const CardShadow = Theme.Shadow.Card;
 
     useEffect(() =>
     {
         if (IsAdFree || !IsAdsReady)
         {
-            SetAd(null);
-
             return;
         }
 
@@ -63,18 +63,22 @@ const NativeDatabaseAdCard = (): React.JSX.Element | null =>
         let Cancelled = false;
         let Loaded: NativeAd | null = null;
 
-        void NativeAd.createForAdRequest(UnitId)
-            .then((NextAd: NativeAd) =>
+        void LoadGoogleMobileAds()
+            .then(async (Module) => ({
+                Ad: await Module.NativeAd.createForAdRequest(UnitId),
+                Module
+            }))
+            .then((Next) =>
             {
                 if (Cancelled)
                 {
-                    NextAd.destroy();
+                    Next.Ad.destroy();
 
                     return;
                 }
 
-                Loaded = NextAd;
-                SetAd(NextAd);
+                Loaded = Next.Ad;
+                SetLoadedAd(Next);
             })
             .catch((Error: unknown) =>
             {
@@ -89,10 +93,13 @@ const NativeDatabaseAdCard = (): React.JSX.Element | null =>
         };
     }, [ IsAdFree, IsAdsReady ]);
 
-    if (Ad === null)
+    if (IsAdFree || !IsAdsReady || LoadedAd === null)
     {
         return null;
     }
+
+    const { Ad, Module } = LoadedAd;
+    const { NativeAdView, NativeAsset, NativeAssetType, NativeMediaView } = Module;
 
     return (
         <NativeAdView
@@ -121,7 +128,7 @@ const NativeDatabaseAdCard = (): React.JSX.Element | null =>
                     <Description
                         Style={ Styles.AdBadgeText }
                         Weight="600">
-                        Ad
+                        { t("ads.nativeDatabaseAdCard.adBadge") }
                     </Description>
                 </View>
 

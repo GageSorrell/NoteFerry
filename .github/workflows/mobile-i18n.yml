@@ -1,0 +1,43 @@
+name: Mobile — i18n
+
+# First CI workflow for NoteFerry (none existed before this). Scoped
+# deliberately narrow — typecheck, the i18n key-parity check, and the Jest
+# suite for the mobile app — rather than a full build/lint/test pipeline,
+# since that's a separate concern from the i18n rollout this workflow exists
+# to protect. Triggers only on changes to files an i18n regression would
+# actually touch.
+
+on:
+  pull_request:
+    paths:
+      - "Application/Mobile/**"
+      - "Package/Ui/**"
+      - "Package/Domain/**"
+      - "Package/Api/**"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24.19.0"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build @noteferry/ui
+        run: npm run build --workspace Package/Ui
+
+      - name: Typecheck
+        run: npx tsc --noEmit --project Application/Mobile/tsconfig.json
+
+      - name: i18n key parity
+        working-directory: Application/Mobile
+        run: node ./scripts/check-i18n-keys.js
+
+      - name: Test
+        working-directory: Application/Mobile
+        run: npx jest --ci

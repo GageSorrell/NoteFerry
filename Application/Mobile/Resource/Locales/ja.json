@@ -1,0 +1,5 @@
+{
+    "ios": {
+        "NSUserTrackingUsageDescription": "この識別子は、パーソナライズされた広告の配信と効果測定に使用されます。"
+    }
+}

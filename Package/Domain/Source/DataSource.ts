@@ -19,7 +19,7 @@
 import * as Id from "./Id.js";
 import { PropertyDefinition } from "./Property/Definition.js";
 import { PropertyInputValue } from "./PageDraft.js";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 export/**
        * The current schema version of {@link CachedDataSourceSchema}. Bump this

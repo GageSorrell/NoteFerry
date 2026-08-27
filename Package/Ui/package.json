@@ -32,6 +32,14 @@
       "import": "./Distribution/Block/index.js",
       "types": "./Distribution/Block/index.d.ts"
     },
+    "./Block/*": {
+      "import": "./Distribution/Block/*.js",
+      "types": "./Distribution/Block/*.d.ts"
+    },
+    "./Core": {
+      "import": "./Distribution/Core.js",
+      "types": "./Distribution/Core.d.ts"
+    },
     "./Token": {
       "import": "./Distribution/Token/index.js",
       "types": "./Distribution/Token/index.d.ts"
@@ -39,6 +47,10 @@
     "./Primitive": {
       "import": "./Distribution/Primitive/index.js",
       "types": "./Distribution/Primitive/index.d.ts"
+    },
+    "./Primitive/*": {
+      "import": "./Distribution/Primitive/*.js",
+      "types": "./Distribution/Primitive/*.d.ts"
     },
     "./package.json": "./package.json"
   },

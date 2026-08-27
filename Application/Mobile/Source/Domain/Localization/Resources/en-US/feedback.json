@@ -1,0 +1,44 @@
+{
+    "titles": {
+        "feedback": "Submit Feedback",
+        "bugReport": "Report a Bug"
+    },
+    "subtitle": {
+        "feedback": "Tell us what's working, what isn't, or what you'd like to see.",
+        "bugReport": "Tell us what went wrong. Steps to reproduce are especially helpful."
+    },
+    "message": {
+        "accessibilityLabel": {
+            "feedback": "Feedback",
+            "bugReport": "Bug report"
+        },
+        "placeholder": {
+            "feedback": "Type your feedback here…",
+            "bugReport": "What happened? What did you expect instead?"
+        },
+        "hint": {
+            "belowMinimum": "At least {{min}} characters ({{count}}/{{min}}).",
+            "atMinimum": "{{count}} characters."
+        }
+    },
+    "shareContact": {
+        "accessibilityLabel": "Share my contact info",
+        "label": "Share my contact info so NoteFerry can respond"
+    },
+    "submit": "Submit",
+    "alert": {
+        "success": {
+            "title": "Thanks!",
+            "feedback": "Your feedback has been sent.",
+            "bugReport": "Your bug report has been sent."
+        },
+        "rateLimit": {
+            "title": "Slow down",
+            "message": "You've sent a few of these recently. Please try again later."
+        },
+        "failure": {
+            "title": "Something went wrong",
+            "message": "Please try again."
+        }
+    }
+}

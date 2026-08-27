@@ -14,7 +14,7 @@
 
 import * as Behavior from "./Behavior.js";
 import * as Id from "./Id.js";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 /**
  * The maximum number of databases NoteFerry will expose as

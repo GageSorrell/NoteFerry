@@ -28,8 +28,9 @@
 
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
-import { ChevronLeft, ChevronRight } from "lucide-react-native";
-import { type DateData, Calendar as RNCalendar } from "react-native-calendars";
+import ChevronLeft from "lucide-react-native/icons/chevron-left";
+import ChevronRight from "lucide-react-native/icons/chevron-right";
+import { type DateData, Calendar as RNCalendar, LocaleConfig } from "react-native-calendars";
 import { MakeStyles, ViewStyle as MakeViewStyle, TextStyle } from "../MakeStyles.js";
 import { Mix, WithAlpha } from "../Utility/index.js";
 import {
@@ -39,7 +40,9 @@ import {
     View,
     type ViewStyle
 } from "react-native";
-import { eachDayOfInterval, format, isBefore } from "date-fns";
+import { eachDayOfInterval } from "date-fns/eachDayOfInterval";
+import { format } from "date-fns/format";
+import { isBefore } from "date-fns/isBefore";
 import { Body } from "./Text.js";
 import { Pressable } from "./Pressable.js";
 import type { ReadonlyRecord } from "effect/Record";
@@ -65,18 +68,61 @@ interface CalendarThemeColors
 /** Visual treatment used by the compact mobile date-property sheet. */
 export type CalendarAppearance = "Default" | "DateSheet";
 
-const WeekdayLabels = [ "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa" ] as const;
+const DefaultWeekdayLabels = [ "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa" ] as const;
+
+/**
+ * Month/weekday names for `react-native-calendars`' own locale system (its
+ * default, non-custom header reads from this). `DateSheetCalendarHeader`'s
+ * "MMM yyyy" month token resolves through the same underlying table, but its
+ * weekday row is rendered independently — see `WeekdayLabels` below.
+ *
+ * @category Localization
+ * @since 1.0.0
+ */
+export interface CalendarLocaleNames
+{
+    readonly MonthNames: ReadonlyArray<string>;
+    readonly MonthNamesShort: ReadonlyArray<string>;
+    readonly DayNames: ReadonlyArray<string>;
+    readonly DayNamesShort: ReadonlyArray<string>;
+}
+
+/**
+ * Registers `Names` under `Code` and makes it the active locale for every
+ * `Calendar` on screen. Call once per supported locale at startup, then
+ * again (or just re-set the active `Code`) whenever the app's language
+ * changes.
+ *
+ * @category Localization
+ * @since 1.0.0
+ */
+export const RegisterCalendarLocale = (Code: string, Names: CalendarLocaleNames): void =>
+{
+    LocaleConfig.locales[ Code ] = {
+        dayNames: [ ...Names.DayNames ],
+        dayNamesShort: [ ...Names.DayNamesShort ],
+        monthNames: [ ...Names.MonthNames ],
+        monthNamesShort: [ ...Names.MonthNamesShort ]
+    };
+    LocaleConfig.defaultLocale = Code;
+};
 
 interface DateSheetCalendarHeaderProps
 {
     readonly addMonth?: ((Amount: number) => void) | undefined;
     readonly month?: { readonly toString: (Format: string) => string; } | undefined;
+    readonly WeekdayLabels?: ReadonlyArray<string> | undefined;
+    readonly PreviousMonthLabel?: string | undefined;
+    readonly NextMonthLabel?: string | undefined;
 }
 
 /** Notion-mobile month header: label on the left, adjacent arrows on the right. */
 const DateSheetCalendarHeader = ({
     addMonth,
-    month
+    month,
+    WeekdayLabels = DefaultWeekdayLabels,
+    PreviousMonthLabel = "Previous month",
+    NextMonthLabel = "Next month"
 }: DateSheetCalendarHeaderProps): React.JSX.Element =>
 {
     const Styles = useStyles();
@@ -101,7 +147,7 @@ const DateSheetCalendarHeader = ({
                 <View style={ Styles.DateSheetMonthActions }>
                     <Pressable
                         Accessibility={ {
-                            Label: "Previous month",
+                            Label: PreviousMonthLabel,
                             Role: "button"
                         } }
                         OnPress={ () => addMonth?.(-1) }
@@ -114,7 +160,7 @@ const DateSheetCalendarHeader = ({
                     </Pressable>
                     <Pressable
                         Accessibility={ {
-                            Label: "Next month",
+                            Label: NextMonthLabel,
                             Role: "button"
                         } }
                         OnPress={ () => addMonth?.(1) }
@@ -131,11 +177,11 @@ const DateSheetCalendarHeader = ({
                 accessibilityElementsHidden
                 importantForAccessibility="no-hide-descendants"
                 style={ Styles.DateSheetWeekdays }>
-                { WeekdayLabels.map((Label: string) => (
+                { WeekdayLabels.map((Label: string, Index: number) => (
                     <Body
                         Color={ MutedColor }
                         Style={ Styles.DateSheetWeekday }
-                        key={ Label }>
+                        key={ `${ Index }-${ Label }` }>
                         { Label }
                     </Body>
                 )) }
@@ -143,6 +189,21 @@ const DateSheetCalendarHeader = ({
         </View>
     );
 };
+
+/**
+ * Binds `Labels` into a `customHeader`-compatible component. `react-native-calendars`
+ * passes only `{ addMonth, month }` to `customHeader` itself, so any caller-supplied
+ * labels have to be captured by closure rather than passed as extra props.
+ */
+const MakeDateSheetCalendarHeader = (
+    Labels: Pick<DateSheetCalendarHeaderProps, "NextMonthLabel" | "PreviousMonthLabel" | "WeekdayLabels">
+) =>
+    (Props: DateSheetCalendarHeaderProps): React.JSX.Element => (
+        <DateSheetCalendarHeader
+            { ...Props }
+            { ...Labels }
+        />
+    );
 
 interface DateSheetCalendarDayMarking
 {
@@ -327,10 +388,10 @@ const useCalendarTheme = (Appearance: CalendarAppearance): CalendarThemeColors =
         todayBackgroundColor: Appearance === "DateSheet" ? RedColor : "transparent",
         todayTextColor: Appearance === "DateSheet" ? "#FFFFFF" : BlueColor,
 
-        textDayFontFamily: "Inter_400Regular",
-        textDayHeaderFontFamily: "Inter_400Regular",
-        textMonthFontFamily: "Inter_400Regular",
-        todayButtonFontFamily: "Inter_400Regular",
+        textDayFontFamily: "Roboto Flex",
+        textDayHeaderFontFamily: "Roboto Flex",
+        textMonthFontFamily: "Roboto Flex",
+        todayButtonFontFamily: "Roboto Flex",
         ...(Appearance === "DateSheet"
             ? {
                 "stylesheet.day.basic":
@@ -395,6 +456,11 @@ interface CalendarCommonProps
     readonly MinDate?: Date | undefined;
     readonly MaxDate?: Date | undefined;
     readonly Style?: StyleProp<ViewStyle> | undefined;
+
+    /** Only used by the `"DateSheet"` appearance's custom header. */
+    readonly WeekdayLabels?: ReadonlyArray<string> | undefined;
+    readonly PreviousMonthLabel?: string | undefined;
+    readonly NextMonthLabel?: string | undefined;
 }
 
 interface CalendarSingleProps extends CalendarCommonProps
@@ -438,7 +504,10 @@ const SingleCalendar = ({
     OnValueChange,
     MinDate,
     MaxDate,
-    Style
+    Style,
+    WeekdayLabels,
+    PreviousMonthLabel,
+    NextMonthLabel
 }: CalendarSingleProps): React.JSX.Element =>
 {
     const [ UncontrolledValue, SetUncontrolledValue ] = React.useState(DefaultValue);
@@ -470,7 +539,11 @@ const SingleCalendar = ({
             enableSwipeMonths
             { ...(Appearance === "DateSheet"
                 ? {
-                    customHeader: DateSheetCalendarHeader,
+                    customHeader: MakeDateSheetCalendarHeader({
+                        NextMonthLabel,
+                        PreviousMonthLabel,
+                        WeekdayLabels
+                    }),
                     dayComponent: DateSheetCalendarDay
                 }
                 : { }) }
@@ -638,7 +711,10 @@ const RangeCalendar = ({
     OnActiveEndpointChange,
     MinDate,
     MaxDate,
-    Style
+    Style,
+    WeekdayLabels,
+    PreviousMonthLabel,
+    NextMonthLabel
 }: CalendarRangeProps): React.JSX.Element =>
 {
     const [ UncontrolledValue, SetUncontrolledValue ] = React.useState<CalendarRange>(DefaultValue ?? { });
@@ -711,7 +787,11 @@ const RangeCalendar = ({
             enableSwipeMonths
             { ...(Appearance === "DateSheet"
                 ? {
-                    customHeader: DateSheetCalendarHeader,
+                    customHeader: MakeDateSheetCalendarHeader({
+                        NextMonthLabel,
+                        PreviousMonthLabel,
+                        WeekdayLabels
+                    }),
                     dayComponent: DateSheetCalendarDay
                 }
                 : { }) }
@@ -764,7 +844,7 @@ const useStyles = MakeStyles({
         width: "100%"
     }),
     DateSheetDayText: TextStyle({
-        fontFamily: "Inter_400Regular",
+        fontFamily: "Roboto Flex",
         fontSize: 16
     }),
     DateSheetMonthActions: MakeViewStyle({

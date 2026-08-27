@@ -43,6 +43,28 @@ export type NotionOAuthTokens =
     readonly workspace_name: string | null;
 };
 
+/** Metadata returned by Notion for the bot represented by an installation token. */
+export type NotionBotUser =
+{
+    readonly avatar_url: string | null;
+    readonly bot:
+    {
+        readonly owner:
+        {
+            readonly user?:
+            {
+                readonly avatar_url?: string | null;
+                readonly id?: string;
+            };
+        };
+        readonly workspace_id: string;
+        readonly workspace_name: string | null;
+    };
+    readonly id: string;
+    readonly name: string | null;
+    readonly type: "bot";
+};
+
 /** Thrown when Notion rejects or fails the token exchange. */
 export class NotionOAuthError extends Error
 {
@@ -332,6 +354,37 @@ const ThrowNotionApiError = async (Response: Response): Promise<never> =>
         await Response.text(),
         RetryAfter ? Number(RetryAfter) : undefined
     );
+};
+
+/**
+ * Resolves the installation metadata associated with a provider access token.
+ * Supabase returns the token after Notion sign-in but intentionally does not
+ * persist it, so the authenticated API uses this response to create the same
+ * server-side connection row as the standalone OAuth callback.
+ *
+ * @category Notion
+ * @since 1.0.0
+ */
+export const RetrieveBotUser = async (AccessToken: string): Promise<NotionBotUser> =>
+{
+    const Response = await fetch(`${ApiBase}/users/me`, {
+        headers: DataApiHeaders(AccessToken),
+        method: "GET"
+    });
+
+    if (!Response.ok)
+    {
+        return await ThrowNotionApiError(Response);
+    }
+
+    const User = await Response.json() as NotionBotUser;
+
+    if (User.type !== "bot" || !User.id || !User.bot?.workspace_id)
+    {
+        throw new NotionApiError(Response.status, "Notion returned incomplete bot metadata.");
+    }
+
+    return User;
 };
 
 /**

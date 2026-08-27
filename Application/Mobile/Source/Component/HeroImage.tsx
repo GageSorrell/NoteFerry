@@ -13,7 +13,7 @@
 import { Image } from "expo-image";
 import type { ImageAsset } from "@/Domain/Utility/Asset";
 import { View } from "react-native";
-import { useTheme } from "@noteferry/ui";
+import { useTheme } from "@noteferry/ui/Core";
 
 /** {@inheritDoc HeroImage} */
 export interface HeroImageProps

@@ -1,0 +1,218 @@
+{
+    "titles": {
+        "settings": "Settings",
+        "general": "General",
+        "notifications": "Notifications",
+        "quickActions": "Quick Actions",
+        "workspaces": "Workspaces",
+        "databaseSettings": "Database settings"
+    },
+    "general": {
+        "onLaunch": {
+            "title": "On launch",
+            "description": "What NoteFerry shows when it opens.",
+            "sheetDescription": "Choose what NoteFerry shows when it opens.",
+            "accessibilityLabel": "On launch: {{label}}",
+            "homeScreen": "Home screen",
+            "placeholder": "Select a database"
+        },
+        "homeScreenLayout": {
+            "title": "Home screen layout",
+            "description": "Show one database per row, or two square cards per row.",
+            "oneColumn": "One database per row",
+            "twoColumn": "Two square cards per row"
+        },
+        "highContrast": {
+            "title": "High contrast",
+            "description": "Increase the contrast of dividers, borders, and switches.",
+            "sheetDescription": "Choose how much contrast to use for dividers, borders, and switches.",
+            "accessibilityLabel": "High contrast: {{label}}",
+            "system": "Use system setting",
+            "standard": "Standard contrast",
+            "high": "High contrast",
+            "systemShort": "System",
+            "standardShort": "Disabled",
+            "highShort": "Enabled"
+        },
+        "homeScreenOrder": {
+            "title": "Home screen order",
+            "description": "Drag to reorder the databases shown on the home screen."
+        },
+        "proGate": {
+            "title": "Available with NoteFerry Pro",
+            "cancel": "Not now",
+            "comparePlans": "Compare plans",
+            "upgrade": "Upgrade",
+            "layoutMessage": "Pro unlocks the two-column layout and custom database ordering.",
+            "launchMessage": "Pro can launch directly into a selected database.",
+            "orderMessage": "Pro lets you set a custom home-screen database order."
+        },
+        "language": {
+            "title": "Language",
+            "description": "Choose the language NoteFerry displays in.",
+            "sheetDescription": "Choose a language, or follow your device's setting.",
+            "accessibilityLabel": "Language: {{label}}",
+            "system": "System language",
+            "names": {
+                "en-US": "English (US)",
+                "es-419": "Español (Latinoamérica)",
+                "ko": "한국어",
+                "ja": "日本語",
+                "de": "Deutsch"
+            }
+        }
+    },
+    "hub": {
+        "subscription": {
+            "upgrade": "Upgrade to NoteFerry Pro",
+            "lifetime": "NoteFerry Pro · Lifetime access",
+            "activeLabel": "NoteFerry Pro · {{term}} · {{status}}",
+            "termMonthly": "Monthly",
+            "termYearly": "Yearly",
+            "termActive": "Active",
+            "renews": "Renews",
+            "expires": "Expires"
+        },
+        "rows": {
+            "general": "General",
+            "databases": "Databases",
+            "workspaces": "Workspaces",
+            "notifications": "Notifications",
+            "quickActions": "Quick Actions",
+            "accountSettings": "Account settings"
+        },
+        "support": {
+            "heading": "Support NoteFerry",
+            "leaveReview": "Leave a review",
+            "submitFeedback": "Submit feedback",
+            "reportBug": "Report a bug"
+        },
+        "appInfo": "NoteFerry {{version}} (build {{build}})"
+    },
+    "accountSettings": {
+        "back": "Back",
+        "title": "Account settings",
+        "notion": {
+            "heading": "Notion",
+            "manageButton": "Manage the NoteFerry connection in Notion"
+        },
+        "yourData": {
+            "heading": "Your data",
+            "requestButton": "Request my account data",
+            "requesting": "Requesting…"
+        },
+        "dangerZone": {
+            "heading": "Danger zone",
+            "description": "Permanently deletes your account and everything associated with it. Store subscriptions must be canceled separately.",
+            "deleteButton": "Delete account",
+            "deleting": "Deleting…"
+        },
+        "requestData": {
+            "successTitle": "Request sent",
+            "successMessage": "We'll email you a copy of your account data once it's ready."
+        },
+        "errorGeneric": {
+            "title": "Something went wrong",
+            "message": "Please try again."
+        },
+        "deleteConfirm": {
+            "title": "Delete your account?",
+            "message": "This permanently deletes your NoteFerry account, connections, and quick-entry destinations. This can't be undone. Deleting your NoteFerry account does not cancel an App Store or Play Store subscription.",
+            "cancel": "Cancel",
+            "manageSubscription": "Manage subscription",
+            "confirm": "Delete account"
+        }
+    },
+    "notificationSettings": {
+        "offline": {
+            "title": "Notify when back online",
+            "description": "Notify you if a page was created while offline."
+        },
+        "sales": {
+            "title": "Notify me about subscription sales",
+            "descriptionActive": "Disabled while NoteFerry Pro is active. Expiration will not turn it back on.",
+            "descriptionInactive": "Optional marketing notifications for limited-time NoteFerry Pro offers."
+        }
+    },
+    "quickActionSettings": {
+        "description": "Free includes one database shortcut; Pro includes up to six. Long-press the app icon to use one. Your full saved selection is restored after re-upgrading.",
+        "proGate": {
+            "title": "Add more Quick Actions with Pro",
+            "message": "Free includes one home-screen database shortcut. Pro includes up to six.",
+            "cancel": "Not now",
+            "comparePlans": "Compare plans",
+            "upgrade": "Upgrade"
+        }
+    },
+    "workspaceSettings": {
+        "showAll": {
+            "title": "Show all databases from all workspaces",
+            "description": "Show every connected workspace's databases together on the home screen, instead of just the current workspace's."
+        }
+    },
+    "dataSources": {
+        "back": "‹ Back",
+        "title": "Data sources",
+        "subtitle": "Choose a Notion data source to enable quick entry.",
+        "searching": "Searching…",
+        "searchAgain": "Search again",
+        "empty": "No data sources found. Make sure this workspace has databases shared with the NoteFerry integration.",
+        "entryStatus": {
+            "locked": "Locked",
+            "saved": "Saved"
+        },
+        "entryMeta": "{{status}} · {{count}} fields",
+        "configure": "Configure",
+        "saving": "Saving…",
+        "update": "Update",
+        "save": "Save",
+        "proUpsell": {
+            "title": "Add unlimited databases with Pro",
+            "message": "Free includes three active databases. You can replace one from Database settings.",
+            "cancel": "Not now",
+            "comparePlans": "Compare plans",
+            "upgrade": "Upgrade"
+        },
+        "customizeGate": {
+            "title": "Customize databases with Pro",
+            "message": "Pro unlocks aliases, form settings, templates, and post-creation behavior.",
+            "cancel": "Not now",
+            "comparePlans": "Compare plans",
+            "upgrade": "Upgrade"
+        },
+        "errorGeneric": {
+            "title": "Something went wrong",
+            "message": "Please try again."
+        }
+    },
+    "databaseSettings": {
+        "description": "Free includes three active databases. Locked databases and saved Pro configuration are retained; replacing or removing one never changes anything in Notion.",
+        "replacePanel": {
+            "title": "Replace an active database",
+            "description": "Choose the Free slot to replace with {{title}}.",
+            "replaceButton": "Replace {{title}}",
+            "cancel": "Cancel"
+        },
+        "empty": "Your selected databases will appear here.",
+        "status": {
+            "locked": "Locked",
+            "active": "Active"
+        },
+        "replaceActive": "Replace active",
+        "customize": "Customize",
+        "remove": "Remove",
+        "customizeGate": {
+            "title": "Customize forms with Pro",
+            "message": "Pro lets you change aliases, visibility, required fields, order, and defaults.",
+            "cancel": "Not now",
+            "comparePlans": "Compare plans",
+            "upgrade": "Upgrade"
+        },
+        "removeConfirm": {
+            "title": "Remove from NoteFerry?",
+            "message": "{{title}} stays unchanged in Notion.",
+            "cancel": "Cancel",
+            "confirm": "Remove"
+        }
+    }
+}

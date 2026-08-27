@@ -10,15 +10,11 @@
  */
 
 import type * as Domain from "@noteferry/domain";
-import {
-    Body,
-    BottomSheet,
-    type BottomSheet as BottomSheetHandle,
-    BottomSheetScrollView,
-    ModalTitle,
-    Pressable
-} from "@noteferry/ui/Primitive";
-import { Check, X } from "lucide-react-native";
+import { Body, ModalTitle } from "@noteferry/ui/Primitive/Text";
+import { BottomSheet, type BottomSheet as BottomSheetHandle, BottomSheetScrollView } from "@noteferry/ui/Primitive/BottomSheet";
+import { Pressable } from "@noteferry/ui/Primitive/Pressable";
+import Check from "lucide-react-native/icons/check";
+import X from "lucide-react-native/icons/x";
 import {
     Keyboard,
     type PressableStateCallbackType,
@@ -27,7 +23,7 @@ import {
     StyleSheet,
     View
 } from "react-native";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
 import type { PropsWithChildren, RefObject } from "react";
 
 export /** Notion's option-pill background color per `PropertyOptionColor`. */

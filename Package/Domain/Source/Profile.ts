@@ -13,7 +13,7 @@
 
 import * as Id from "./Id.js";
 import * as Settings from "./Settings.js";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 export/**
        * A NoteFerry user's profile: display metadata plus their app-wide

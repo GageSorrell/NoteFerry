@@ -23,6 +23,8 @@ var AccountApi = HttpApiGroup.make("Account").add(Delete);
 // Package/Api/Distribution/ConnectionsApi.js
 var ConnectionsApi_exports = {};
 __export(ConnectionsApi_exports, {
+  AdoptAuthorization: () => AdoptAuthorization,
+  AdoptAuthorizationPayload: () => AdoptAuthorizationPayload,
   ConnectionsApi: () => ConnectionsApi,
   Disconnect: () => Disconnect,
   List: () => List,
@@ -34,6 +36,10 @@ import { HttpApiEndpoint as HttpApiEndpoint2, HttpApiGroup as HttpApiGroup2 } fr
 import { Schema } from "effect";
 var StartAuthorizationResult = Schema.Struct({
   AuthorizationUrl: Schema.String
+});
+var AdoptAuthorizationPayload = Schema.Struct({
+  ProviderToken: Schema.String,
+  ProviderRefreshToken: Schema.optional(Schema.String)
 });
 var List = HttpApiEndpoint2.get("List", "/", {
   error: [
@@ -49,6 +55,17 @@ var StartAuthorization = HttpApiEndpoint2.post("StartAuthorization", "/Notion/St
   ],
   success: StartAuthorizationResult
 });
+var AdoptAuthorization = HttpApiEndpoint2.post("AdoptAuthorization", "/Notion/Adopt", {
+  error: [
+    Domain2.Error.AuthenticationRequired,
+    Domain2.Error.NotionUnauthorized,
+    Domain2.Error.NotionRateLimited,
+    Domain2.Error.NotionUnavailable,
+    Domain2.Error.NetworkError,
+    Domain2.Error.DatabaseError
+  ],
+  payload: AdoptAuthorizationPayload
+});
 var Disconnect = HttpApiEndpoint2.delete("Disconnect", "/:ConnectionId", {
   error: [
     Domain2.Error.AuthenticationRequired,
@@ -59,7 +76,7 @@ var Disconnect = HttpApiEndpoint2.delete("Disconnect", "/:ConnectionId", {
     ConnectionId: Domain2.Id.NotionConnectionId
   }
 });
-var ConnectionsApi = HttpApiGroup2.make("Connections").add(List, StartAuthorization, Disconnect);
+var ConnectionsApi = HttpApiGroup2.make("Connections").add(List, StartAuthorization, AdoptAuthorization, Disconnect);
 
 // Package/Api/Distribution/DataSourcesApi.js
 var DataSourcesApi_exports = {};
@@ -510,7 +527,7 @@ export {
  * The complete NoteFerry API contract: every group, endpoint, payload, success and
  * error schema the Expo app and the `api` Supabase Edge Function agree on.
  *
- * This module only *describes* the API. Implementing each group's handlers
+ * This module only *describes* the API.  Implementing each group's handlers
  * (`HttpApiBuilder.group`) and deriving a client (`HttpApiClient.make`) both
  * happen elsewhere, against this same value.
  *

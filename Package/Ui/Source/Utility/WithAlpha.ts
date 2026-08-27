@@ -14,7 +14,7 @@
  * @license   MIT
  */
 
-import { String } from "effect";
+import * as String from "effect/String";
 
 const ParseHex = (Hex: string): readonly [ number, number, number ] | undefined =>
 {

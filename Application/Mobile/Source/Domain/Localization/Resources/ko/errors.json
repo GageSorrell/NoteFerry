@@ -1,0 +1,8 @@
+{
+    "destinationNotFound": "이 연결을 더 이상 사용할 수 없어요. 다른 대상을 선택한 후 다시 시도해 주세요.",
+    "pageCreationInProgress": "이 페이지는 이미 생성 중이에요. 잠시 후 다시 시도해 주세요.",
+    "rateLimitExceeded": "최근에 요청을 너무 많이 보냈어요. 잠시 후 다시 시도해 주세요.",
+    "freeDatabaseLimitReached": "무료 계정은 최대 {{limit}}개의 데이터베이스를 활성화할 수 있어요.",
+    "featureGateError": "이 기능을 사용하려면 NoteFerry Pro가 필요해요.",
+    "generic": "문제가 발생했어요. 다시 시도해 주세요."
+}

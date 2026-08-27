@@ -443,10 +443,10 @@ var FieldConfiguration = Schema9.Struct({
   Fields: Schema9.Array(FieldSetting),
   Version: FieldConfigurationVersion
 });
-function IsQuickEntryProperty(Property) {
+var IsQuickEntryProperty = (Property) => {
   return !["People", "Relation"].includes(Property.Type);
-}
-function ReconcileFieldConfiguration(Current, Properties) {
+};
+var ReconcileFieldConfiguration = (Current, Properties) => {
   const PropertyById = new Map(Properties.map((Property) => [Property.Id, Property]));
   const SettingById = new Map(Current.Fields.map((Field) => [Field.PropertyId, Field]));
   const SeenIds = /* @__PURE__ */ new Set();
@@ -482,7 +482,7 @@ function ReconcileFieldConfiguration(Current, Properties) {
     };
   });
   return { FieldOrder, Fields, Version: 1 };
-}
+};
 var TemplateConfigurationVersion = Schema9.Literal(1);
 var TemplateConfiguration = Schema9.Struct({
   Hidden: Schema9.Array(NotionTemplateId),
@@ -490,7 +490,7 @@ var TemplateConfiguration = Schema9.Struct({
   Version: TemplateConfigurationVersion
 });
 var EmptyTemplateConfiguration = { Hidden: [], TemplateOrder: [], Version: 1 };
-function ReconcileTemplateConfiguration(Current, Templates) {
+var ReconcileTemplateConfiguration = (Current, Templates) => {
   const KnownIds = new Set(Templates.map((Template) => Template.TemplateId));
   const SeenIds = /* @__PURE__ */ new Set();
   const TemplateOrder = [];
@@ -508,7 +508,7 @@ function ReconcileTemplateConfiguration(Current, Templates) {
   }
   const Hidden = Current.Hidden.filter((TemplateId) => KnownIds.has(TemplateId));
   return { Hidden, TemplateOrder, Version: 1 };
-}
+};
 var Destination = Schema9.Struct({
   ConnectionId: NotionConnectionId,
   CreatedAt: Schema9.DateFromString,
@@ -524,19 +524,19 @@ var Destination = Schema9.Struct({
   UpdatedAt: Schema9.DateFromString,
   UserId
 });
-function ResolvePostCreationBehavior(Destination2) {
+var ResolvePostCreationBehavior = (Destination2) => {
   return Destination2.PostCreationBehavior ?? { Type: "Home" };
-}
-function ResolveTemplateConfiguration(Destination2) {
+};
+var ResolveTemplateConfiguration = (Destination2) => {
   return Destination2.TemplateConfiguration ?? EmptyTemplateConfiguration;
-}
-function ResolveSelectedTemplate(Destination2, Templates) {
+};
+var ResolveSelectedTemplate = (Destination2, Templates) => {
   const Selection = Destination2.Template;
   if (Selection.Type !== "Specific") {
     return void 0;
   }
   return Templates.find((Template) => Template.TemplateId === Selection.TemplateId);
-}
+};
 
 // Package/Domain/Distribution/Profile.js
 var Profile_exports = {};
@@ -580,7 +580,7 @@ var DefaultAppSettings = {
   SelectedConnectionId: void 0,
   ShowAllWorkspaceDatabases: false
 };
-function WithDefaults(Stored) {
+var WithDefaults = (Stored) => {
   return {
     Contrast: Stored.Contrast ?? DefaultAppSettings.Contrast,
     DatabaseOrder: Stored.DatabaseOrder ?? DefaultAppSettings.DatabaseOrder,
@@ -592,7 +592,7 @@ function WithDefaults(Stored) {
     SelectedConnectionId: Stored.SelectedConnectionId,
     ShowAllWorkspaceDatabases: Stored.ShowAllWorkspaceDatabases ?? DefaultAppSettings.ShowAllWorkspaceDatabases
   };
-}
+};
 
 // Package/Domain/Distribution/Profile.js
 import { Schema as Schema11 } from "effect";
@@ -667,6 +667,7 @@ __export(Error_exports, {
   NotionUnauthorized: () => NotionUnauthorized,
   NotionUnavailable: () => NotionUnavailable,
   NotionValidationError: () => NotionValidationError,
+  PageCreationInProgress: () => PageCreationInProgress,
   RateLimitExceeded: () => RateLimitExceeded
 });
 import { Schema as Schema13 } from "effect";
@@ -694,6 +695,8 @@ var DestinationNotFound = class extends Schema13.TaggedError()("DestinationNotFo
 };
 var InvalidPageDraft = class extends Schema13.TaggedError()("InvalidPageDraft", { Message: Schema13.String }, { httpApiStatus: 422 }) {
 };
+var PageCreationInProgress = class extends Schema13.TaggedError()("PageCreationInProgress", {}, { httpApiStatus: 409 }) {
+};
 var DatabaseError = class extends Schema13.TaggedError()("DatabaseError", { Message: Schema13.String }, { httpApiStatus: 500 }) {
 };
 var NetworkError = class extends Schema13.TaggedError()("NetworkError", { Message: Schema13.String }, { httpApiStatus: 502 }) {
@@ -719,6 +722,7 @@ var DomainError = Schema13.Union([
   DataSourceSchemaChanged,
   DestinationNotFound,
   InvalidPageDraft,
+  PageCreationInProgress,
   DatabaseError,
   NetworkError,
   FeatureGateError,

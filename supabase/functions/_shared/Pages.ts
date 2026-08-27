@@ -226,7 +226,7 @@ export const CreateForUser = (UserId: string, Command: CreatePageInput) =>
 
         if (!Destination)
         {
-            return yield* Effect.fail(new Domain.Error.InvalidPageDraft({ Message: "Destination not found." }));
+            return yield* Effect.fail(new Domain.Error.DestinationNotFound({ DestinationId: Command.DestinationId }));
         }
 
         const ConnectionId = Destination.connection_id as string;
@@ -361,9 +361,7 @@ export const CreateForUser = (UserId: string, Command: CreatePageInput) =>
 
         if (Reservation?.operation_state === "already_pending")
         {
-            return yield* Effect.fail(new Domain.Error.NotionUnavailable({
-                Message: "This page creation is already in progress. Retry shortly."
-            }));
+            return yield* Effect.fail(new Domain.Error.PageCreationInProgress({ }));
         }
 
         /* 5. Resolve any pending file uploads, then call Notion; on failure

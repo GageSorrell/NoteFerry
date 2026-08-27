@@ -10,10 +10,11 @@
  */
 
 import type * as Domain from "@noteferry/domain";
-import { MakeStyles, TextStyle, ViewStyle } from "@noteferry/ui";
+import { MakeStyles, TextStyle, ViewStyle } from "@noteferry/ui/Core";
 import { PropertyLabel } from "@/features/page-creation/property-label";
-import { Textarea } from "@noteferry/ui/Primitive";
+import { Textarea } from "@noteferry/ui/Primitive/Textarea";
 import { View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 /** Props for a Notion Rich text property field. */
 export interface TextPropertyFieldProps
@@ -35,6 +36,7 @@ export const TextPropertyField = ({
 }: TextPropertyFieldProps): React.JSX.Element =>
 {
     const Styles = useStyles();
+    const { t } = useTranslation("pageCreation");
 
     return (
         <View style={ [ Styles.Field, Inline && Styles.InlineField ] }>
@@ -43,7 +45,7 @@ export const TextPropertyField = ({
                 Disabled={ Disabled }
                 NumberOfLines={ 1 }
                 OnChangeText={ OnValueChange }
-                Placeholder="Empty"
+                Placeholder={ t("propertyFields.empty") }
                 Style={ Inline ? Styles.InlineTextarea : undefined }
                 Value={ Value }
             />

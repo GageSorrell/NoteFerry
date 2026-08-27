@@ -10,18 +10,19 @@
  */
 
 import type { EventArg, NavigationAction } from "expo-router/build/react-navigation";
-import { MakeStyles, ViewStyle, useTheme } from "@noteferry/ui";
+import { MakeStyles, ViewStyle, useTheme } from "@noteferry/ui/Core";
 import { OnboardingMockTiming, useDevelopmentOnboarding } from "@/features/onboarding/onboarding-development";
 import { Stack, useNavigation } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronLeft } from "lucide-react-native";
-import { ConnectNotion } from "@/Domain/Connection";
-import { Pressable } from "@noteferry/ui/Primitive";
+import ChevronLeft from "lucide-react-native/icons/chevron-left";
+import { AdoptNotionAuthorization } from "@/Domain/Runtime/NoteFerryApi";
+import { Pressable } from "@noteferry/ui/Primitive/Pressable";
 import type { PressableStateCallbackType } from "react-native";
 import { SignInModalView } from "@/features/onboarding/onboarding-views";
 import { SignInWithOAuth } from "@/Domain/Auth/OAuth";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useOnboarding } from "@/features/onboarding/onboarding-context";
+import { useTranslation } from "react-i18next";
 
 interface HeaderBackButtonProps
 {
@@ -33,10 +34,11 @@ const HeaderBackButton = ({ OnPress }: HeaderBackButtonProps): React.JSX.Element
 {
     const Theme = useTheme();
     const Styles = useHeaderStyles();
+    const { t } = useTranslation("onboarding");
 
     return (
         <Pressable
-            Accessibility={ { Label: "Back to welcome", Role: "button" } }
+            Accessibility={ { Label: t("signInModal.backToWelcome"), Role: "button" } }
             OnPress={ OnPress }
             hitSlop={ 8 }
             style={ ({ pressed }: PressableStateCallbackType) => [
@@ -91,17 +93,17 @@ const SignInModal = () =>
         }
 
         /* Enter onboarding before authentication changes the protected route
-         * tree. The content authorization starts immediately after sign-in, so
-         * there is no intermediate grant screen. */
+         * tree. The Notion authorization used for sign-in is also adopted as
+         * the user's first content connection after the callback returns. */
         await Begin();
         let IsSignedIn = false;
 
         try
         {
             SetBusy(true);
-            const Session = await SignInWithOAuth();
+            const Result = await SignInWithOAuth();
 
-            if (Session === null)
+            if (Result === null)
             {
                 await Complete();
 
@@ -109,7 +111,11 @@ const SignInModal = () =>
             }
 
             IsSignedIn = true;
-            RecordAuthorizationResult(await ConnectNotion());
+            await AdoptNotionAuthorization(
+                Result.ProviderToken,
+                Result.ProviderRefreshToken
+            );
+            RecordAuthorizationResult(true);
         }
         catch (Error)
         {

@@ -14,18 +14,14 @@
  */
 
 import type * as Domain from "@noteferry/domain";
-import {
-    Body,
-    BottomSheet,
-    type BottomSheet as BottomSheetHandle,
-    BottomSheetScrollView,
-    ModalTitle,
-    Pressable
-} from "@noteferry/ui/Primitive";
-import { Ban, Check } from "lucide-react-native";
+import { Body, ModalTitle } from "@noteferry/ui/Primitive/Text";
+import { BottomSheet, type BottomSheet as BottomSheetHandle, BottomSheetScrollView } from "@noteferry/ui/Primitive/BottomSheet";
+import { Pressable } from "@noteferry/ui/Primitive/Pressable";
+import Ban from "lucide-react-native/icons/ban";
+import Check from "lucide-react-native/icons/check";
 import { type PressableStateCallbackType, StyleSheet, View } from "react-native";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
-import { IconBlock } from "@noteferry/ui/Block";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
+import { IconBlock } from "@noteferry/ui/Block/IconBlock";
 import { ResolveTemplateIconData } from "./template-icon";
 import type { RefObject } from "react";
 

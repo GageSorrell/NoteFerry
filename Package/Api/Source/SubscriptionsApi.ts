@@ -2,7 +2,7 @@
 
 import * as Domain from "@noteferry/domain";
 import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 export const RegisterDevicePayload = Schema.Struct({
     DeviceId: Schema.String,

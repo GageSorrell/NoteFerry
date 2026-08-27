@@ -15,7 +15,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-    --font-sans: var(--font-inter);
+    --font-sans: var(--font-roboto-flex);
 
     --radius-sm: calc(var(--radius) - 4px);
     --radius-md: calc(var(--radius) - 2px);
@@ -113,6 +113,11 @@
     }
 
     body {
+        /* Roboto Flex's default tracking runs looser than Inter's — Notion's
+         * UI (and this site's prior Inter setup) reads tighter than that,
+         * so pull it back in globally rather than per-component. */
         @apply bg-background text-foreground;
+        letter-spacing: -0.011em;
+        font-optical-sizing: auto;
     }
 }

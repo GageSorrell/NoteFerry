@@ -13,20 +13,25 @@
  * @license   MIT
  */
 
-import { CreateFullScreenAdController } from "./FullScreenAdController";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { CreateFullScreenAdController, type FullScreenAdController } from "./FullScreenAdController";
 import { GetMillisecondsSinceLastFullScreenAd } from "./AdActivity";
-import { InterstitialAd } from "react-native-google-mobile-ads";
 import { IsAdFree } from "./Entitlement";
 import { IsAdsRuntimeReady } from "./AdsRuntime";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ResolveAdUnitId } from "./AdUnits";
+import { LoadGoogleMobileAds } from "./GoogleMobileAds";
 
-/** Show the page-creation interstitial on every Nth successful save, not
- *  every one -- a user creating five pages in a row should not see five
- *  interstitials. */
+/**
+ * Show the page-creation interstitial on every Nth successful save, not
+ * every one -- a user creating five pages in a row should not see five
+ * interstitials.
+ */
 const PageCreationInterstitialEveryN = 3;
-/** Never show a full-screen ad within this long of the last one, of any kind
- *  (interstitial or app open). */
+
+/**
+ * Never show a full-screen ad within this long of the last one, of any kind
+ * (interstitial or app open).
+ */
 const MinimumIntervalBetweenInterstitialsMs = 3 * 60_000;
 
 const PageCreationCountStorageKey = "@noteferry/ads-page-creation-count" as const;
@@ -36,12 +41,28 @@ const CanShowInterstitial = (): boolean =>
     && IsAdsRuntimeReady()
     && GetMillisecondsSinceLastFullScreenAd() >= MinimumIntervalBetweenInterstitialsMs;
 
-const PageCreationController = CreateFullScreenAdController({
-    CreateAd: (UnitId: string) => InterstitialAd.createForAdRequest(UnitId)
-});
-const OnboardingController = CreateFullScreenAdController({
-    CreateAd: (UnitId: string) => InterstitialAd.createForAdRequest(UnitId)
-});
+let PageCreationControllerPromise: Promise<FullScreenAdController> | null = null;
+let OnboardingControllerPromise: Promise<FullScreenAdController> | null = null;
+
+const CreateController = async (): Promise<FullScreenAdController> =>
+{
+    const { InterstitialAd } = await LoadGoogleMobileAds();
+    return CreateFullScreenAdController({
+        CreateAd: (UnitId: string) => InterstitialAd.createForAdRequest(UnitId)
+    });
+};
+
+const GetPageCreationController = (): Promise<FullScreenAdController> =>
+{
+    PageCreationControllerPromise ??= CreateController();
+    return PageCreationControllerPromise;
+};
+
+const GetOnboardingController = (): Promise<FullScreenAdController> =>
+{
+    OnboardingControllerPromise ??= CreateController();
+    return OnboardingControllerPromise;
+};
 
 export/**
        * Preloads both interstitial placements. Call once the ads runtime is
@@ -58,12 +79,12 @@ const PreloadInterstitialPlacements = (): void =>
 
     if (PageCreationUnitId !== null)
     {
-        PageCreationController.Preload(PageCreationUnitId);
+        void GetPageCreationController().then((Controller) => Controller.Preload(PageCreationUnitId));
     }
 
     if (OnboardingUnitId !== null)
     {
-        OnboardingController.Preload(OnboardingUnitId);
+        void GetOnboardingController().then((Controller) => Controller.Preload(OnboardingUnitId));
     }
 };
 
@@ -94,9 +115,10 @@ const PageCreationInterstitial = {
             return;
         }
 
-        if (PageCreationController.IsReady())
+        const Controller = await GetPageCreationController();
+        if (Controller.IsReady())
         {
-            await PageCreationController.Show();
+            await Controller.Show();
 
             return;
         }
@@ -105,7 +127,7 @@ const PageCreationInterstitial = {
 
         if (UnitId !== null)
         {
-            PageCreationController.Preload(UnitId);
+            Controller.Preload(UnitId);
         }
     }
 };
@@ -132,9 +154,10 @@ const OnboardingInterstitial = {
             return;
         }
 
-        if (OnboardingController.IsReady())
+        const Controller = await GetOnboardingController();
+        if (Controller.IsReady())
         {
-            await OnboardingController.Show();
+            await Controller.Show();
 
             return;
         }
@@ -143,7 +166,7 @@ const OnboardingInterstitial = {
 
         if (UnitId !== null)
         {
-            OnboardingController.Preload(UnitId);
+            Controller.Preload(UnitId);
         }
     }
 };

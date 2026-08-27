@@ -12,8 +12,8 @@
  * @license   MIT
  */
 
-import { Description, Heading1 } from "@noteferry/ui/Primitive";
-import { MakeStyles, ViewStyle } from "@noteferry/ui";
+import { Description, Heading1 } from "@noteferry/ui/Primitive/Text";
+import { MakeStyles, ViewStyle } from "@noteferry/ui/Core";
 import { HeroImage } from "@/Component/HeroImage";
 import type { ImageAsset } from "@/Domain/Utility/Asset";
 import type { ReactNode } from "react";

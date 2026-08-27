@@ -36,7 +36,7 @@ import {
 } from "react-native-gesture-handler";
 import { MakeStyles, ViewStyle as MakeViewStyle } from "../MakeStyles.js";
 import { type StyleProp, View, type ViewStyle } from "react-native";
-import { Check } from "lucide-react-native";
+import Check from "lucide-react-native/icons/check";
 import type { Thunk } from "@sorrell/effect/Function";
 import { useToken } from "../ThemeProvider.js";
 

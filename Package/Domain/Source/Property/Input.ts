@@ -13,7 +13,7 @@
  */
 
 import * as Id from "../Id.js";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 export/**
        * TODO Write description.

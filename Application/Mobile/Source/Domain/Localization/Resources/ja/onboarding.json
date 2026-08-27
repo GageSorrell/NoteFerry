@@ -1,0 +1,127 @@
+{
+    "titles": {
+        "signInModal": "この後の流れ:2つのステップ"
+    },
+    "signIn": {
+        "heroTitle": "ノート作成を、もっと速く。",
+        "heroSubtitle": "Notionアカウントでログイン",
+        "continueWithNotion": "Notionで続ける",
+        "noAccount": "Notionアカウントをお持ちでないですか?",
+        "signUp": "登録する",
+        "legal": {
+            "line1": "続けることで、あなたは",
+            "line2": "以下の内容を理解し、同意したものとみなされます:",
+            "terms": "利用規約",
+            "and": "および",
+            "privacy": "プライバシーポリシー"
+        },
+        "learnMore": "詳しく見る",
+        "needHelp": "お困りですか?",
+        "copyright": "© 2026 Gage Sorrell. 全著作権所有。",
+        "mail": {
+            "unavailableTitle": "利用できるメールアプリがありません",
+            "unavailableMessage": "フィードバックを送るには、この端末にメールアカウントを設定してください。",
+            "subject": "NoteFerryに関する質問",
+            "body": "\n\n—\nNoteFerry {{version}} ({{build}})"
+        }
+    },
+    "signInModal": {
+        "step1": "まず、Notionにログインして、ワークスペースにNoteFerryのインテグレーションを追加します。",
+        "step2": "次に、NoteFerryが参照できるデータベースを選びます。",
+        "tip": "ヒント:ページへのアクセス権をNoteFerryに与えると、そのページ配下のすべてのデータベースへのアクセス権も与えられます。",
+        "logInWithNotion": "Notionでログイン",
+        "backToWelcome": "ようこそ画面に戻る"
+    },
+    "sync": {
+        "helpLink": "Notionのサードパーティ連携について詳しく見る",
+        "loading": {
+            "accessibilityLabel": "Notionへのアクセスを確認中",
+            "message": "NoteFerryがアクセスできる範囲を確認しています…"
+        },
+        "noIntegration": {
+            "title": "NoteFerryが追加されませんでした",
+            "subtitle": "認証は完了しましたが、ワークスペースにNoteFerryのインテグレーションが追加されませんでした。",
+            "action": "戻ってやり直す"
+        },
+        "noAccess": {
+            "title": "NoteFerryが見られる範囲を選ぶ",
+            "subtitle": "インテグレーションはインストール済みですが、まだページやデータベースが共有されていません。",
+            "action": "Notionでページを選ぶ"
+        },
+        "pagesOnly": {
+            "title": "データベースが見つかりません",
+            "subtitle": "NoteFerryは通常のページを参照できますが、共有されたページツリーにデータベースが含まれていません。",
+            "action": "Notionでアクセス権を変更する"
+        },
+        "error": {
+            "title": "問題が発生しました",
+            "subtitle": "Notionへのアクセス確認を完了できませんでした。接続を確認して、もう一度お試しください。",
+            "action": "再試行"
+        },
+        "pageAccessDisclosure": {
+            "pagesFound_one": "{{count}}件のページが見つかりました",
+            "pagesFound_other": "{{count}}件のページが見つかりました",
+            "whyShown": "ページが表示される理由",
+            "helpGlyph": "?",
+            "noPages": "表示できる通常のページがありません。",
+            "andMore": "ほか{{count}}件",
+            "sheetTitle": "ページとデータベースは別物です",
+            "sheetBody": "NoteFerryは通常のページではなく、データベースにエントリを作成します。それでもページを共有する意味はあります。そのページ配下のデータベースは自動的にNoteFerryと共有されるため、ページツリー全体を一度に追加できます。",
+            "gotIt": "了解しました"
+        },
+        "databaseSelection": {
+            "title": "データベースを選ぶ",
+            "subtitle": "無料プランは最大3つのデータベースを含みます。NoteFerry Proはデータベース数が無制限で、無料プランで選んだものは後から変更できます。",
+            "searchPlaceholder": "データベースを検索",
+            "selectedCount_one": "{{count}}件選択中",
+            "selectedCount_other": "{{count}}件選択中",
+            "selectDatabase": "{{title}}を選択",
+            "moreThan100Pages": "100件超",
+            "pageCount_one": "{{count}}件",
+            "pageCount_other": "{{count}}件",
+            "noResults": "「{{query}}」に一致するデータベースがありません。",
+            "selectAtLeastOne": "少なくとも1つデータベースを選んでください",
+            "continueWith_one": "{{count}}件のデータベースで続ける",
+            "continueWith_other": "{{count}}件のデータベースで続ける",
+            "proGate": {
+                "title": "Proでデータベースを無制限に追加",
+                "message": "無料プランはアクティブなデータベースを3つまで含みます。Notion側を変更せずに、後から入れ替えることもできます。",
+                "cancel": "今はしない",
+                "comparePlans": "プランを比較",
+                "upgrade": "アップグレード"
+            }
+        }
+    },
+    "enableNotifications": {
+        "title": "通知を有効にする",
+        "subtitle": "オフライン中に送信したページの作成が完了すると通知が届きます。",
+        "enable": "通知を有効にする",
+        "notNow": "今はしない"
+    },
+    "done": {
+        "title": "準備が整いました!",
+        "description": "これでNoteFerryを使い始める準備が整いました。ページ作成時に表示するプロパティの編集や、データベースのエイリアス作成など、必要に応じて設定を変更できます。",
+        "viewDatabaseSettings": "データベース設定を見る",
+        "addWorkspace": "別のワークスペースを追加",
+        "start": "NoteFerryを使い始める"
+    },
+    "oauthCallback": {
+        "accessibilityLabel": "Notionの認証を完了しています"
+    },
+    "destinationConfig": {
+        "back": "‹ 戻る",
+        "defaultTitle": "設定",
+        "subtitle": "このデータソース用のクイック入力先を設定します。",
+        "name": "名前",
+        "namePlaceholder": "入力先の名前",
+        "fields": "フィールド",
+        "visible": "表示",
+        "required": "必須",
+        "afterCreatingPage": "ページ作成後",
+        "saving": "保存中…",
+        "saveChanges": "変更を保存",
+        "saveDestination": "入力先を保存",
+        "configured": "設定済み",
+        "delete": "削除"
+    }
+}

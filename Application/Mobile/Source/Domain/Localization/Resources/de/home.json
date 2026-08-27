@@ -1,0 +1,30 @@
+{
+    "avatarAccessibilityLabel": "Notion-Profil von {{name}}",
+    "header": {
+        "comparePlans": "Pläne vergleichen",
+        "comparePlansNew": "Pläne vergleichen, neu",
+        "settings": "Einstellungen"
+    },
+    "databases": {
+        "title": "Datenbanken",
+        "empty": "Noch keine Datenbanken gefunden."
+    },
+    "lockedDatabase": {
+        "title": "Diese Datenbank mit Pro freischalten",
+        "message": "Mit Free hast du bis zu drei aktive Datenbanken. Upgrade für unbegrenzte Datenbanken, oder ersetze eine aktive Datenbank in den Datenbankeinstellungen.",
+        "cancel": "Nicht jetzt",
+        "comparePlans": "Pläne vergleichen",
+        "upgrade": "Upgrade"
+    },
+    "sale": {
+        "viewOffer": "Zeitlich begrenztes Angebot ansehen",
+        "dismiss": "Verwerfen"
+    },
+    "usage": {
+        "title": "Kostenloses Seiten-Kontingent",
+        "compareAccessibilityLabel": "Free und Pro vergleichen",
+        "summary": "{{used}} von {{limit}} Seiten in den letzten {{minutes}} Minuten verwendet.",
+        "nextSlot": "Nächster Slot um {{time}}.",
+        "upgrade": "Upgrade"
+    }
+}

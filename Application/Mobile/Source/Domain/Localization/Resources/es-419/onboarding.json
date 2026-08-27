@@ -1,0 +1,127 @@
+{
+    "titles": {
+        "signInModal": "Lo que viene: dos pasos"
+    },
+    "signIn": {
+        "heroTitle": "Tus notas, más rápido.",
+        "heroSubtitle": "Inicia sesión con tu cuenta de Notion",
+        "continueWithNotion": "Continuar con Notion",
+        "noAccount": "¿No tienes una cuenta de Notion?",
+        "signUp": "Regístrate",
+        "legal": {
+            "line1": "Al continuar, confirmas que entiendes",
+            "line2": "y aceptas los",
+            "terms": "Términos y Condiciones",
+            "and": "y la",
+            "privacy": "Política de Privacidad"
+        },
+        "learnMore": "Más información",
+        "needHelp": "¿Necesitas ayuda?",
+        "copyright": "© 2026 Gage Sorrell. Todos los derechos reservados.",
+        "mail": {
+            "unavailableTitle": "No hay una app de correo disponible",
+            "unavailableMessage": "Configura una cuenta de correo en este dispositivo para enviar comentarios.",
+            "subject": "Pregunta sobre NoteFerry",
+            "body": "\n\n—\nNoteFerry {{version}} ({{build}})"
+        }
+    },
+    "signInModal": {
+        "step1": "Primero, iniciarás sesión en Notion y agregarás la integración de NoteFerry a tu espacio de trabajo.",
+        "step2": "Luego, elegirás qué bases de datos puede ver NoteFerry.",
+        "tip": "Consejo: Darle acceso a NoteFerry a una página también le da acceso a todas las bases de datos debajo de esa página.",
+        "logInWithNotion": "Iniciar sesión con Notion",
+        "backToWelcome": "Volver a la bienvenida"
+    },
+    "sync": {
+        "helpLink": "Más información sobre las conexiones de terceros en Notion",
+        "loading": {
+            "accessibilityLabel": "Comprobando el acceso a Notion",
+            "message": "Comprobando a qué puede acceder NoteFerry…"
+        },
+        "noIntegration": {
+            "title": "NoteFerry no se agregó",
+            "subtitle": "La autorización terminó sin agregar la integración de NoteFerry a tu espacio de trabajo.",
+            "action": "Volver y empezar de nuevo"
+        },
+        "noAccess": {
+            "title": "Elige qué puede ver NoteFerry",
+            "subtitle": "La integración está instalada, pero todavía no se compartió ninguna página o base de datos con ella.",
+            "action": "Elegir páginas en Notion"
+        },
+        "pagesOnly": {
+            "title": "No se encontraron bases de datos",
+            "subtitle": "NoteFerry puede ver páginas normales, pero ninguno de los árboles de páginas compartidos contiene una base de datos.",
+            "action": "Cambiar el acceso en Notion"
+        },
+        "error": {
+            "title": "Tuvimos un problema",
+            "subtitle": "No pudimos terminar de comprobar tu acceso a Notion. Revisa tu conexión e inténtalo de nuevo.",
+            "action": "Intentar de nuevo"
+        },
+        "pageAccessDisclosure": {
+            "pagesFound_one": "Se encontró {{count}} página",
+            "pagesFound_other": "Se encontraron {{count}} páginas",
+            "whyShown": "Por qué se muestran páginas",
+            "helpGlyph": "?",
+            "noPages": "No hay páginas normales visibles.",
+            "andMore": "y {{count}} más",
+            "sheetTitle": "Las páginas y las bases de datos son distintas",
+            "sheetBody": "NoteFerry crea entradas en bases de datos, no en páginas normales. Aun así, compartir una página es útil: las bases de datos debajo de esa página se comparten con NoteFerry automáticamente, así que puedes agregar todo un árbol de páginas en un solo paso.",
+            "gotIt": "Entendido"
+        },
+        "databaseSelection": {
+            "title": "Elige tus bases de datos",
+            "subtitle": "El plan Gratis incluye hasta tres bases de datos. NoteFerry Pro incluye bases de datos ilimitadas, y puedes cambiar una selección del plan Gratis más adelante.",
+            "searchPlaceholder": "Buscar bases de datos",
+            "selectedCount_one": "{{count}} base de datos seleccionada",
+            "selectedCount_other": "{{count}} bases de datos seleccionadas",
+            "selectDatabase": "Seleccionar {{title}}",
+            "moreThan100Pages": ">100 páginas",
+            "pageCount_one": "{{count}} página",
+            "pageCount_other": "{{count}} páginas",
+            "noResults": "Ninguna base de datos coincide con “{{query}}”.",
+            "selectAtLeastOne": "Selecciona al menos una base de datos",
+            "continueWith_one": "Continuar con {{count}} base de datos",
+            "continueWith_other": "Continuar con {{count}} bases de datos",
+            "proGate": {
+                "title": "Agrega bases de datos ilimitadas con Pro",
+                "message": "El plan Gratis incluye tres bases de datos activas. Puedes reemplazarlas más adelante sin cambiar nada en Notion.",
+                "cancel": "Ahora no",
+                "comparePlans": "Comparar planes",
+                "upgrade": "Mejorar plan"
+            }
+        }
+    },
+    "enableNotifications": {
+        "title": "Activar notificaciones",
+        "subtitle": "Recibe un aviso cuando NoteFerry termine de crear las páginas que enviaste sin conexión.",
+        "enable": "Activar notificaciones",
+        "notNow": "Ahora no"
+    },
+    "done": {
+        "title": "¡Todo listo!",
+        "description": "Ya estás listo para empezar a usar NoteFerry. Si quieres, puedes editar las propiedades que se muestran al crear páginas, crear alias para tus bases de datos y mucho más.",
+        "viewDatabaseSettings": "Ver configuración de bases de datos",
+        "addWorkspace": "Agregar otro espacio de trabajo",
+        "start": "Empezar a usar NoteFerry"
+    },
+    "oauthCallback": {
+        "accessibilityLabel": "Terminando la autorización de Notion"
+    },
+    "destinationConfig": {
+        "back": "‹ Atrás",
+        "defaultTitle": "Configurar",
+        "subtitle": "Configura un destino de entrada rápida para esta fuente de datos.",
+        "name": "Nombre",
+        "namePlaceholder": "Nombre del destino",
+        "fields": "Campos",
+        "visible": "Visible",
+        "required": "Obligatorio",
+        "afterCreatingPage": "Después de crear una página",
+        "saving": "Guardando…",
+        "saveChanges": "Guardar cambios",
+        "saveDestination": "Guardar destino",
+        "configured": "Configurados",
+        "delete": "Eliminar"
+    }
+}

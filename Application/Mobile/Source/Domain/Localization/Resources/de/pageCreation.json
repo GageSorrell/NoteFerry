@@ -1,0 +1,84 @@
+{
+    "propertyFields": {
+        "empty": "Leer",
+        "date": {
+            "helpTitle": "Warum sind Erinnerungen nicht verfügbar?",
+            "helpMessage": "Notion stellt Datums-Erinnerungen nicht über seine öffentliche API bereit, daher kann NoteFerry sie nicht erstellen oder bearbeiten."
+        }
+    },
+    "dateSheet": {
+        "selectDate": "Datum auswählen",
+        "selectTime": "Uhrzeit auswählen",
+        "cancel": "Abbrechen",
+        "done": "Fertig",
+        "help": "Hilfe",
+        "endDate": "Enddatum",
+        "dateFormat": "Datumsformat",
+        "dateFormatFull": "Vollständiges Datum",
+        "dateFormatShort": "Kurzes Datum",
+        "dateFormatMonthDayYear": "Monat/Tag/Jahr",
+        "dateFormatDayMonthYear": "Tag/Monat/Jahr",
+        "dateFormatYearMonthDay": "Jahr/Monat/Tag",
+        "dateFormatRelative": "Relativ",
+        "includeTime": "Uhrzeit einbeziehen",
+        "timeFormat": "Zeitformat",
+        "timeFormatHidden": "Ausgeblendet",
+        "timeFormatTwelveHour": "12 Stunden",
+        "timeFormatTwentyFourHour": "24 Stunden",
+        "timezone": "Zeitzone",
+        "clear": "Löschen",
+        "previousMonth": "Vorheriger Monat",
+        "nextMonth": "Nächster Monat"
+    },
+    "createPage": {
+        "databaseFallback": "Datenbank",
+        "settingsFor": "Einstellungen für {{database}}",
+        "populateDummyData": "Formular mit Testdaten füllen",
+        "useTemplate": "Vorlage verwenden",
+        "changeIcon": "Seitensymbol ändern",
+        "goBack": "Zurück",
+        "addIcon": "Symbol hinzufügen",
+        "addCover": "Titelbild hinzufügen",
+        "titlePlaceholder": "Ohne Titel",
+        "pageBody": {
+            "accessibilityLabel": "Seiteninhalt",
+            "placeholder": "Schreib etwas…"
+        },
+        "submit": "Seite erstellen",
+        "discard": {
+            "title": "Diese Seite verwerfen?",
+            "message": "Du hast ungespeicherte Änderungen. Wenn du zurückgehst, gehen sie verloren.",
+            "keepEditing": "Weiter bearbeiten",
+            "discard": "Verwerfen"
+        },
+        "databaseSettingsGate": {
+            "title": "Formulare mit Pro anpassen",
+            "message": "Mit Pro kannst du Aliasse, Sichtbarkeit, Pflichtfelder, Reihenfolge, Standardwerte und das Verhalten nach dem Erstellen ändern."
+        },
+        "proPrompt": {
+            "title": "Verfügbar mit NoteFerry Pro",
+            "notNow": "Nicht jetzt",
+            "comparePlans": "Pläne vergleichen",
+            "upgrade": "Upgrade",
+            "iconBenefit": "Füge den Seiten, die du erfasst, ein wiedererkennbares Symbol hinzu.",
+            "coverBenefit": "Füge den Seiten, die du erfasst, ein Titelbild hinzu."
+        },
+        "template": {
+            "applyTitle": "„{{name}}“ anwenden?",
+            "applyMessage": "Einige Eigenschaften, die du bereits ausgefüllt hast, haben auch in dieser Vorlage einen Wert.",
+            "cancel": "Abbrechen",
+            "keepMine": "Meine behalten",
+            "overwrite": "Überschreiben"
+        },
+        "freeLimit": {
+            "title": "Kostenloses Seitenlimit erreicht",
+            "message": "Dein Entwurf ist sicher. Dein nächster Slot ist um {{time}} verfügbar.",
+            "keepEditing": "Weiter bearbeiten",
+            "upgrade": "Upgrade"
+        },
+        "errors": {
+            "loadFailed": "Wir konnten dieses Seitenformular nicht laden. Versuche es erneut.",
+            "titleRequired": "Gib einen Seitentitel ein, bevor du die Seite erstellst."
+        }
+    }
+}

@@ -12,8 +12,9 @@
  * @license   MIT
  */
 
-import { Body, Pressable } from "@noteferry/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
+import { Body } from "@noteferry/ui/Primitive/Text";
+import { Pressable } from "@noteferry/ui/Primitive/Pressable";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
 import type { LucideIcon } from "lucide-react-native";
 import { type PressableStateCallbackType } from "react-native";
 import type { Thunk } from "@sorrell/effect/Function";

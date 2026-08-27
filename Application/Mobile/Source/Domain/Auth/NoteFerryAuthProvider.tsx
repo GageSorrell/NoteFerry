@@ -11,12 +11,12 @@
  * @license   MIT
  */
 
+import * as Application from "expo-application";
 import * as React from "react";
 import type { AuthChangeEvent, AuthError, Session } from "@supabase/supabase-js";
-import { Supabase } from "@/Domain/Runtime/Supabase";
-import * as Application from "expo-application";
 import { Platform } from "react-native";
 import { RemoveSubscriptionSaleDevice } from "@/Domain/Runtime/NoteFerryApi";
+import { Supabase } from "@/Domain/Runtime/Supabase";
 
 const CurrentDeviceId = async (): Promise<string> =>
 {

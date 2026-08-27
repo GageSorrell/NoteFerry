@@ -9,7 +9,7 @@
  * @license   MIT
  */
 
-import { Brand } from "effect";
+import * as Brand from "effect/Brand";
 
 /** {@inheritDoc ImageAsset:var} */
 export type ImageAsset = Brand.Branded<string, "ImageAsset">;

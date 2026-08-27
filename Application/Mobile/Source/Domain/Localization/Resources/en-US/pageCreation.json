@@ -1,0 +1,84 @@
+{
+    "propertyFields": {
+        "empty": "Empty",
+        "date": {
+            "helpTitle": "Why aren't reminders available?",
+            "helpMessage": "Notion doesn't expose date reminders through its public API, so NoteFerry can't create or edit them."
+        }
+    },
+    "dateSheet": {
+        "selectDate": "Select a date",
+        "selectTime": "Select a time",
+        "cancel": "Cancel",
+        "done": "Done",
+        "help": "Help",
+        "endDate": "End date",
+        "dateFormat": "Date format",
+        "dateFormatFull": "Full date",
+        "dateFormatShort": "Short date",
+        "dateFormatMonthDayYear": "Month/Day/Year",
+        "dateFormatDayMonthYear": "Day/Month/Year",
+        "dateFormatYearMonthDay": "Year/Month/Day",
+        "dateFormatRelative": "Relative",
+        "includeTime": "Include time",
+        "timeFormat": "Time format",
+        "timeFormatHidden": "Hidden",
+        "timeFormatTwelveHour": "12 hour",
+        "timeFormatTwentyFourHour": "24 hour",
+        "timezone": "Timezone",
+        "clear": "Clear",
+        "previousMonth": "Previous month",
+        "nextMonth": "Next month"
+    },
+    "createPage": {
+        "databaseFallback": "Database",
+        "settingsFor": "Settings for {{database}}",
+        "populateDummyData": "Populate form with dummy data",
+        "useTemplate": "Use a template",
+        "changeIcon": "Change page icon",
+        "goBack": "Go back",
+        "addIcon": "Add icon",
+        "addCover": "Add cover",
+        "titlePlaceholder": "Untitled",
+        "pageBody": {
+            "accessibilityLabel": "Page body",
+            "placeholder": "Type something..."
+        },
+        "submit": "Create page",
+        "discard": {
+            "title": "Discard this page?",
+            "message": "You have unsaved changes. If you go back, they will be lost.",
+            "keepEditing": "Keep editing",
+            "discard": "Discard"
+        },
+        "databaseSettingsGate": {
+            "title": "Customize forms with Pro",
+            "message": "Pro lets you change aliases, visibility, required fields, order, defaults, and post-creation behavior."
+        },
+        "proPrompt": {
+            "title": "Available with NoteFerry Pro",
+            "notNow": "Not now",
+            "comparePlans": "Compare plans",
+            "upgrade": "Upgrade",
+            "iconBenefit": "Add a recognizable icon to pages you capture.",
+            "coverBenefit": "Add a cover image to pages you capture."
+        },
+        "template": {
+            "applyTitle": "Apply \"{{name}}\"?",
+            "applyMessage": "Some properties you've already filled in also have a value in this template.",
+            "cancel": "Cancel",
+            "keepMine": "Keep mine",
+            "overwrite": "Overwrite"
+        },
+        "freeLimit": {
+            "title": "Free page limit reached",
+            "message": "Your draft is safe. Your next slot is available at {{time}}.",
+            "keepEditing": "Keep editing",
+            "upgrade": "Upgrade"
+        },
+        "errors": {
+            "loadFailed": "We couldn't load this page form. Please try again.",
+            "titleRequired": "Enter a page title before creating the page."
+        }
+    }
+}

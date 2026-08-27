@@ -1,0 +1,84 @@
+{
+    "propertyFields": {
+        "empty": "Vacío",
+        "date": {
+            "helpTitle": "¿Por qué no hay recordatorios disponibles?",
+            "helpMessage": "Notion no expone los recordatorios de fecha a través de su API pública, así que NoteFerry no puede crearlos ni editarlos."
+        }
+    },
+    "dateSheet": {
+        "selectDate": "Seleccionar una fecha",
+        "selectTime": "Seleccionar una hora",
+        "cancel": "Cancelar",
+        "done": "Listo",
+        "help": "Ayuda",
+        "endDate": "Fecha de fin",
+        "dateFormat": "Formato de fecha",
+        "dateFormatFull": "Fecha completa",
+        "dateFormatShort": "Fecha corta",
+        "dateFormatMonthDayYear": "Mes/Día/Año",
+        "dateFormatDayMonthYear": "Día/Mes/Año",
+        "dateFormatYearMonthDay": "Año/Mes/Día",
+        "dateFormatRelative": "Relativo",
+        "includeTime": "Incluir hora",
+        "timeFormat": "Formato de hora",
+        "timeFormatHidden": "Oculto",
+        "timeFormatTwelveHour": "12 horas",
+        "timeFormatTwentyFourHour": "24 horas",
+        "timezone": "Zona horaria",
+        "clear": "Borrar",
+        "previousMonth": "Mes anterior",
+        "nextMonth": "Mes siguiente"
+    },
+    "createPage": {
+        "databaseFallback": "Base de datos",
+        "settingsFor": "Configuración de {{database}}",
+        "populateDummyData": "Rellenar formulario con datos de prueba",
+        "useTemplate": "Usar una plantilla",
+        "changeIcon": "Cambiar el ícono de la página",
+        "goBack": "Volver",
+        "addIcon": "Agregar ícono",
+        "addCover": "Agregar portada",
+        "titlePlaceholder": "Sin título",
+        "pageBody": {
+            "accessibilityLabel": "Cuerpo de la página",
+            "placeholder": "Escribe algo…"
+        },
+        "submit": "Crear página",
+        "discard": {
+            "title": "¿Descartar esta página?",
+            "message": "Tienes cambios sin guardar. Si vuelves atrás, se perderán.",
+            "keepEditing": "Seguir editando",
+            "discard": "Descartar"
+        },
+        "databaseSettingsGate": {
+            "title": "Personaliza formularios con Pro",
+            "message": "Pro te permite cambiar alias, visibilidad, campos obligatorios, orden, valores predeterminados y el comportamiento después de crear la página."
+        },
+        "proPrompt": {
+            "title": "Disponible con NoteFerry Pro",
+            "notNow": "Ahora no",
+            "comparePlans": "Comparar planes",
+            "upgrade": "Mejorar plan",
+            "iconBenefit": "Agrega un ícono reconocible a las páginas que capturas.",
+            "coverBenefit": "Agrega una imagen de portada a las páginas que capturas."
+        },
+        "template": {
+            "applyTitle": "¿Aplicar “{{name}}”?",
+            "applyMessage": "Algunas propiedades que ya completaste también tienen un valor en esta plantilla.",
+            "cancel": "Cancelar",
+            "keepMine": "Mantener lo mío",
+            "overwrite": "Sobrescribir"
+        },
+        "freeLimit": {
+            "title": "Límite de páginas gratis alcanzado",
+            "message": "Tu borrador está a salvo. Tu próximo turno estará disponible a las {{time}}.",
+            "keepEditing": "Seguir editando",
+            "upgrade": "Mejorar plan"
+        },
+        "errors": {
+            "loadFailed": "No pudimos cargar este formulario de página. Inténtalo de nuevo.",
+            "titleRequired": "Ingresa un título de página antes de crear la página."
+        }
+    }
+}

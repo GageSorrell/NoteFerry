@@ -16,7 +16,7 @@
 
 import * as Id from "../Id.js";
 import { PropertyOption, StatusGroup } from "./Option.js";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 /**
  * Fields every property definition carries regardless of type.

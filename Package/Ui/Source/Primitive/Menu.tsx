@@ -17,7 +17,8 @@ import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { Body, BodyCompact, Description, LabelText, MenuItemText } from "./Text.js";
-import { Check, ChevronRight } from "lucide-react-native";
+import Check from "lucide-react-native/icons/check";
+import ChevronRight from "lucide-react-native/icons/chevron-right";
 import {
     type GestureResponderEvent,
     type StyleProp,
@@ -25,7 +26,7 @@ import {
     type ViewStyle
 } from "react-native";
 import { Pressable, type RnPressableRef } from "./Pressable.js";
-import { Predicate } from "effect";
+import * as Predicate from "effect/Predicate";
 import { WithAlpha } from "../Utility/index.js";
 import { useToken } from "../ThemeProvider.js";
 

@@ -11,7 +11,8 @@
     "./Package/Domain",
     "./Package/Icons",
     "./Package/Ui",
-    "./Website"
+    "./Website",
+    "./Script/AvdDemoMode"
   ],
   "version": "1.0.0",
   "author": {
@@ -43,6 +44,7 @@
     "@noteferry/ui": "1.0.0",
     "@sorrell/eslint-config": "2.3.0",
     "eslint": "9.39.5",
+    "eslint-plugin-react-perf": "3.3.3",
     "react-native": "0.86.2",
     "typescript": "6.0.3"
   }

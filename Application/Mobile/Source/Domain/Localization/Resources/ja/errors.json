@@ -1,0 +1,8 @@
+{
+    "destinationNotFound": "この接続先は利用できなくなりました。別の送信先を選んでもう一度お試しください。",
+    "pageCreationInProgress": "このページは現在作成中です。しばらくしてからもう一度お試しください。",
+    "rateLimitExceeded": "最近のリクエストが多すぎます。しばらくしてからもう一度お試しください。",
+    "freeDatabaseLimitReached": "無料アカウントでは、同時に有効にできるデータベースは最大{{limit}}件です。",
+    "featureGateError": "この機能を使うにはNoteFerry Proが必要です。",
+    "generic": "問題が発生しました。もう一度お試しください。"
+}

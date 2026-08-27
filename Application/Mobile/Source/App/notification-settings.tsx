@@ -10,20 +10,22 @@
  * @license   MIT
  */
 
-import { MakeStyles, Token, ViewStyle } from "@noteferry/ui";
-import { Setting, SettingsContainer, Switch } from "@noteferry/ui/Primitive";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useSettings } from "@/features/settings/use-settings";
-import { Platform, View } from "react-native";
 import * as Application from "expo-application";
 import * as Notifications from "expo-notifications";
-import Constants from "expo-constants";
+import { MakeStyles, Token, ViewStyle } from "@noteferry/ui/Core";
+import { Platform, View } from "react-native";
 import {
     RegisterSubscriptionSaleDevice,
     RemoveSubscriptionSaleDevice
 } from "@/Domain/Runtime/NoteFerryApi";
+import { Setting, SettingsContainer } from "@noteferry/ui/Primitive/Setting";
+import { Switch } from "@noteferry/ui/Primitive/Switch";
+import Constants from "expo-constants";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useCallback } from "react";
+import { useSettings } from "@/features/settings/use-settings";
 import { useSubscription } from "@/Domain/Subscription";
+import { useTranslation } from "react-i18next";
 
 const DeviceId = async (): Promise<string> =>
 {
@@ -40,6 +42,7 @@ const NotificationSettingsScreen = (): React.JSX.Element =>
     const Styles = useStyles();
     const { Settings: AppSettings, Update } = useSettings();
     const { Status } = useSubscription();
+    const { t } = useTranslation("settings");
 
     const ToggleSales = useCallback(async (Value: boolean): Promise<void> =>
     {
@@ -52,7 +55,10 @@ const NotificationSettingsScreen = (): React.JSX.Element =>
             return;
         }
 
-        if (Status?.Active) return;
+        if (Status?.Active)
+        {
+            return;
+        }
 
         let Permission = await Notifications.getPermissionsAsync();
         if (Permission.status !== "granted")
@@ -60,10 +66,17 @@ const NotificationSettingsScreen = (): React.JSX.Element =>
             Permission = await Notifications.requestPermissionsAsync();
         }
 
-        if (Permission.status !== "granted") return;
+        if (Permission.status !== "granted")
+        {
+            return;
+        }
 
         const ProjectId = Constants.expoConfig?.extra?.eas?.projectId as string | undefined;
-        if (!ProjectId) return;
+        if (!ProjectId)
+        {
+            return;
+        }
+
         const Token = await Notifications.getExpoPushTokenAsync({ projectId: ProjectId });
 
         await RegisterSubscriptionSaleDevice({
@@ -79,8 +92,8 @@ const NotificationSettingsScreen = (): React.JSX.Element =>
             <SafeAreaView style={ Styles.SafeArea }>
                 <SettingsContainer>
                     <Setting
-                        Description="Notify you if a page was created while offline."
-                        Title="Notify when back online">
+                        Description={ t("notificationSettings.offline.description") }
+                        Title={ t("notificationSettings.offline.title") }>
                         <Switch
                             OnValueChange={ (Value: boolean) =>
                                 void Update({ NotifyOnOfflineSubmit: Value }) }
@@ -89,9 +102,9 @@ const NotificationSettingsScreen = (): React.JSX.Element =>
                     </Setting>
                     <Setting
                         Description={ Status?.Active
-                            ? "Disabled while NoteFerry Pro is active. Expiration will not turn it back on."
-                            : "Optional marketing notifications for limited-time NoteFerry Pro offers." }
-                        Title="Notify me about subscription sales">
+                            ? t("notificationSettings.sales.descriptionActive")
+                            : t("notificationSettings.sales.descriptionInactive") }
+                        Title={ t("notificationSettings.sales.title") }>
                         <Switch
                             Disabled={ Status?.Active === true }
                             OnValueChange={ (Value: boolean) => void ToggleSales(Value) }

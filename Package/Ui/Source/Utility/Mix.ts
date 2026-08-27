@@ -14,7 +14,7 @@
  * @license   MIT
  */
 
-import { String } from "effect";
+import * as String from "effect/String";
 
 const ParseColor = (Value: string): readonly [ number, number, number ] | undefined =>
 {

@@ -13,7 +13,7 @@
 
 import * as Id from "./Id.js";
 import { PropertyInput } from "./Property/Input.js";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 export/**
        * The value the user has entered for a single property, paired with the

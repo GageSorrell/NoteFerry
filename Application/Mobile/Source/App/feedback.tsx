@@ -15,13 +15,17 @@
  */
 
 import { Alert, ScrollView, View } from "react-native";
-import { Body, Button, Checkbox, Description, LabelText, Textarea } from "@noteferry/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui";
+import { Body, Description, LabelText } from "@noteferry/ui/Primitive/Text";
+import { Button } from "@noteferry/ui/Primitive/Button";
+import { Checkbox } from "@noteferry/ui/Primitive/Checkbox";
+import { Textarea } from "@noteferry/ui/Primitive/Textarea";
+import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui/Core";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SubmitFeedback } from "@/Domain/Runtime/NoteFerryApi";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { useTranslation } from "react-i18next";
 
 const MinimumMessageLength = 12;
 const MaximumMessageLength = 4_000;
@@ -53,9 +57,10 @@ const FeedbackScreen = (): React.JSX.Element =>
 {
     const Router = useLazyRouter();
     const Styles = useStyles();
+    const { t } = useTranslation("feedback");
     const Params = useLocalSearchParams<{ mode?: string }>();
     const IsBugReport = IsBugReportMode(Params.mode);
-    const HeaderTitle = IsBugReport ? "Report a Bug" : "Submit Feedback";
+    const HeaderTitle = IsBugReport ? t("titles.bugReport") : t("titles.feedback");
 
     const [ Message, SetMessage ] = useState("");
     const [ ShareContact, SetShareContact ] = useState(true);
@@ -79,10 +84,10 @@ const FeedbackScreen = (): React.JSX.Element =>
             });
 
             Alert.alert(
-                "Thanks!",
+                t("alert.success.title"),
                 IsBugReport
-                    ? "Your bug report has been sent."
-                    : "Your feedback has been sent."
+                    ? t("alert.success.bugReport")
+                    : t("alert.success.feedback")
             );
             Router.back();
         }
@@ -93,22 +98,22 @@ const FeedbackScreen = (): React.JSX.Element =>
             if (Tagged?._tag === "RateLimitExceeded")
             {
                 Alert.alert(
-                    "Slow down",
-                    "You've sent a few of these recently. Please try again later."
+                    t("alert.rateLimit.title"),
+                    t("alert.rateLimit.message")
                 );
             }
             else
             {
                 /* eslint-disable-next-line no-console */
                 console.error("Failed to submit feedback", Error_);
-                Alert.alert("Something went wrong", "Please try again.");
+                Alert.alert(t("alert.failure.title"), t("alert.failure.message"));
             }
         }
         finally
         {
             SetIsSubmitting(false);
         }
-    }, [ CanSubmit, IsBugReport, Message, Router, ShareContact ]);
+    }, [ CanSubmit, IsBugReport, Message, Router, ShareContact, t ]);
 
     return (
         <View style={ Styles.Container }>
@@ -116,8 +121,8 @@ const FeedbackScreen = (): React.JSX.Element =>
             <SafeAreaView style={ Styles.SafeArea }>
                 <Description Style={ Styles.Subtitle }>
                     { IsBugReport
-                        ? "Tell us what went wrong. Steps to reproduce are especially helpful."
-                        : "Tell us what's working, what isn't, or what you'd like to see." }
+                        ? t("subtitle.bugReport")
+                        : t("subtitle.feedback") }
                 </Description>
 
                 <ScrollView
@@ -125,32 +130,34 @@ const FeedbackScreen = (): React.JSX.Element =>
                     keyboardShouldPersistTaps="handled"
                     style={ Styles.Scroll }>
                     <Textarea
-                        AccessibilityLabel={ IsBugReport ? "Bug report" : "Feedback" }
+                        AccessibilityLabel={ IsBugReport
+                            ? t("message.accessibilityLabel.bugReport")
+                            : t("message.accessibilityLabel.feedback") }
                         Disabled={ IsSubmitting }
                         MaxLength={ MaximumMessageLength }
                         NumberOfLines={ 8 }
                         OnChangeText={ SetMessage }
                         Placeholder={ IsBugReport
-                            ? "What happened? What did you expect instead?"
-                            : "Type your feedback here…" }
+                            ? t("message.placeholder.bugReport")
+                            : t("message.placeholder.feedback") }
                         Style={ Styles.Message }
                         Value={ Message }
                     />
                     <LabelText Style={ Styles.Hint }>
                         { TrimmedLength < MinimumMessageLength
-                            ? `At least ${ MinimumMessageLength } characters (${ TrimmedLength }/${ MinimumMessageLength }).`
-                            : `${ TrimmedLength } characters.` }
+                            ? t("message.hint.belowMinimum", { count: TrimmedLength, min: MinimumMessageLength })
+                            : t("message.hint.atMinimum", { count: TrimmedLength }) }
                     </LabelText>
 
                     <View style={ Styles.ShareRow }>
                         <Checkbox
-                            AccessibilityLabel="Share my contact info"
+                            AccessibilityLabel={ t("shareContact.accessibilityLabel") }
                             Checked={ ShareContact }
                             Disabled={ IsSubmitting }
                             OnCheckedChange={ SetShareContact }
                         />
                         <Body Style={ Styles.ShareLabel }>
-                            Share my contact info so NoteFerry can respond
+                            { t("shareContact.label") }
                         </Body>
                     </View>
 
@@ -160,7 +167,7 @@ const FeedbackScreen = (): React.JSX.Element =>
                         Loading={ IsSubmitting }
                         OnPress={ () => void HandleSubmit() }
                         Style={ Styles.Submit }>
-                        Submit
+                        { t("submit") }
                     </Button>
                 </ScrollView>
             </SafeAreaView>

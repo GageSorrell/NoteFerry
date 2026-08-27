@@ -1,0 +1,30 @@
+{
+    "avatarAccessibilityLabel": "{{name}}의 Notion 프로필",
+    "header": {
+        "comparePlans": "요금제 비교",
+        "comparePlansNew": "요금제 비교, 신규",
+        "settings": "설정"
+    },
+    "databases": {
+        "title": "데이터베이스",
+        "empty": "아직 데이터베이스가 없어요."
+    },
+    "lockedDatabase": {
+        "title": "Pro로 이 데이터베이스 잠금 해제",
+        "message": "무료 플랜은 활성 데이터베이스 3개까지 사용할 수 있어요. 업그레이드하면 무제한으로 사용하거나, 데이터베이스 설정에서 활성 데이터베이스를 교체할 수 있어요.",
+        "cancel": "나중에",
+        "comparePlans": "요금제 비교",
+        "upgrade": "업그레이드"
+    },
+    "sale": {
+        "viewOffer": "기간 한정 혜택 보기",
+        "dismiss": "닫기"
+    },
+    "usage": {
+        "title": "무료 페이지 사용 한도",
+        "compareAccessibilityLabel": "Free와 Pro 비교",
+        "summary": "최근 {{minutes}}분 동안 {{limit}}개 중 {{used}}개의 페이지를 사용했어요.",
+        "nextSlot": "다음 이용 가능 시간은 {{time}}이에요.",
+        "upgrade": "업그레이드"
+    }
+}

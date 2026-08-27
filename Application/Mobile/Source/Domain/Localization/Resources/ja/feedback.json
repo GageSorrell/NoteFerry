@@ -1,0 +1,44 @@
+{
+    "titles": {
+        "feedback": "フィードバックを送る",
+        "bugReport": "不具合を報告"
+    },
+    "subtitle": {
+        "feedback": "うまくいっていること、いないこと、見てみたい機能などを教えてください。",
+        "bugReport": "何が起きたか教えてください。再現手順を教えていただけるととても助かります。"
+    },
+    "message": {
+        "accessibilityLabel": {
+            "feedback": "フィードバック",
+            "bugReport": "不具合の報告"
+        },
+        "placeholder": {
+            "feedback": "ここにフィードバックを入力してください…",
+            "bugReport": "何が起きましたか?本来はどうなることを期待していましたか?"
+        },
+        "hint": {
+            "belowMinimum": "{{min}}文字以上必要です({{count}}/{{min}})。",
+            "atMinimum": "{{count}}文字です。"
+        }
+    },
+    "shareContact": {
+        "accessibilityLabel": "連絡先情報を共有する",
+        "label": "NoteFerryが返信できるように連絡先情報を共有する"
+    },
+    "submit": "送信",
+    "alert": {
+        "success": {
+            "title": "ありがとうございます!",
+            "feedback": "フィードバックを送信しました。",
+            "bugReport": "不具合の報告を送信しました。"
+        },
+        "rateLimit": {
+            "title": "少し間を空けてください",
+            "message": "最近何度か送信されています。しばらくしてからもう一度お試しください。"
+        },
+        "failure": {
+            "title": "問題が発生しました",
+            "message": "もう一度お試しください。"
+        }
+    }
+}

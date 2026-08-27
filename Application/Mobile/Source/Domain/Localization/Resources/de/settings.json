@@ -1,0 +1,218 @@
+{
+    "titles": {
+        "settings": "Einstellungen",
+        "general": "Allgemein",
+        "notifications": "Benachrichtigungen",
+        "quickActions": "Schnellaktionen",
+        "workspaces": "Workspaces",
+        "databaseSettings": "Datenbankeinstellungen"
+    },
+    "general": {
+        "onLaunch": {
+            "title": "Beim Start",
+            "description": "Was NoteFerry beim Öffnen anzeigt.",
+            "sheetDescription": "Wähle, was NoteFerry beim Öffnen anzeigt.",
+            "accessibilityLabel": "Beim Start: {{label}}",
+            "homeScreen": "Startbildschirm",
+            "placeholder": "Datenbank auswählen"
+        },
+        "homeScreenLayout": {
+            "title": "Layout des Startbildschirms",
+            "description": "Zeige eine Datenbank pro Zeile oder zwei quadratische Karten pro Zeile.",
+            "oneColumn": "Eine Datenbank pro Zeile",
+            "twoColumn": "Zwei quadratische Karten pro Zeile"
+        },
+        "highContrast": {
+            "title": "Hoher Kontrast",
+            "description": "Erhöht den Kontrast von Trennlinien, Rahmen und Schaltern.",
+            "sheetDescription": "Wähle, wie viel Kontrast Trennlinien, Rahmen und Schalter haben sollen.",
+            "accessibilityLabel": "Hoher Kontrast: {{label}}",
+            "system": "Systemeinstellung verwenden",
+            "standard": "Standardkontrast",
+            "high": "Hoher Kontrast",
+            "systemShort": "System",
+            "standardShort": "Aus",
+            "highShort": "An"
+        },
+        "homeScreenOrder": {
+            "title": "Reihenfolge des Startbildschirms",
+            "description": "Ziehe, um die auf dem Startbildschirm angezeigten Datenbanken neu anzuordnen."
+        },
+        "proGate": {
+            "title": "Verfügbar mit NoteFerry Pro",
+            "cancel": "Nicht jetzt",
+            "comparePlans": "Pläne vergleichen",
+            "upgrade": "Upgrade",
+            "layoutMessage": "Mit Pro erhältst du das zweispaltige Layout und eine eigene Datenbank-Reihenfolge.",
+            "launchMessage": "Mit Pro startest du direkt in einer ausgewählten Datenbank.",
+            "orderMessage": "Mit Pro kannst du die Reihenfolge der Datenbanken auf dem Startbildschirm selbst festlegen."
+        },
+        "language": {
+            "title": "Sprache",
+            "description": "Wähle die Sprache, in der NoteFerry angezeigt wird.",
+            "sheetDescription": "Wähle eine Sprache, oder folge der Einstellung deines Geräts.",
+            "accessibilityLabel": "Sprache: {{label}}",
+            "system": "Systemsprache",
+            "names": {
+                "en-US": "English (US)",
+                "es-419": "Español (Latinoamérica)",
+                "ko": "한국어",
+                "ja": "日本語",
+                "de": "Deutsch"
+            }
+        }
+    },
+    "hub": {
+        "subscription": {
+            "upgrade": "Auf NoteFerry Pro upgraden",
+            "lifetime": "NoteFerry Pro · Lebenslanger Zugang",
+            "activeLabel": "NoteFerry Pro · {{term}} · {{status}}",
+            "termMonthly": "Monatlich",
+            "termYearly": "Jährlich",
+            "termActive": "Aktiv",
+            "renews": "Verlängert sich",
+            "expires": "Läuft ab"
+        },
+        "rows": {
+            "general": "Allgemein",
+            "databases": "Datenbanken",
+            "workspaces": "Workspaces",
+            "notifications": "Benachrichtigungen",
+            "quickActions": "Schnellaktionen",
+            "accountSettings": "Kontoeinstellungen"
+        },
+        "support": {
+            "heading": "NoteFerry unterstützen",
+            "leaveReview": "Bewertung hinterlassen",
+            "submitFeedback": "Feedback senden",
+            "reportBug": "Fehler melden"
+        },
+        "appInfo": "NoteFerry {{version}} (Build {{build}})"
+    },
+    "accountSettings": {
+        "back": "Zurück",
+        "title": "Kontoeinstellungen",
+        "notion": {
+            "heading": "Notion",
+            "manageButton": "NoteFerry-Verbindung in Notion verwalten"
+        },
+        "yourData": {
+            "heading": "Deine Daten",
+            "requestButton": "Meine Kontodaten anfordern",
+            "requesting": "Wird angefordert…"
+        },
+        "dangerZone": {
+            "heading": "Gefahrenzone",
+            "description": "Löscht dein Konto und alles, was damit verbunden ist, endgültig. Store-Abos müssen separat gekündigt werden.",
+            "deleteButton": "Konto löschen",
+            "deleting": "Wird gelöscht…"
+        },
+        "requestData": {
+            "successTitle": "Anfrage gesendet",
+            "successMessage": "Wir schicken dir eine Kopie deiner Kontodaten per E-Mail, sobald sie bereit ist."
+        },
+        "errorGeneric": {
+            "title": "Etwas ist schiefgelaufen",
+            "message": "Bitte versuche es erneut."
+        },
+        "deleteConfirm": {
+            "title": "Dein Konto löschen?",
+            "message": "Dadurch werden dein NoteFerry-Konto, deine Verbindungen und deine Schnelleingabe-Ziele endgültig gelöscht. Das kann nicht rückgängig gemacht werden. Das Löschen deines NoteFerry-Kontos kündigt kein App-Store- oder Play-Store-Abo.",
+            "cancel": "Abbrechen",
+            "manageSubscription": "Abo verwalten",
+            "confirm": "Konto löschen"
+        }
+    },
+    "notificationSettings": {
+        "offline": {
+            "title": "Benachrichtigen, wenn wieder online",
+            "description": "Benachrichtigt dich, wenn im Offline-Modus eine Seite erstellt wurde."
+        },
+        "sales": {
+            "title": "Über Abo-Angebote benachrichtigen",
+            "descriptionActive": "Deaktiviert, solange NoteFerry Pro aktiv ist. Nach Ablauf wird es nicht automatisch wieder aktiviert.",
+            "descriptionInactive": "Optionale Marketing-Benachrichtigungen zu zeitlich begrenzten NoteFerry-Pro-Angeboten."
+        }
+    },
+    "quickActionSettings": {
+        "description": "Mit Free kannst du eine Datenbank als Schnellaktion nutzen, mit Pro bis zu sechs. Halte das App-Symbol gedrückt, um eine zu verwenden. Deine komplette gespeicherte Auswahl wird beim erneuten Upgrade wiederhergestellt.",
+        "proGate": {
+            "title": "Mit Pro mehr Schnellaktionen hinzufügen",
+            "message": "Free enthält eine Datenbank als Schnellaktion auf dem Startbildschirm. Pro enthält bis zu sechs.",
+            "cancel": "Nicht jetzt",
+            "comparePlans": "Pläne vergleichen",
+            "upgrade": "Upgrade"
+        }
+    },
+    "workspaceSettings": {
+        "showAll": {
+            "title": "Alle Datenbanken aus allen Workspaces anzeigen",
+            "description": "Zeigt die Datenbanken aller verbundenen Workspaces gemeinsam auf dem Startbildschirm an, statt nur die des aktuellen Workspace."
+        }
+    },
+    "dataSources": {
+        "back": "‹ Zurück",
+        "title": "Datenquellen",
+        "subtitle": "Wähle eine Notion-Datenquelle, um die Schnelleingabe zu aktivieren.",
+        "searching": "Wird gesucht…",
+        "searchAgain": "Erneut suchen",
+        "empty": "Keine Datenquellen gefunden. Stelle sicher, dass dieser Workspace Datenbanken mit der NoteFerry-Integration geteilt hat.",
+        "entryStatus": {
+            "locked": "Gesperrt",
+            "saved": "Gespeichert"
+        },
+        "entryMeta": "{{status}} · {{count}} Felder",
+        "configure": "Konfigurieren",
+        "saving": "Wird gespeichert…",
+        "update": "Aktualisieren",
+        "save": "Speichern",
+        "proUpsell": {
+            "title": "Mit Pro unbegrenzt Datenbanken hinzufügen",
+            "message": "Free enthält drei aktive Datenbanken. Du kannst eine davon in den Datenbankeinstellungen ersetzen.",
+            "cancel": "Nicht jetzt",
+            "comparePlans": "Pläne vergleichen",
+            "upgrade": "Upgrade"
+        },
+        "customizeGate": {
+            "title": "Datenbanken mit Pro anpassen",
+            "message": "Pro schaltet Aliasse, Formulareinstellungen, Vorlagen und Aktionen nach dem Erstellen frei.",
+            "cancel": "Nicht jetzt",
+            "comparePlans": "Pläne vergleichen",
+            "upgrade": "Upgrade"
+        },
+        "errorGeneric": {
+            "title": "Etwas ist schiefgelaufen",
+            "message": "Bitte versuche es erneut."
+        }
+    },
+    "databaseSettings": {
+        "description": "Free enthält drei aktive Datenbanken. Gesperrte Datenbanken und gespeicherte Pro-Einstellungen bleiben erhalten; Ersetzen oder Entfernen ändert nie etwas in Notion.",
+        "replacePanel": {
+            "title": "Eine aktive Datenbank ersetzen",
+            "description": "Wähle den Free-Platz, den du mit {{title}} ersetzen möchtest.",
+            "replaceButton": "{{title}} ersetzen",
+            "cancel": "Abbrechen"
+        },
+        "empty": "Deine ausgewählten Datenbanken werden hier angezeigt.",
+        "status": {
+            "locked": "Gesperrt",
+            "active": "Aktiv"
+        },
+        "replaceActive": "Aktive ersetzen",
+        "customize": "Anpassen",
+        "remove": "Entfernen",
+        "customizeGate": {
+            "title": "Formulare mit Pro anpassen",
+            "message": "Mit Pro kannst du Aliasse, Sichtbarkeit, Pflichtfelder, Reihenfolge und Standardwerte ändern.",
+            "cancel": "Nicht jetzt",
+            "comparePlans": "Pläne vergleichen",
+            "upgrade": "Upgrade"
+        },
+        "removeConfirm": {
+            "title": "Aus NoteFerry entfernen?",
+            "message": "{{title}} bleibt in Notion unverändert.",
+            "cancel": "Abbrechen",
+            "confirm": "Entfernen"
+        }
+    }
+}

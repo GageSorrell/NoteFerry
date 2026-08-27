@@ -1,0 +1,30 @@
+{
+    "avatarAccessibilityLabel": "Notion profile for {{name}}",
+    "header": {
+        "comparePlans": "Compare plans",
+        "comparePlansNew": "Compare plans, new",
+        "settings": "Settings"
+    },
+    "databases": {
+        "title": "Databases",
+        "empty": "No databases found yet."
+    },
+    "lockedDatabase": {
+        "title": "Unlock this database with Pro",
+        "message": "Free includes three active databases. Upgrade for unlimited databases, or replace an active database in Database settings.",
+        "cancel": "Not now",
+        "comparePlans": "Compare plans",
+        "upgrade": "Upgrade"
+    },
+    "sale": {
+        "viewOffer": "View the limited-time offer",
+        "dismiss": "Dismiss"
+    },
+    "usage": {
+        "title": "Free page allowance",
+        "compareAccessibilityLabel": "Compare Free and Pro",
+        "summary": "{{used}} of {{limit}} pages used in the last {{minutes}} minutes.",
+        "nextSlot": "Next slot at {{time}}.",
+        "upgrade": "Upgrade"
+    }
+}

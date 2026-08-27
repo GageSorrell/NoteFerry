@@ -15,10 +15,18 @@
  * @license   MIT
  */
 
+import ExpoConfig from "eslint-config-expo/flat";
+import ReactPerf  from "eslint-plugin-react-perf";
 import SorrellConfig from "@sorrell/eslint-config";
 import { defineConfig } from "eslint/config";
 
+module.exports = defineConfig([
+    {
+    },
+]);
+
 export default defineConfig(
+    ExpoConfig,
     SorrellConfig,
     {
         /* Next.js build output — never hand-authored, and picking it up
@@ -100,6 +108,18 @@ export default defineConfig(
                     ]
                 }
             ]
+        }
+    },
+    {
+        plugins:
+        {
+            "react-perf": ReactPerf
+        },
+        rules:
+        {
+            "react-perf/jsx-no-new-object-as-prop": "warn",
+            "react-perf/jsx-no-new-array-as-prop": "warn",
+            "react-perf/jsx-no-new-function-as-prop": "warn",
         }
     }
 );

@@ -173,6 +173,18 @@ export const OnboardingProvider = ({
             return;
         }
 
+        /* A newly established Supabase session is visible before its transient
+         * Notion provider token has been adopted by the API. Reading connection
+         * state in that gap produces an expected authorization failure and can
+         * misclassify the user as disconnected. The authorization result causes
+         * this callback to be recreated and run once adoption has finished. */
+        if (IsAuthorizing)
+        {
+            SetIsLoadingConnection(false);
+
+            return;
+        }
+
         SetIsLoadingConnection(true);
 
         /* Settled independently rather than `Promise.all` — a `DataSources`
@@ -208,7 +220,7 @@ export const OnboardingProvider = ({
         }
 
         SetIsLoadingConnection(false);
-    }, [ Enabled, Session ]);
+    }, [ Enabled, IsAuthorizing, Session ]);
 
     React.useEffect(() => void RefetchConnection(), [ RefetchConnection ]);
 

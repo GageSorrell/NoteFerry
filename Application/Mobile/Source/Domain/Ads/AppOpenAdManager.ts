@@ -14,37 +14,49 @@
  */
 
 import { AppState, type AppStateStatus } from "react-native";
-import { AppOpenAd } from "react-native-google-mobile-ads";
-import { CreateFullScreenAdController } from "./FullScreenAdController";
+import { CreateFullScreenAdController, type FullScreenAdController } from "./FullScreenAdController";
 import { GetMillisecondsSinceLastFullScreenAd } from "./AdActivity";
 import { IsAdFree } from "./Entitlement";
 import { IsAdsRuntimeReady } from "./AdsRuntime";
 import { ResolveAdUnitId } from "./AdUnits";
+import { LoadGoogleMobileAds } from "./GoogleMobileAds";
 
-/** Two app-open ads shown back to back would be jarring even across a rapid
- *  app-switcher bounce; require this much quiet time since any full-screen ad
- *  (interstitial or app open) before showing another one. */
-const MinimumGapSinceLastAdMs = 60_000;
+/**
+ * Two app-open ads shown back to back would be jarring even across a rapid
+ * app-switcher bounce; require this much quiet time since any full-screen ad
+ * (interstitial or app open) before showing another one.
+ */
+const MinimumGapSinceLastAdMs = 60_000 as const;
 
-const Controller = CreateFullScreenAdController({
-    CreateAd: (UnitId: string) => AppOpenAd.createForAdRequest(UnitId)
-});
+let ControllerPromise: Promise<FullScreenAdController> | null = null;
+
+const GetController = (): Promise<FullScreenAdController> =>
+{
+    ControllerPromise ??= LoadGoogleMobileAds().then(({ AppOpenAd }) =>
+        CreateFullScreenAdController({
+            CreateAd: (UnitId: string) => AppOpenAd.createForAdRequest(UnitId)
+        }));
+    return ControllerPromise;
+};
 
 let Eligible = false;
 let HasSeenFirstForeground = false;
 
-const MaybeShow = (): void =>
+const MaybeShow = async (): Promise<void> =>
 {
     if (!Eligible
         || IsAdFree()
         || !IsAdsRuntimeReady()
-        || !Controller.IsReady()
         || GetMillisecondsSinceLastFullScreenAd() < MinimumGapSinceLastAdMs)
     {
         return;
     }
 
-    void Controller.Show();
+    const Controller = await GetController();
+    if (Eligible && Controller.IsReady())
+    {
+        await Controller.Show();
+    }
 };
 
 AppState.addEventListener("change", (State: AppStateStatus) =>
@@ -62,7 +74,7 @@ AppState.addEventListener("change", (State: AppStateStatus) =>
         return;
     }
 
-    MaybeShow();
+    void MaybeShow();
 });
 
 export/**
@@ -93,7 +105,7 @@ const AppOpenAdManager = {
 
             if (UnitId !== null)
             {
-                Controller.Preload(UnitId);
+                void GetController().then((Controller) => Controller.Preload(UnitId));
             }
         }
     }

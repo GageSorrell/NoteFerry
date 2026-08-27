@@ -33,188 +33,186 @@
 import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
-import {
-    Anchor,
-    Apple,
-    Archive,
-    Atom,
-    Award,
-    Baby,
-    Backpack,
-    Bandage,
-    Battery,
-    Beer,
-    Bell,
-    Bike,
-    Bird,
-    Bluetooth,
-    Bone,
-    Book,
-    BookOpen,
-    Bookmark,
-    Box,
-    Brain,
-    Briefcase,
-    Bug,
-    Building,
-    Building2,
-    Bus,
-    Cake,
-    Calculator,
-    Calendar,
-    CalendarDays,
-    Camera,
-    Car,
-    Carrot,
-    Cat,
-    ChartColumn,
-    ChartPie,
-    Cherry,
-    Clapperboard,
-    Clipboard,
-    ClipboardList,
-    Clock,
-    Cloud,
-    CloudRain,
-    CloudUpload,
-    Code,
-    Coffee,
-    Compass,
-    CreditCard,
-    Crown,
-    Database,
-    Dice5,
-    Dna,
-    Dog,
-    DollarSign,
-    Drama,
-    Droplet,
-    Drum,
-    Earth,
-    Egg,
-    Eye,
-    Feather,
-    File,
-    FileText,
-    Film,
-    Fish,
-    Flag,
-    Flame,
-    FlaskConical,
-    Flower2,
-    Folder,
-    FolderOpen,
-    Gamepad2,
-    Gem,
-    Gift,
-    GitBranch,
-    Glasses,
-    Globe,
-    GraduationCap,
-    Guitar,
-    Hammer,
-    Headphones,
-    Heart,
-    HeartPulse,
-    Hospital,
-    Hourglass,
-    Image as ImageIcon,
-    Inbox,
-    Key,
-    Keyboard,
-    Laptop,
-    Leaf,
-    Lightbulb,
-    Link,
-    ListTodo,
-    Lock,
-    Luggage,
-    Mail,
-    Map as MapIcon,
-    MapPin,
-    Medal,
-    MessageCircle,
-    Mic,
-    Microscope,
-    Monitor,
-    Moon,
-    Mountain,
-    Mouse,
-    Music,
-    Music2,
-    Newspaper,
-    NotebookPen,
-    Package,
-    Paintbrush,
-    Palette,
-    Paperclip,
-    PartyPopper,
-    PawPrint,
-    PenLine,
-    PenTool,
-    Pencil,
-    Phone,
-    Piano,
-    PiggyBank,
-    Pill,
-    Pin,
-    Pizza,
-    Plane,
-    Plug,
-    Printer,
-    Puzzle,
-    Receipt,
-    Rocket,
-    Ruler,
-    Satellite,
-    School,
-    Scissors,
-    Search,
-    Server,
-    Shield,
-    ShieldCheck,
-    Ship,
-    Shirt,
-    ShoppingBag,
-    ShoppingCart,
-    Smartphone,
-    Smile,
-    Snowflake,
-    Sparkles,
-    Sprout,
-    SquareCheck,
-    Star,
-    Stethoscope,
-    StickyNote,
-    Store,
-    Sun,
-    Swords,
-    Syringe,
-    Tag,
-    Tags,
-    Target,
-    Telescope,
-    Tent,
-    Terminal,
-    ThumbsUp,
-    Ticket,
-    TrainFront,
-    Trees,
-    TrendingUp,
-    Trophy,
-    Truck,
-    Umbrella,
-    User,
-    Users,
-    Utensils,
-    Video,
-    Wallet,
-    Wheat,
-    Wifi,
-    Wine,
-    Wrench,
-    Zap
-} from "lucide-react-native";
+import Anchor from "lucide-react-native/icons/anchor";
+import Apple from "lucide-react-native/icons/apple";
+import Archive from "lucide-react-native/icons/archive";
+import Atom from "lucide-react-native/icons/atom";
+import Award from "lucide-react-native/icons/award";
+import Baby from "lucide-react-native/icons/baby";
+import Backpack from "lucide-react-native/icons/backpack";
+import Bandage from "lucide-react-native/icons/bandage";
+import Battery from "lucide-react-native/icons/battery";
+import Beer from "lucide-react-native/icons/beer";
+import Bell from "lucide-react-native/icons/bell";
+import Bike from "lucide-react-native/icons/bike";
+import Bird from "lucide-react-native/icons/bird";
+import Bluetooth from "lucide-react-native/icons/bluetooth";
+import Bone from "lucide-react-native/icons/bone";
+import Book from "lucide-react-native/icons/book";
+import BookOpen from "lucide-react-native/icons/book-open";
+import Bookmark from "lucide-react-native/icons/bookmark";
+import Box from "lucide-react-native/icons/box";
+import Brain from "lucide-react-native/icons/brain";
+import Briefcase from "lucide-react-native/icons/briefcase";
+import Bug from "lucide-react-native/icons/bug";
+import Building from "lucide-react-native/icons/building";
+import Building2 from "lucide-react-native/icons/building-2";
+import Bus from "lucide-react-native/icons/bus";
+import Cake from "lucide-react-native/icons/cake";
+import Calculator from "lucide-react-native/icons/calculator";
+import Calendar from "lucide-react-native/icons/calendar";
+import CalendarDays from "lucide-react-native/icons/calendar-days";
+import Camera from "lucide-react-native/icons/camera";
+import Car from "lucide-react-native/icons/car";
+import Carrot from "lucide-react-native/icons/carrot";
+import Cat from "lucide-react-native/icons/cat";
+import ChartColumn from "lucide-react-native/icons/chart-column";
+import ChartPie from "lucide-react-native/icons/chart-pie";
+import Cherry from "lucide-react-native/icons/cherry";
+import Clapperboard from "lucide-react-native/icons/clapperboard";
+import Clipboard from "lucide-react-native/icons/clipboard";
+import ClipboardList from "lucide-react-native/icons/clipboard-list";
+import Clock from "lucide-react-native/icons/clock";
+import Cloud from "lucide-react-native/icons/cloud";
+import CloudRain from "lucide-react-native/icons/cloud-rain";
+import CloudUpload from "lucide-react-native/icons/cloud-upload";
+import Code from "lucide-react-native/icons/code";
+import Coffee from "lucide-react-native/icons/coffee";
+import Compass from "lucide-react-native/icons/compass";
+import CreditCard from "lucide-react-native/icons/credit-card";
+import Crown from "lucide-react-native/icons/crown";
+import Database from "lucide-react-native/icons/database";
+import Dice5 from "lucide-react-native/icons/dice-5";
+import Dna from "lucide-react-native/icons/dna";
+import Dog from "lucide-react-native/icons/dog";
+import DollarSign from "lucide-react-native/icons/dollar-sign";
+import Drama from "lucide-react-native/icons/drama";
+import Droplet from "lucide-react-native/icons/droplet";
+import Drum from "lucide-react-native/icons/drum";
+import Earth from "lucide-react-native/icons/earth";
+import Egg from "lucide-react-native/icons/egg";
+import Eye from "lucide-react-native/icons/eye";
+import Feather from "lucide-react-native/icons/feather";
+import File from "lucide-react-native/icons/file";
+import FileText from "lucide-react-native/icons/file-text";
+import Film from "lucide-react-native/icons/film";
+import Fish from "lucide-react-native/icons/fish";
+import Flag from "lucide-react-native/icons/flag";
+import Flame from "lucide-react-native/icons/flame";
+import FlaskConical from "lucide-react-native/icons/flask-conical";
+import Flower2 from "lucide-react-native/icons/flower-2";
+import Folder from "lucide-react-native/icons/folder";
+import FolderOpen from "lucide-react-native/icons/folder-open";
+import Gamepad2 from "lucide-react-native/icons/gamepad-2";
+import Gem from "lucide-react-native/icons/gem";
+import Gift from "lucide-react-native/icons/gift";
+import GitBranch from "lucide-react-native/icons/git-branch";
+import Glasses from "lucide-react-native/icons/glasses";
+import Globe from "lucide-react-native/icons/globe";
+import GraduationCap from "lucide-react-native/icons/graduation-cap";
+import Guitar from "lucide-react-native/icons/guitar";
+import Hammer from "lucide-react-native/icons/hammer";
+import Headphones from "lucide-react-native/icons/headphones";
+import Heart from "lucide-react-native/icons/heart";
+import HeartPulse from "lucide-react-native/icons/heart-pulse";
+import Hospital from "lucide-react-native/icons/hospital";
+import Hourglass from "lucide-react-native/icons/hourglass";
+import ImageIcon from "lucide-react-native/icons/image";
+import Inbox from "lucide-react-native/icons/inbox";
+import Key from "lucide-react-native/icons/key";
+import Keyboard from "lucide-react-native/icons/keyboard";
+import Laptop from "lucide-react-native/icons/laptop";
+import Leaf from "lucide-react-native/icons/leaf";
+import Lightbulb from "lucide-react-native/icons/lightbulb";
+import Link from "lucide-react-native/icons/link";
+import ListTodo from "lucide-react-native/icons/list-todo";
+import Lock from "lucide-react-native/icons/lock";
+import Luggage from "lucide-react-native/icons/luggage";
+import Mail from "lucide-react-native/icons/mail";
+import MapIcon from "lucide-react-native/icons/map";
+import MapPin from "lucide-react-native/icons/map-pin";
+import Medal from "lucide-react-native/icons/medal";
+import MessageCircle from "lucide-react-native/icons/message-circle";
+import Mic from "lucide-react-native/icons/mic";
+import Microscope from "lucide-react-native/icons/microscope";
+import Monitor from "lucide-react-native/icons/monitor";
+import Moon from "lucide-react-native/icons/moon";
+import Mountain from "lucide-react-native/icons/mountain";
+import Mouse from "lucide-react-native/icons/mouse";
+import Music from "lucide-react-native/icons/music";
+import Music2 from "lucide-react-native/icons/music-2";
+import Newspaper from "lucide-react-native/icons/newspaper";
+import NotebookPen from "lucide-react-native/icons/notebook-pen";
+import Package from "lucide-react-native/icons/package";
+import Paintbrush from "lucide-react-native/icons/paintbrush";
+import Palette from "lucide-react-native/icons/palette";
+import Paperclip from "lucide-react-native/icons/paperclip";
+import PartyPopper from "lucide-react-native/icons/party-popper";
+import PawPrint from "lucide-react-native/icons/paw-print";
+import PenLine from "lucide-react-native/icons/pen-line";
+import PenTool from "lucide-react-native/icons/pen-tool";
+import Pencil from "lucide-react-native/icons/pencil";
+import Phone from "lucide-react-native/icons/phone";
+import Piano from "lucide-react-native/icons/piano";
+import PiggyBank from "lucide-react-native/icons/piggy-bank";
+import Pill from "lucide-react-native/icons/pill";
+import Pin from "lucide-react-native/icons/pin";
+import Pizza from "lucide-react-native/icons/pizza";
+import Plane from "lucide-react-native/icons/plane";
+import Plug from "lucide-react-native/icons/plug";
+import Printer from "lucide-react-native/icons/printer";
+import Puzzle from "lucide-react-native/icons/puzzle";
+import Receipt from "lucide-react-native/icons/receipt";
+import Rocket from "lucide-react-native/icons/rocket";
+import Ruler from "lucide-react-native/icons/ruler";
+import Satellite from "lucide-react-native/icons/satellite";
+import School from "lucide-react-native/icons/school";
+import Scissors from "lucide-react-native/icons/scissors";
+import Search from "lucide-react-native/icons/search";
+import Server from "lucide-react-native/icons/server";
+import Shield from "lucide-react-native/icons/shield";
+import ShieldCheck from "lucide-react-native/icons/shield-check";
+import Ship from "lucide-react-native/icons/ship";
+import Shirt from "lucide-react-native/icons/shirt";
+import ShoppingBag from "lucide-react-native/icons/shopping-bag";
+import ShoppingCart from "lucide-react-native/icons/shopping-cart";
+import Smartphone from "lucide-react-native/icons/smartphone";
+import Smile from "lucide-react-native/icons/smile";
+import Snowflake from "lucide-react-native/icons/snowflake";
+import Sparkles from "lucide-react-native/icons/sparkles";
+import Sprout from "lucide-react-native/icons/sprout";
+import SquareCheck from "lucide-react-native/icons/square-check";
+import Star from "lucide-react-native/icons/star";
+import Stethoscope from "lucide-react-native/icons/stethoscope";
+import StickyNote from "lucide-react-native/icons/sticky-note";
+import Store from "lucide-react-native/icons/store";
+import Sun from "lucide-react-native/icons/sun";
+import Swords from "lucide-react-native/icons/swords";
+import Syringe from "lucide-react-native/icons/syringe";
+import Tag from "lucide-react-native/icons/tag";
+import Tags from "lucide-react-native/icons/tags";
+import Target from "lucide-react-native/icons/target";
+import Telescope from "lucide-react-native/icons/telescope";
+import Tent from "lucide-react-native/icons/tent";
+import Terminal from "lucide-react-native/icons/terminal";
+import ThumbsUp from "lucide-react-native/icons/thumbs-up";
+import Ticket from "lucide-react-native/icons/ticket";
+import TrainFront from "lucide-react-native/icons/train-front";
+import Trees from "lucide-react-native/icons/trees";
+import TrendingUp from "lucide-react-native/icons/trending-up";
+import Trophy from "lucide-react-native/icons/trophy";
+import Truck from "lucide-react-native/icons/truck";
+import Umbrella from "lucide-react-native/icons/umbrella";
+import User from "lucide-react-native/icons/user";
+import Users from "lucide-react-native/icons/users";
+import Utensils from "lucide-react-native/icons/utensils";
+import Video from "lucide-react-native/icons/video";
+import Wallet from "lucide-react-native/icons/wallet";
+import Wheat from "lucide-react-native/icons/wheat";
+import Wifi from "lucide-react-native/icons/wifi";
+import Wine from "lucide-react-native/icons/wine";
+import Wrench from "lucide-react-native/icons/wrench";
+import Zap from "lucide-react-native/icons/zap";
 import { Avatar, AvatarFallback, AvatarImage } from "../Primitive/Avatar.js";
 import { MakeStyles, ViewStyle as MakeViewStyle, TextStyle } from "../MakeStyles.js";
 import { type StyleProp, View, type ViewStyle } from "react-native";

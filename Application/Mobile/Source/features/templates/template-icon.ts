@@ -13,7 +13,7 @@
  * @license   MIT
  */
 
-import type { IconData } from "@noteferry/ui/Block";
+import type { IconData } from "@noteferry/ui/Block/IconBlock";
 import { ToLucideIconName } from "@/Domain/Utility/DatabaseIcon";
 
 const IsImageUrl = (Value: string): boolean =>

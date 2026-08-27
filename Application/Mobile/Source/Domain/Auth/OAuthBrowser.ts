@@ -1,7 +1,7 @@
 /**
  * Shared native OAuth browser launcher.
  *
- * @module notivex/Domain/Auth/OAuthBrowser
+ * @module noteferry/Domain/Auth/OAuthBrowser
  *
  * @file      OAuthBrowser.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -16,10 +16,14 @@ import type {
 } from "expo-web-browser";
 import { Platform } from "react-native";
 
-const BaseOptions: AuthSessionOpenOptions = {
-    createTask: true,
-    useProxyActivity: true
-};
+const BaseOptions: AuthSessionOpenOptions =
+    Object.freeze({
+        createTask: true,
+        showTitle: true,
+        /* Lifted from the Notion integration web page. */
+        toolbarColor: "#F9F8F7",
+        useProxyActivity: true
+    } as const);
 
 let AndroidOptions: Promise<AuthSessionOpenOptions> | null = null;
 
@@ -34,14 +38,13 @@ const GetAuthBrowserOptions = (): Promise<AuthSessionOpenOptions> =>
     AndroidOptions ??= WebBrowser.getCustomTabsSupportingBrowsersAsync()
         .then((Browsers: WebBrowser.WebBrowserCustomTabsResults): AuthSessionOpenOptions =>
         {
-            const BrowserPackage = Browsers.preferredBrowserPackage
+            const browserPackage = Browsers.preferredBrowserPackage
                 ?? Browsers.defaultBrowserPackage
-                ?? Browsers.servicePackages.find((Package: string) =>
-                    Browsers.browserPackages.includes(Package));
+                ?? Browsers.servicePackages.find(Browsers.browserPackages.includes);
 
-            return BrowserPackage === undefined
+            return browserPackage === undefined
                 ? BaseOptions
-                : { ...BaseOptions, browserPackage: BrowserPackage };
+                : { ...BaseOptions, browserPackage };
         })
         .catch((): AuthSessionOpenOptions => BaseOptions);
 

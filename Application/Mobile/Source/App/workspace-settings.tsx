@@ -11,24 +11,27 @@
  * @license   MIT
  */
 
-import { MakeStyles, Token, ViewStyle } from "@noteferry/ui";
-import { Setting, SettingsContainer, Switch } from "@noteferry/ui/Primitive";
+import { MakeStyles, Token, ViewStyle } from "@noteferry/ui/Core";
+import { Setting, SettingsContainer } from "@noteferry/ui/Primitive/Setting";
+import { Switch } from "@noteferry/ui/Primitive/Switch";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSettings } from "@/features/settings/use-settings";
 import { View } from "react-native";
+import { useSettings } from "@/features/settings/use-settings";
+import { useTranslation } from "react-i18next";
 
 const WorkspaceSettingsScreen = (): React.JSX.Element =>
 {
     const Styles = useStyles();
     const { Settings: AppSettings, Update } = useSettings();
+    const { t } = useTranslation("settings");
 
     return (
         <View style={ Styles.Container }>
             <SafeAreaView style={ Styles.SafeArea }>
                 <SettingsContainer>
                     <Setting
-                        Description="Show every connected workspace's databases together on the home screen, instead of just the current workspace's."
-                        Title="Show all databases from all workspaces">
+                        Description={ t("workspaceSettings.showAll.description") }
+                        Title={ t("workspaceSettings.showAll.title") }>
                         <Switch
                             OnValueChange={ (Value: boolean) =>
                                 void Update({ ShowAllWorkspaceDatabases: Value }) }

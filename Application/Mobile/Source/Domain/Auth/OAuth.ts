@@ -2,9 +2,10 @@
  * The OAuth sign-in flow. NoteFerry authenticates with the user's **Notion**
  * account (Notion is enabled as a Supabase Auth provider): the app asks Supabase
  * for the Notion authorization URL, opens it in an in-app browser session, and
- * turns the redirected-back URL into a session — no provider secret ever lives
- * in the app. Granting the NoteFerry integration access to content is
- * a *separate* step (the content integration).
+ * turns the redirected-back URL into a session. The callback also carries the
+ * short-lived provider credentials for the Notion integration the user just
+ * approved; the app immediately hands those to the authenticated API rather
+ * than asking the user to approve the same integration a second time.
  *
  * @module noteferry/Domain/Auth/OAuth
  *
@@ -24,6 +25,14 @@ import { Supabase } from "@/Domain/Runtime/Supabase";
 /* Required so a dangling web auth session can complete (web/dev only). */
 WebBrowser.maybeCompleteAuthSession();
 
+/** The Supabase session and transient Notion credentials returned by one sign-in. */
+export interface OAuthSignInResult
+{
+    readonly ProviderRefreshToken?: string | undefined;
+    readonly ProviderToken: string;
+    readonly Session: Session;
+}
+
 export/**
        * Completes a Supabase identity callback and persists its session.
        * Shared by the live auth-session result and cold-start recovery route.
@@ -31,7 +40,7 @@ export/**
        * @category Auth
        * @since 1.0.0
        */
-const CompleteSignInFromUrl = async (Url: string): Promise<Session | null> =>
+const CompleteSignInFromUrl = async (Url: string): Promise<OAuthSignInResult | null> =>
 {
     const { params, errorCode } = QueryParams.getQueryParams(Url);
 
@@ -40,9 +49,15 @@ const CompleteSignInFromUrl = async (Url: string): Promise<Session | null> =>
         throw new Error(errorCode);
     }
 
-    const { access_token, refresh_token } = params;
+    /* eslint-disable-next-line @typescript-eslint/naming-convention */
+    const {
+        access_token,
+        provider_refresh_token,
+        provider_token,
+        refresh_token
+    } = params;
 
-    if (!access_token)
+    if (!access_token || !provider_token)
     {
         return null;
     }
@@ -54,7 +69,18 @@ const CompleteSignInFromUrl = async (Url: string): Promise<Session | null> =>
         throw error;
     }
 
-    return data.session;
+    if (data.session === null)
+    {
+        return null;
+    }
+
+    return {
+        ProviderToken: provider_token,
+        Session: data.session,
+        ...(provider_refresh_token
+            ? { ProviderRefreshToken: provider_refresh_token }
+            : { })
+    };
 };
 
 export/**
@@ -65,7 +91,7 @@ export/**
        * @category Auth
        * @since 1.0.0
        */
-const SignInWithOAuth = async (): Promise<Session | null> =>
+const SignInWithOAuth = async (): Promise<OAuthSignInResult | null> =>
 {
     const { data, error } = await Supabase.auth.signInWithOAuth({
         options:

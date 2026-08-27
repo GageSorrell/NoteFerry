@@ -1,0 +1,27 @@
+{
+    "behaviorPicker": {
+        "goToHome": "Zum Startbildschirm gehen",
+        "openDatabase": "Datenbank öffnen",
+        "closeApp": "App schließen"
+    },
+    "databaseCard": {
+        "createPageAccessibilityLabel": "Seite in {{title}} erstellen"
+    },
+    "workspaceMenu": {
+        "accessibilityLabel": "Workspace wechseln",
+        "workspaces": "Workspaces",
+        "addWorkspace": "Workspace hinzufügen",
+        "logOut": "Abmelden",
+        "logOutConfirm": {
+            "title": "Abmelden?",
+            "message": "Du musst dich erneut mit Notion anmelden, um NoteFerry wieder zu nutzen.",
+            "cancel": "Abbrechen",
+            "confirm": "Abmelden"
+        }
+    },
+    "ads": {
+        "nativeDatabaseAdCard": {
+            "adBadge": "Anzeige"
+        }
+    }
+}

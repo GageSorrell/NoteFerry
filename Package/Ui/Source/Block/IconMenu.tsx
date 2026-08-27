@@ -68,10 +68,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button } from "../Primitive/Button.js";
 import { Input } from "../Primitive/Input.js";
 import type { ReadonlyRecord } from "effect/Record";
-import { String } from "effect";
+import * as String from "effect/String";
 import type { Thunk } from "@sorrell/effect/Function";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
-import { Upload } from "lucide-react-native";
+import Upload from "lucide-react-native/icons/upload";
 import { View } from "react-native";
 import { useToken } from "../ThemeProvider.js";
 

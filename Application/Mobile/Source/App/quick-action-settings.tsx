@@ -12,15 +12,18 @@
  */
 
 import type * as Domain from "@noteferry/domain";
-import { Checkbox, Description, Setting, SettingsContainer } from "@noteferry/ui/Primitive";
-import { MakeStyles, Token, ViewStyle } from "@noteferry/ui";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Alert, ScrollView, View } from "react-native";
+import { Checkbox } from "@noteferry/ui/Primitive/Checkbox";
+import { Description } from "@noteferry/ui/Primitive/Text";
+import { Setting, SettingsContainer } from "@noteferry/ui/Primitive/Setting";
+import { MakeStyles, Token, ViewStyle } from "@noteferry/ui/Core";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useCallback } from "react";
 import { useConnections } from "@/Domain/Connection";
+import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSettings } from "@/features/settings/use-settings";
 import { useSubscription } from "@/Domain/Subscription";
-import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { useTranslation } from "react-i18next";
 
 const QuickActionSettingsScreen = (): React.JSX.Element =>
 {
@@ -29,6 +32,7 @@ const QuickActionSettingsScreen = (): React.JSX.Element =>
     const { Settings: AppSettings, Update } = useSettings();
     const { HasProAccess } = useSubscription();
     const Router = useLazyRouter();
+    const { t } = useTranslation("settings");
 
     const ToggleQuickAction = useCallback((DataSourceId: Domain.Id.NotionDataSourceId) =>
     {
@@ -38,12 +42,12 @@ const QuickActionSettingsScreen = (): React.JSX.Element =>
         if (IsAdding && !HasProAccess && Current.length >= 1)
         {
             Alert.alert(
-                "Add more Quick Actions with Pro",
-                "Free includes one home-screen database shortcut. Pro includes up to six.",
+                t("quickActionSettings.proGate.title"),
+                t("quickActionSettings.proGate.message"),
                 [
-                    { style: "cancel", text: "Not now" },
-                    { onPress: Router.push("/plans"), text: "Compare plans" },
-                    { onPress: Router.push("/subscribe"), text: "Upgrade" }
+                    { style: "cancel", text: t("quickActionSettings.proGate.cancel") },
+                    { onPress: Router.push("/plans"), text: t("quickActionSettings.proGate.comparePlans") },
+                    { onPress: Router.push("/subscribe"), text: t("quickActionSettings.proGate.upgrade") }
                 ]
             );
             return;
@@ -54,15 +58,13 @@ const QuickActionSettingsScreen = (): React.JSX.Element =>
             : [ ...Current, DataSourceId ];
 
         void Update({ QuickActionDataSourceIds: Next });
-    }, [ AppSettings.QuickActionDataSourceIds, HasProAccess, Router, Update ]);
+    }, [ AppSettings.QuickActionDataSourceIds, HasProAccess, Router, Update, t ]);
 
     return (
         <View style={ Styles.Container }>
             <SafeAreaView style={ Styles.SafeArea }>
                 <Description>
-                    Free includes one database shortcut; Pro includes up to six.
-                    Long-press the app icon to use one. Your full saved selection
-                    is restored after re-upgrading.
+                    { t("quickActionSettings.description") }
                 </Description>
 
                 <ScrollView

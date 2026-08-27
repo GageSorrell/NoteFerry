@@ -1,0 +1,44 @@
+{
+    "titles": {
+        "feedback": "Feedback senden",
+        "bugReport": "Fehler melden"
+    },
+    "subtitle": {
+        "feedback": "Sag uns, was gut funktioniert, was nicht, oder was du dir wünschst.",
+        "bugReport": "Sag uns, was schiefgelaufen ist. Schritte zur Reproduktion helfen besonders."
+    },
+    "message": {
+        "accessibilityLabel": {
+            "feedback": "Feedback",
+            "bugReport": "Fehlerbericht"
+        },
+        "placeholder": {
+            "feedback": "Schreib dein Feedback hier…",
+            "bugReport": "Was ist passiert? Was hättest du stattdessen erwartet?"
+        },
+        "hint": {
+            "belowMinimum": "Mindestens {{min}} Zeichen ({{count}}/{{min}}).",
+            "atMinimum": "{{count}} Zeichen."
+        }
+    },
+    "shareContact": {
+        "accessibilityLabel": "Meine Kontaktdaten teilen",
+        "label": "Meine Kontaktdaten teilen, damit NoteFerry antworten kann"
+    },
+    "submit": "Senden",
+    "alert": {
+        "success": {
+            "title": "Danke!",
+            "feedback": "Dein Feedback wurde gesendet.",
+            "bugReport": "Dein Fehlerbericht wurde gesendet."
+        },
+        "rateLimit": {
+            "title": "Langsamer, bitte",
+            "message": "Du hast in letzter Zeit schon ein paar davon gesendet. Bitte versuch es später noch einmal."
+        },
+        "failure": {
+            "title": "Etwas ist schiefgelaufen",
+            "message": "Bitte versuch es noch einmal."
+        }
+    }
+}

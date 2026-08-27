@@ -1,0 +1,30 @@
+{
+    "avatarAccessibilityLabel": "{{name}}のNotionプロフィール",
+    "header": {
+        "comparePlans": "プランを比較",
+        "comparePlansNew": "プランを比較、新着",
+        "settings": "設定"
+    },
+    "databases": {
+        "title": "データベース",
+        "empty": "データベースがまだ見つかりません。"
+    },
+    "lockedDatabase": {
+        "title": "Proでこのデータベースのロックを解除",
+        "message": "無料プランではアクティブなデータベースを3つまで利用できます。アップグレードすると無制限に利用でき、またはデータベース設定でアクティブなデータベースを入れ替えることもできます。",
+        "cancel": "あとで",
+        "comparePlans": "プランを比較",
+        "upgrade": "アップグレード"
+    },
+    "sale": {
+        "viewOffer": "期間限定オファーを見る",
+        "dismiss": "閉じる"
+    },
+    "usage": {
+        "title": "無料ページ利用枠",
+        "compareAccessibilityLabel": "FreeとProを比較",
+        "summary": "直近{{minutes}}分で{{limit}}件中{{used}}件のページを使用しました。",
+        "nextSlot": "次の利用可能時刻は{{time}}です。",
+        "upgrade": "アップグレード"
+    }
+}

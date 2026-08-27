@@ -16,7 +16,7 @@ import {
     type RoutePath,
     useRouter
 } from "expo-router";
-import { Struct } from "effect";
+import * as Struct from "effect/Struct";
 import type { Thunk } from "@sorrell/effect/Function";
 
 /**

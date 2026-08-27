@@ -1,0 +1,5 @@
+{
+    "ios": {
+        "NSUserTrackingUsageDescription": "이 식별자는 맞춤 광고를 제공하고 효과를 측정하는 데 사용됩니다."
+    }
+}

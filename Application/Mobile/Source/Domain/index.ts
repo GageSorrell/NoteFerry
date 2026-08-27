@@ -1,6 +1,4 @@
 /**
- *
- *
  * @module noteferry/Domain
  *
  * @file      index.ts

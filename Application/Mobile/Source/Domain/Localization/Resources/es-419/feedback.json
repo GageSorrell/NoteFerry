@@ -1,0 +1,44 @@
+{
+    "titles": {
+        "feedback": "Enviar comentarios",
+        "bugReport": "Reportar un error"
+    },
+    "subtitle": {
+        "feedback": "Cuéntanos qué está funcionando, qué no, o qué te gustaría ver.",
+        "bugReport": "Cuéntanos qué salió mal. Los pasos para reproducirlo son especialmente útiles."
+    },
+    "message": {
+        "accessibilityLabel": {
+            "feedback": "Comentarios",
+            "bugReport": "Reporte de error"
+        },
+        "placeholder": {
+            "feedback": "Escribe tus comentarios aquí…",
+            "bugReport": "¿Qué pasó? ¿Qué esperabas que pasara en su lugar?"
+        },
+        "hint": {
+            "belowMinimum": "Al menos {{min}} caracteres ({{count}}/{{min}}).",
+            "atMinimum": "{{count}} caracteres."
+        }
+    },
+    "shareContact": {
+        "accessibilityLabel": "Compartir mi información de contacto",
+        "label": "Compartir mi información de contacto para que NoteFerry pueda responder"
+    },
+    "submit": "Enviar",
+    "alert": {
+        "success": {
+            "title": "¡Gracias!",
+            "feedback": "Tus comentarios han sido enviados.",
+            "bugReport": "Tu reporte de error ha sido enviado."
+        },
+        "rateLimit": {
+            "title": "Más despacio",
+            "message": "Has enviado varios de estos recientemente. Por favor, inténtalo de nuevo más tarde."
+        },
+        "failure": {
+            "title": "Algo salió mal",
+            "message": "Por favor, inténtalo de nuevo."
+        }
+    }
+}

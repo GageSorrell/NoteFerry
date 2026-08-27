@@ -14,26 +14,26 @@
 
 import * as Application from "expo-application";
 import * as StoreReview from "expo-store-review";
+import Bell from "lucide-react-native/icons/bell";
+import Building2 from "lucide-react-native/icons/building-2";
+import Crown from "lucide-react-native/icons/crown";
+import Database from "lucide-react-native/icons/database";
+import ExternalLink from "lucide-react-native/icons/external-link";
+import Settings from "lucide-react-native/icons/settings";
+import UserRound from "lucide-react-native/icons/user-round";
+import Zap from "lucide-react-native/icons/zap";
+import { Button } from "@noteferry/ui/Primitive/Button";
+import { ButtonLabel, Heading2, LabelText } from "@noteferry/ui/Primitive/Text";
 import { Linking, ScrollView, View } from "react-native";
-import {
-    Bell,
-    Building2,
-    Crown,
-    Database,
-    ExternalLink,
-    Settings,
-    UserRound,
-    Zap
-} from "lucide-react-native";
-import { Button, ButtonLabel, Heading2, LabelText } from "@noteferry/ui/Primitive";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
-import Constants from "expo-constants";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
 import { SettingsTable, SettingsTableRow } from "@/Component";
+import Constants from "expo-constants";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useCallback } from "react";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSubscription } from "@/Domain/Subscription";
-import Purchases from "react-native-purchases";
+import { useTranslation } from "react-i18next";
+import { LoadPurchases } from "@/Domain/Subscription/Purchases";
 
 const SettingsScreen = (): React.JSX.Element =>
 {
@@ -43,6 +43,7 @@ const SettingsScreen = (): React.JSX.Element =>
     const Theme = useTheme();
     const Styles = useStyles();
     const { Status } = useSubscription();
+    const { t } = useTranslation("settings");
 
     const HandleLeaveReview = useCallback(async () =>
     {
@@ -62,11 +63,19 @@ const SettingsScreen = (): React.JSX.Element =>
         Router.push({ params: { mode: "bug" }, pathname: "/feedback" })();
     }, [ Router ]);
 
+    const TermLabel = Status?.Term === "Monthly"
+        ? t("hub.subscription.termMonthly")
+        : Status?.Term === "Yearly"
+            ? t("hub.subscription.termYearly")
+            : t("hub.subscription.termActive");
     const SubscriptionLabel = Status?.Active
         ? Status.Term === "Lifetime"
-            ? "NoteFerry Pro · Lifetime access"
-            : `NoteFerry Pro · ${Status.Term ?? "Active"}${Status.Renews ? " · Renews" : " · Expires"}`
-        : "Upgrade to NoteFerry Pro";
+            ? t("hub.subscription.lifetime")
+            : t("hub.subscription.activeLabel", {
+                status: Status.Renews ? t("hub.subscription.renews") : t("hub.subscription.expires"),
+                term: TermLabel
+            })
+        : t("hub.subscription.upgrade");
 
     const OpenSubscription = useCallback((): void =>
     {
@@ -88,7 +97,7 @@ const SettingsScreen = (): React.JSX.Element =>
         }
         else
         {
-            void Purchases.showManageSubscriptions();
+            void LoadPurchases().then(({ default: Purchases }) => Purchases.showManageSubscriptions());
         }
     }, [ Router, Status ]);
 
@@ -97,8 +106,8 @@ const SettingsScreen = (): React.JSX.Element =>
             <SafeAreaView style={ Styles.SafeArea }>
                 <SettingsTable>
                     <SettingsTableRow
-                        Divider
                         AccessibilityLabel={ SubscriptionLabel }
+                        Divider
                         Icon={
                             <Crown
                                 color={ Theme.Semantic.IconSecondary }
@@ -118,7 +127,7 @@ const SettingsScreen = (): React.JSX.Element =>
                                 strokeWidth={ 1.8 }
                             />
                         }
-                        Label="General"
+                        Label={ t("hub.rows.general") }
                         OnPress={ Router.push("/general-settings") }
                     />
                     <SettingsTableRow
@@ -130,7 +139,7 @@ const SettingsScreen = (): React.JSX.Element =>
                                 strokeWidth={ 1.8 }
                             />
                         }
-                        Label="Databases"
+                        Label={ t("hub.rows.databases") }
                         OnPress={ Router.push("/database-settings") }
                     />
                     <SettingsTableRow
@@ -142,7 +151,7 @@ const SettingsScreen = (): React.JSX.Element =>
                                 strokeWidth={ 1.8 }
                             />
                         }
-                        Label="Workspaces"
+                        Label={ t("hub.rows.workspaces") }
                         OnPress={ Router.push("/workspace-settings") }
                     />
                     <SettingsTableRow
@@ -154,7 +163,7 @@ const SettingsScreen = (): React.JSX.Element =>
                                 strokeWidth={ 1.8 }
                             />
                         }
-                        Label="Notifications"
+                        Label={ t("hub.rows.notifications") }
                         OnPress={ Router.push("/notification-settings") }
                     />
                     <SettingsTableRow
@@ -166,7 +175,7 @@ const SettingsScreen = (): React.JSX.Element =>
                                 strokeWidth={ 1.8 }
                             />
                         }
-                        Label="Quick Actions"
+                        Label={ t("hub.rows.quickActions") }
                         OnPress={ Router.push("/quick-action-settings") }
                     />
                     <SettingsTableRow
@@ -177,7 +186,7 @@ const SettingsScreen = (): React.JSX.Element =>
                                 strokeWidth={ 1.8 }
                             />
                         }
-                        Label="Account settings"
+                        Label={ t("hub.rows.accountSettings") }
                         OnPress={ Router.push("/account-settings") }
                     />
                 </SettingsTable>
@@ -185,7 +194,7 @@ const SettingsScreen = (): React.JSX.Element =>
                 <ScrollView
                     contentContainerStyle={ Styles.List }
                     style={ Styles.Scroll }>
-                    <Heading2 Style={ Styles.SectionHeading }>Support NoteFerry</Heading2>
+                    <Heading2 Style={ Styles.SectionHeading }>{ t("hub.support.heading") }</Heading2>
                     <Button
                         Appearance="Primary"
                         OnPress={ () => void HandleLeaveReview() }
@@ -193,7 +202,7 @@ const SettingsScreen = (): React.JSX.Element =>
                         <ButtonLabel
                             Color={ Token.Semantic.Primary }
                             Style={ Styles.SupportButtonLabel }>
-                            Leave a review
+                            { t("hub.support.leaveReview") }
                         </ButtonLabel>
                         <ExternalLink
                             color={ Theme.Semantic.Primary }
@@ -205,19 +214,21 @@ const SettingsScreen = (): React.JSX.Element =>
                         Appearance="Primary"
                         OnPress={ HandleSubmitFeedback }
                         Style={ Styles.SupportButton }>
-                        Submit feedback
+                        { t("hub.support.submitFeedback") }
                     </Button>
                     <Button
                         Appearance="Primary"
                         OnPress={ HandleReportBug }
                         Style={ Styles.SupportButton }>
-                        Report a bug
+                        { t("hub.support.reportBug") }
                     </Button>
 
                     <View style={ Styles.AppInfo }>
                         <LabelText Color={ Token.Semantic.Muted }>
-                            NoteFerry { Application.nativeApplicationVersion ?? Constants.expoConfig?.version }
-                            { " " }(build { Application.nativeBuildVersion ?? "—" })
+                            { t("hub.appInfo", {
+                                build: Application.nativeBuildVersion ?? "—",
+                                version: Application.nativeApplicationVersion ?? Constants.expoConfig?.version
+                            }) }
                         </LabelText>
                     </View>
                 </ScrollView>

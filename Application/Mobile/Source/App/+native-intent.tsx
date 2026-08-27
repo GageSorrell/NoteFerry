@@ -1,7 +1,7 @@
 /**
  * Prevents OAuth callbacks from being interpreted as Expo Router screens.
  *
- * @module notivex/app/+native-intent
+ * @module noteferry/App/+native-intent
  *
  * @file      +native-intent.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -21,12 +21,12 @@ interface SystemPathInput
     readonly path: string;
 }
 
-/**
- * Lets an already-running `openAuthSessionAsync` consume its own callback.
- * When Android recreated the process, sends the callback to a recovery route
- * because the original browser-session promise no longer exists.
- */
-export const redirectSystemPath = ({ initial, path }: SystemPathInput): string | null =>
+export/**
+       * Lets an already-running `openAuthSessionAsync` consume its own callback.
+       * When Android recreated the process, sends the callback to a recovery route
+       * because the original browser-session promise no longer exists.
+       */
+const redirectSystemPath = ({ initial, path }: SystemPathInput): string | null =>
 {
     if (GetOAuthCallbackKind(path) === null)
     {

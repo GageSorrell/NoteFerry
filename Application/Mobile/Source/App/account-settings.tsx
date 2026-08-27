@@ -13,15 +13,17 @@
 
 import * as WebBrowser from "expo-web-browser";
 import { Alert, Linking, ScrollView, View } from "react-native";
-import { Button, Description, Heading1, Heading2 } from "@noteferry/ui/Primitive";
+import { Button } from "@noteferry/ui/Primitive/Button";
+import { Description, Heading1, Heading2 } from "@noteferry/ui/Primitive/Text";
 import { DeleteAccount, RequestAccountData } from "@/Domain/Runtime/NoteFerryApi";
-import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui";
+import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui/Core";
 import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/Domain/Auth/NoteFerryAuthProvider";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSubscription } from "@/Domain/Subscription";
-import Purchases from "react-native-purchases";
+import { useTranslation } from "react-i18next";
+import { LoadPurchases } from "@/Domain/Subscription/Purchases";
 
 const NotionIntegrationsUrl = "https://www.notion.so/my-integrations";
 
@@ -31,6 +33,7 @@ const AccountSettingsScreen = (): React.JSX.Element =>
     const Styles = useStyles();
     const { SignOut } = useAuth();
     const { Status } = useSubscription();
+    const { t } = useTranslation("settings");
     const [ IsDeleting, SetIsDeleting ] = useState(false);
     const [ IsRequestingData, SetIsRequestingData ] = useState(false);
 
@@ -47,21 +50,21 @@ const AccountSettingsScreen = (): React.JSX.Element =>
         {
             await RequestAccountData();
             Alert.alert(
-                "Request sent",
-                "We'll email you a copy of your account data once it's ready."
+                t("accountSettings.requestData.successTitle"),
+                t("accountSettings.requestData.successMessage")
             );
         }
         catch (Error)
         {
             /* eslint-disable-next-line no-console */
             console.error("Failed to request account data", Error);
-            Alert.alert("Something went wrong", "Please try again.");
+            Alert.alert(t("accountSettings.errorGeneric.title"), t("accountSettings.errorGeneric.message"));
         }
         finally
         {
             SetIsRequestingData(false);
         }
-    }, [ ]);
+    }, [ t ]);
 
     const PerformDelete = useCallback(async () =>
     {
@@ -76,79 +79,86 @@ const AccountSettingsScreen = (): React.JSX.Element =>
         {
             /* eslint-disable-next-line no-console */
             console.error("Failed to delete account", Error);
-            Alert.alert("Something went wrong", "Please try again.");
+            Alert.alert(t("accountSettings.errorGeneric.title"), t("accountSettings.errorGeneric.message"));
             SetIsDeleting(false);
         }
-    }, [ SignOut ]);
+    }, [ SignOut, t ]);
 
     const HandleDeleteAccount = useCallback(() =>
     {
         const Manage = (): void =>
         {
-            if (Status?.ManagementUrl) void Linking.openURL(Status.ManagementUrl);
-            else void Purchases.showManageSubscriptions();
+            if (Status?.ManagementUrl)
+            {
+                Linking.openURL(Status.ManagementUrl);
+            }
+            else
+            {
+                void LoadPurchases().then(({ default: Purchases }) => Purchases.showManageSubscriptions());
+            }
         };
 
         Alert.alert(
-            "Delete your account?",
-            "This permanently deletes your NoteFerry account, connections, and "
-                + "quick-entry destinations. This can't be undone. Deleting your "
-                + "NoteFerry account does not cancel an App Store or Play Store subscription.",
+            t("accountSettings.deleteConfirm.title"),
+            t("accountSettings.deleteConfirm.message"),
             [
-                { style: "cancel", text: "Cancel" },
+                { style: "cancel", text: t("accountSettings.deleteConfirm.cancel") },
                 ...(Status?.Active && Status.Term !== "Lifetime"
-                    ? [ { onPress: Manage, text: "Manage subscription" } ]
-                    : []),
+                    ? [ { onPress: Manage, text: t("accountSettings.deleteConfirm.manageSubscription") } ]
+                    : [ ]),
                 {
                     onPress: () => void PerformDelete(),
                     style: "destructive",
-                    text: "Delete account"
+                    text: t("accountSettings.deleteConfirm.confirm")
                 }
             ]
         );
-    }, [ PerformDelete, Status ]);
+    }, [ PerformDelete, Status, t ]);
 
     return (
         <View style={ Styles.Container }>
             <SafeAreaView style={ Styles.SafeArea }>
                 <Button
-                    AccessibilityLabel="Back"
+                    AccessibilityLabel={ t("accountSettings.back") }
                     Appearance="Link"
                     OnPress={ Router.back }
                     Style={ Styles.Back }>
-                    Back
+                    { t("accountSettings.back") }
                 </Button>
 
-                <Heading1>Account settings</Heading1>
+                <Heading1>{ t("accountSettings.title") }</Heading1>
 
                 <ScrollView
                     contentContainerStyle={ Styles.List }
                     style={ Styles.Scroll }>
-                    <Heading2 Style={ Styles.SectionHeading }>Notion</Heading2>
+                    <Heading2 Style={ Styles.SectionHeading }>{ t("accountSettings.notion.heading") }</Heading2>
                     <Button
                         Appearance="Cell"
                         OnPress={ () => void HandleManageInNotion() }>
-                        Manage the NoteFerry connection in Notion
+                        { t("accountSettings.notion.manageButton") }
                     </Button>
 
-                    <Heading2 Style={ Styles.SectionHeading }>Your data</Heading2>
+                    <Heading2 Style={ Styles.SectionHeading }>{ t("accountSettings.yourData.heading") }</Heading2>
                     <Button
                         Appearance="Cell"
                         Disabled={ IsRequestingData }
                         OnPress={ () => void HandleRequestData() }>
-                        { IsRequestingData ? "Requesting…" : "Request my account data" }
+                        { IsRequestingData
+                            ? t("accountSettings.yourData.requesting")
+                            : t("accountSettings.yourData.requestButton") }
                     </Button>
 
-                    <Heading2 Style={ Styles.SectionHeading }>Danger zone</Heading2>
+                    <Heading2 Style={ Styles.SectionHeading }>{ t("accountSettings.dangerZone.heading") }</Heading2>
                     <Description Style={ Styles.DangerDescription }>
-                        Permanently deletes your account and everything associated
-                        with it. Store subscriptions must be canceled separately.
+                        { t("accountSettings.dangerZone.description") }
                     </Description>
                     <Button
                         Appearance="Red"
                         Disabled={ IsDeleting }
                         OnPress={ HandleDeleteAccount }>
-                        { IsDeleting ? "Deleting…" : "Delete account" }
+                        { IsDeleting
+                            ? t("accountSettings.dangerZone.deleting")
+                            : t("accountSettings.dangerZone.deleteButton") }
                     </Button>
                 </ScrollView>
             </SafeAreaView>

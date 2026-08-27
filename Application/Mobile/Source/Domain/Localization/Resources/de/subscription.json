@@ -1,0 +1,73 @@
+{
+    "titles": {
+        "plans": "NoteFerry Premium",
+        "subscribe": "NoteFerry Pro"
+    },
+    "purchaseSyncPending": {
+        "title": "Kauf erfolgreich — Einrichtung wird abgeschlossen",
+        "body": "Deine Pro-Funktionen werden automatisch aktiviert, sobald dein Kauf mit der Synchronisierung fertig ist. Das dauert nicht lange."
+    },
+    "subscribe": {
+        "heading": "NoteFerry Pro",
+        "description": "Unbegrenzte Datenbanken und Erfassungen, volle Anpassung und keine Werbung.",
+        "plan": {
+            "term": {
+                "monthly": "Monatlich",
+                "yearly": "Jährlich",
+                "lifetime": "Lebenslang"
+            },
+            "accessibilityLabel": "{{term}}, {{price}}",
+            "savePercent": "Spare {{percent}}%",
+            "bestValue": "Bester Wert",
+            "lifetimeDescription": "Einmaliger Kauf. Der Zugang gilt, solange der NoteFerry-Dienst unterstützt wird.",
+            "renewingDescription": "Verlängert sich automatisch, wenn du nicht über dein Store-Konto kündigst."
+        },
+        "storeUnavailable": "Store-Produkte sind nicht verfügbar. Überprüfe deine Verbindung und versuche es erneut.",
+        "actions": {
+            "continueWith": "Weiter mit {{term}}",
+            "finishingSetup": "Kauf erfolgreich – Einrichtung wird abgeschlossen …",
+            "restore": "Käufe wiederherstellen",
+            "retrySetup": "Einrichtung erneut versuchen"
+        },
+        "legalNotice": "Mit dem Kauf stimmst du den Abrechnungsbedingungen des Stores und den NoteFerry-Richtlinien zu.",
+        "terms": "Nutzungsbedingungen",
+        "privacy": "Datenschutz",
+        "alerts": {
+            "purchaseSuccess": {
+                "title": "NoteFerry Pro ist bereit",
+                "body": "Deine Pro-Funktionen sind jetzt aktiv."
+            },
+            "purchaseNotCompleted": {
+                "title": "Kauf nicht abgeschlossen",
+                "body": "Bitte versuche es erneut."
+            },
+            "restoreSuccess": {
+                "title": "Käufe wiederhergestellt",
+                "body": "Dein aktueller Zugriffsstatus wurde aktualisiert."
+            },
+            "restoreFailed": {
+                "title": "Wiederherstellung fehlgeschlagen"
+            },
+            "stillFinishingSetup": {
+                "title": "Einrichtung läuft noch",
+                "body": "Überprüfe deine Verbindung und versuche es in Kürze erneut."
+            }
+        }
+    },
+    "plans": {
+        "heading": "Hol dir NoteFerry™ Premium",
+        "description": "Kostenlos behält Erfassung, Barrierefreiheit, Zuverlässigkeit und Kontoeinstellungen. Pro schaltet Anpassung, weitere Ziele frei und entfernt Werbung.",
+        "usage": {
+            "heading": "Deine aktuelle Nutzung",
+            "description": "{{used}} von {{limit}} Seiten in den letzten {{minutes}} Minuten verwendet."
+        },
+        "pricing": {
+            "heading": "Eine Stufe, drei Kaufmöglichkeiten",
+            "fallback": "Die lokalisierten Store-Preise werden beim Bezahlvorgang angezeigt.",
+            "description": "Monatlich und jährlich verlängern sich automatisch. Lebenslang ist ein einmaliger Kauf."
+        },
+        "actions": {
+            "viewOptions": "Abo-Optionen ansehen"
+        }
+    }
+}

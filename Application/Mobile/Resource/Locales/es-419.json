@@ -1,0 +1,5 @@
+{
+    "ios": {
+        "NSUserTrackingUsageDescription": "Este identificador se usará para mostrar anuncios personalizados y medir su efectividad."
+    }
+}

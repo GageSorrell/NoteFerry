@@ -14,6 +14,7 @@
     },
     "preview": {
       "node": "24.19.0",
+      "developmentClient": false,
       "distribution": "internal",
       "android": {
         "buildType": "apk"

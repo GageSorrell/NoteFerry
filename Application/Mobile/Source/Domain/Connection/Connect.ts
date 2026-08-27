@@ -17,14 +17,14 @@ import { NotionConnectedReturnUrl } from "@/Domain/Auth/OAuthRedirect";
 import { OpenAuthSession } from "@/Domain/Auth/OAuthBrowser";
 import { StartNotionAuthorization } from "@/Domain/Runtime/NoteFerryApi";
 
-/**
- * Runs the Notion connect flow to completion (or until the user dismisses the
- * browser).  Callers should refetch connections afterward.
- *
- * @category Connections
- * @since 1.0.0
- */
-export const ConnectNotion = async (): Promise<boolean> =>
+export/**
+       * Runs the Notion connect flow to completion (or until the user dismisses the
+       * browser).  Callers should refetch connections afterward.
+       *
+       * @category Connections
+       * @since 1.0.0
+       */
+const ConnectNotion = async (): Promise<boolean> =>
 {
     const AuthorizationUrl = await StartNotionAuthorization();
     const Result = await OpenAuthSession(

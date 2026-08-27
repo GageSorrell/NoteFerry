@@ -22,18 +22,22 @@ import {
     TextInput,
     View
 } from "react-native";
-import {
-    type BottomSheet,
-    Button,
-    Description,
-    Input,
-    NavigationTitle,
-    Pressable,
-    Separator,
-    Textarea
-} from "@noteferry/ui/Primitive";
-import { ChevronLeft, ImagePlus, LayoutTemplate, Settings, Smile, Wand2 } from "lucide-react-native";
-import { Cover, IconBlock, type IconData, IconMenu } from "@noteferry/ui/Block";
+import { type BottomSheet } from "@noteferry/ui/Primitive/BottomSheet";
+import { Button } from "@noteferry/ui/Primitive/Button";
+import { Description, NavigationTitle } from "@noteferry/ui/Primitive/Text";
+import { Input } from "@noteferry/ui/Primitive/Input";
+import { Pressable } from "@noteferry/ui/Primitive/Pressable";
+import { Separator } from "@noteferry/ui/Primitive/Separator";
+import { Textarea } from "@noteferry/ui/Primitive/Textarea";
+import ChevronLeft from "lucide-react-native/icons/chevron-left";
+import ImagePlus from "lucide-react-native/icons/image-plus";
+import LayoutTemplate from "lucide-react-native/icons/layout-template";
+import Settings from "lucide-react-native/icons/settings";
+import Smile from "lucide-react-native/icons/smile";
+import Wand2 from "lucide-react-native/icons/wand-sparkles";
+import { Cover } from "@noteferry/ui/Block/Cover";
+import { IconBlock, type IconData } from "@noteferry/ui/Block/IconBlock";
+import { IconMenu } from "@noteferry/ui/Block/IconMenu";
 import {
     CreateDestination,
     CreatePage,
@@ -51,14 +55,15 @@ import {
     GetStockPhotoFileValue,
     IsFieldEmpty
 } from "@/features/page-creation/dummy-page-data";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
 import {
     ResolveTemplateFieldValues,
     type TemplateFieldAssignment
 } from "@/features/templates/template-values";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
-import { String, pipe } from "effect";
+import * as String from "effect/String";
+import { pipe } from "effect/Function";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AddMediaButton } from "@/features/page-creation/add-media-button";
 import { CheckboxPropertyField } from
@@ -82,6 +87,8 @@ import { UrlPropertyField } from "@/features/page-creation/url-property-field";
 import { randomUUID } from "expo-crypto";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSubscription } from "@/Domain/Subscription";
+import type { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
 
 const MaxPageBodyLength = 200_000;
 
@@ -145,20 +152,23 @@ interface HeaderIconButtonProps
 }
 
 /** Shows the discard prompt shared by header navigation actions. */
-const ShowDiscardConfirmation = (OnDiscard: () => void): void =>
+const ShowDiscardConfirmation = (
+    OnDiscard: () => void,
+    T: TFunction<readonly [ "pageCreation", "errors" ], undefined>
+): void =>
 {
     Alert.alert(
-        "Discard this page?",
-        "You have unsaved changes. If you go back, they will be lost.",
+        T("createPage.discard.title"),
+        T("createPage.discard.message"),
         [
             {
                 style: "cancel",
-                text: "Keep editing"
+                text: T("createPage.discard.keepEditing")
             },
             {
                 onPress: OnDiscard,
                 style: "destructive",
-                text: "Discard"
+                text: T("createPage.discard.discard")
             }
         ]
     );
@@ -268,6 +278,7 @@ const PageFormField = ({
 }: PageFormFieldProps): React.JSX.Element =>
 {
     const Styles = useStyles();
+    const { t } = useTranslation("pageCreation");
     const StringValue = typeof Value === "string" ? Value : "";
     const MultiSelectValue = Array.isArray(Value)
         ? Value as ReadonlyArray<Domain.Id.NotionOptionId>
@@ -403,7 +414,7 @@ const PageFormField = ({
             <Input
                 Disabled={ Disabled }
                 OnChangeText={ OnChange }
-                Placeholder="Empty"
+                Placeholder={ t("propertyFields.empty") }
                 Style={ Styles.InlineInput }
                 Value={ StringValue }
                 Variant="Flat"
@@ -434,6 +445,7 @@ const PageCreateScreen = (): React.JSX.Element =>
     const Theme = useTheme();
     const Styles = useStyles();
     const { HasProAccess, Refresh: RefreshSubscription } = useSubscription();
+    const { t } = useTranslation([ "pageCreation", "errors" ]);
     const DataSourceId = Params.dataSourceId as Domain.Id.NotionDataSourceId;
     const [ DataSource, SetDataSource ] =
         useState<Domain.DataSource.CachedDataSourceSchema | null>(null);
@@ -457,7 +469,7 @@ const PageCreateScreen = (): React.JSX.Element =>
             || (typeof Value === "string" && Value.trim() !== "")
             || IsDateValue(Value)
             || (Array.isArray(Value) && Value.length > 0));
-    const DatabaseTitle = DataSource?.Title ?? Params.title ?? "Database";
+    const DatabaseTitle = DataSource?.Title ?? Params.title ?? t("createPage.databaseFallback");
     const RenderHeaderTitle = useCallback(() => (
         <DatabaseHeaderTitle
             Source={ DataSource }
@@ -492,13 +504,12 @@ const PageCreateScreen = (): React.JSX.Element =>
         if (!HasProAccess)
         {
             Alert.alert(
-                "Customize forms with Pro",
-                "Pro lets you change aliases, visibility, required fields, " +
-                "order, defaults, and post-creation behavior.",
+                t("createPage.databaseSettingsGate.title"),
+                t("createPage.databaseSettingsGate.message"),
                 [
-                    { style: "cancel", text: "Not now" },
-                    { onPress: Router.push("/plans"), text: "Compare plans" },
-                    { onPress: Router.push("/subscribe"), text: "Upgrade" }
+                    { style: "cancel", text: t("createPage.proPrompt.notNow") },
+                    { onPress: Router.push("/plans"), text: t("createPage.proPrompt.comparePlans") },
+                    { onPress: Router.push("/subscribe"), text: t("createPage.proPrompt.upgrade") }
                 ]
             );
             return;
@@ -506,13 +517,13 @@ const PageCreateScreen = (): React.JSX.Element =>
 
         if (IsDirty)
         {
-            ShowDiscardConfirmation(NavigateToDatabaseSettings);
+            ShowDiscardConfirmation(NavigateToDatabaseSettings, t);
         }
         else
         {
             NavigateToDatabaseSettings();
         }
-    }, [ DataSource, HasProAccess, IsDirty, NavigateToDatabaseSettings, Router ]);
+    }, [ DataSource, HasProAccess, IsDirty, NavigateToDatabaseSettings, Router, t ]);
     type BeforeRemoveEvent = EventArg<"beforeRemove", true, { action: NavigationAction; }>;
     useEffect(() => Navigation.addListener("beforeRemove", (Event: BeforeRemoveEvent) =>
     {
@@ -526,8 +537,8 @@ const PageCreateScreen = (): React.JSX.Element =>
         {
             AllowNavigation.current = true;
             Router.dismissTo("/")();
-        });
-    }), [ IsDirty, Navigation, Router ]);
+        }, t);
+    }), [ IsDirty, Navigation, Router, t ]);
 
     useEffect(() =>
     {
@@ -666,7 +677,7 @@ const PageCreateScreen = (): React.JSX.Element =>
             {
                 if (Active)
                 {
-                    SetErrorMessage("We couldn't load this page form. Please try again.");
+                    SetErrorMessage(t("createPage.errors.loadFailed"));
                     /* eslint-disable-next-line no-console */
                     console.error("Failed to load page creation form", Error);
                 }
@@ -684,7 +695,7 @@ const PageCreateScreen = (): React.JSX.Element =>
         {
             Active = false;
         };
-    }, [ DataSourceId ]);
+    }, [ DataSourceId, t ]);
 
     const VisibleProperties = useMemo(() =>
     {
@@ -817,15 +828,15 @@ const PageCreateScreen = (): React.JSX.Element =>
         }
 
         Alert.alert(
-            `Apply “${ Template.Name }”?`,
-            "Some properties you've already filled in also have a value in this template.",
+            t("createPage.template.applyTitle", { name: Template.Name }),
+            t("createPage.template.applyMessage"),
             [
-                { style: "cancel", text: "Cancel" },
-                { onPress: () => Apply(true), text: "Keep mine" },
-                { onPress: () => Apply(false), style: "destructive", text: "Overwrite" }
+                { style: "cancel", text: t("createPage.template.cancel") },
+                { onPress: () => Apply(true), text: t("createPage.template.keepMine") },
+                { onPress: () => Apply(false), style: "destructive", text: t("createPage.template.overwrite") }
             ]
         );
-    }, [ SetFieldValue, Values, VisibleTemplates ]);
+    }, [ SetFieldValue, t, Values, VisibleTemplates ]);
 
     /**
      * Dev-only: fills every empty property (including the title, via its own
@@ -875,7 +886,7 @@ const PageCreateScreen = (): React.JSX.Element =>
                         Color={ Theme.Semantic.IconPrimary }
                         Disabled={ DataSource === null || IsSaving }
                         Icon={ Wand2 }
-                        Label="Populate form with dummy data"
+                        Label={ t("createPage.populateDummyData") }
                         OnPress={ () => void FillDummyData() }
                     />
                 )
@@ -887,7 +898,7 @@ const PageCreateScreen = (): React.JSX.Element =>
                             Color={ Theme.Semantic.IconPrimary }
                             Disabled={ DataSource === null }
                             Icon={ LayoutTemplate }
-                            Label="Use a template"
+                            Label={ t("createPage.useTemplate") }
                             OnPress={ OpenTemplateSwitcher }
                         />
                     )
@@ -897,7 +908,7 @@ const PageCreateScreen = (): React.JSX.Element =>
                 Color={ Theme.Semantic.IconPrimary }
                 Disabled={ DataSource === null }
                 Icon={ Settings }
-                Label={ `Settings for ${ DatabaseTitle }` }
+                Label={ t("createPage.settingsFor", { database: DatabaseTitle }) }
                 OnPress={ OpenDatabaseSettings }
             />
         </View>
@@ -911,32 +922,33 @@ const PageCreateScreen = (): React.JSX.Element =>
         OpenDatabaseSettings,
         OpenTemplateSwitcher,
         Styles.HeaderRight,
+        t,
         Theme.Semantic.IconPrimary
     ]);
 
     const ShowProPrompt = useCallback((Benefit: string): void =>
     {
         Alert.alert(
-            "Available with NoteFerry Pro",
+            t("createPage.proPrompt.title"),
             Benefit,
             [
-                { style: "cancel", text: "Not now" },
-                { onPress: Router.push("/plans"), text: "Compare plans" },
-                { onPress: Router.push("/subscribe"), text: "Upgrade" }
+                { style: "cancel", text: t("createPage.proPrompt.notNow") },
+                { onPress: Router.push("/plans"), text: t("createPage.proPrompt.comparePlans") },
+                { onPress: Router.push("/subscribe"), text: t("createPage.proPrompt.upgrade") }
             ]
         );
-    }, [ Router ]);
+    }, [ Router, t ]);
 
     const OpenIconMenu = useCallback((): void =>
     {
         if (!HasProAccess)
         {
-            ShowProPrompt("Add a recognizable icon to pages you capture.");
+            ShowProPrompt(t("createPage.proPrompt.iconBenefit"));
             return;
         }
 
         IconMenuRef.current?.present();
-    }, [ HasProAccess, ShowProPrompt ]);
+    }, [ HasProAccess, ShowProPrompt, t ]);
 
     /**
      * Attaching an icon seeds a default document glyph so a value is set (the
@@ -946,13 +958,13 @@ const PageCreateScreen = (): React.JSX.Element =>
     {
         if (!HasProAccess)
         {
-            ShowProPrompt("Add a recognizable icon to pages you capture.");
+            ShowProPrompt(t("createPage.proPrompt.iconBenefit"));
             return;
         }
 
         SetPageIcon({ Src: "📄", Type: "Emoji" });
         IconMenuRef.current?.present();
-    }, [ HasProAccess, ShowProPrompt ]);
+    }, [ HasProAccess, ShowProPrompt, t ]);
 
     const SelectIcon = useCallback((Icon: IconData): void =>
     {
@@ -970,7 +982,7 @@ const PageCreateScreen = (): React.JSX.Element =>
     {
         if (!HasProAccess)
         {
-            ShowProPrompt("Add a cover image to pages you capture.");
+            ShowProPrompt(t("createPage.proPrompt.coverBenefit"));
             return;
         }
 
@@ -992,7 +1004,7 @@ const PageCreateScreen = (): React.JSX.Element =>
         {
             SetCoverUrl(Asset.uri);
         }
-    }, [ HasProAccess, ShowProPrompt ]);
+    }, [ HasProAccess, ShowProPrompt, t ]);
 
     const RemoveCover = useCallback((): void =>
     {
@@ -1130,7 +1142,7 @@ const PageCreateScreen = (): React.JSX.Element =>
 
         if (Title === undefined)
         {
-            SetErrorMessage("Enter a page title before creating the page.");
+            SetErrorMessage(t("createPage.errors.titleRequired"));
 
             return;
         }
@@ -1200,21 +1212,47 @@ const PageCreateScreen = (): React.JSX.Element =>
                     : new Date(`${ Tagged.NextAvailableAt }`);
 
                 Alert.alert(
-                    "Free page limit reached",
-                    `Your draft is safe. Your next slot is available at ${Next.toLocaleTimeString([], {
-                        hour: "numeric",
-                        minute: "2-digit"
-                    })}.`,
+                    t("createPage.freeLimit.title"),
+                    t("createPage.freeLimit.message", {
+                        time: Next.toLocaleTimeString([], {
+                            hour: "numeric",
+                            minute: "2-digit"
+                        })
+                    }),
                     [
-                        { style: "cancel", text: "Keep editing" },
-                        { onPress: Router.push("/subscribe"), text: "Upgrade" }
+                        { style: "cancel", text: t("createPage.freeLimit.keepEditing") },
+                        { onPress: Router.push("/subscribe"), text: t("createPage.freeLimit.upgrade") }
                     ]
                 );
                 void RefreshSubscription();
                 return;
             }
 
-            SetErrorMessage("We couldn't create the page. Check the form and try again.");
+            if (Tagged?._tag === "DestinationNotFound")
+            {
+                SetErrorMessage(t("errors:destinationNotFound"));
+            }
+            else if (Tagged?._tag === "PageCreationInProgress")
+            {
+                SetErrorMessage(t("errors:pageCreationInProgress"));
+            }
+            else if (Tagged?._tag === "RateLimitExceeded")
+            {
+                SetErrorMessage(t("errors:rateLimitExceeded"));
+            }
+            else if (Tagged?._tag === "FreeDatabaseLimitReached")
+            {
+                SetErrorMessage(t("errors:freeDatabaseLimitReached", { limit: Tagged.Limit }));
+            }
+            else if (Tagged?._tag === "FeatureGateError")
+            {
+                SetErrorMessage(t("errors:featureGateError"));
+            }
+            else
+            {
+                SetErrorMessage(t("errors:generic"));
+            }
+
             /* eslint-disable-next-line no-console */
             console.error("Failed to create page", Error);
         }
@@ -1231,6 +1269,7 @@ const PageCreateScreen = (): React.JSX.Element =>
         PageTitleText,
         RefreshSubscription,
         Router,
+        t,
         Values,
         VisibleProperties
     ]);
@@ -1243,7 +1282,7 @@ const PageCreateScreen = (): React.JSX.Element =>
         ? null
         : (
             <Pressable
-                Accessibility={ { Label: "Change page icon", Role: "button" } }
+                Accessibility={ { Label: t("createPage.changeIcon"), Role: "button" } }
                 OnPress={ OpenIconMenu }
                 style={ [ Styles.IconWrap, HasCover && Styles.IconOverlap ] }>
                 <IconBlock
@@ -1256,7 +1295,7 @@ const PageCreateScreen = (): React.JSX.Element =>
         <AddMediaButton
             Disabled={ IsSaving }
             Icon={ Smile }
-            Label="Add icon"
+            Label={ t("createPage.addIcon") }
             OnPress={ AddIcon }
         />
     );
@@ -1264,7 +1303,7 @@ const PageCreateScreen = (): React.JSX.Element =>
         <AddMediaButton
             Disabled={ IsSaving }
             Icon={ ImagePlus }
-            Label="Add cover"
+            Label={ t("createPage.addCover") }
             OnPress={ () => void PickCover() }
         />
     );
@@ -1346,7 +1385,7 @@ const PageCreateScreen = (): React.JSX.Element =>
                                                 multiline
                                                 onChangeText={ (Value: string) =>
                                                     SetFieldValue(TitleProperty.Id, Value) }
-                                                placeholder="Untitled"
+                                                placeholder={ t("createPage.titlePlaceholder") }
                                                 placeholderTextColor={ Theme.Semantic.Muted }
                                                 scrollEnabled={ false }
                                                 selectionColor={ Theme.Semantic.Cursor }
@@ -1373,12 +1412,12 @@ const PageCreateScreen = (): React.JSX.Element =>
                                     <Separator Style={ Styles.BodyDivider } />
 
                                     <Textarea
-                                        AccessibilityLabel="Page body"
+                                        AccessibilityLabel={ t("createPage.pageBody.accessibilityLabel") }
                                         Disabled={ IsSaving }
                                         MaxLength={ MaxPageBodyLength }
                                         NumberOfLines={ 8 }
                                         OnChangeText={ SetPageBody }
-                                        Placeholder="Type something..."
+                                        Placeholder={ t("createPage.pageBody.placeholder") }
                                         Style={ Styles.PageBodyInput }
                                         Value={ PageBody }
                                     />
@@ -1393,7 +1432,7 @@ const PageCreateScreen = (): React.JSX.Element =>
                                         Loading={ IsSaving }
                                         OnPress={ Submit }
                                         Style={ Styles.Submit }>
-                                        Create page
+                                        { t("createPage.submit") }
                                     </Button>
                                 </View>
                             </ScrollView>
@@ -1403,7 +1442,7 @@ const PageCreateScreen = (): React.JSX.Element =>
                         pointerEvents="box-none"
                         style={ [ Styles.CoverHeader, { paddingTop: Insets.top + 6 } ] }>
                         <Pressable
-                            Accessibility={ { Label: "Go back", Role: "button" } }
+                            Accessibility={ { Label: t("createPage.goBack"), Role: "button" } }
                             OnPress={ GoBack }
                             hitSlop={ 8 }
                             style={ Styles.CoverHeaderButton }>
@@ -1415,7 +1454,7 @@ const PageCreateScreen = (): React.JSX.Element =>
                         </Pressable>
                         <Pressable
                             Accessibility={ {
-                                Label: `Settings for ${ DatabaseTitle }`,
+                                Label: t("createPage.settingsFor", { database: DatabaseTitle }),
                                 Role: "button",
                                 State: { disabled: DataSource === null }
                             } }

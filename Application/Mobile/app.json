@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "NoteFerry",
-    "slug": "noteferry",
+    "slug": "notivex",
     "owner": "gagesorrell",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -16,6 +16,9 @@
       },
       "config": {
         "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "CFBundleAllowMixedLocalizations": true
       }
     },
     "android": {
@@ -47,6 +50,44 @@
       ],
       "expo-secure-store",
       "expo-image",
+      [
+        "expo-font",
+        {
+          "android": {
+            "fonts": [
+              {
+                "fontFamily": "Inter",
+                "fontDefinitions": [
+                  {
+                    "path": "../../node_modules/@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf",
+                    "weight": 400
+                  },
+                  {
+                    "path": "../../node_modules/@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf",
+                    "weight": 500
+                  },
+                  {
+                    "path": "../../node_modules/@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf",
+                    "weight": 600
+                  },
+                  {
+                    "path": "../../node_modules/@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf",
+                    "weight": 700
+                  }
+                ]
+              }
+            ]
+          },
+          "ios": {
+            "fonts": [
+              "../../node_modules/@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf",
+              "../../node_modules/@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf",
+              "../../node_modules/@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf",
+              "../../node_modules/@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf"
+            ]
+          }
+        }
+      ],
       [
         "react-native-google-mobile-ads",
         {
@@ -126,8 +167,15 @@
         }
       ],
       "expo-mail-composer",
-      "expo-notifications"
+      "expo-notifications",
+      "expo-localization"
     ],
+    "locales": {
+      "de": "./Resource/Locales/de.json",
+      "es-419": "./Resource/Locales/es-419.json",
+      "ja": "./Resource/Locales/ja.json",
+      "ko": "./Resource/Locales/ko.json"
+    },
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true

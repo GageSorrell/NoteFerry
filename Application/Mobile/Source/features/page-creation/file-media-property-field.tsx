@@ -16,16 +16,15 @@
 import * as DocumentPicker from "expo-document-picker";
 import type * as Domain from "@noteferry/domain";
 import * as VideoThumbnails from "expo-video-thumbnails";
-import {
-    Body,
-    BottomSheet,
-    type BottomSheet as BottomSheetHandle,
-    BottomSheetView,
-    Button,
-    Input
-} from "@noteferry/ui/Primitive";
-import { File as FileIcon, Link as LinkIcon, Play, Upload } from "lucide-react-native";
-import { ImageStyle, MakeStyles, Token, ViewStyle, useTheme } from "@noteferry/ui";
+import { Body } from "@noteferry/ui/Primitive/Text";
+import { BottomSheet, type BottomSheet as BottomSheetHandle, BottomSheetView } from "@noteferry/ui/Primitive/BottomSheet";
+import { Button } from "@noteferry/ui/Primitive/Button";
+import { Input } from "@noteferry/ui/Primitive/Input";
+import FileIcon from "lucide-react-native/icons/file";
+import LinkIcon from "lucide-react-native/icons/link";
+import Play from "lucide-react-native/icons/play";
+import Upload from "lucide-react-native/icons/upload";
+import { ImageStyle, MakeStyles, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
 import { useEffect, useRef, useState } from "react";
 import { Image } from "expo-image";
 import { PropertyLabel } from "@/features/page-creation/property-label";

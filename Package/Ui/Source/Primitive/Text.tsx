@@ -15,13 +15,6 @@ import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import * as Typography from "../Token/Typography.js";
 import {
-    Inter_400Regular,
-    Inter_500Medium,
-    Inter_600SemiBold,
-    Inter_700Bold,
-    useFonts
-} from "@expo-google-fonts/inter";
-import {
     Text as RNText,
     type TextProps as RNTextProps,
     type StyleProp,
@@ -58,7 +51,7 @@ export type TextVariant =
     | "Caption";
 
 /**
- * Notion's page typeface choices. `Default` uses Inter while `Serif` and
+ * Notion's page typeface choices. `Default` uses Roboto while `Serif` and
  * `Mono` use the platform serif and monospace families.
  *
  * @category Typography
@@ -137,46 +130,7 @@ export interface TextProps extends Omit<RNTextProps, "style" | "numberOfLines">
     readonly Style?: StyleProp<TextStyle>;
 }
 
-type LoadedFontWeight =
-    | "400"
-    | "500"
-    | "600"
-    | "700";
-
-const DefaultFontFamilies: Readonly<Record<LoadedFontWeight, string>> = Object.freeze({
-    400: "Inter_400Regular",
-    500: "Inter_500Medium",
-    600: "Inter_600SemiBold",
-    700: "Inter_700Bold"
-} as const);
-
-const ResolveLoadedFontWeight = (Weight: TextStyle["fontWeight"]): LoadedFontWeight =>
-{
-    const NumericWeight = Weight === "normal"
-        ? 400
-        : Weight === "bold"
-            ? 700
-            : Number(Weight);
-
-    if (NumericWeight >= 700)
-    {
-        return "700";
-    }
-
-    if (NumericWeight >= 600)
-    {
-        return "600";
-    }
-
-    if (NumericWeight >= 500)
-    {
-        return "500";
-    }
-
-    return "400";
-};
-
-const ResolveFontFamily = (Family: TextFamily, Weight: TextStyle["fontWeight"]): string =>
+const ResolveFontFamily = (Family: TextFamily): string =>
 {
     switch (Family)
     {
@@ -186,7 +140,7 @@ const ResolveFontFamily = (Family: TextFamily, Weight: TextStyle["fontWeight"]):
             return "monospace";
         case "Default":
         default:
-            return DefaultFontFamilies[ResolveLoadedFontWeight(Weight)];
+            return "Roboto Flex";
     }
 };
 
@@ -213,25 +167,13 @@ const Text = ({
     const FinalColor = typeof ColorProp === "string" ? ColorProp : ResolvedTokenColor;
     const EffectiveWeight = Weight ?? ResolvedTypography.FontWeight;
 
-    const [ AreFontsLoaded ] = useFonts({
-        Inter_400Regular,
-        Inter_500Medium,
-        Inter_600SemiBold,
-        Inter_700Bold
-    });
-
-    if (!AreFontsLoaded)
-    {
-        return null;
-    }
-
     return (
         <RNText
             numberOfLines={ NumberOfLines }
             style={ [
                 {
                     color: FinalColor,
-                    fontFamily: ResolveFontFamily(Family, EffectiveWeight),
+                    fontFamily: ResolveFontFamily(Family),
                     fontSize: ResolvedTypography.FontSize,
                     fontWeight: EffectiveWeight,
                     lineHeight: ResolvedTypography.LineHeight
