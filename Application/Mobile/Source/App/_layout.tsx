@@ -10,7 +10,7 @@
 import * as Notifications from "expo-notifications";
 import * as React from "react";
 import * as SplashScreen from "expo-splash-screen";
-import { ActivityIndicator, View } from "react-native";
+import { View } from "react-native";
 import {
     DevelopmentOnboardingProvider,
     OnboardingMockRegistry,
@@ -20,7 +20,7 @@ import { NoteFerryAuthProvider, useAuth } from "@/Domain/Auth/NoteFerryAuthProvi
 import { ThemeProvider as NoteFerryThemeProvider, useTheme } from "@noteferry/ui/Core";
 import { OnboardingProvider, useOnboarding } from "@/features/onboarding/onboarding-context";
 import { Stack, router } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { Action } from "expo-quick-actions";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Function } from "@sorrell/effect";
@@ -28,6 +28,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import type { Href } from "expo-router";
 import { InitializeI18n, SyncCalendarLocales } from "@/Domain/Localization";
 import { RegisterDevelopmentMenu } from "@/Domain/Runtime/DevelopmentMenu";
+import { RestoringSessionScreen } from "@/Component";
 import { StatusBar } from "@/Domain/Miscellaneous/StatusBar";
 import { SubscriptionProvider } from "@/Domain/Subscription";
 import { useHighContrast } from "@/features/settings/use-high-contrast";
@@ -36,6 +37,18 @@ import { useQuickActionCallback } from "expo-quick-actions/hooks";
 import { useTranslation } from "react-i18next";
 
 void SplashScreen.preventAutoHideAsync();
+
+/* Kicked off at module load — before `RootLayout` ever renders — rather than
+ * from a `useEffect`, so it starts as early in boot as possible. Resolves as
+ * soon as the bundled translation resources are loaded (no storage/network
+ * I/O on this path — see `i18n.ts`), so it is not gated behind rendering, and
+ * `SplashScreen.hideAsync()` no longer waits on it either: the splash now
+ * hides on first root-view layout instead (see `RootLayout`). A failed init
+ * still gets `SyncCalendarLocales` afterward so the calendar locale is never
+ * left unsynced. */
+void InitializeI18n()
+    .catch((Error_: unknown) => console.error("i18n initialization failed:", Error_))
+    .then(SyncCalendarLocales);
 
 const HandledNotificationIds = new Set<string>();
 
@@ -88,7 +101,11 @@ const useRootRegistration = () =>
 };
 
 /**
- * The various providers used across the application.
+ * The various providers used across the application. `NoteFerryAuthProvider`
+ * is deliberately outermost (above theming) so `useHighContrast` — rendered
+ * by {@link ThemedProviders}, a descendant — can call `useAuth()` and gate its
+ * settings fetch on a known session, rather than firing an unauthenticated
+ * request before auth has resolved.
  *
  * @category Context
  * @since 1.0.0
@@ -96,6 +113,35 @@ const useRootRegistration = () =>
 const Providers = ({ children }: React.PropsWithChildren): React.JSX.Element =>
 {
     const Development = useDevelopmentOnboarding();
+
+    return (
+        <NoteFerryAuthProvider>
+            <DevelopmentOnboardingProvider>
+                <ThemedProviders Enabled={ !Development.Active }>
+                    { children }
+                </ThemedProviders>
+            </DevelopmentOnboardingProvider>
+        </NoteFerryAuthProvider>
+    );
+};
+
+/** Props for {@link ThemedProviders}. */
+interface ThemedProvidersProps extends React.PropsWithChildren
+{
+    /** Passed through to `OnboardingProvider` — disabled while a development mock is active. */
+    readonly Enabled: boolean;
+}
+
+/**
+ * The theming and everything nested below it, split out from {@link Providers}
+ * so `useHighContrast` runs as a descendant of `NoteFerryAuthProvider` instead
+ * of above it.
+ *
+ * @category Context
+ * @since 1.0.0
+ */
+const ThemedProviders = ({ Enabled, children }: ThemedProvidersProps): React.JSX.Element =>
+{
     const HighContrast = useHighContrast();
 
     return (
@@ -103,15 +149,11 @@ const Providers = ({ children }: React.PropsWithChildren): React.JSX.Element =>
             <StatusBar />
             <GestureHandlerRootView style={ { flex: 1 } }>
                 <BottomSheetModalProvider>
-                    <DevelopmentOnboardingProvider>
-                        <NoteFerryAuthProvider>
-                            <SubscriptionProvider>
-                                <OnboardingProvider Enabled={ !Development.Active }>
-                                    { children }
-                                </OnboardingProvider>
-                            </SubscriptionProvider>
-                        </NoteFerryAuthProvider>
-                    </DevelopmentOnboardingProvider>
+                    <SubscriptionProvider>
+                        <OnboardingProvider Enabled={ Enabled }>
+                            { children }
+                        </OnboardingProvider>
+                    </SubscriptionProvider>
                 </BottomSheetModalProvider>
             </GestureHandlerRootView>
         </NoteFerryThemeProvider>
@@ -132,7 +174,7 @@ const RootNavigator = () =>
      * a blank gate. Opt out so stage transitions take effect. */
     "use no memo";
 
-    const { IsLoading: IsLoadingSession, Session } = useAuth();
+    const { IsLoading: IsLoadingSession, RetryRestore, Session, SkipRestore } = useAuth();
     const {
         HasConnection,
         HasSelectedDatabases,
@@ -183,20 +225,17 @@ const RootNavigator = () =>
             || IsLoadingActivity
             || (IsAuthenticated && IsLoadingConnection)))
     {
+        /* The retry/continue-signed-out affordances only make sense for the
+         * session-restore case — they're omitted while the *other* reasons
+         * for this gate (onboarding activity/connection lookups) are what's
+         * pending, since "continue without signing in" would be nonsensical
+         * for an already-signed-in user waiting on a connection check. */
         return (
-            <View
-                accessibilityLabel={ t("common:loading") }
-                style={ {
-                    alignItems: "center",
-                    backgroundColor: Theme.Semantic.BackgroundMain,
-                    flex: 1,
-                    justifyContent: "center"
-                } }>
-                <ActivityIndicator
-                    color={ Theme.Semantic.Cursor }
-                    size="large"
-                />
-            </View>
+            <RestoringSessionScreen
+                { ...(IsLoadingSession
+                    ? { OnContinueSignedOut: SkipRestore, OnRetry: RetryRestore }
+                    : { }) }
+            />
         );
     }
 
@@ -304,43 +343,34 @@ const RootNavigator = () =>
 
 const RootLayout = () =>
 {
-    const [ IsI18nReady, SetIsI18nReady ] = useState(false);
+    const HasHiddenSplash = useRef(false);
 
     useRootRegistration();
 
-    useEffect(() =>
+    /* Hides the native splash on the first root-view layout — not after
+     * i18n, storage, authentication, subscription, or API work, none of
+     * which this waits on. Guarded so a later `onLayout` (e.g. a device
+     * rotation) never re-invokes `hideAsync`. */
+    const HandleRootLayout = useCallback((): void =>
     {
-        let Cancelled = false;
-
-        void InitializeI18n()
-            .catch((Error_: unknown) => console.error("i18n initialization failed:", Error_))
-            .then(() =>
-            {
-                if (!Cancelled)
-                {
-                    SyncCalendarLocales();
-                    SetIsI18nReady(true);
-                    void SplashScreen.hideAsync();
-                }
-            });
-
-        return () =>
+        if (HasHiddenSplash.current)
         {
-            Cancelled = true;
-        };
+            return;
+        }
+
+        HasHiddenSplash.current = true;
+        void SplashScreen.hideAsync();
     }, [ ]);
 
-    if (!IsI18nReady)
-    {
-        return null;
-    }
-
     return (
-        <Providers>
-            <RootNavigator />
-        </Providers>
+        <View
+            onLayout={ HandleRootLayout }
+            style={ { flex: 1 } }>
+            <Providers>
+                <RootNavigator />
+            </Providers>
+        </View>
     );
-
 };
 
 export default RootLayout;

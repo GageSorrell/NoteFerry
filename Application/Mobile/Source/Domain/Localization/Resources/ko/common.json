@@ -1,3 +1,8 @@
 {
-    "loading": "NoteFerry 로딩 중"
+    "loading": "NoteFerry 로딩 중",
+    "restoringSession": {
+        "continueSignedOut": "로그인하지 않고 계속하기",
+        "retry": "다시 시도",
+        "slow": "평소보다 시간이 걸리고 있습니다."
+    }
 }

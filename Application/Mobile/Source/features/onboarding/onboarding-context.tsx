@@ -18,6 +18,7 @@
 
 import type * as Domain from "@noteferry/domain";
 import * as React from "react";
+import { BootStoreGet, BootStoreGetLate } from "@/Domain/Runtime/BootStore";
 import { ListConnections, ListDataSources } from "@/Domain/Runtime/NoteFerryApi";
 import { type UseNotionSync, useNotionSync } from "@/features/onboarding/use-notion-sync";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -25,35 +26,6 @@ import type { AsyncThunk } from "@sorrell/effect/Function";
 import { useAuth } from "@/Domain/Auth";
 
 const PendingOnboardingStorageKey = "@noteferry/onboarding-pending" as const;
-const StorageReadAttempts = 12 as const;
-const StorageReadTimeoutMs = 1_000 as const;
-
-/** Reads the persisted onboarding marker without allowing native storage to hang startup. */
-const ReadPendingOnboarding = async (): Promise<boolean> =>
-{
-    const TimedOut = Symbol("timed-out");
-
-    for (let Attempt = 0; Attempt < StorageReadAttempts; Attempt += 1)
-    {
-        const Result = await Promise.race([
-            AsyncStorage.getItem(PendingOnboardingStorageKey)
-                .catch((): typeof TimedOut => TimedOut),
-            new Promise<typeof TimedOut>((
-                Resolve: (Value: typeof TimedOut) => void
-            ): void =>
-            {
-                setTimeout(() => Resolve(TimedOut), StorageReadTimeoutMs);
-            })
-        ]);
-
-        if (Result !== TimedOut)
-        {
-            return Result === "true";
-        }
-    }
-
-    return false;
-};
 
 /** The onboarding state shared through {@link useOnboarding}. */
 export interface OnboardingState
@@ -137,13 +109,27 @@ export const OnboardingProvider = ({
     React.useEffect(() =>
     {
         let Cancelled = false;
+        let Resolved = false;
 
-        void ReadPendingOnboarding().then((Pending: boolean) =>
+        void BootStoreGet(PendingOnboardingStorageKey).then((Value: string | null) =>
         {
             if (!Cancelled)
             {
-                SetIsActive(Enabled && Pending);
+                Resolved = true;
+                SetIsActive(Enabled && Value === "true");
                 SetIsLoadingActivity(false);
+            }
+        });
+
+        /* `BootStoreGet` above is budget-limited and may resolve "absent" on a
+         * slow cold start before the real value is in. The underlying read is
+         * never abandoned, so pick up the true value if it arrives afterward
+         * rather than silently stranding an in-progress onboarding run. */
+        void BootStoreGetLate(PendingOnboardingStorageKey).then((Value: string | null) =>
+        {
+            if (!Cancelled && Resolved)
+            {
+                SetIsActive(Enabled && Value === "true");
             }
         });
 

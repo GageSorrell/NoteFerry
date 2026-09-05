@@ -1,3 +1,8 @@
 {
-    "loading": "NoteFerryを読み込み中"
+    "loading": "NoteFerryを読み込み中",
+    "restoringSession": {
+        "continueSignedOut": "サインインせずに続ける",
+        "retry": "再試行",
+        "slow": "通常より時間がかかっています。"
+    }
 }

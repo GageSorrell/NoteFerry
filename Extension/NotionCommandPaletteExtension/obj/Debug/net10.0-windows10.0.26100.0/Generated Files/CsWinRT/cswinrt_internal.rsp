@@ -1,7 +1,0 @@
--target net8.0
--input 10.0.26100.0
--input 
--output "e:\Notivex\Extension\NotionCommandPaletteExtension\obj\Debug\net10.0-windows10.0.26100.0\Generated Files\CsWinRT"
-
--exclude Windows
--exclude Microsoft

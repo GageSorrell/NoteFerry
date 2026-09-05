@@ -7,6 +7,7 @@
  * @license   MIT
  */
 
+export * from "./BootStore";
 export * from "./CurrentUser";
 export * from "./DevelopmentMenu";
 export * from "./NoteFerryApi";

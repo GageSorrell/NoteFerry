@@ -56,17 +56,39 @@ export const ResolveSupportedLocale = (Tag: string): SupportedLocale =>
 };
 
 /**
- * Initializes i18next with all five bundled translation sets, resolving the
- * active language from a saved user override if one exists, otherwise from
- * the device's own locale. Must resolve before the app renders — see the
- * splash-screen gate in `App/_layout.tsx`.
+ * Applies the user's saved language override, if there is one and it differs
+ * from the device-locale default {@link InitializeI18n} already started
+ * rendering with. Deliberately not awaited by `InitializeI18n` — reading it
+ * happens in the background, after the app has already begun rendering with
+ * the device locale, so a slow or stuck `AsyncStorage` read can never hold up
+ * first paint. See the module doc.
+ *
+ * @category Localization
+ * @since 1.0.0
+ */
+const ApplyLanguageOverride = async (DeviceLocale: SupportedLocale): Promise<void> =>
+{
+    const Override = await ReadLanguageOverride();
+
+    if (Override !== null && Override !== DeviceLocale)
+    {
+        await i18next.changeLanguage(Override);
+    }
+};
+
+/**
+ * Initializes i18next with all five bundled translation sets, from the
+ * device's own locale. Resolves as soon as the bundled resources are loaded —
+ * no storage or network I/O is on this path, so it is safe to call before the
+ * app renders anything (see `App/_layout.tsx`) without risking a blank
+ * screen. The user's saved language override, if any, is applied afterward in
+ * the background — see {@link ApplyLanguageOverride}.
  *
  * @category Localization
  * @since 1.0.0
  */
 export const InitializeI18n = async (): Promise<void> =>
 {
-    const Override = await ReadLanguageOverride();
     const DeviceTag = Localization.getLocales()[ 0 ]?.languageTag ?? "en-US";
     const DeviceLocale = ResolveSupportedLocale(DeviceTag);
 
@@ -75,7 +97,7 @@ export const InitializeI18n = async (): Promise<void> =>
         defaultNS: "common",
         fallbackLng: "en-US",
         interpolation: { escapeValue: false },
-        lng: Override ?? DeviceLocale,
+        lng: DeviceLocale,
         ns: [
             "common",
             "settings",
@@ -87,6 +109,7 @@ export const InitializeI18n = async (): Promise<void> =>
             "errors",
             "home"
         ],
+        react: { useSuspense: false },
         resources: {
             de: De,
             "en-US": EnUS,
@@ -95,5 +118,11 @@ export const InitializeI18n = async (): Promise<void> =>
             ko: Ko
         },
         returnNull: false
+    });
+
+    void ApplyLanguageOverride(DeviceLocale).catch((Error_: unknown) =>
+    {
+        /* eslint-disable-next-line no-console */
+        console.error("Failed to apply saved language override:", Error_);
     });
 };

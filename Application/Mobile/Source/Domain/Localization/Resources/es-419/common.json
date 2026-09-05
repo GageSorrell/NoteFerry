@@ -1,3 +1,8 @@
 {
-    "loading": "Cargando NoteFerry"
+    "loading": "Cargando NoteFerry",
+    "restoringSession": {
+        "continueSignedOut": "Continuar sin iniciar sesión",
+        "retry": "Reintentar",
+        "slow": "Esto está tardando más de lo habitual."
+    }
 }

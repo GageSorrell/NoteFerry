@@ -29,15 +29,22 @@ export/**
        * `Domain.Settings.WithDefaults`) and exposes a merging update, refetching
        * afterward.
        *
+       * @param Enabled Whether to fetch on mount. Defaults to `true`; pass `false`
+       * while the caller doesn't yet know if a session exists (e.g. `useHighContrast`,
+       * which runs while auth is still restoring) so this never sends a doomed
+       * unauthenticated request — {@link Domain.Settings.DefaultAppSettings} is
+       * returned until it flips to `true` and the real settings load. `Refetch` still
+       * works regardless of `Enabled`.
+       *
        * @category Settings
        * @since 1.0.0
        */
-const useSettings = (): UseSettings =>
+const useSettings = (Enabled = true): UseSettings =>
 {
     const [ Settings, SetSettings ] =
         useState<Domain.Settings.ResolvedAppSettings>(Domain.Settings.DefaultAppSettings);
 
-    const [ IsLoading, SetIsLoading ] = useState(true);
+    const [ IsLoading, SetIsLoading ] = useState(Enabled);
 
     const Refetch = useCallback(async () =>
     {
@@ -53,8 +60,10 @@ const useSettings = (): UseSettings =>
         {
             if (Error instanceof NoSessionError)
             {
-                /* Not signed in yet (e.g. `useHighContrast` runs above the auth
-                 * provider, before a session exists) — expected, not a bug. */
+                /* Not signed in — expected, not a bug. `Enabled` normally
+                 * keeps this fetch from firing at all until a session is
+                 * known to exist, but a manual `Refetch()` call can still
+                 * race a sign-out. */
                 SetSettings(Domain.Settings.DefaultAppSettings);
             }
             else
@@ -78,8 +87,11 @@ const useSettings = (): UseSettings =>
 
     useEffect(() =>
     {
-        void Refetch();
-    }, [ Refetch ]);
+        if (Enabled)
+        {
+            void Refetch();
+        }
+    }, [ Enabled, Refetch ]);
 
     return { IsLoading, Refetch, Settings, Update };
 };

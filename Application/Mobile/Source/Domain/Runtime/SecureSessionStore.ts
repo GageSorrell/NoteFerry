@@ -20,19 +20,22 @@ import * as AesJs from "aes-js";
 import * as Crypto from "expo-crypto";
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BootStoreGet } from "./BootStore";
 
-/* The longest a single native storage read may take before it is assumed to
- * have been dispatched to a not-yet-ready native module and a fresh attempt is
- * made. Healthy reads resolve in a few milliseconds. */
-const ReadTimeoutMs = 1000;
+/* The longest a single SecureStore read may take before it is assumed to have
+ * been dispatched to a not-yet-ready native module and a fresh attempt is
+ * made. Healthy reads resolve in a few milliseconds. Unlike the AsyncStorage
+ * half (which shares one boot-time read via `BootStore`), SecureStore has no
+ * batch API, so this still retries per key — but no longer needs the same
+ * generous ceiling: publishing the session no longer waits on this read (see
+ * `NoteFerryAuthProvider`), so a slow read degrades to "restore this session
+ * a little later" rather than "block the app". */
+const ReadTimeoutMs = 800;
 
-/* How many read attempts to make before treating the value as absent. This
- * covers the cold-start window during which the AsyncStorage/SecureStore native
- * modules can accept a call before they are ready to service it (observed to be
- * up to ~7s on a cold debug build), with headroom so a real session is read
- * rather than prematurely dropped. Once the modules are ready, reads resolve on
- * the first attempt, so a high ceiling costs nothing in the common case. */
-const ReadAttempts = 12;
+/* How many SecureStore read attempts to make before treating the value as
+ * absent. Kept low relative to the old 12-attempt ceiling for the same
+ * reason as `ReadTimeoutMs` above. */
+const ReadAttempts = 3;
 
 /**
  * Reads a value with a bounded wait, retrying from scratch when a read does not
@@ -78,6 +81,13 @@ const ReadWithRetry = async (Read: () => Promise<string | null>): Promise<string
  */
 export class SecureSessionStore
 {
+    /* Keys this instance has itself written since it was constructed. Once a
+     * key is written, its AsyncStorage read must go through a live
+     * `AsyncStorage.getItem` rather than `BootStore`'s snapshot — that
+     * snapshot is captured once at module load, so it cannot see a write that
+     * happened afterward. */
+    private readonly WrittenKeys = new Set<string>();
+
     private async Encrypt(Key: string, Value: string): Promise<string>
     {
         const EncryptionKey = Crypto.getRandomBytes(32);
@@ -118,7 +128,9 @@ export class SecureSessionStore
      */
     public async getItem(Key: string): Promise<string | null>
     {
-        const Encrypted = await ReadWithRetry(() => AsyncStorage.getItem(Key));
+        const Encrypted = this.WrittenKeys.has(Key)
+            ? await ReadWithRetry(() => AsyncStorage.getItem(Key))
+            : await BootStoreGet(Key);
 
         if (!Encrypted)
         {
@@ -138,6 +150,7 @@ export class SecureSessionStore
     {
         const Encrypted = await this.Encrypt(Key, Value);
 
+        this.WrittenKeys.add(Key);
         await AsyncStorage.setItem(Key, Encrypted);
     }
 
@@ -149,6 +162,7 @@ export class SecureSessionStore
      */
     public async removeItem(Key: string): Promise<void>
     {
+        this.WrittenKeys.add(Key);
         await AsyncStorage.removeItem(Key);
         await SecureStore.deleteItemAsync(Key);
     }

@@ -7,6 +7,11 @@
  * Contrast" (`AccessibilityInfo.isDarkerSystemColorsEnabled`) — read live and
  * kept in sync via `AccessibilityInfo`'s change events.
  *
+ * Called from inside `NoteFerryAuthProvider` (see `App/_layout.tsx`) so the
+ * `Contrast` setting itself — a network fetch — only fires once a session is
+ * actually known to exist, rather than firing an unauthenticated request (and
+ * an extra, redundant session lookup) before auth has resolved.
+ *
  * @module noteferry/features/settings/use-high-contrast
  *
  * @file      use-high-contrast.ts
@@ -17,6 +22,7 @@
 
 import { AccessibilityInfo, Platform } from "react-native";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/Domain/Auth";
 import { useSettings } from "@/features/settings/use-settings";
 
 /** Queries the OS's own increase-contrast accessibility setting, if this platform has one. */
@@ -89,7 +95,8 @@ const useSystemHighContrast = (): boolean =>
  */
 export const useHighContrast = (): boolean =>
 {
-    const { Settings: AppSettings } = useSettings();
+    const { IsLoading: IsLoadingSession, Session } = useAuth();
+    const { Settings: AppSettings } = useSettings(!IsLoadingSession && Session !== null);
     const SystemHighContrast = useSystemHighContrast();
 
     if (AppSettings.Contrast === "Standard")
