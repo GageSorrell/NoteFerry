@@ -10,7 +10,7 @@
 import * as Notifications from "expo-notifications";
 import * as React from "react";
 import * as SplashScreen from "expo-splash-screen";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
     DevelopmentOnboardingProvider,
     OnboardingMockRegistry,
@@ -240,35 +240,42 @@ const RootNavigator = () =>
         }
     }, [ IsInApp, Router ]));
 
-    if (!Development.Active
+    const IsRestoring = !Development.Active
         && (IsLoadingSession
             || IsLoadingActivity
-            || (IsAuthenticated && IsLoadingConnection)))
+            || (IsAuthenticated && IsLoadingConnection));
+
+    useEffect(() =>
     {
-        /* The retry/continue-signed-out affordances only make sense for the
-         * session-restore case — they're omitted while the *other* reasons
-         * for this gate (onboarding activity/connection lookups) are what's
-         * pending, since "continue without signing in" would be nonsensical
-         * for an already-signed-in user waiting on a connection check. */
-        return (
-            <RestoringSessionScreen
-                { ...(IsLoadingSession
-                    ? { OnContinueSignedOut: SkipRestore, OnRetry: RetryRestore }
-                    : { }) }
-            />
-        );
-    }
+        console.info("[NoteFerry startup gate]", {
+            IsAuthenticated,
+            IsLoadingActivity,
+            IsLoadingConnection,
+            IsLoadingSession,
+            IsRestoring
+        });
+    }, [
+        IsAuthenticated,
+        IsLoadingActivity,
+        IsLoadingConnection,
+        IsLoadingSession,
+        IsRestoring
+    ]);
 
     return (
-        <Stack screenOptions={ {
-            headerShown: false,
-            headerTitleAlign: "center",
-            headerTitleStyle: {
-                fontFamily: "Roboto Flex",
-                fontSize: 16,
-                fontWeight: "600"
-            }
-        } }>
+        <View style={ Styles.RootNavigator }>
+            <View
+                importantForAccessibility={ IsRestoring ? "no-hide-descendants" : "auto" }
+                style={ Styles.RootNavigator }>
+                <Stack screenOptions={ {
+                    headerShown: false,
+                    headerTitleAlign: "center",
+                    headerTitleStyle: {
+                        fontFamily: "Roboto Flex",
+                        fontSize: 16,
+                        fontWeight: "600"
+                    }
+                } }>
             <Stack.Screen name="oauth-callback" />
             <Stack.Protected guard={ IsSignedOut }>
                 <Stack.Screen name="sign-in" />
@@ -361,9 +368,37 @@ const RootNavigator = () =>
                     options={ { headerShown: true, title: "Rich editor lab" } }
                 />
             </Stack.Protected>
-        </Stack>
+                </Stack>
+            </View>
+            {
+                IsRestoring &&
+                <View
+                    accessibilityViewIsModal
+                    style={ Styles.RestoringOverlay }>
+                    {/* The retry/continue-signed-out affordances only make sense
+                      * for the session-restore case — they're omitted while the
+                      * other reasons for this gate are pending. Keeping the
+                      * Stack mounted behind this overlay is required by Expo
+                      * Router and prevents the root provider tree from being
+                      * repeatedly torn down before restoration can finish. */}
+                    <RestoringSessionScreen
+                        { ...(IsLoadingSession
+                            ? { OnContinueSignedOut: SkipRestore, OnRetry: RetryRestore }
+                            : { }) }
+                    />
+                </View>
+            }
+        </View>
     );
 };
+
+const Styles = StyleSheet.create({
+    RestoringOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        zIndex: 1
+    },
+    RootNavigator: { flex: 1 }
+});
 
 const RootLayout = () =>
 {

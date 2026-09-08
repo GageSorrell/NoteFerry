@@ -15,6 +15,7 @@
  */
 
 import * as Account from "../_shared/Account.ts";
+import * as Cors from "../_shared/Cors.ts";
 import * as DataSources from "../_shared/DataSources.ts";
 import * as Destinations from "../_shared/Destinations.ts";
 import * as Domain from "@noteferry/domain";
@@ -455,8 +456,15 @@ const { handler } = HttpRouter.toWebHandler(AppLayer);
  * path arrives prefixed with the function name (`/api/...`). Strip that prefix
  * so it matches the HttpApi routes, which begin at each group's prefix (e.g.
  * `/Connections`). */
-Deno.serve((Request_: Request) =>
+Deno.serve(async (Request_: Request) =>
 {
+    const Preflight = Cors.HandlePreflight(Request_);
+
+    if (Preflight)
+    {
+        return Preflight;
+    }
+
     const Url = new URL(Request_.url);
     const Marker = "/api";
     const Index = Url.pathname.indexOf(Marker);
@@ -466,5 +474,7 @@ Deno.serve((Request_: Request) =>
         Url.pathname = Url.pathname.slice(Index + Marker.length) || "/";
     }
 
-    return handler(new Request(Url.toString(), Request_ as unknown as RequestInit));
+    const Response_ = await handler(new Request(Url.toString(), Request_ as unknown as RequestInit));
+
+    return Cors.WithCors(Response_, Request_.headers.get("Origin"));
 });

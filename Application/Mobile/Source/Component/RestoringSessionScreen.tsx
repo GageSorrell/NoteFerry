@@ -21,8 +21,7 @@ import { Caption } from "@noteferry/ui/Primitive/Text";
 import { Image } from "expo-image";
 import type React from "react";
 import { Screen } from "./Screen";
-import { Spinner } from "@noteferry/ui/Primitive/Spinner";
-import { View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { useEffect, useState } from "react";
 import { useTheme } from "@noteferry/ui/Core";
 import { useTranslation } from "react-i18next";
@@ -85,7 +84,10 @@ const RestoringSessionScreen = ({
                         : require("../../Resource/Logo/NoteFerryLogoLight.png") }
                     style={ { height: 56, width: 56 } }
                 />
-                <Spinner Size={ 24 } />
+                <ActivityIndicator
+                    color={ Theme.Semantic.Cursor }
+                    size="large"
+                />
                 {
                     OfferActions &&
                     <View style={ { alignItems: "center", gap: 12, marginTop: 12 } }>

@@ -15,6 +15,7 @@ Scope:
   - code blocks
   - dividers
   - rich-text annotations and links
+- Where the initial subset overlaps GitHub-Flavored Markdown (to-dos as GFM task-list items, strikethrough within rich-text annotations), parse and serialize using standard GFM syntax rather than a custom convention; the full plan extends this to tables and other elements with a direct GFM equivalent.
 - Implement:
   - Markdown → Notion blocks
   - Notion blocks → enriched Markdown

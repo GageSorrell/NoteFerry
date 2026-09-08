@@ -4,8 +4,13 @@ The marketing website for [NoteFerry](https://noteferry.sorrell.sh): a landing
 page plus placeholder `/terms` and `/privacy` pages, built with Next.js
 (App Router), Tailwind CSS v4, and shadcn/ui.
 
-This is a fully static site — no environment variables, no API routes, no
-backend calls. NoteFerry targets four stores (Microsoft Store, Google
+Almost everything here is static content — no API routes, no server-side
+data fetching. The one exception is `/delete-account`, Google Play's
+required web-based account-deletion page: it signs the visitor in with
+Notion (reusing the same Supabase Auth provider the mobile app uses) and
+calls the existing `DELETE /Account/` edge function directly from the
+browser. That page is the only thing that needs the environment variables
+below. NoteFerry targets four stores (Microsoft Store, Google
 Play, Mac App Store, App Store); all four currently link to `#`
 placeholders (see `content/site-config.ts`'s `storeUrls`) until the
 corresponding build is published. The hero and closing CTA each show only
@@ -13,6 +18,14 @@ two of the four badges, guessed from the visitor's `User-Agent` (see
 `lib/platform.ts` and `components/site/store-badges.tsx`); the full set
 always stays reachable from the platforms table near the bottom of the
 page (`components/site/sections/platforms.tsx`).
+
+## Environment variables
+
+Only `/delete-account` needs these — see `.env.example`:
+
+- `NEXT_PUBLIC_SUPABASE_URL` — the NoteFerry Supabase project URL.
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — its publishable anon key (safe
+  client-side; the API it talks to enforces auth and RLS server-side).
 
 ## Development
 
@@ -47,7 +60,9 @@ this repository and set:
 - **Root Directory**: `Website`
 - **Framework Preset**: Next.js (auto-detected)
 - **Node.js Version**: 24.x (matches the repo's `.nvmrc` / `engines.node`)
-- **Environment Variables**: none
+- **Environment Variables**: `NEXT_PUBLIC_SUPABASE_URL` and
+  `NEXT_PUBLIC_SUPABASE_ANON_KEY` (see "Environment variables" above) —
+  everything else needs none
 - *(optional)* **Ignored Build Step**: `git diff --quiet HEAD^ HEAD -- Website`,
   so pushes that only touch other workspaces (e.g. `Application/Mobile`)
   don't trigger a redeploy of this site.

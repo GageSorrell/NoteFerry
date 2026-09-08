@@ -40,7 +40,8 @@ export interface NavLink
 export/** Links shown in both the navbar and the footer. */
 const navLinks: ReadonlyArray<NavLink> = [
     { href: "/terms", label: "Terms" },
-    { href: "/privacy", label: "Privacy" }
+    { href: "/privacy", label: "Privacy" },
+    { href: "/delete-account", label: "Delete Account" }
 ];
 
 export/**

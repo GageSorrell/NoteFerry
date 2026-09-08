@@ -15,7 +15,7 @@
  * @license   MIT
  */
 
-import ExpoConfig from "eslint-config-expo/flat";
+import ExpoConfig from "eslint-config-expo/flat.js";
 import ReactPerf  from "eslint-plugin-react-perf";
 import SorrellConfig from "@sorrell/eslint-config";
 import { defineConfig } from "eslint/config";
