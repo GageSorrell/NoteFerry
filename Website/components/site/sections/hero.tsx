@@ -8,8 +8,9 @@
  * @license   MIT
  */
 
+import { ArrowRight } from "lucide-react";
 import { PhoneFrame } from "@/components/site/mockup/phone-frame";
-import { StoreBadges } from "@/components/site/store-badges";
+import { PlatformStoreBadges } from "@/components/site/store-badges";
 import { siteConfig } from "@/content/site-config";
 
 export/**
@@ -31,7 +32,16 @@ const Hero = () =>
                 <p className="mt-6 max-w-xl text-lg text-muted-foreground">
                     { siteConfig.description }
                 </p>
-                <StoreBadges className={ ctaLayout } />
+                <PlatformStoreBadges className={ ctaLayout } />
+                <a
+                    className={ "mt-4 inline text-sm text-muted-foreground underline "
+                        + "underline-offset-4 transition-colors hover:text-foreground" }
+                    href="#platforms">
+                    All platforms
+                    <ArrowRight
+                        aria-hidden
+                        className="ml-1 inline size-4 align-middle" />
+                </a>
             </div>
             <div className="flex flex-1 justify-center">
                 <PhoneFrame label="Quick-entry screen" />

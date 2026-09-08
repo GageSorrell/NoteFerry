@@ -56,10 +56,15 @@
       "import": "./Distribution/Platform/index.js",
       "types": "./Distribution/Platform/index.d.ts"
     },
+    "./rich-editor": {
+      "import": "./Distribution/rich-editor/index.js",
+      "types": "./Distribution/rich-editor/index.d.ts"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsc -p ./tsconfig.json"
+    "build": "tsc -p ./tsconfig.json",
+    "test": "npm run build && node --test Test/*.test.mjs"
   },
   "peerDependencies": {
     "@expo/ui": "~57.0.11",
@@ -69,6 +74,7 @@
     "expo-router": "~57.0.11",
     "react": ">=19.2.0",
     "react-native": ">=0.84.0",
+    "react-native-enriched-markdown": ">=1.0.2",
     "react-native-gesture-handler": ">=2.32.0",
     "react-native-reanimated": ">=4.5.0",
     "react-native-safe-area-context": "5.8.0",
@@ -89,6 +95,7 @@
     "@better-fetch/fetch": "1.3.1",
     "@emoji-mart/data": "1.2.1",
     "@gorhom/bottom-sheet": "5.2.14",
+    "@noteferry/notion-markdown": "1.0.0",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@shopify/flash-list": "2.0.2",
     "@sorrell/react": "1.1.3",
@@ -110,6 +117,7 @@
     "@types/react": "19.2.18",
     "jest-expo": "~57.0.4",
     "react-native": "0.86.2",
+    "react-native-enriched-markdown": "1.0.2",
     "typescript": "6.0.3"
   }
 }

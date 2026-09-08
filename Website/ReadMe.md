@@ -5,9 +5,14 @@ page plus placeholder `/terms` and `/privacy` pages, built with Next.js
 (App Router), Tailwind CSS v4, and shadcn/ui.
 
 This is a fully static site — no environment variables, no API routes, no
-backend calls. The App Store / Play Store buttons currently link to `#`
-placeholders (see `content/site-config.ts`'s `storeUrls`) until the app is
-published.
+backend calls. NoteFerry targets four stores (Microsoft Store, Google
+Play, Mac App Store, App Store); all four currently link to `#`
+placeholders (see `content/site-config.ts`'s `storeUrls`) until the
+corresponding build is published. The hero and closing CTA each show only
+two of the four badges, guessed from the visitor's `User-Agent` (see
+`lib/platform.ts` and `components/site/store-badges.tsx`); the full set
+always stays reachable from the platforms table near the bottom of the
+page (`components/site/sections/platforms.tsx`).
 
 ## Development
 

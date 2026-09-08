@@ -49,6 +49,11 @@ const RegisterDevelopmentMenu = async (): Promise<void> =>
 
     await registerDevMenuItems([
         {
+            callback: () => router.navigate("/rich-editor-lab" as Href),
+            name: "Rich editor lab",
+            shouldCollapse: true
+        },
+        {
             callback: () => router.navigate("/onboarding-scenarios" as Href),
             name: "Onboarding scenarios",
             shouldCollapse: true

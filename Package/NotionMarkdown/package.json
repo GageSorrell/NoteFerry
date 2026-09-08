@@ -1,0 +1,25 @@
+{
+  "name": "@noteferry/notion-markdown",
+  "description": "Loss-aware conversion between Markdown and official Notion block shapes.",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./Distribution/index.js",
+      "types": "./Distribution/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc -p ./tsconfig.json",
+    "test": "npm run build && node --test Test/*.test.mjs"
+  },
+  "dependencies": {
+    "@notionhq/client": "5.23.3"
+  },
+  "devDependencies": {
+    "@sorrell/tsconfig": "2.1.0",
+    "typescript": "6.0.3"
+  }
+}

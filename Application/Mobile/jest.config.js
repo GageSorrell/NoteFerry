@@ -27,7 +27,9 @@ module.exports = {
          * them straight to the built output so `require()` can find them. */
         "^@noteferry/ui/Block$": "<rootDir>/../../Package/Ui/Distribution/Block/index.js",
         "^@noteferry/ui/Primitive$": "<rootDir>/../../Package/Ui/Distribution/Primitive/index.js",
+        "^@noteferry/ui/rich-editor$": "<rootDir>/../../Package/Ui/Distribution/rich-editor/index.js",
         "^@noteferry/ui/Token$": "<rootDir>/../../Package/Ui/Distribution/Token/index.js",
+        "^react-native-enriched-markdown$": "react-native-enriched-markdown/jest",
         "^@noteferry/ui$": "<rootDir>/../../Package/Ui/Distribution/index.js",
         "^@/(.*)$": "<rootDir>/Source/$1"
     }

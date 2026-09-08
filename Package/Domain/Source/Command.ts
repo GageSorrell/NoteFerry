@@ -52,6 +52,7 @@ export/**
        * @since 1.0.0
        */
 const CreatePageCommand = Schema.Struct({
+    /** Enriched Markdown converted to official Notion block children by the server. */
     Body: Schema.optional(Schema.String),
     Cover: Schema.optional(PageCoverInput),
     DestinationId: Id.DestinationId,

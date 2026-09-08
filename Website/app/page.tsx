@@ -10,6 +10,7 @@
 import { Cta } from "@/components/site/sections/cta";
 import { Hero } from "@/components/site/sections/hero";
 import { HowItWorks } from "@/components/site/sections/how-it-works";
+import { Platforms } from "@/components/site/sections/platforms";
 import { Showcase } from "@/components/site/sections/showcase";
 
 /**
@@ -23,6 +24,7 @@ const HomePage = () =>
             <HowItWorks />
             <Showcase />
             <Cta />
+            <Platforms />
         </>
     );
 };

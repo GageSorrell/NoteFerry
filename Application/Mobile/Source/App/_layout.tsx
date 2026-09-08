@@ -356,6 +356,10 @@ const RootNavigator = () =>
             </Stack.Protected>
             <Stack.Protected guard={ __DEV__ }>
                 <Stack.Screen name="onboarding-scenarios" />
+                <Stack.Screen
+                    name="rich-editor-lab"
+                    options={ { headerShown: true, title: "Rich editor lab" } }
+                />
             </Stack.Protected>
         </Stack>
     );

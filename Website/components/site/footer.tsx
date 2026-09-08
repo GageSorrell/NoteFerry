@@ -8,6 +8,7 @@
  */
 
 import { type NavLink, navLinks, siteConfig } from "@/content/site-config";
+import { CreditsModal } from "@/components/site/credits-modal";
 import Link from "next/link";
 import { Logo } from "@/components/site/logo";
 
@@ -24,7 +25,7 @@ const Footer = () =>
                 <div className="flex flex-col items-center gap-2 sm:items-start">
                     <Logo />
                     <p className="text-xs text-muted-foreground">
-                        © { new Date().getFullYear() } { siteConfig.name }. All rights reserved.
+                        © { new Date().getFullYear() } Gage Sorrell. All rights reserved.
                     </p>
                 </div>
                 <nav className="flex items-center gap-6">
@@ -36,6 +37,7 @@ const Footer = () =>
                             { link.label }
                         </Link>
                     )) }
+                    <CreditsModal />
                     <a
                         className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                         href={ siteConfig.githubIssuesUrl }>

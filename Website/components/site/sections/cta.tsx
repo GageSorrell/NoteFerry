@@ -8,7 +8,7 @@
  * @license   MIT
  */
 
-import { StoreBadges } from "@/components/site/store-badges";
+import { PlatformStoreBadges } from "@/components/site/store-badges";
 
 export/** The centered closing CTA band. */
 const Cta = () =>
@@ -22,7 +22,7 @@ const Cta = () =>
                 <p className="max-w-md text-base text-muted-foreground">
                     Download it now and capture your first Notion page in seconds.
                 </p>
-                <StoreBadges className="flex flex-wrap items-center justify-center gap-3" />
+                <PlatformStoreBadges className="flex flex-wrap items-center justify-center gap-3" />
             </div>
         </section>
     );

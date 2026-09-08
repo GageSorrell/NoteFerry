@@ -20,6 +20,7 @@ const siteConfig = {
         + "databases. Sign in with Notion, pick a destination, and add a "
         + "new page in seconds.",
     githubIssuesUrl: "https://github.com/GageSorrell/NoteFerry/issues",
+    githubRepoUrl: "https://github.com/GageSorrell/NoteFerry",
     name: "NoteFerry",
     tagline: "Your notes, faster."
 };
@@ -43,13 +44,21 @@ const navLinks: ReadonlyArray<NavLink> = [
 ];
 
 export/**
-       * App Store / Play Store destination URLs. NoteFerry has not shipped
-       * to either store yet, so both are placeholders — replace with the
-       * real listing URLs once the app is published.
+       * Destination URLs for every store NoteFerry targets. NoteFerry has
+       * not shipped to any of them yet, so all four are `"#"`
+       * placeholders — replace each with its real listing URL once that
+       * build is published. {@link Platforms} (the landing page's
+       * platforms table) treats a `"#"` value as "coming soon"
+       * automatically, so swapping a URL in here is the only change
+       * needed to flip that row to "available".
        */
 const storeUrls = {
-    // TODO: replace once published to the App Store.
+    // TODO: replace once published to the App Store (iOS).
     appStore: "#",
+    // TODO: replace once published to the Mac App Store.
+    macAppStore: "#",
+    // TODO: replace once published to the Microsoft Store.
+    microsoftStore: "#",
     // TODO: replace once published to the Google Play Store.
     playStore: "#"
 };

@@ -136,7 +136,7 @@ const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element =>
                     Appearance="Blue"
                     OnPress={ OnContinue }
                     Style={ Styles.Cta }>
-                    <Body Style={ { color: "#FFFFFF", fontWeight: "semibold" } }>
+                    <Body Style={ { color: "#FFFFFF", fontSize: 14 } }>
                         { t("signIn.getStarted") }
                     </Body>
                 </Button>

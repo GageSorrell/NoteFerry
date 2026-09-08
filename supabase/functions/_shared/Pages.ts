@@ -17,6 +17,7 @@
  */
 
 import * as Domain from "@noteferry/domain";
+import { ChunkNotionBlocks, MarkdownToNotionBlocks } from "@noteferry/notion-markdown";
 import * as Notion from "./Notion.ts";
 import { CallNotionData, type ConnectionTokens, LoadConnectionTokens, RateLimited } from "./NotionAuth.ts";
 import { AdminClient, PrivateSchema } from "./Database.ts";
@@ -131,24 +132,6 @@ const ResolveFilesValue = (
             };
         }
     });
-};
-
-const NotionRichTextContentLimit = 2_000;
-
-/** Splits plaintext across Notion text objects without applying Markdown formatting. */
-const MapPlainTextToNotion = (Value: string): ReadonlyArray<unknown> =>
-{
-    const RichText: Array<unknown> = [];
-
-    for (let Index = 0; Index < Value.length; Index += NotionRichTextContentLimit)
-    {
-        RichText.push({
-            text: { content: Value.slice(Index, Index + NotionRichTextContentLimit) },
-            type: "text"
-        });
-    }
-
-    return RichText;
 };
 
 /* eslint-disable-next-line jsdoc/require-jsdoc */
@@ -304,11 +287,13 @@ export const CreateForUser = (UserId: string, Command: CreatePageInput) =>
         const Configuration = Destination.configuration as StoredConfiguration;
         const PageChildren = Command.Body === undefined || Command.Body.trim() === ""
             ? undefined
-            : [ {
-                object: "block",
-                paragraph: { rich_text: MapPlainTextToNotion(Command.Body) },
-                type: "paragraph"
-            } ];
+            : yield* Effect.try({
+                catch: (Error_) => new Domain.Error.NotionValidationError({ Message: String(Error_) }),
+                try: () => MarkdownToNotionBlocks(
+                    Command.Body ?? "",
+                    { FailOnUnsupported: true }
+                ).Blocks
+            });
 
         for (const Field of IsPro === true
             ? Configuration.FieldConfiguration?.Fields ?? []
@@ -434,13 +419,28 @@ export const CreateForUser = (UserId: string, Command: CreatePageInput) =>
 
             return yield* Effect.tryPromise({
                 catch: (Error_) => Error_,
-                try: () => CallNotionData(Tokens, ConnectionId, (Token) => Notion.CreatePage(Token, {
-                    ...(PageChildren === undefined ? { } : { children: PageChildren }),
-                    ...(NotionCover === undefined ? { } : { cover: NotionCover }),
-                    ...(NotionIcon === undefined ? { } : { icon: NotionIcon }),
-                    parent: { data_source_id: DataSourceId, type: "data_source_id" },
-                    properties: NotionProperties
-                }))
+                try: () => CallNotionData(Tokens, ConnectionId, async (Token) =>
+                {
+                    const ChildChunks = PageChildren === undefined ? [] : ChunkNotionBlocks(PageChildren);
+                    const Page = await Notion.CreatePage(Token, {
+                        ...(ChildChunks[0] === undefined ? { } : { children: ChildChunks[0] }),
+                        ...(NotionCover === undefined ? { } : { cover: NotionCover }),
+                        ...(NotionIcon === undefined ? { } : { icon: NotionIcon }),
+                        parent: { data_source_id: DataSourceId, type: "data_source_id" },
+                        properties: NotionProperties
+                    });
+
+                    for (const Chunk of ChildChunks.slice(1))
+                    {
+                        await Notion.AppendBlockChildren(
+                            Token,
+                            Page.id,
+                            Chunk
+                        );
+                    }
+
+                    return Page;
+                })
             });
         }).pipe(
             Effect.catchAll((Error_) => Effect.fail(MapCreateError(Error_, DataSourceId))),

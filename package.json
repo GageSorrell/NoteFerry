@@ -10,6 +10,7 @@
     "./Package/Api",
     "./Package/Domain",
     "./Package/Icons",
+    "./Package/NotionMarkdown",
     "./Package/Ui",
     "./Website",
     "./Script/AvdDemoMode",
@@ -54,5 +55,8 @@
     "eslint-plugin-react-perf": "3.3.3",
     "react-native": "0.86.2",
     "typescript": "6.0.3"
+  },
+  "allowScripts": {
+    "react-native-enriched-markdown@1.0.2": true
   }
 }

@@ -28,7 +28,7 @@ import { Description, NavigationTitle } from "@noteferry/ui/Primitive/Text";
 import { Input } from "@noteferry/ui/Primitive/Input";
 import { Pressable } from "@noteferry/ui/Primitive/Pressable";
 import { Separator } from "@noteferry/ui/Primitive/Separator";
-import { Textarea } from "@noteferry/ui/Primitive/Textarea";
+import { RichContentEditor } from "@noteferry/ui/rich-editor";
 import ChevronLeft from "lucide-react-native/icons/chevron-left";
 import ImagePlus from "lucide-react-native/icons/image-plus";
 import LayoutTemplate from "lucide-react-native/icons/layout-template";
@@ -1411,14 +1411,13 @@ const PageCreateScreen = (): React.JSX.Element =>
 
                                     <Separator Style={ Styles.BodyDivider } />
 
-                                    <Textarea
+                                    <RichContentEditor
                                         AccessibilityLabel={ t("createPage.pageBody.accessibilityLabel") }
                                         Disabled={ IsSaving }
                                         MaxLength={ MaxPageBodyLength }
-                                        NumberOfLines={ 8 }
-                                        OnChangeText={ SetPageBody }
+                                        OnChange={ SetPageBody }
                                         Placeholder={ t("createPage.pageBody.placeholder") }
-                                        Style={ Styles.PageBodyInput }
+                                        Style={ Styles.PageBodyEditor }
                                         Value={ PageBody }
                                     />
 
@@ -1582,14 +1581,9 @@ const useStyles = MakeStyles({
     NavigationTitleText: TextStyle({
         flexShrink: 1
     }),
-    PageBodyInput: TextStyle({
-        backgroundColor: "transparent",
-        borderWidth: 0,
-        fontSize: 16,
-        lineHeight: 24,
+    PageBodyEditor: ViewStyle({
         minHeight: 192,
-        paddingHorizontal: 0,
-        paddingVertical: 0
+        width: "100%"
     }),
     PageTitleInput: TextStyle({
         color: Token.Semantic.Primary,

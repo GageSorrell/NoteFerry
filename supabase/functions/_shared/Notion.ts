@@ -16,6 +16,8 @@
  * @license   MIT
  */
 
+import type { NotionBlockRequest } from "@noteferry/notion-markdown";
+
 /** The current Notion API version. */
 export const NotionVersion = "2026-03-11";
 
@@ -758,7 +760,7 @@ export const SendFileUpload = async (
 /** The Notion Create Page request body NoteFerry sends. */
 export interface NotionCreatePageBody
 {
-    readonly children?: ReadonlyArray<unknown>;
+    readonly children?: ReadonlyArray<NotionBlockRequest>;
     readonly cover?: unknown;
     readonly icon?: unknown;
     readonly parent: { readonly type: "data_source_id"; readonly data_source_id: string };
@@ -789,4 +791,23 @@ export const CreatePage = async (
     }
 
     return await Response.json() as { readonly id: string };
+};
+
+/** Appends one API-sized chunk of official block children to an existing page. */
+export const AppendBlockChildren = async (
+    AccessToken: string,
+    BlockId: string,
+    Children: ReadonlyArray<NotionBlockRequest>
+): Promise<void> =>
+{
+    const Response = await fetch(`${ApiBase}/blocks/${BlockId}/children`, {
+        body: JSON.stringify({ children: Children }),
+        headers: DataApiHeaders(AccessToken),
+        method: "PATCH"
+    });
+
+    if (!Response.ok)
+    {
+        return await ThrowNotionApiError(Response);
+    }
 };

@@ -8,6 +8,7 @@
     "icon": "./Resource/Logo/NoteFerryLogoLight.png",
     "scheme": "noteferry",
     "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
     "ios": {
       "icon": {
         "light": "./Resource/Logo/NoteFerryLogoLight.png",
