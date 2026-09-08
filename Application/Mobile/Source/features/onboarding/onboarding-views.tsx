@@ -22,7 +22,7 @@ import {
     View
 } from "react-native";
 import { AuthButton, Button } from "@noteferry/ui/Primitive/Button";
-import { Body, ButtonLabel, Caption, Description, Heading1, HeroTitle, ItemTitle, ScreenTitle } from "@noteferry/ui/Primitive/Text";
+import { Body, Caption, Description, Heading1, HeroTitle, ItemTitle, ScreenTitle } from "@noteferry/ui/Primitive/Text";
 import { BottomSheet, BottomSheetView } from "@noteferry/ui/Primitive/BottomSheet";
 import { Checkbox } from "@noteferry/ui/Primitive/Checkbox";
 import { Input } from "@noteferry/ui/Primitive/Input";
@@ -30,7 +30,6 @@ import { Link } from "@noteferry/ui/Primitive/Link";
 import { Pressable } from "@noteferry/ui/Primitive/Pressable";
 import ChevronDown from "lucide-react-native/icons/chevron-down";
 import ChevronUp from "lucide-react-native/icons/chevron-up";
-import ExternalLink from "lucide-react-native/icons/external-link";
 import { HeroImage, ResourceIcon } from "@/Component";
 import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
 import * as Boolean from "effect/Boolean";
@@ -133,29 +132,25 @@ const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element =>
             Subtitle={ t("signIn.heroSubtitle") }
             Title={ t("signIn.heroTitle") }>
             <View style={ Styles.BottomContent }>
-                <AuthButton
-                    Icon={
-                        <Image
-                            source={ require("../../../Resource/Onboarding/NotionLogoLight.svg") }
-                            style={ Styles.AuthIcon }
-                        />
-                    }
+                <Button
+                    Appearance="Blue"
                     OnPress={ OnContinue }
                     Style={ Styles.Cta }>
-                    { t("signIn.continueWithNotion") }
-                </AuthButton>
+                    <Body Style={ { color: "#FFFFFF", fontWeight: "semibold" } }>
+                        { t("signIn.getStarted") }
+                    </Body>
+                </Button>
+                <Description Style={ Styles.AffiliationDisclaimer }>
+                    { t("signIn.notionAffiliationDisclaimer") }{" "}
+                    { t("signIn.noAccount") }{"  "}
+                    <Link
+                        Appearance="Subtle"
+                        Href="https://app.notion.com/signup"
+                        Style={ { fontSize: 14, textDecorationLine: "underline" } }>
+                        { t("signIn.signUp") }
+                    </Link>
+                </Description>
                 <View style={ Styles.Footer }>
-                    <View style={ Styles.AccountPrompt }>
-                        <Description Style={ { fontSize: 14 } }>
-                            { t("signIn.noAccount") }{"  "}
-                        </Description>
-                        <Link
-                            Appearance="Subtle"
-                            Href="https://app.notion.com/signup"
-                            Style={ { fontSize: 14, textDecorationLine: "underline" } }>
-                            { t("signIn.signUp") }
-                        </Link>
-                    </View>
                     <Caption Style={ Styles.LegalCopy }>
                         { t("signIn.legal.line1") }{"\n"}
                         { t("signIn.legal.line2") }{" "}
@@ -195,9 +190,7 @@ export interface SignInModalViewProps extends PendingOnboardingActionProps
 }
 
 export/**
-       * Renders the sign-in explanation modal, walking the user through the
-       * two-step process (Notion sign-in, then database selection) before
-       * they authenticate.
+       * Renders the sign-in explanation modal before the user authenticates.
        *
        * @category Onboarding
        * @since 1.0.0
@@ -214,36 +207,38 @@ const SignInModalView = ({
 
     return (
         <View style={ Styles.Container }>
-            <SafeAreaView style={ Styles.SafeArea }>
-                <ScrollView
-                    contentContainerStyle={ Styles.Scroll }
-                    showsVerticalScrollIndicator={ false }
-                    style={ Styles.SafeArea }>
-                    <HeroImage Source={ require("../../../Resource/Onboarding/SignInModalStepTwo.png") } />
+            <SafeAreaView
+                edges={ [ "bottom" ] }
+                style={ Styles.SafeArea }>
+                <BottomSheetView style={ Styles.Content }>
+                    <Heading1>
+                        { t("titles.signInModal") }
+                    </Heading1>
                     <Body>
-                        { t("signInModal.step1") }
-                    </Body>
-                    <Body>
-                        { t("signInModal.step2") }
+                        { t("signInModal.message") }
                     </Body>
                     <Body Style={ { color: TipColor, textAlign: "center" } }>
                         { t("signInModal.tip") }
                     </Body>
-                    <View style={ Styles.Spacer } />
-                    <Button
+                    <AuthButton
+                        Icon={
+                            <Image
+                                source={ require("../../../Resource/Onboarding/NotionLogoLight.svg") }
+                                style={ Styles.AuthIcon }
+                            />
+                        }
                         Loading={ Pending }
                         OnPress={ OnSignIn }
                         Style={ Styles.FullWidthCta }>
-                        <ButtonLabel Color={ Token.Semantic.Primary }>
-                            { t("signInModal.logInWithNotion") }
-                        </ButtonLabel>
-                        <ExternalLink
-                            color={ Theme.Semantic.Primary }
-                            size={ 16 }
-                            strokeWidth={ 1.8 }
-                        />
-                    </Button>
-                </ScrollView>
+                        { t("signIn.continueWithNotion") }
+                    </AuthButton>
+                    <Link
+                        Appearance="Subtle"
+                        Href={ NotionConnectionsHelpUrl }
+                        Style={ Styles.LearnMoreLink }>
+                        { t("signInModal.learnMore") }
+                    </Link>
+                </BottomSheetView>
             </SafeAreaView>
         </View>
     );
@@ -1068,9 +1063,19 @@ const useOnboardingStyles = MakeStyles({
 });
 
 const useModalStyles = MakeStyles({
+    AuthIcon: ImageStyle({
+        height: 24,
+        width: 24
+    }),
     Container: ViewStyle({
         backgroundColor: Token.Semantic.BackgroundModal,
         flex: 1
+    }),
+    Content: ViewStyle({
+        gap: 20,
+        paddingBottom: 24,
+        paddingHorizontal: 32,
+        paddingTop: 8
     }),
     Cta: ViewStyle({
         flex: 1
@@ -1081,27 +1086,21 @@ const useModalStyles = MakeStyles({
     Header: ViewStyle({
         gap: 8
     }),
+    LearnMoreLink: TextStyle({
+        alignSelf: "center",
+        fontSize: 14,
+        textDecorationLine: "underline"
+    }),
     SafeArea: ViewStyle({
         flex: 1
-    }),
-    Scroll: ViewStyle({
-        flexGrow: 1,
-        gap: 32,
-        marginTop: -24,
-        paddingBottom: 24,
-        paddingHorizontal: 32
-    }),
-    Spacer: ViewStyle({
-        flexGrow: 1,
-        minHeight: 24
     })
 });
 
 const useSignInStyles = MakeStyles({
-    AccountPrompt: ViewStyle({
-        flexDirection: "row",
-        justifyContent: "center",
-        marginBottom: 8
+    AffiliationDisclaimer: TextStyle({
+        marginHorizontal: 24,
+        marginTop: 12,
+        textAlign: "center"
     }),
     AuthIcon: ImageStyle({
         height: 24,
@@ -1120,6 +1119,7 @@ const useSignInStyles = MakeStyles({
         textAlign: "center"
     }),
     Cta: ViewStyle({
+        marginBottom: 16,
         marginHorizontal: 18
     }),
     Footer: ViewStyle({

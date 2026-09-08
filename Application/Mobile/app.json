@@ -51,43 +51,14 @@
       "expo-secure-store",
       "expo-image",
       [
-        "expo-font",
+        "expo-image-picker",
         {
-          "android": {
-            "fonts": [
-              {
-                "fontFamily": "Inter",
-                "fontDefinitions": [
-                  {
-                    "path": "../../node_modules/@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf",
-                    "weight": 400
-                  },
-                  {
-                    "path": "../../node_modules/@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf",
-                    "weight": 500
-                  },
-                  {
-                    "path": "../../node_modules/@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf",
-                    "weight": 600
-                  },
-                  {
-                    "path": "../../node_modules/@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf",
-                    "weight": 700
-                  }
-                ]
-              }
-            ]
-          },
-          "ios": {
-            "fonts": [
-              "../../node_modules/@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf",
-              "../../node_modules/@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf",
-              "../../node_modules/@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf",
-              "../../node_modules/@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf"
-            ]
-          }
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to attach them to your notes.",
+          "cameraPermission": false,
+          "microphonePermission": false
         }
       ],
+      "expo-document-picker",
       [
         "react-native-google-mobile-ads",
         {

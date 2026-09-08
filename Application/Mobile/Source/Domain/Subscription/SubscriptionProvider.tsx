@@ -19,7 +19,6 @@ import {
 } from "@/Domain/Runtime/NoteFerryApi";
 import type { PurchasesPackage } from "react-native-purchases";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { InitializeAdsRuntime } from "@/Domain/Ads/AdsRuntime";
 import { Platform } from "react-native";
 import { SetConfirmedFree } from "@/Domain/Ads/Entitlement";
 import { useAuth } from "@/Domain/Auth/NoteFerryAuthProvider";
@@ -194,10 +193,16 @@ const SubscriptionProvider = (
             SetIsFinishingPurchase(false);
         }
 
-        if (!NextStatus.Active)
-        {
-            void InitializeAdsRuntime();
-        }
+        /* Ads initialization (and the Google UMP consent form it can show) is
+         * deliberately not started here. This effect fires the instant
+         * `Session` appears, which on a fresh sign-in is also the instant the
+         * app is mid onboarding-recovery from the Notion OAuth browser --
+         * exactly when Android is already cycling this activity through
+         * stop/resume and its saved-instance-state bundle is most likely to
+         * grow large enough to crash with `TransactionTooLargeException` if a
+         * WebView-backed consent form is added on top. `RootNavigator` starts
+         * ads once onboarding has actually finished instead (see
+         * `App/_layout.tsx`). */
 
         try
         {

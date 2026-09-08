@@ -12,7 +12,9 @@
     "./Package/Icons",
     "./Package/Ui",
     "./Website",
-    "./Script/AvdDemoMode"
+    "./Script/AvdDemoMode",
+    "./Script/PatchReactNativeTools",
+    "./Script/RnwDevProcesses"
   ],
   "version": "1.0.0",
   "author": {
@@ -34,6 +36,11 @@
     "npm": ">=12.0.2"
   },
   "type": "module",
+  "scripts": {
+    "rnw:ls": "npm run build -w @noteferry/rnw-dev-processes && node Script/RnwDevProcesses/Distribution/index.js ls",
+    "rnw:kill": "npm run build -w @noteferry/rnw-dev-processes && node Script/RnwDevProcesses/Distribution/index.js kill",
+    "rnw:kill-all": "npm run build -w @noteferry/rnw-dev-processes && node Script/RnwDevProcesses/Distribution/index.js kill-all"
+  },
   "overrides": {
     "react": "19.2.3",
     "react-dom": "19.2.3",

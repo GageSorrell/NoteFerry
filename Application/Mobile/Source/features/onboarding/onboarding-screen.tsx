@@ -65,7 +65,7 @@ const OnboardingScreen = ({
                     ) }
                 </View>
 
-                <HeroImage Source={ Hero } />
+                { Hero !== undefined && <HeroImage Source={ Hero } /> }
                 <View style={ Styles.Content }>
                     { children }
                 </View>
@@ -97,7 +97,8 @@ const useStyles = MakeStyles({
     }),
     SafeArea: ViewStyle({
         flex: 1,
+        paddingBottom: 16,
         paddingHorizontal: 8,
-        paddingVertical: 48
+        paddingTop: 48
     })
 });

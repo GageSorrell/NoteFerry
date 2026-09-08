@@ -20,8 +20,7 @@
 
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
-import ImageIcon from "lucide-react-native/icons/image";
-import X from "lucide-react-native/icons/x";
+import { Image as ImageIcon, X } from "../Icon.js";
 import { ImageStyle, MakeStyles, ViewStyle as MakeViewStyle, TextStyle } from "../MakeStyles.js";
 import { type StyleProp, View, type ViewStyle, useWindowDimensions } from "react-native";
 import { Body } from "../Primitive/Text.js";

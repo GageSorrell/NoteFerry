@@ -11,8 +11,7 @@
 
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
-import Check from "lucide-react-native/icons/check";
-import Minus from "lucide-react-native/icons/minus";
+import { Check, Minus } from "../Icon.js";
 import { type StyleProp, type ViewStyle } from "react-native";
 import { Pressable } from "./Pressable.js";
 import type { ReadonlyRecord } from "effect/Record";

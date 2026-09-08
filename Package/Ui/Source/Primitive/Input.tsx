@@ -16,8 +16,7 @@ import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { MakeStyles, TextStyle as MakeTextStyle, ViewStyle as MakeViewStyle } from "../MakeStyles.js";
-import Search from "lucide-react-native/icons/search";
-import X from "lucide-react-native/icons/x";
+import { Search, X } from "../Icon.js";
 import {
     type StyleProp,
     TextInput,

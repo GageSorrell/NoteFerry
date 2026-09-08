@@ -35,7 +35,7 @@ import { MakeStyles, TextStyle, ViewStyle } from "../MakeStyles.js";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Primitive/Tabs.js";
 import { Body } from "../Primitive/Text.js";
 import { Button } from "../Primitive/Button.js";
-import Image from "lucide-react-native/icons/image";
+import { Image } from "../Icon.js";
 import { Input } from "../Primitive/Input.js";
 import { View } from "react-native";
 import { useToken } from "../ThemeProvider.js";

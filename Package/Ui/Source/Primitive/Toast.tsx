@@ -23,10 +23,12 @@ import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import * as Shadow from "../Token/Shadow.js";
-import AlertTriangle from "lucide-react-native/icons/triangle-alert";
-import CheckCircle2 from "lucide-react-native/icons/circle-check";
-import InfoIcon from "lucide-react-native/icons/info";
-import XCircle from "lucide-react-native/icons/circle-x";
+import {
+    CircleCheck as CheckCircle2,
+    CircleX as XCircle,
+    Info as InfoIcon,
+    TriangleAlert as AlertTriangle
+} from "../Icon.js";
 import Animated, { FadeInDown, FadeOutDown, LinearTransition } from "react-native-reanimated";
 import { Body, Description } from "./Text.js";
 import { MakeStyles, ViewStyle } from "../MakeStyles.js";

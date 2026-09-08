@@ -11,6 +11,7 @@
 export * from "./ComposeRefs.js";
 export * from "./MakeVariants.js";
 export * from "./Mix.js";
+export * from "./SvgDataUri.js";
 export * from "./Utility.js";
 export * from "./WithAlpha.js";
 

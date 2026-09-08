@@ -42,8 +42,7 @@ import {
     BottomSheetScrollView
 } from "./BottomSheet.js";
 import { Calendar, type CalendarRange } from "./Calendar.js";
-import ChevronDown from "lucide-react-native/icons/chevron-down";
-import HelpCircle from "lucide-react-native/icons/circle-question-mark";
+import { ChevronDown, CircleQuestionMark as HelpCircle } from "../Icon.js";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./Dialog.js";
 import { MakeStyles, ViewStyle as MakeViewStyle, TextStyle } from "../MakeStyles.js";
 import { MenuItem, MenuItemCheck, MenuItemSelect } from "./Menu.js";

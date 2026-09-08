@@ -28,7 +28,7 @@ import {
 import { type StyleProp, type ViewStyle } from "react-native";
 import { Body } from "./Text.js";
 import { Pressable } from "./Pressable.js";
-import ChevronDown from "lucide-react-native/icons/chevron-down";
+import { ChevronDown } from "../Icon.js";
 import { MenuItemCheck } from "./Menu.js";
 import type { Thunk } from "@sorrell/effect/Function";
 import { useToken } from "../ThemeProvider.js";

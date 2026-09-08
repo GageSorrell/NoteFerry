@@ -26,11 +26,12 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Function } from "@sorrell/effect";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import type { Href } from "expo-router";
+import { InitializeAdsRuntime } from "@/Domain/Ads/AdsRuntime";
 import { InitializeI18n, SyncCalendarLocales } from "@/Domain/Localization";
 import { RegisterDevelopmentMenu } from "@/Domain/Runtime/DevelopmentMenu";
 import { RestoringSessionScreen } from "@/Component";
 import { StatusBar } from "@/Domain/Miscellaneous/StatusBar";
-import { SubscriptionProvider } from "@/Domain/Subscription";
+import { SubscriptionProvider, useSubscription } from "@/Domain/Subscription";
 import { useHighContrast } from "@/features/settings/use-high-contrast";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useQuickActionCallback } from "expo-quick-actions/hooks";
@@ -185,7 +186,7 @@ const RootNavigator = () =>
     const Development = useDevelopmentOnboarding();
     const Router = useLazyRouter();
     const Theme = useTheme();
-    const { t } = useTranslation([ "settings", "common", "subscription", "onboarding" ]);
+    const { t } = useTranslation([ "settings", "common", "subscription" ]);
 
     const IsAuthenticated = Session !== null;
     const MockStage = Development.Scenario === null
@@ -206,6 +207,25 @@ const RootNavigator = () =>
     const CanAccessDatabaseConfiguration = Development.Active
         ? MockStage === "Onboarding"
         : IsAuthenticated;
+
+    const { Status: SubscriptionStatus } = useSubscription();
+
+    /* Started here, once onboarding is fully behind the user, rather than the
+     * instant a session appears: initializing ads also runs Google's UMP
+     * consent flow, which can present a WebView-backed native form. Showing
+     * that immediately after Notion sign-in stacks it on top of the activity
+     * stop/resume churn the OAuth browser return already causes, and has been
+     * observed to grow this activity's saved-instance-state bundle past
+     * Android's Binder transaction limit -- crashing with
+     * `TransactionTooLargeException` right when onboarding should be
+     * finishing up. */
+    useEffect(() =>
+    {
+        if (IsInApp && SubscriptionStatus?.Active === false)
+        {
+            void InitializeAdsRuntime();
+        }
+    }, [ IsInApp, SubscriptionStatus ]);
 
     useQuickActionCallback(useCallback((QuickAction: Action) =>
     {
@@ -254,10 +274,10 @@ const RootNavigator = () =>
                 <Stack.Screen name="sign-in" />
                 <Stack.Screen name="sign-in-modal"
                     options={ {
-                        headerShown: true,
-                        headerStyle: { backgroundColor: Theme.Semantic.BackgroundModal },
-                        presentation: "modal",
-                        title: t("onboarding:titles.signInModal")
+                        animation: "none",
+                        gestureEnabled: false,
+                        headerShown: false,
+                        presentation: "transparentModal"
                     } } />
             </Stack.Protected>
             <Stack.Protected guard={ IsInOnboarding }>

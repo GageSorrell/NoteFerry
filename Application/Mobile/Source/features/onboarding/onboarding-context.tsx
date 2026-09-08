@@ -27,6 +27,28 @@ import { useAuth } from "@/Domain/Auth";
 
 const PendingOnboardingStorageKey = "@noteferry/onboarding-pending" as const;
 
+/* How long the post-sign-in connection check may block onboarding navigation.
+ * Neither `ListConnections` nor `ListDataSources` carries a network timeout of
+ * its own, so a slow dependency (a cold Supabase Edge Function, a dropped
+ * connection with no server-side response) can otherwise leave
+ * `IsLoadingConnection` -- and with it `RootNavigator`'s blocking gate, which
+ * offers no escape for this reason the way it does for a slow session
+ * restore -- stuck on `RestoringSessionScreen` forever, right after the user
+ * finishes signing in with Notion. */
+const ConnectionCheckTimeoutMs = 10_000;
+
+/** Rejects with a timeout error if `Target` has not settled within the budget. */
+const WithTimeout = <Value,>(Target: Promise<Value>): Promise<Value> => Promise.race([
+    Target,
+    new Promise<never>((_Resolve, Reject: (Reason: unknown) => void): void =>
+    {
+        setTimeout(
+            () => Reject(new Error("Timed out checking the Notion connection")),
+            ConnectionCheckTimeoutMs
+        );
+    })
+]);
+
 /** The onboarding state shared through {@link useOnboarding}. */
 export interface OnboardingState
 {
@@ -179,8 +201,8 @@ export const OnboardingProvider = ({
          * completed connection reads back as "not connected" and sends the
          * user through the Notion OAuth flow again for no reason. */
         const [ ConnectionsResult, DataSourcesResult ] = await Promise.allSettled([
-            ListConnections(),
-            ListDataSources()
+            WithTimeout(ListConnections()),
+            WithTimeout(ListDataSources())
         ]);
 
         if (ConnectionsResult.status === "fulfilled")

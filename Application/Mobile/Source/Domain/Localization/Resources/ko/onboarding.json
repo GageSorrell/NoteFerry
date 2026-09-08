@@ -1,11 +1,13 @@
 {
     "titles": {
-        "signInModal": "앞으로 남은 두 단계"
+        "signInModal": "NoteFerry로 로그인"
     },
     "signIn": {
         "heroTitle": "노트 정리, 더 빠르게.",
         "heroSubtitle": "Notion 계정으로 로그인하세요",
         "continueWithNotion": "Notion으로 계속하기",
+        "getStarted": "시작하기",
+        "notionAffiliationDisclaimer": "NoteFerry는 독립된 앱으로, Notion과 제휴하거나 Notion의 후원을 받지 않아요.",
         "noAccount": "Notion 계정이 없으신가요?",
         "signUp": "가입하기",
         "legal": {
@@ -26,10 +28,9 @@
         }
     },
     "signInModal": {
-        "step1": "먼저 Notion에 로그인하고 워크스페이스에 NoteFerry 통합을 추가할 거예요.",
-        "step2": "그다음 NoteFerry가 볼 수 있는 데이터베이스를 선택할 거예요.",
+        "message": "Notion에서 NoteFerry와 공유할 데이터베이스도 선택하라는 메시지가 표시돼요.",
         "tip": "팁: NoteFerry에 페이지 접근 권한을 주면 그 페이지 아래에 있는 모든 데이터베이스에도 접근 권한이 주어져요.",
-        "logInWithNotion": "Notion으로 로그인",
+        "learnMore": "타사 연결에 대해 자세히 알아보기",
         "backToWelcome": "환영 화면으로 돌아가기"
     },
     "sync": {

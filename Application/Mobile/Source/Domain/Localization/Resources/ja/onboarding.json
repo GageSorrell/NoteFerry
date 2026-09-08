@@ -1,11 +1,13 @@
 {
     "titles": {
-        "signInModal": "この後の流れ:2つのステップ"
+        "signInModal": "NoteFerryにログイン"
     },
     "signIn": {
         "heroTitle": "ノート作成を、もっと速く。",
         "heroSubtitle": "Notionアカウントでログイン",
         "continueWithNotion": "Notionで続ける",
+        "getStarted": "はじめる",
+        "notionAffiliationDisclaimer": "NoteFerryは独立したアプリであり、Notionとの提携や、Notionによる承認を受けたものではありません。",
         "noAccount": "Notionアカウントをお持ちでないですか?",
         "signUp": "登録する",
         "legal": {
@@ -26,10 +28,9 @@
         }
     },
     "signInModal": {
-        "step1": "まず、Notionにログインして、ワークスペースにNoteFerryのインテグレーションを追加します。",
-        "step2": "次に、NoteFerryが参照できるデータベースを選びます。",
+        "message": "Notionでは、NoteFerryと共有するデータベースを選ぶよう求められます。",
         "tip": "ヒント:ページへのアクセス権をNoteFerryに与えると、そのページ配下のすべてのデータベースへのアクセス権も与えられます。",
-        "logInWithNotion": "Notionでログイン",
+        "learnMore": "サードパーティ連携について詳しく見る",
         "backToWelcome": "ようこそ画面に戻る"
     },
     "sync": {

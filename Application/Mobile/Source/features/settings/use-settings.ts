@@ -70,6 +70,20 @@ const useSettings = (Enabled = true): UseSettings =>
             {
                 /* eslint-disable-next-line no-console */
                 console.error("Failed to load settings", Error);
+
+                if (typeof Error === "object" && Error !== null)
+                {
+                    if ("message" in Error)
+                    {
+                        console.error("Error.message:");
+                        console.error(Error.message);
+                    }
+                    else if ("Message" in Error)
+                    {
+                        console.error("Error.Message:");
+                        console.error(Error.Message);
+                    }
+                }
             }
         }
         finally

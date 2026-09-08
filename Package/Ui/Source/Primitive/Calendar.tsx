@@ -28,8 +28,7 @@
 
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
-import ChevronLeft from "lucide-react-native/icons/chevron-left";
-import ChevronRight from "lucide-react-native/icons/chevron-right";
+import { ChevronLeft, ChevronRight } from "../Icon.js";
 import { type DateData, Calendar as RNCalendar, LocaleConfig } from "react-native-calendars";
 import { MakeStyles, ViewStyle as MakeViewStyle, TextStyle } from "../MakeStyles.js";
 import { Mix, WithAlpha } from "../Utility/index.js";

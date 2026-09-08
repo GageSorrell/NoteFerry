@@ -31,7 +31,6 @@
     "expo-device": "~57.0.1",
     "expo-document-picker": "~57.0.1",
     "expo-file-system": "~57.0.3",
-    "expo-font": "~57.0.1",
     "expo-glass-effect": "~57.0.1",
     "expo-image": "~57.0.3",
     "expo-image-picker": "~57.0.10",
@@ -85,8 +84,8 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
-    "dev": "expo start --android --dev-client",
-    "dev:clean": "expo start --android --dev-client -c",
+    "dev": "expo start --dev-client",
+    "dev:clean": "expo start --dev-client -c",
     "start": "expo start --dev-client",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android --dev-client",

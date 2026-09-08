@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  MSBuild auto-imports the nearest Directory.Build.props above every project
+  it builds (via Microsoft.Cpp.Default.props/Microsoft.Common.props, very
+  early — before any PropertySheets a .vcxproj imports later). This repo
+  hoists npm dependencies to its own root node_modules (npm workspaces), so
+  every react-native-windows-autolinked native module project — e.g.
+  react-native-svg's node_modules\react-native-svg\windows\RNSVG\RNSVG.vcxproj
+  — lives several directories below THIS repo root, not below
+  Application\Windows (the actual RN app). This is the one file that's an
+  ancestor of every such hoisted project, so it's the one place that can fix
+  what's below for all of them at once.
+
+  react-native-windows's own Codegen.props computes a default
+  CodegenCommandWorkingDir by walking UP from each project's own directory
+  to the *nearest* package.json. For an autolinked node_modules project,
+  that's the dependency's own package.json (e.g.
+  node_modules\react-native-svg\package.json) — not Application\Windows's.
+  Running "npx @react-native-community/cli codegen-windows" from there fails
+  with "unknown command 'codegen-windows'": that command is registered by
+  the @react-native-windows/cli plugin, which @react-native-community/cli
+  only discovers by finding a real React Native project rooted at its own
+  cwd — and node_modules\react-native-svg isn't one.
+
+  Pin every project's codegen working directory to the actual app,
+  explicitly, instead of relying on that upward package.json search.
+
+  This repo currently has exactly one react-native-windows app
+  (Application\Windows). If a second one is ever added, this needs to
+  become per-project (e.g. moved into that app's own windows\ tree) instead
+  of repo-wide.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <CodegenCommandWorkingDir>$(MSBuildThisFileDirectory)Application\Windows</CodegenCommandWorkingDir>
+  </PropertyGroup>
+</Project>

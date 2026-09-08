@@ -9,6 +9,7 @@
     {
 		"cSpell.words":
         [
+			"Allman",
 			"Amato's",
 			"ciphertext",
 			"cmdk",
@@ -18,6 +19,7 @@
 			"Gumroad",
 			"httpapi",
 			"interstitials",
+			"invasively",
 			"Jetpack",
 			"logcat",
 			"navigations",
@@ -40,5 +42,10 @@
 		],
 		"sorrellWmCodeExtension.headers.insertOnAnyFileCreation": false,
 		"dotnet.defaultSolution": "disable"
+	},
+	"extensions": {
+		"recommendations": [
+			"msjsdiag.vscode-react-native"
+		]
 	}
 }

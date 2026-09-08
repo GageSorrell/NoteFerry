@@ -1,11 +1,13 @@
 {
     "titles": {
-        "signInModal": "What’s Ahead: Two Steps"
+        "signInModal": "Sign in to NoteFerry"
     },
     "signIn": {
         "heroTitle": "Your notes, faster.",
         "heroSubtitle": "Log in with your Notion account",
         "continueWithNotion": "Continue with Notion",
+        "getStarted": "Get started",
+        "notionAffiliationDisclaimer": "NoteFerry is a third-party companion for Notion.  It is not affiliated with Notion.",
         "noAccount": "Don’t have a Notion account?",
         "signUp": "Sign up",
         "legal": {
@@ -26,10 +28,9 @@
         }
     },
     "signInModal": {
-        "step1": "First, you’ll sign into Notion and add the NoteFerry integration to your workspace.",
-        "step2": "Then, you’ll choose which databases NoteFerry can see.",
-        "tip": "Tip: Giving NoteFerry access to a page also gives access to all databases under that page.",
-        "logInWithNotion": "Log in with Notion",
+        "message": "Once signed in, Notion will ask you which databases to share with NoteFerry.",
+        "tip": "Tip: Giving NoteFerry access to a page also gives access to all databases in that page.",
+        "learnMore": "Learn more about connections in Notion",
         "backToWelcome": "Back to welcome"
     },
     "sync": {

@@ -52,6 +52,10 @@
       "import": "./Distribution/Primitive/*.js",
       "types": "./Distribution/Primitive/*.d.ts"
     },
+    "./Platform": {
+      "import": "./Distribution/Platform/index.js",
+      "types": "./Distribution/Platform/index.d.ts"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {
@@ -64,18 +68,26 @@
     "expo-image-picker": "~57.0.8",
     "expo-router": "~57.0.11",
     "react": ">=19.2.0",
-    "react-native": ">=0.86.0",
+    "react-native": ">=0.84.0",
     "react-native-gesture-handler": ">=2.32.0",
     "react-native-reanimated": ">=4.5.0",
     "react-native-safe-area-context": "5.8.0",
     "react-native-svg": "15.15.4"
+  },
+  "peerDependenciesMeta": {
+    "@expo/ui": { "optional": true },
+    "expo": { "optional": true },
+    "expo-image": { "optional": true },
+    "expo-image-picker": { "optional": true },
+    "expo-router": { "optional": true },
+    "react-native-gesture-handler": { "optional": true },
+    "react-native-reanimated": { "optional": true }
   },
   "dependencies": {
     "@sorrell/effect": "1.0.1",
     "@sorrell/utility": "2.0.1",
     "@better-fetch/fetch": "1.3.1",
     "@emoji-mart/data": "1.2.1",
-    "@expo-google-fonts/inter": "0.4.2",
     "@gorhom/bottom-sheet": "5.2.14",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@shopify/flash-list": "2.0.2",

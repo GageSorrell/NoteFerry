@@ -1,11 +1,13 @@
 {
     "titles": {
-        "signInModal": "Das erwartet dich: Zwei Schritte"
+        "signInModal": "Bei NoteFerry anmelden"
     },
     "signIn": {
         "heroTitle": "Deine Notizen, schneller.",
         "heroSubtitle": "Melde dich mit deinem Notion-Konto an",
         "continueWithNotion": "Mit Notion fortfahren",
+        "getStarted": "Loslegen",
+        "notionAffiliationDisclaimer": "NoteFerry ist eine unabhängige App und weder mit Notion verbunden noch von Notion unterstützt.",
         "noAccount": "Du hast noch kein Notion-Konto?",
         "signUp": "Registrieren",
         "legal": {
@@ -26,10 +28,9 @@
         }
     },
     "signInModal": {
-        "step1": "Zuerst meldest du dich bei Notion an und fügst deinem Workspace die NoteFerry-Integration hinzu.",
-        "step2": "Danach wählst du aus, welche Datenbanken NoteFerry sehen darf.",
+        "message": "Notion wird dich außerdem fragen, welche Datenbanken du mit NoteFerry teilen möchtest.",
         "tip": "Tipp: Wenn du NoteFerry Zugriff auf eine Seite gibst, erhält es auch Zugriff auf alle Datenbanken unter dieser Seite.",
-        "logInWithNotion": "Mit Notion anmelden",
+        "learnMore": "Mehr über Drittanbieter-Verbindungen erfahren",
         "backToWelcome": "Zurück zum Willkommensbildschirm"
     },
     "sync": {

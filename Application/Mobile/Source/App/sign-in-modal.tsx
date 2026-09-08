@@ -1,5 +1,7 @@
 /**
- * Controller for the sign-in explanation modal and Notion sign-in.
+ * Controller for the sign-in explanation bottom sheet and Notion sign-in.
+ * The route itself renders as a transparent overlay (see `_layout.tsx`) so
+ * the welcome screen (`/sign-in`) stays visible and dimmed beneath it.
  *
  * @module noteferry/app/sign-in-modal
  *
@@ -10,49 +12,15 @@
  */
 
 import type { EventArg, NavigationAction } from "expo-router/build/react-navigation";
-import { MakeStyles, ViewStyle, useTheme } from "@noteferry/ui/Core";
 import { OnboardingMockTiming, useDevelopmentOnboarding } from "@/features/onboarding/onboarding-development";
-import { Stack, useNavigation } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import ChevronLeft from "lucide-react-native/icons/chevron-left";
 import { AdoptNotionAuthorization } from "@/Domain/Runtime/NoteFerryApi";
-import { Pressable } from "@noteferry/ui/Primitive/Pressable";
-import type { PressableStateCallbackType } from "react-native";
+import { BottomSheet, type BottomSheet as BottomSheetHandle } from "@noteferry/ui/Primitive/BottomSheet";
 import { SignInModalView } from "@/features/onboarding/onboarding-views";
 import { SignInWithOAuth } from "@/Domain/Auth/OAuth";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
+import { useNavigation } from "expo-router";
 import { useOnboarding } from "@/features/onboarding/onboarding-context";
-import { useTranslation } from "react-i18next";
-
-interface HeaderBackButtonProps
-{
-    readonly OnPress: () => void;
-}
-
-/** Native-stack header back control that always routes to the welcome screen. */
-const HeaderBackButton = ({ OnPress }: HeaderBackButtonProps): React.JSX.Element =>
-{
-    const Theme = useTheme();
-    const Styles = useHeaderStyles();
-    const { t } = useTranslation("onboarding");
-
-    return (
-        <Pressable
-            Accessibility={ { Label: t("signInModal.backToWelcome"), Role: "button" } }
-            OnPress={ OnPress }
-            hitSlop={ 8 }
-            style={ ({ pressed }: PressableStateCallbackType) => [
-                Styles.BackButton,
-                pressed && Styles.BackButtonPressed
-            ] }>
-            <ChevronLeft
-                color={ Theme.Semantic.IconPrimary }
-                size={ 26 }
-                strokeWidth={ 2 }
-            />
-        </Pressable>
-    );
-};
 
 const SignInModal = () =>
 {
@@ -61,12 +29,14 @@ const SignInModal = () =>
     const Navigation = useNavigation();
     const Development = useDevelopmentOnboarding();
     const { Begin, Complete, RecordAuthorizationResult } = useOnboarding();
+    const Sheet = useRef<BottomSheetHandle>(null);
 
-    /* Both the native header button and the footer link call `OnBack`
-     * directly, but a hardware back press or an iOS swipe-dismiss instead
-     * fire `beforeRemove`, which the listener below intercepts. This flag
-     * tells that listener the removal it is seeing was already initiated by
-     * `OnBack`, so it should let it through rather than re-triggering it. */
+    /* The sheet's own close animation (swipe, backdrop tap, or a
+     * programmatic `.dismiss()` below) is the only way this screen should
+     * ever disappear. This flag tells the `beforeRemove` listener that a
+     * removal it is seeing already went through that animation via
+     * `OnSheetDismiss`, so it should let it through rather than
+     * re-triggering it. */
     const AllowNavigation = useRef(false);
 
     const IsPending = Development.Active
@@ -137,7 +107,19 @@ const SignInModal = () =>
         }
     };
 
-    const OnBack = useCallback((): void =>
+    /* Presents the sheet once this (otherwise-invisible) route has mounted,
+     * so it slides up and dims `/sign-in` behind it rather than appearing
+     * instantly. */
+    useEffect(() =>
+    {
+        Sheet.current?.present();
+    }, []);
+
+    /* Fires once the sheet has finished closing, however that was
+     * triggered — swipe-to-dismiss, a backdrop tap, or the programmatic
+     * `.dismiss()` below — and performs the actual navigation back to the
+     * welcome screen. */
+    const OnSheetDismiss = useCallback((): void =>
     {
         AllowNavigation.current = true;
 
@@ -154,9 +136,9 @@ const SignInModal = () =>
     type BeforeRemoveEvent = EventArg<"beforeRemove", true, { action: NavigationAction; }>;
 
     /* Catches every way this screen can be left that does not already go
-     * through `OnBack` — the Android hardware back button and the iOS
-     * swipe-to-dismiss gesture — and redirects them to the welcome screen
-     * the same way the header button and footer link do. */
+     * through the sheet's own close animation — chiefly the Android
+     * hardware back button — and routes it through that animation instead
+     * of letting the screen disappear abruptly. */
     useEffect(() => Navigation.addListener("beforeRemove", (Event: BeforeRemoveEvent) =>
     {
         if (AllowNavigation.current)
@@ -165,30 +147,17 @@ const SignInModal = () =>
         }
 
         Event.preventDefault();
-        OnBack();
-    }), [ Navigation, OnBack ]);
+        Sheet.current?.dismiss();
+    }), [ Navigation ]);
 
     return (
-        <>
-            <Stack.Screen
-                options={ { headerLeft: () => <HeaderBackButton OnPress={ OnBack } /> } }
-            />
+        <BottomSheet
+            EnableDynamicSizing
+            OnDismiss={ OnSheetDismiss }
+            Ref={ Sheet }>
             <SignInModalView { ...{ IsPending, OnSignIn } } />
-        </>
+        </BottomSheet>
     );
 };
 
 export default SignInModal;
-
-const useHeaderStyles = MakeStyles({
-    BackButton: ViewStyle({
-        alignItems: "center",
-        height: 32,
-        justifyContent: "center",
-        marginLeft: -8,
-        width: 32
-    }),
-    BackButtonPressed: ViewStyle({
-        opacity: 0.5
-    })
-});

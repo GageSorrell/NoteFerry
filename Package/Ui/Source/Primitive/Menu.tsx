@@ -17,8 +17,7 @@ import * as Radii from "../Token/Radii.js";
 import * as React from "react";
 import * as Semantic from "../Token/Semantic.js";
 import { Body, BodyCompact, Description, LabelText, MenuItemText } from "./Text.js";
-import Check from "lucide-react-native/icons/check";
-import ChevronRight from "lucide-react-native/icons/chevron-right";
+import { Check, ChevronRight } from "../Icon.js";
 import {
     type GestureResponderEvent,
     type StyleProp,

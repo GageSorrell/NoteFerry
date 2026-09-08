@@ -31,17 +31,34 @@ const ReadBudgetMs = 2500;
  * Every reader shares this promise instead of issuing its own AsyncStorage
  * call.
  *
+ * Never rejects: a storage failure here degrades to "every key absent" rather
+ * than a rejected `Snapshot`, which would otherwise sit forever unhandled
+ * inside {@link BootStoreGet}'s `Promise.race` (a race only settles once one
+ * of its inputs does; a rejection that loses the race is never observed) and
+ * leave every caller's own `.then` -- callers that gate a loading flag on it,
+ * like `OnboardingProvider`, have no `.catch` of their own -- pending forever.
+ *
  * @category Runtime
  * @since 1.0.0
  */
 const Snapshot: Promise<ReadonlyMap<string, string>> = (async (): Promise<ReadonlyMap<string, string>> =>
 {
-    const Keys = await AsyncStorage.getAllKeys();
-    const Entries = await AsyncStorage.multiGet(Keys);
+    try
+    {
+        const Keys = await AsyncStorage.getAllKeys();
+        const Entries = await AsyncStorage.multiGet(Keys);
 
-    return new Map(
-        Entries.filter((Entry): Entry is [ string, string ] => Entry[ 1 ] !== null)
-    );
+        return new Map(
+            Entries.filter((Entry): Entry is [ string, string ] => Entry[ 1 ] !== null)
+        );
+    }
+    catch (Error)
+    {
+        /* eslint-disable-next-line no-console */
+        console.error("Failed to read the boot-time AsyncStorage snapshot", Error);
+
+        return new Map();
+    }
 })();
 
 /**

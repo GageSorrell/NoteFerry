@@ -1,0 +1,29 @@
+{
+  "name": "@noteferry/patch-react-native-tools",
+  "description": "Auto-patches two Windows-only bugs that break RNW debugging via the installed React Native Tools VS Code extension: its spawn EINVAL bug (react-native.cmd spawned without shell:true), and its hardcoded (non-monorepo-aware) lookup of the open npm package.",
+  "private": true,
+  "homepage": "https://noteferry.sorrell.sh",
+  "version": "1.0.0",
+  "author": {
+    "name": "Gage Sorrell",
+    "email": "gage@sorrell.sh",
+    "url": "https://sorrell.sh"
+  },
+  "bugs": {
+    "url": "https://github.com/GageSorrell/NoteFerry/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "directory": "Script/PatchReactNativeTools",
+    "type": "git",
+    "url": "git+https://github.com/GageSorrell/NoteFerry.git"
+  },
+  "engines": {
+    "node": "24.19.0",
+    "npm": ">=12.0.2"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node ./Source/index.ts"
+  }
+}

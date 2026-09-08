@@ -64,39 +64,40 @@ import EmojiMartDataRaw, { type Emoji, type EmojiMartData } from "@emoji-mart/da
 import { IconBlock, type IconData, LucideIconMap, type LucideIconName } from "./IconBlock.js";
 import { MakeStyles, TextStyle, ViewStyle } from "../MakeStyles.js";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Primitive/Tabs.js";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button } from "../Primitive/Button.js";
 import { Input } from "../Primitive/Input.js";
 import type { ReadonlyRecord } from "effect/Record";
 import * as String from "effect/String";
 import type { Thunk } from "@sorrell/effect/Function";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
-import Upload from "lucide-react-native/icons/upload";
+import { Upload } from "../Icon.js";
 import { View } from "react-native";
 import { useToken } from "../ThemeProvider.js";
+import { usePlatformAdapter } from "../Platform/index.js";
 
 const MaxEmojiSearchResults = 60 as const;
 const MaxIconSearchResults = 100 as const;
 const RecentLimit = 24 as const;
 
 /**
- * A most-recently-used id list, persisted in `AsyncStorage`; this file's
- * (non-pluggable) stand-in for source's `useRecentIcons` "recency"
- * strategy.
+ * A most-recently-used id list, persisted via `usePlatformAdapter().KeyValueStore`
+ * (the Expo/mobile build's default is backed by `AsyncStorage`); this file's
+ * (non-pluggable) stand-in for source's `useRecentIcons` "recency" strategy.
  */
 const useRecentIconIds = (
     StorageKey: string
 ): readonly [ ReadonlyArray<string>, (Id: string) => void ] =>
 {
+    const { KeyValueStore: Store } = usePlatformAdapter();
     const [ RecentIds, SetRecentIds ] = React.useState<ReadonlyArray<string>>([ ]);
 
     React.useEffect(() =>
     {
         let Cancelled = false;
 
-        void AsyncStorage.getItem(StorageKey).then((Raw: string | null) =>
+        void Store.GetItem(StorageKey).then((Raw: string | undefined) =>
         {
-            if (Cancelled || Raw === null)
+            if (Cancelled || Raw === undefined)
             {
                 return;
             }
@@ -117,7 +118,7 @@ const useRecentIconIds = (
         });
 
         return () => { Cancelled = true; };
-    }, [ StorageKey ]);
+    }, [ Store, StorageKey ]);
 
     const TrackRecent = React.useCallback((Id: string) =>
     {
@@ -129,10 +130,10 @@ const useRecentIconIds = (
                     ...Previous.filter((Existing: string) => Existing !== Id)
                 ].slice(0, RecentLimit);
 
-            void AsyncStorage.setItem(StorageKey, JSON.stringify(Next));
+            void Store.SetItem(StorageKey, JSON.stringify(Next));
             return Next;
         });
-    }, [ StorageKey ]);
+    }, [ Store, StorageKey ]);
 
     return [ RecentIds, TrackRecent ] as const;
 };

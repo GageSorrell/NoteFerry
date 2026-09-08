@@ -28,7 +28,7 @@ import { Popup, type PopupAnchor, type PopupPlacement } from "./Popup.js";
 import { ScrollView, type StyleProp, type ViewStyle } from "react-native";
 export { MenuGroup as SelectGroup, MenuLabel as SelectLabel } from "./Menu.js";
 import { Body } from "./Text.js";
-import ChevronDown from "lucide-react-native/icons/chevron-down";
+import { ChevronDown } from "../Icon.js";
 import { NoteFerryUiError } from "../NoteFerryUiError.js";
 import { Pressable } from "./Pressable.js";
 import type { Thunk } from "@sorrell/effect/Function";

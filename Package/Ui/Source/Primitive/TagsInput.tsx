@@ -32,7 +32,7 @@ import { Description } from "./Text.js";
 import { Pressable } from "./Pressable.js";
 import * as String from "effect/String";
 import { WithAlpha } from "../Utility/index.js";
-import X from "lucide-react-native/icons/x";
+import { X } from "../Icon.js";
 import { useToken } from "../ThemeProvider.js";
 
 /** {@inheritDoc TagsInput} */

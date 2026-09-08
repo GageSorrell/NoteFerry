@@ -1,0 +1,41 @@
+{
+  "name": "@noteferry/rnw-dev-processes",
+  "description": "Lists and kills this repo's React Native Windows dev processes — the Metro packager that Application/Windows's debug/attach flow spawns.",
+  "private": true,
+  "homepage": "https://noteferry.sorrell.sh",
+  "version": "1.0.0",
+  "author": {
+    "name": "Gage Sorrell",
+    "email": "gage@sorrell.sh",
+    "url": "https://sorrell.sh"
+  },
+  "bugs": {
+    "url": "https://github.com/GageSorrell/NoteFerry/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "directory": "Script/RnwDevProcesses",
+    "type": "git",
+    "url": "git+https://github.com/GageSorrell/NoteFerry.git"
+  },
+  "engines": {
+    "node": "24.19.0",
+    "npm": ">=12.0.2"
+  },
+  "type": "module",
+  "bin": {
+    "rnw-dev-processes": "./Distribution/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p ./tsconfig.json",
+    "start": "node ./Distribution/index.js"
+  },
+  "dependencies": {
+    "@effect/platform-node": "4.0.0-rc.109",
+    "effect": "4.0.0-rc.109"
+  },
+  "devDependencies": {
+    "@sorrell/tsconfig": "2.1.0",
+    "typescript": "6.0.3"
+  }
+}

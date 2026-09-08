@@ -41,9 +41,15 @@ export interface BottomSheetProps extends React.PropsWithChildren
 {
     /** Overrides the sheet surface and handle-edge background. */
     readonly BackgroundColor?: string | undefined;
+    /**
+     * Sizes the sheet to fit its content instead of a fixed `SnapPoints`
+     * height — as short as the content allows, growing up to the screen
+     * height. `SnapPoints` is ignored while this is set.
+     */
+    readonly EnableDynamicSizing?: boolean;
     readonly OnChange?: Gorhom.BottomSheetModalProps["onChange"];
     readonly OnDismiss?: (() => void) | undefined;
-    /** Sheet heights. The first entry is used when the sheet opens. */
+    /** Sheet heights. The first entry is used when the sheet opens. Ignored when `EnableDynamicSizing` is set. */
     readonly SnapPoints?: Gorhom.BottomSheetModalProps["snapPoints"];
     readonly ShowDragIndicator?: boolean;
     readonly Ref: React.RefObject<Gorhom.BottomSheetModal | null>;
@@ -60,6 +66,7 @@ export/**
        */
 const BottomSheet = ({
     BackgroundColor,
+    EnableDynamicSizing = false,
     OnChange,
     OnDismiss,
     SnapPoints,
@@ -84,6 +91,11 @@ const BottomSheet = ({
 
     const marginHorizontal = Math.max(0, (WindowWidth - MaxWidth) / 2);
 
+    /* Fully dynamic sizing (no explicit `SnapPoints`) needs `snapPoints`
+     * omitted rather than passed as `undefined` — `exactOptionalPropertyTypes`
+     * treats those differently. */
+    const ResolvedSnapPoints = EnableDynamicSizing ? SnapPoints : (SnapPoints ?? DefaultSnapPoints);
+
     return (
         <Gorhom.BottomSheetModal
             backdropComponent={ (Props: Gorhom.BottomSheetBackdropProps) =>
@@ -98,7 +110,7 @@ const BottomSheet = ({
                 { backgroundColor: SheetBackgroundColor }
             ] }
             containerStyle={ { marginHorizontal } }
-            enableDynamicSizing={ false }
+            enableDynamicSizing={ EnableDynamicSizing }
             enablePanDownToClose
             handleIndicatorStyle={ [
                 Styles.HandleIndicator,
@@ -110,9 +122,9 @@ const BottomSheet = ({
             ] }
             index={ 0 }
             ref={ Ref }
-            snapPoints={ SnapPoints ?? DefaultSnapPoints }
             { ...(OnChange !== undefined ? { onChange: OnChange } : { }) }
             { ...(OnDismiss !== undefined ? { onClose: OnDismiss } : { }) }
+            { ...(ResolvedSnapPoints !== undefined ? { snapPoints: ResolvedSnapPoints } : { }) }
             { ...(ShowDragIndicator ? { } : { handleComponent: null }) }
             { ...(TestId === undefined ? { } : { testID: TestId }) }>
             <ThemeProvider { ...{ ColorScheme } }>
