@@ -19,7 +19,8 @@ __export(Id_exports, {
   OperationId: () => OperationId,
   UserId: () => UserId
 });
-import { Schema, pipe } from "effect";
+import * as Schema from "effect/Schema";
+import { pipe } from "effect/Function";
 var UserId = pipe(Schema.String, Schema.brand("UserId"));
 var NotionConnectionId = pipe(Schema.String, Schema.brand("NotionConnectionId"));
 var NotionWorkspaceId = pipe(Schema.String, Schema.brand("NotionWorkspaceId"));
@@ -71,7 +72,7 @@ __export(Property_exports, {
 });
 
 // Package/Domain/Distribution/Property/Option.js
-import { Schema as Schema2 } from "effect";
+import * as Schema2 from "effect/Schema";
 var PropertyOptionColor = Schema2.Literals([
   "Default",
   "Gray",
@@ -97,7 +98,7 @@ var StatusGroup = Schema2.Struct({
 });
 
 // Package/Domain/Distribution/Property/Definition.js
-import { Schema as Schema3 } from "effect";
+import * as Schema3 from "effect/Schema";
 var Base = {
   Id: NotionPropertyId,
   Name: Schema3.String
@@ -182,7 +183,7 @@ var PropertyDefinition = Schema3.Union([
 ]);
 
 // Package/Domain/Distribution/Property/Input.js
-import { Schema as Schema4 } from "effect";
+import * as Schema4 from "effect/Schema";
 var TitlePropertyInput = Schema4.Struct({
   Type: Schema4.tag("Title"),
   Value: Schema4.String
@@ -275,7 +276,7 @@ __export(Behavior_exports, {
   LaunchBehavior: () => LaunchBehavior,
   PostCreationBehavior: () => PostCreationBehavior
 });
-import { Schema as Schema5 } from "effect";
+import * as Schema5 from "effect/Schema";
 var LaunchBehavior = Schema5.Union([
   Schema5.Struct({ Type: Schema5.tag("Home") }),
   Schema5.Struct({
@@ -310,7 +311,7 @@ __export(PageDraft_exports, {
   PageDraft: () => PageDraft,
   PropertyInputValue: () => PropertyInputValue
 });
-import { Schema as Schema6 } from "effect";
+import * as Schema6 from "effect/Schema";
 var PropertyInputValue = Schema6.Struct({
   PropertyId: NotionPropertyId,
   Value: PropertyInput
@@ -324,7 +325,7 @@ var PageDraft = Schema6.Struct({
 });
 
 // Package/Domain/Distribution/DataSource.js
-import { Schema as Schema7 } from "effect";
+import * as Schema7 from "effect/Schema";
 var CachedDataSourceSchemaVersion = Schema7.Literal(2);
 var DiscoveredDataSource = Schema7.Struct({
   ConnectionId: NotionConnectionId,
@@ -391,7 +392,7 @@ __export(NotionConnection_exports, {
   NotionConnection: () => NotionConnection,
   NotionConnectionStatus: () => NotionConnectionStatus
 });
-import { Schema as Schema8 } from "effect";
+import * as Schema8 from "effect/Schema";
 var NotionConnectionStatus = Schema8.Literals(["Active", "Revoked"]);
 var NotionConnection = Schema8.Struct({
   BotId: Schema8.String,
@@ -425,7 +426,7 @@ __export(Destination_exports, {
   TemplateConfiguration: () => TemplateConfiguration,
   TemplateConfigurationVersion: () => TemplateConfigurationVersion
 });
-import { Schema as Schema9 } from "effect";
+import * as Schema9 from "effect/Schema";
 var DestinationTemplate = Schema9.Union([
   Schema9.Struct({ Type: Schema9.tag("None") }),
   Schema9.Struct({
@@ -556,7 +557,7 @@ __export(Settings_exports, {
   MaxQuickActionCount: () => MaxQuickActionCount,
   WithDefaults: () => WithDefaults
 });
-import { Schema as Schema10 } from "effect";
+import * as Schema10 from "effect/Schema";
 var MaxQuickActionCount = 6;
 var HomeScreenLayout = Schema10.Literals(["1", "2"]);
 var Contrast = Schema10.Literals(["System", "Standard", "High"]);
@@ -597,7 +598,7 @@ var WithDefaults = (Stored) => {
 };
 
 // Package/Domain/Distribution/Profile.js
-import { Schema as Schema11 } from "effect";
+import * as Schema11 from "effect/Schema";
 var Profile = Schema11.Struct({
   CreatedAt: Schema11.DateFromString,
   DisplayName: Schema11.optional(Schema11.String),
@@ -614,7 +615,7 @@ __export(Command_exports, {
   PageCoverInput: () => PageCoverInput,
   PageIconInput: () => PageIconInput
 });
-import { Schema as Schema12 } from "effect";
+import * as Schema12 from "effect/Schema";
 var PageIconInput = Schema12.Union([
   Schema12.Struct({ Emoji: Schema12.String, Type: Schema12.tag("Emoji") }),
   Schema12.Struct({ Type: Schema12.tag("External"), Url: Schema12.String }),
@@ -635,6 +636,7 @@ var PageCoverInput = Schema12.Union([
   })
 ]);
 var CreatePageCommand = Schema12.Struct({
+  /** Enriched Markdown converted to official Notion block children by the server. */
   Body: Schema12.optional(Schema12.String),
   Cover: Schema12.optional(PageCoverInput),
   DestinationId,
@@ -672,7 +674,7 @@ __export(Error_exports, {
   PageCreationInProgress: () => PageCreationInProgress,
   RateLimitExceeded: () => RateLimitExceeded
 });
-import { Schema as Schema13 } from "effect";
+import * as Schema13 from "effect/Schema";
 var AuthenticationRequired = class extends Schema13.TaggedError()("AuthenticationRequired", {}, { httpApiStatus: 401 }) {
 };
 var NotionConnectionNotFound = class extends Schema13.TaggedError()("NotionConnectionNotFound", { ConnectionId: NotionConnectionId }, { httpApiStatus: 404 }) {
@@ -751,8 +753,8 @@ __export(Subscription_exports, {
   SubscriptionStatus: () => SubscriptionStatus,
   SubscriptionTier: () => SubscriptionTier
 });
-import { Schema as Schema14 } from "effect";
-var ProEntitlementId = "pro";
+import * as Schema14 from "effect/Schema";
+var ProEntitlementId = "Notivex Pro";
 var FreeCreationLimit = 5;
 var FreeCreationWindowMinutes = 30;
 var FreeDatabaseLimit = 3;

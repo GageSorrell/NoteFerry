@@ -301,11 +301,6 @@ const RootNavigator = () =>
                         fontWeight: "600"
                     }
                 } }>
-            {/* Unguarded (not even by an auth-independent condition, unlike
-              * `oauth-callback` below) -- a Severe error can happen in any
-              * auth state, so `PresentError`'s `router.push("/error")` must
-              * always be able to reach it. */}
-            <Stack.Screen name="error" />
             <Stack.Protected guard={ CanRecoverOAuthCallback }>
                 <Stack.Screen name="oauth-callback" />
             </Stack.Protected>
@@ -400,6 +395,20 @@ const RootNavigator = () =>
                     options={ { headerShown: true, title: "Rich editor lab" } }
                 />
             </Stack.Protected>
+            {/* Unguarded (not even by an auth-independent condition, unlike
+              * `oauth-callback` above) -- a Severe error can happen in any
+              * auth state, so `PresentError`'s `router.push("/error")` must
+              * always be able to reach it. Kept *last*, not first: React
+              * Navigation falls back to the first-listed screen as the
+              * initial route whenever the actually-requested one (e.g.
+              * `index`) isn't among the currently guarded-in screens --
+              * which is exactly the case on a signed-out cold start. Listed
+              * first, this screen itself became that fallback, so a brand
+              * new user landed on "NoteFerry hit a snag" instead of
+              * `sign-in`. Its position doesn't affect reachability -- a
+              * screen is navigable via `router.push` regardless of where
+              * it's declared -- only which screen is chosen as the default. */}
+            <Stack.Screen name="error" />
                 </Stack>
                 </ErrorBoundary>
             </View>

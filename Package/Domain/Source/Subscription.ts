@@ -7,7 +7,18 @@
 
 import * as Schema from "effect/Schema";
 
-export const ProEntitlementId = "pro";
+/**
+ * RevenueCat entitlement lookup_key for Pro access. Must match the active
+ * entitlement identifier configured in the RevenueCat dashboard exactly
+ * (`Subscriber.entitlements[ProEntitlementId]` in
+ * `supabase/functions/_shared/Subscriptions.ts`). This is not "pro" because
+ * that identifier (and "noteferry_pro") is already reserved by an archived
+ * entitlement in the project that isn't reachable/unarchivable via the
+ * RevenueCat API tooling available at the time this was set up — see
+ * RELEASE_CHECKLIST.md section 1E. If that archived entitlement is ever
+ * unarchived and made current instead, update this constant to match.
+ */
+export const ProEntitlementId = "Notivex Pro";
 export const FreeCreationLimit = 5;
 export const FreeCreationWindowMinutes = 30;
 export const FreeDatabaseLimit = 3;
