@@ -21,9 +21,7 @@ import { DeleteAccountAction } from "@/components/site/delete-account/delete-acc
 import type { Metadata } from "next";
 import { siteConfig } from "@/content/site-config";
 
-export /**
-        *
-        */
+export/** Route-level metadata for `/delete-account`. */
 const metadata: Metadata = {
     alternates: { canonical: `${ siteConfig.canonicalUrl }/delete-account` },
     description: `How to request deletion of your ${ siteConfig.name } account and data.`,
@@ -85,7 +83,7 @@ const DeleteAccountPage = () =>
 
             <section className="mt-10">
                 <h2 className="text-xl font-semibold tracking-tight text-foreground">
-                    What's retained, and for how long
+                    What&apos;s retained, and for how long
                 </h2>
                 <ul className="mt-3 flex flex-col gap-2">
                     { dataRetained.map((item: string, index: number) => (

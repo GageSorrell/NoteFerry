@@ -37,7 +37,7 @@ const routes: ReadonlyArray<SitemapRoute> = [
  */
 const sitemap = (): MetadataRoute.Sitemap =>
 {
-    return routes.map(({ lastModified, path }) => ({
+    return routes.map(({ lastModified, path }: SitemapRoute) => ({
         lastModified,
         url: `${ siteConfig.canonicalUrl }${ path }`
     }));

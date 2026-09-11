@@ -22,13 +22,10 @@ import { useEffect, useState } from "react";
 import Script from "next/script";
 import { siteConfig } from "@/content/site-config";
 
-/**
- * Renders GA4's loader script once consent is granted on production;
- * renders nothing before that.
- */
-export /**
-        *
-        */
+export/**
+       * Renders GA4's loader script once consent is granted on production;
+       * renders nothing before that.
+       */
 const GoogleAnalytics = () =>
 {
     const [ isGranted, setIsGranted ] = useState(false);

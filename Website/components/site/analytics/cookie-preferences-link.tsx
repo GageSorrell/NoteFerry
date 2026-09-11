@@ -15,12 +15,7 @@
 
 import { reopenCookiePreferences } from "@/lib/analytics-consent";
 
-/**
- * Styled to match its sibling footer links (Terms/Privacy/Contact).
- */
-export /**
-        *
-        */
+export/** Styled to match its sibling footer links (Terms/Privacy/Contact). */
 const CookiePreferencesLink = () =>
 {
     return (
