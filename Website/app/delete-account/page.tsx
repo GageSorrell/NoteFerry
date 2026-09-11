@@ -21,7 +21,11 @@ import { DeleteAccountAction } from "@/components/site/delete-account/delete-acc
 import type { Metadata } from "next";
 import { siteConfig } from "@/content/site-config";
 
-export const metadata: Metadata = {
+export /**
+        *
+        */
+const metadata: Metadata = {
+    alternates: { canonical: `${ siteConfig.canonicalUrl }/delete-account` },
     description: `How to request deletion of your ${ siteConfig.name } account and data.`,
     title: "Delete Your Account"
 };

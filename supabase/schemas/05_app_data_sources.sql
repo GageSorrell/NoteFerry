@@ -14,8 +14,11 @@ create table app.data_sources (
     user_id uuid not null references auth.users (id) on delete cascade,
     notion_database_id text not null,
     title text not null,
+    -- Durable copies of SVG artwork accompany Notion's one-hour signed URLs.
+    cover_svg text,
     cover_url text,
     icon text,
+    icon_svg text,
     icon_type text check (icon_type in ('Emoji', 'Image', 'Native')),
     selected boolean not null default false,
     property_schema jsonb not null,

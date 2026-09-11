@@ -37,7 +37,7 @@ import { Clock } from "lucide-react";
 import Image from "next/image";
 import { headers } from "next/headers";
 import { cn } from "@/lib/utils";
-import { detectStorePlatformGroup, type StorePlatformGroup } from "@/lib/platform";
+import { type StorePlatformGroup, detectStorePlatformGroup } from "@/lib/platform";
 import { storeUrls } from "@/content/site-config";
 
 /**
@@ -89,7 +89,8 @@ export/**
        */
 const MicrosoftStoreBadge = ({ className }: StoreBadgeProps) =>
 {
-    return <ComingSoonBadge className={ className } storeName="Microsoft Store" />;
+    return <ComingSoonBadge className={ className }
+        storeName="Microsoft Store" />;
 };
 
 export/**
@@ -99,7 +100,8 @@ export/**
        */
 const MacAppStoreBadge = ({ className }: StoreBadgeProps) =>
 {
-    return <ComingSoonBadge className={ className } storeName="Mac App Store" />;
+    return <ComingSoonBadge className={ className }
+        storeName="Mac App Store" />;
 };
 
 export/**
@@ -109,7 +111,8 @@ export/**
        */
 const AppStoreBadge = ({ className }: StoreBadgeProps) =>
 {
-    return <ComingSoonBadge className={ className } storeName="App Store" />;
+    return <ComingSoonBadge className={ className }
+        storeName="App Store" />;
 };
 
 export/**
@@ -182,5 +185,6 @@ const PlatformStoreBadges = async ({ className }: StoreBadgeProps) =>
     const headerList = await headers();
     const platformGroup = detectStorePlatformGroup(headerList.get("user-agent"));
 
-    return <StoreBadges className={ className } platformGroup={ platformGroup } />;
+    return <StoreBadges className={ className }
+        platformGroup={ platformGroup } />;
 };

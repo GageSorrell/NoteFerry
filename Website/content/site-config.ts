@@ -14,11 +14,14 @@ export/**
        */
 const siteConfig = {
     canonicalUrl: "https://noteferry.sorrell.sh",
-    contactEmail: "gage@sorrell.sh",
+    contactEmail: "noteferry@sorrell.sh",
     description:
         "NoteFerry turns your phone into a fast capture tool for your Notion "
         + "databases. Sign in with Notion, pick a destination, and add a "
         + "new page in seconds.",
+    // The GA4 Measurement ID behind `GoogleAnalytics` — not a secret, so it's
+    // fine alongside the rest of this file rather than an env var.
+    gaMeasurementId: "G-0RTE8TYBFQ",
     githubIssuesUrl: "https://github.com/GageSorrell/NoteFerry/issues",
     githubRepoUrl: "https://github.com/GageSorrell/NoteFerry",
     name: "NoteFerry",

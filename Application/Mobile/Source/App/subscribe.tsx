@@ -21,6 +21,7 @@ import {
     type PurchasesPackage
 } from "react-native-purchases";
 import { useMemo, useState } from "react";
+import { PresentError } from "@/Domain/Observability";
 import { PurchaseSyncPendingError } from "@/Domain/Subscription/SubscriptionProvider";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSubscription } from "@/Domain/Subscription";
@@ -129,7 +130,7 @@ const SubscribeScreen = (): React.JSX.Element =>
         }
         catch (Error_)
         {
-            Alert.alert(t("subscribe.alerts.restoreFailed.title"), String(Error_));
+            PresentError(Error_, "RestorePurchases");
         }
         finally
         {

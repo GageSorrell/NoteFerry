@@ -27,16 +27,22 @@ import { Function } from "@sorrell/effect";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import type { Href } from "expo-router";
 import { InitializeAdsRuntime } from "@/Domain/Ads/AdsRuntime";
+import { GetPendingInitialOAuthCallback } from "@/Domain/Auth/OAuthRedirect";
 import { InitializeI18n, SyncCalendarLocales } from "@/Domain/Localization";
+import { InitializeSentry } from "@/Domain/Runtime/Sentry";
+import { PresentedErrorHost, ReportError } from "@/Domain/Observability";
 import { RegisterDevelopmentMenu } from "@/Domain/Runtime/DevelopmentMenu";
-import { RestoringSessionScreen } from "@/Component";
+import { ErrorBoundary, RestoringSessionScreen } from "@/Component";
 import { StatusBar } from "@/Domain/Miscellaneous/StatusBar";
+import { useAppFonts } from "@/Domain/Runtime/Fonts";
 import { SubscriptionProvider, useSubscription } from "@/Domain/Subscription";
+import { Toaster } from "@noteferry/ui/Primitive/Toast";
 import { useHighContrast } from "@/features/settings/use-high-contrast";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useQuickActionCallback } from "expo-quick-actions/hooks";
 import { useTranslation } from "react-i18next";
 
+InitializeSentry();
 void SplashScreen.preventAutoHideAsync();
 
 /* Kicked off at module load — before `RootLayout` ever renders — rather than
@@ -46,9 +52,19 @@ void SplashScreen.preventAutoHideAsync();
  * `SplashScreen.hideAsync()` no longer waits on it either: the splash now
  * hides on first root-view layout instead (see `RootLayout`). A failed init
  * still gets `SyncCalendarLocales` afterward so the calendar locale is never
- * left unsynced. */
+ * left unsynced.
+ *
+ * Reported as `"Severe"` (§D3) even though the app keeps booting afterward
+ * (i18next still falls back to bundled `en-US` strings) -- the checklist
+ * classifies i18n init failure as Severe outright, so this stays visible in
+ * Sentry at that tier without forcing a disruptive full-screen redirect for
+ * a condition the app already degrades gracefully from. */
 void InitializeI18n()
-    .catch((Error_: unknown) => console.error("i18n initialization failed:", Error_))
+    .catch((Error_: unknown) =>
+    {
+        console.error("i18n initialization failed:", Error_);
+        ReportError(Error_, "Severe", "i18n init");
+    })
     .then(SyncCalendarLocales);
 
 const HandledNotificationIds = new Set<string>();
@@ -189,6 +205,14 @@ const RootNavigator = () =>
     const { t } = useTranslation([ "settings", "common", "subscription" ]);
 
     const IsAuthenticated = Session !== null;
+    /* `oauth-callback` is a recovery-only route, not a general navigation
+     * fallback. Leaving it permanently available lets Expo Router select it
+     * while `/` is temporarily protected during session restoration. The
+     * callback screen then redirects to another protected route and can loop
+     * forever on its spinner. `+native-intent` records a real cold-start OAuth
+     * callback before this layout mounts, so only expose the route in that
+     * case. */
+    const CanRecoverOAuthCallback = GetPendingInitialOAuthCallback() !== null;
     const MockStage = Development.Scenario === null
         ? null
         : OnboardingMockRegistry[Development.Scenario].Stage;
@@ -267,6 +291,7 @@ const RootNavigator = () =>
             <View
                 importantForAccessibility={ IsRestoring ? "no-hide-descendants" : "auto" }
                 style={ Styles.RootNavigator }>
+                <ErrorBoundary>
                 <Stack screenOptions={ {
                     headerShown: false,
                     headerTitleAlign: "center",
@@ -276,7 +301,14 @@ const RootNavigator = () =>
                         fontWeight: "600"
                     }
                 } }>
-            <Stack.Screen name="oauth-callback" />
+            {/* Unguarded (not even by an auth-independent condition, unlike
+              * `oauth-callback` below) -- a Severe error can happen in any
+              * auth state, so `PresentError`'s `router.push("/error")` must
+              * always be able to reach it. */}
+            <Stack.Screen name="error" />
+            <Stack.Protected guard={ CanRecoverOAuthCallback }>
+                <Stack.Screen name="oauth-callback" />
+            </Stack.Protected>
             <Stack.Protected guard={ IsSignedOut }>
                 <Stack.Screen name="sign-in" />
                 <Stack.Screen name="sign-in-modal"
@@ -369,6 +401,7 @@ const RootNavigator = () =>
                 />
             </Stack.Protected>
                 </Stack>
+                </ErrorBoundary>
             </View>
             {
                 IsRestoring &&
@@ -388,13 +421,15 @@ const RootNavigator = () =>
                     />
                 </View>
             }
+            <Toaster Position="Top" />
+            <PresentedErrorHost />
         </View>
     );
 };
 
 const Styles = StyleSheet.create({
     RestoringOverlay: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         zIndex: 1
     },
     RootNavigator: { flex: 1 }
@@ -404,6 +439,10 @@ const RootLayout = () =>
 {
     const HasHiddenSplash = useRef(false);
 
+    /* Not awaited/gated on -- see `Fonts.ts`'s doc comment for why a custom
+     * font used only by the rarely-seen error-detail disclosure doesn't need
+     * to hold up the splash screen. */
+    useAppFonts();
     useRootRegistration();
 
     /* Hides the native splash on the first root-view layout — not after

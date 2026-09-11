@@ -35,7 +35,7 @@ interface FeedbackSubmissionPayload
 /* This webhook only ever notifies NoteFerry's own maintainer, so unlike
  * `ACCOUNT_DATA_REQUEST_NOTIFY_EMAIL` it is a fixed address rather than an
  * env var — one fewer secret to provision per environment. */
-const NotifyEmail = "gage@sorrell.sh";
+const NotifyEmail = "noteferry@sorrell.sh";
 
 const EscapeHtml = (Value: string): string =>
 {

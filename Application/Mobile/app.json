@@ -63,7 +63,7 @@
       [
         "react-native-google-mobile-ads",
         {
-          "androidAppId": "ca-app-pub-3940256099942544~3347511713",
+          "androidAppId": "ca-app-pub-4326984491274422~1327953099",
           "iosAppId": "ca-app-pub-3940256099942544~1458002511",
           "delayAppMeasurementInit": true,
           "userTrackingUsageDescription": "This identifier will be used to deliver personalized ads and measure their effectiveness.",
@@ -140,7 +140,8 @@
       ],
       "expo-mail-composer",
       "expo-notifications",
-      "expo-localization"
+      "expo-localization",
+      "@sentry/react-native/expo"
     ],
     "locales": {
       "de": "./Resource/Locales/de.json",

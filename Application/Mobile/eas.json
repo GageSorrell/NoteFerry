@@ -22,7 +22,10 @@
     },
     "production": {
       "node": "24.19.0",
-      "autoIncrement": true
+      "autoIncrement": true,
+      "android": {
+        "buildType": "app-bundle"
+      }
     }
   },
   "submit": {

@@ -338,6 +338,22 @@ skip_nonce_check = false
 # If enabled, it will allow the user to successfully authenticate when the provider does not return an email address.
 email_optional = false
 
+# Notion sign-in, used by both the mobile app and the website's `/delete-account` page
+# (Website/lib/supabase-client.ts) to identify which account to act on. Disabled by default,
+# like the `apple` template above — enabling this locally also requires
+# SUPABASE_AUTH_EXTERNAL_NOTION_SECRET to be set in the environment, or the CLI fails to parse
+# this file at all. The hosted project's Notion provider is configured separately, in the
+# Supabase Dashboard, and is unaffected by this file.
+[auth.external.notion]
+enabled = false
+client_id = ""
+# DO NOT commit your OAuth provider secret to git. Use environment variable substitution instead:
+secret = "env(SUPABASE_AUTH_EXTERNAL_NOTION_SECRET)"
+redirect_uri = ""
+url = ""
+skip_nonce_check = false
+email_optional = false
+
 # Allow Solana wallet holders to sign in to your project via the Sign in with Solana (SIWS, EIP-4361) standard.
 # You can configure "web3" rate limit in the [auth.rate_limit] section and set up [auth.captcha] if self-hosting.
 [auth.web3.solana]

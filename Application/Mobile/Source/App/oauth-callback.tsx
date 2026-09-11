@@ -19,6 +19,7 @@ import {
 } from "@/Domain/Auth";
 import { useEffect, useState } from "react";
 import { AdoptNotionAuthorization } from "@/Domain/Runtime/NoteFerryApi";
+import { ReportError } from "@/Domain/Observability";
 import { useOnboarding } from "@/features/onboarding/onboarding-context";
 import { useRouter } from "expo-router";
 import { useTheme } from "@noteferry/ui/Core";
@@ -84,9 +85,11 @@ const RecoverCallback = (
             {
                 /* The Supabase session is valid even if adopting its transient
                  * provider token fails. Keep the user in onboarding so they can
-                 * retry explicitly instead of launching another browser here. */
-                /* eslint-disable-next-line no-console */
-                console.error("Failed to save the Notion authorization", Error);
+                 * retry explicitly instead of launching another browser here.
+                 * `ReportError` only (no `PresentError`/dialog): the recovery
+                 * flow already surfaces `Succeeded: false` through `sync.tsx`'s
+                 * own UI, so a dialog here would be redundant. */
+                ReportError(Error, "Moderate", "OAuthCallback:AdoptAuthorization");
 
                 return { Destination: "Sync", Succeeded: false };
             }
@@ -108,8 +111,7 @@ const RecoverCallback = (
         return { Destination: "SignIn" };
     })().catch((Error: unknown): RecoveryResult =>
     {
-        /* eslint-disable-next-line no-console */
-        console.error("Failed to recover the OAuth callback", Error);
+        ReportError(Error, "Moderate", "OAuthCallback:Recover");
 
         return { Destination: "SignIn" };
     });

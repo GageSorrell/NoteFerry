@@ -137,7 +137,10 @@ const ResolveFontFamily = (Family: TextFamily): string =>
         case "Serif":
             return "serif";
         case "Mono":
-            return "monospace";
+            /* Loaded by the app under this exact family name -- see
+             * `Domain/Runtime/Fonts.ts`. Renders as the platform default
+             * font (not a monospace fallback) until that finishes loading. */
+            return "iA Writer Mono";
         case "Default":
         default:
             return "Roboto Flex";

@@ -16,6 +16,7 @@ import {
     useDevelopmentOnboarding
 } from "@/features/onboarding/onboarding-development";
 import { ConnectNotion } from "@/Domain/Connection";
+import { PresentError, ReportError } from "@/Domain/Observability";
 import { RefreshDataSource } from "@/Domain/Runtime/NoteFerryApi";
 import { SyncView } from "@/features/onboarding/onboarding-views";
 import { useAuth } from "@/Domain/Auth";
@@ -98,8 +99,10 @@ const SyncScreen = () =>
         }
         catch (Error)
         {
-            /* eslint-disable-next-line no-console */
-            console.error("Notion reauthorization failed", Error);
+            /* Previously silent (`console.error` only) -- the user tapped
+             * "reauthorize" and got no feedback at all if it failed, beyond
+             * the button resetting. `PresentError` closes that gap. */
+            PresentError(Error, "Reauthorize");
         }
         finally
         {
@@ -137,9 +140,11 @@ const SyncScreen = () =>
             catch (Error)
             {
                 /* One inaccessible database should not prevent the other
-                 * selected databases from being cached. */
-                /* eslint-disable-next-line no-console */
-                console.error("Failed to cache an onboarding database", Error);
+                 * selected databases from being cached -- so this stays
+                 * `ReportError` only (Sentry visibility), not `PresentError`:
+                 * a Toast/dialog per failed database in this loop would be
+                 * noisy for something that isn't blocking. */
+                ReportError(Error, "Minor", "SyncCacheOnboardingDatabase");
             }
         }
 

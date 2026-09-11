@@ -13,6 +13,9 @@
  * @license   MIT
  */
 
+/**
+ *
+ */
 export/**
        * The two badge groupings a visitor's device can fall into.
        */

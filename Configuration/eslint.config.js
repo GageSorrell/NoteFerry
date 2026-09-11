@@ -20,11 +20,6 @@ import ReactPerf  from "eslint-plugin-react-perf";
 import SorrellConfig from "@sorrell/eslint-config";
 import { defineConfig } from "eslint/config";
 
-module.exports = defineConfig([
-    {
-    },
-]);
-
 export default defineConfig(
     ExpoConfig,
     SorrellConfig,

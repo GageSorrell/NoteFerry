@@ -17,6 +17,7 @@
  */
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ReportError } from "@/Domain/Observability";
 
 /* How long a caller waits for the shared snapshot before treating a key as
  * absent. Short, because this is now the *only* AsyncStorage round trip on
@@ -56,6 +57,13 @@ const Snapshot: Promise<ReadonlyMap<string, string>> = (async (): Promise<Readon
     {
         /* eslint-disable-next-line no-console */
         console.error("Failed to read the boot-time AsyncStorage snapshot", Error);
+
+        /* `"Severe"` for Sentry visibility (per §D3's "boot failure" example)
+         * without actually behaving like it -- this function's entire
+         * contract (see the doc comment above) is to never leave a caller
+         * hanging, so it degrades to "every key absent" and the app keeps
+         * booting rather than routing to `/error`. */
+        ReportError(Error, "Severe", "BootStore");
 
         return new Map();
     }

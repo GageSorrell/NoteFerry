@@ -1,0 +1,4 @@
+Contact: mailto:noteferry@sorrell.sh
+Expires: 2027-09-11T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://noteferry.sorrell.sh/.well-known/security.txt

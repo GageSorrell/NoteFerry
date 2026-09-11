@@ -377,6 +377,45 @@ const FileToUrl = (File: Notion.NotionFile | undefined): string | undefined =>
     return File.type === "external" ? File.external.url : File.file.url;
 };
 
+const MaximumSvgLength = 1_000_000;
+
+/** Returns whether a remote artwork URL points to an SVG document. */
+const IsSvgUrl = (Value: string): boolean => /\.svg(?:$|[?#])/iu.test(Value);
+
+/**
+ * Takes a durable snapshot of Notion-hosted SVG artwork. Notion's file URLs
+ * expire after one hour, so persisting only the URL makes cached database
+ * artwork disappear even though the rest of the cached schema remains valid.
+ */
+const LoadSvgSnapshot = async (Url: string | undefined): Promise<string | undefined> =>
+{
+    if (!Url || !IsSvgUrl(Url))
+    {
+        return undefined;
+    }
+
+    try
+    {
+        const Response = await fetch(Url);
+
+        if (!Response.ok)
+        {
+            return undefined;
+        }
+
+        const Xml = await Response.text();
+
+        return Xml.length <= MaximumSvgLength && /<svg\b/iu.test(Xml)
+            ? Xml
+            : undefined;
+    }
+    catch
+    {
+        // Artwork is optional and must never prevent the schema from refreshing.
+        return undefined;
+    }
+};
+
 /* eslint-disable-next-line jsdoc/require-jsdoc */
 const TitleToString = (Title: readonly Notion.NotionRichTextItem[] | undefined): string =>
 {
@@ -438,17 +477,21 @@ const RowToCached = (
 ): Domain.DataSource.CachedDataSourceSchema =>
 {
     const CoverUrl = Row.cover_url as string | null;
+    const CoverSvg = Row.cover_svg as string | null;
     const Icon = Row.icon as string | null;
+    const IconSvg = Row.icon_svg as string | null;
     const IconType = Row.icon_type as NormalizedIcon["IconType"] | null;
     const StoredTemplates = (Row.templates ?? []) as ReadonlyArray<StoredTemplate>;
 
     return {
         Access: IsPro || Row.free_active === true ? "Available" : "Locked",
         ConnectionId: Row.connection_id as Domain.Id.NotionConnectionId,
+        ...(CoverSvg ? { CoverSvg } : {}),
         ...(CoverUrl ? { CoverUrl } : {}),
         DatabaseId: Row.notion_database_id as Domain.Id.NotionDatabaseId,
         DataSourceId: Row.notion_data_source_id as Domain.Id.NotionDataSourceId,
         ...(Icon ? { Icon } : {}),
+        ...(IconSvg ? { IconSvg } : {}),
         ...(IconType ? { IconType } : {}),
         NotionLastEditedTime: new Date(Row.notion_last_edited_time as string),
         Properties: Row.property_schema as readonly Domain.Property.PropertyDefinition[],
@@ -888,6 +931,10 @@ export const RefreshForUser = (UserId: string, ConnectionId: string, DataSourceI
         const CoverUrl = FileToUrl(Database.cover ?? ParentPage?.cover);
         const Title = TitleToString(Database.title ?? Object_.title);
         const Icon = NormalizeIcon(Database.icon ?? Object_.icon ?? ParentPage?.icon);
+        const [ CoverSvg, IconSvg ] = yield* Effect.promise(async () => Promise.all([
+            LoadSvgSnapshot(CoverUrl),
+            LoadSvgSnapshot(Icon?.IconType === "Image" ? Icon.Icon : undefined)
+        ]));
         const NotionLastEditedTime = Object_.last_edited_time ? new Date(Object_.last_edited_time) : new Date();
         const RefreshedAt = new Date();
         const { data: ProResult } = yield* Effect.promise(async () =>
@@ -928,9 +975,11 @@ export const RefreshForUser = (UserId: string, ConnectionId: string, DataSourceI
                 .upsert(
                     {
                         connection_id: ConnectionId,
+                        cover_svg: CoverSvg ?? null,
                         cover_url: CoverUrl ?? null,
                         free_active: FreeActive,
                         icon: Icon?.Icon ?? null,
+                        icon_svg: IconSvg ?? null,
                         icon_type: Icon?.IconType ?? null,
                         notion_data_source_id: DataSourceId,
                         notion_database_id: DatabaseId,
@@ -962,10 +1011,12 @@ export const RefreshForUser = (UserId: string, ConnectionId: string, DataSourceI
         return {
             Access: IsPro || FreeActive ? "Available" : "Locked",
             ConnectionId: ConnectionId as Domain.Id.NotionConnectionId,
+            ...(CoverSvg ? { CoverSvg } : {}),
             ...(CoverUrl ? { CoverUrl } : {}),
             DatabaseId: DatabaseId as Domain.Id.NotionDatabaseId,
             DataSourceId: DataSourceId as Domain.Id.NotionDataSourceId,
             ...(Icon ?? {}),
+            ...(IconSvg ? { IconSvg } : {}),
             NotionLastEditedTime,
             Properties,
             RefreshedAt,

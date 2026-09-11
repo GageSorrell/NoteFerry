@@ -11,6 +11,7 @@
 
 export * from "./Cover.js";
 export * from "./CoverPicker.js";
+export * from "./ErrorDialog.js";
 export * from "./IconBlock.js";
 export * from "./IconMenu.js";
 export * from "./Selectable.js";

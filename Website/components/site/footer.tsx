@@ -8,6 +8,7 @@
  */
 
 import { type NavLink, navLinks, siteConfig } from "@/content/site-config";
+import { CookiePreferencesLink } from "@/components/site/analytics/cookie-preferences-link";
 import { CreditsModal } from "@/components/site/credits-modal";
 import Link from "next/link";
 import { Logo } from "@/components/site/logo";
@@ -38,6 +39,7 @@ const Footer = () =>
                         </Link>
                     )) }
                     <CreditsModal />
+                    <CookiePreferencesLink />
                     <a
                         className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                         href={ siteConfig.githubIssuesUrl }>

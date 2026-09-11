@@ -17,6 +17,7 @@ import { Button } from "@noteferry/ui/Primitive/Button";
 import { Description, Heading1, Heading2 } from "@noteferry/ui/Primitive/Text";
 import { DeleteAccount, RequestAccountData } from "@/Domain/Runtime/NoteFerryApi";
 import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui/Core";
+import { PresentError } from "@/Domain/Observability";
 import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/Domain/Auth/NoteFerryAuthProvider";
@@ -56,9 +57,7 @@ const AccountSettingsScreen = (): React.JSX.Element =>
         }
         catch (Error)
         {
-            /* eslint-disable-next-line no-console */
-            console.error("Failed to request account data", Error);
-            Alert.alert(t("accountSettings.errorGeneric.title"), t("accountSettings.errorGeneric.message"));
+            PresentError(Error, "RequestAccountData");
         }
         finally
         {
@@ -77,12 +76,10 @@ const AccountSettingsScreen = (): React.JSX.Element =>
         }
         catch (Error)
         {
-            /* eslint-disable-next-line no-console */
-            console.error("Failed to delete account", Error);
-            Alert.alert(t("accountSettings.errorGeneric.title"), t("accountSettings.errorGeneric.message"));
+            PresentError(Error, "DeleteAccount");
             SetIsDeleting(false);
         }
-    }, [ SignOut, t ]);
+    }, [ SignOut ]);
 
     const HandleDeleteAccount = useCallback(() =>
     {

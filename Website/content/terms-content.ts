@@ -16,7 +16,7 @@
 import type { LegalSection } from "@/content/legal-section";
 
 export/** The effective date shown at the top of the Terms page. */
-const termsEffectiveDate = "August 21, 2026";
+const termsEffectiveDate = "September 11, 2026";
 
 export/** The ordered sections of the Terms of Service. */
 const termsSections: ReadonlyArray<LegalSection> = [
@@ -283,8 +283,8 @@ const termsSections: ReadonlyArray<LegalSection> = [
         heading: "18. Contact",
         id: "contact",
         paragraphs: [
-            "Questions about these Terms can be sent to gage@sorrell.sh, or filed as "
-            + "an issue on the project's GitHub repository."
+            "Questions about these Terms can be sent to noteferry@sorrell.sh, or "
+            + "filed as an issue on the project's GitHub repository."
         ]
     }
 ];

@@ -18,7 +18,7 @@
 import type { LegalSection } from "@/content/legal-section";
 
 export/** The effective date shown at the top of the Privacy page. */
-const privacyEffectiveDate = "August 21, 2026";
+const privacyEffectiveDate = "September 11, 2026";
 
 export/** The ordered sections of the Privacy Policy. */
 const privacySections: ReadonlyArray<LegalSection> = [
@@ -61,6 +61,12 @@ const privacySections: ReadonlyArray<LegalSection> = [
             + "can be retried if it fails or you're offline, and so you have a "
             + "history of what you've submitted. See \"Data Retention and "
             + "Deletion\" below for how long this is kept.",
+            "Crash and session diagnostics — we use Sentry, an error-monitoring "
+            + "service, to automatically collect crash reports, error details, "
+            + "device and app version information, and coarse session data (for "
+            + "example, whether a session ended in a crash) so we can find and fix "
+            + "bugs. This does not include the content of your Notion pages or "
+            + "operations.",
             "Advertising identifiers — Google AdMob, which serves ads in the App, "
             + "may collect device and advertising identifiers and other technical "
             + "information. See \"Advertising\" below.",
@@ -135,10 +141,21 @@ const privacySections: ReadonlyArray<LegalSection> = [
         heading: "7. Cookies and Tracking Technologies",
         id: "cookies",
         paragraphs: [
-            "This marketing website does not currently set tracking or "
-            + "advertising cookies. If that changes — for example, to add "
-            + "privacy-respecting page-view analytics — this section will be "
-            + "updated to disclose it."
+            "This marketing website uses Google Analytics (GA4) to understand "
+            + "aggregate visitor traffic — which pages are visited, how visitors "
+            + "arrived, and coarse device and location information. Google "
+            + "Analytics sets first-party cookies to distinguish sessions and "
+            + "visits.",
+            "Google Analytics is only loaded, and these cookies are only set, "
+            + "after you accept analytics cookies in the banner shown on your "
+            + "first visit. Declining, or taking no action, keeps Google "
+            + "Analytics disabled and sets no cookies. You can change your "
+            + "choice at any time using the \"Cookie preferences\" link in the "
+            + "footer. Google processes this data subject to its own privacy "
+            + "policy, available at policies.google.com/privacy.",
+            "This website does not set advertising cookies. AdMob, which serves "
+            + "ads inside the App (not on this website), is described separately "
+            + "in \"Advertising\" above."
         ]
     },
     {
@@ -151,7 +168,11 @@ const privacySections: ReadonlyArray<LegalSection> = [
             + "infrastructure provider; with Google AdMob, to serve ads to Free "
             + "accounts; with RevenueCat, Apple, and Google, to process purchases "
             + "and maintain entitlements; with Expo Push Service, APNs, and FCM, "
-            + "to deliver requested notifications; and with "
+            + "to deliver requested notifications; with Sentry, our crash-reporting "
+            + "and error-monitoring provider, to help us detect, diagnose, and fix "
+            + "crashes and technical errors; with Google Analytics, if you accept "
+            + "analytics cookies on this website, to understand aggregate visitor "
+            + "traffic; and with "
             + "Resend, an email delivery service we use to notify ourselves (not "
             + "you) when you submit an in-app data request, so we can fulfill it — "
             + "that notification includes your account and request identifiers, "
@@ -252,8 +273,8 @@ const privacySections: ReadonlyArray<LegalSection> = [
         id: "contact",
         paragraphs: [
             "Questions about this Privacy Policy, or requests regarding your "
-            + "data, can be sent to gage@sorrell.sh, or filed as an issue on the "
-            + "project's GitHub repository."
+            + "data, can be sent to noteferry@sorrell.sh, or filed as an issue on "
+            + "the project's GitHub repository."
         ]
     }
 ];

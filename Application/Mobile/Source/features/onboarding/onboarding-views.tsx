@@ -102,7 +102,7 @@ const SignInView = ({ OnContinue }: SignInViewProps): React.JSX.Element =>
 
         await MailComposer.composeAsync({
             body,
-            recipients: [ "gage@sorrell.sh" ],
+            recipients: [ "noteferry@sorrell.sh" ],
             subject: t("signIn.mail.subject")
         });
     }, [ t ]);

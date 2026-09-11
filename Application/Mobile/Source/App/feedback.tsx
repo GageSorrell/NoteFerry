@@ -18,6 +18,7 @@ import { Alert, ScrollView, View } from "react-native";
 import { Body, Description, LabelText } from "@noteferry/ui/Primitive/Text";
 import { Button } from "@noteferry/ui/Primitive/Button";
 import { Checkbox } from "@noteferry/ui/Primitive/Checkbox";
+import { ClassifyDomainError, PresentError } from "@/Domain/Observability";
 import { Textarea } from "@noteferry/ui/Primitive/Textarea";
 import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui/Core";
 import { Stack, useLocalSearchParams } from "expo-router";
@@ -31,27 +32,6 @@ const MinimumMessageLength = 12;
 const MaximumMessageLength = 4_000;
 
 const IsBugReportMode = (Mode: string | undefined): boolean => Mode === "bug";
-
-/* Finds a tagged domain error (e.g. `RateLimitExceeded`) buried inside an
- * Effect `FiberFailure`/`Cause`, the same way `create-page.tsx` does for
- * `FreeCreationWindowExceeded`. */
-const FindTaggedError = (Error_: unknown): Record<string, unknown> | null =>
-{
-    const Seen = new Set<unknown>();
-    const Queue: unknown[] = [ Error_ ];
-
-    while (Queue.length > 0)
-    {
-        const Current = Queue.shift();
-        if (!Current || typeof Current !== "object" || Seen.has(Current)) continue;
-        Seen.add(Current);
-        const Record_ = Current as Record<string, unknown>;
-        if (typeof Record_._tag === "string") return Record_;
-        Queue.push(Record_.cause, Record_.error, Record_.failure);
-    }
-
-    return null;
-};
 
 const FeedbackScreen = (): React.JSX.Element =>
 {
@@ -93,21 +73,20 @@ const FeedbackScreen = (): React.JSX.Element =>
         }
         catch (Error_)
         {
-            const Tagged = FindTaggedError(Error_);
-
-            if (Tagged?._tag === "RateLimitExceeded")
+            /* `RateLimitExceeded` is Expected-severity (§D3) -- it already has
+             * bespoke inline UI below, so `PresentError` (called either way)
+             * only adds a breadcrumb for it, no dialog. Anything else now goes
+             * through `PresentError`'s Moderate-severity `ErrorDialog` instead
+             * of this file's own generic `Alert.alert`. */
+            if (ClassifyDomainError(Error_).Tag === "RateLimitExceeded")
             {
                 Alert.alert(
                     t("alert.rateLimit.title"),
                     t("alert.rateLimit.message")
                 );
             }
-            else
-            {
-                /* eslint-disable-next-line no-console */
-                console.error("Failed to submit feedback", Error_);
-                Alert.alert(t("alert.failure.title"), t("alert.failure.message"));
-            }
+
+            PresentError(Error_, "Feedback");
         }
         finally
         {

@@ -56,6 +56,7 @@ import {
     IsFieldEmpty
 } from "@/features/page-creation/dummy-page-data";
 import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
+import { ClassifyDomainError, PresentError } from "@/Domain/Observability";
 import {
     ResolveTemplateFieldValues,
     type TemplateFieldAssignment
@@ -94,32 +95,6 @@ const MaxPageBodyLength = 200_000;
 
 const FileNameFromUri = (Uri: string, Fallback: string): string =>
     decodeURIComponent(Uri.split(/[?#]/u)[0]?.split("/").pop() ?? Fallback) || Fallback;
-
-const FindTaggedError = (InError: unknown): Record<string, unknown> | null =>
-{
-    const Seen = new Set<unknown>();
-    const Queue: Array<unknown> = [ InError ];
-
-    while (Queue.length > 0)
-    {
-        const Current = Queue.shift();
-        if (!Current || typeof Current !== "object" || Seen.has(Current))
-        {
-            continue;
-        }
-
-        Seen.add(Current);
-        const CurrentRecord = Current as Record<string, unknown>;
-        if (typeof CurrentRecord._tag === "string")
-        {
-            return CurrentRecord;
-        }
-
-        Queue.push(CurrentRecord.cause, CurrentRecord.error, CurrentRecord.failure);
-    }
-
-    return null;
-};
 
 type FieldValue =
     | boolean
@@ -1203,13 +1178,21 @@ const PageCreateScreen = (): React.JSX.Element =>
         }
         catch (Error: unknown)
         {
-            const Tagged = FindTaggedError(Error);
+            const Classified = ClassifyDomainError(Error);
 
-            if (Tagged?._tag === "FreeCreationWindowExceeded")
+            /* `FreeCreationWindowExceeded` and the three `SetErrorMessage`
+             * branches below are Expected-severity (§D3): they already have
+             * bespoke inline UI, so `PresentError` (called in every branch,
+             * including these) only adds a breadcrumb for them -- no dialog,
+             * no screen change. Everything else falls through to
+             * `PresentError`'s own Moderate-severity `ErrorDialog`, replacing
+             * the inline `errors:generic` banner this used to fall back to. */
+            if (Classified.Tag === "FreeCreationWindowExceeded")
             {
-                const Next = Tagged.NextAvailableAt instanceof Date
-                    ? Tagged.NextAvailableAt
-                    : new Date(`${ Tagged.NextAvailableAt }`);
+                const RawNextAvailableAt = Classified.TaggedError?.NextAvailableAt;
+                const Next = RawNextAvailableAt instanceof Date
+                    ? RawNextAvailableAt
+                    : new Date(`${ RawNextAvailableAt }`);
 
                 Alert.alert(
                     t("createPage.freeLimit.title"),
@@ -1225,36 +1208,25 @@ const PageCreateScreen = (): React.JSX.Element =>
                     ]
                 );
                 void RefreshSubscription();
-                return;
             }
-
-            if (Tagged?._tag === "DestinationNotFound")
-            {
-                SetErrorMessage(t("errors:destinationNotFound"));
-            }
-            else if (Tagged?._tag === "PageCreationInProgress")
-            {
-                SetErrorMessage(t("errors:pageCreationInProgress"));
-            }
-            else if (Tagged?._tag === "RateLimitExceeded")
+            else if (Classified.Tag === "RateLimitExceeded")
             {
                 SetErrorMessage(t("errors:rateLimitExceeded"));
             }
-            else if (Tagged?._tag === "FreeDatabaseLimitReached")
+            else if (Classified.Tag === "FreeDatabaseLimitReached")
             {
-                SetErrorMessage(t("errors:freeDatabaseLimitReached", { limit: Tagged.Limit }));
+                SetErrorMessage(t("errors:freeDatabaseLimitReached", { limit: Classified.TaggedError?.Limit }));
             }
-            else if (Tagged?._tag === "FeatureGateError")
+            else if (Classified.Tag === "FeatureGateError")
             {
                 SetErrorMessage(t("errors:featureGateError"));
             }
             else
             {
-                SetErrorMessage(t("errors:generic"));
+                SetErrorMessage(null);
             }
 
-            /* eslint-disable-next-line no-console */
-            console.error("Failed to create page", Error);
+            PresentError(Error, "CreatePage");
         }
         finally
         {

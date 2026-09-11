@@ -10,9 +10,11 @@
 import { termsEffectiveDate, termsSections } from "@/content/terms-content";
 import { LegalPageShell } from "@/components/site/legal/legal-page-shell";
 import type { Metadata } from "next";
+import { siteConfig } from "@/content/site-config";
 
 export/** Route-level metadata for `/terms`. */
 const metadata: Metadata = {
+    alternates: { canonical: `${ siteConfig.canonicalUrl }/terms` },
     title: "Terms of Service"
 };
 

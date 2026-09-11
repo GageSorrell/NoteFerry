@@ -23,7 +23,10 @@ const SupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
  * @category DeleteAccount
  * @since 1.0.0
  */
-export const DeleteAccount = async (AccessToken: string): Promise<void> =>
+export /**
+        *
+        */
+const DeleteAccount = async (AccessToken: string): Promise<void> =>
 {
     const Response_ = await fetch(`${ SupabaseUrl }/functions/v1/api/Account/`, {
         headers: { Authorization: `Bearer ${ AccessToken }` },

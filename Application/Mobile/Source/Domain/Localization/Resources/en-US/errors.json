@@ -4,5 +4,37 @@
     "rateLimitExceeded": "You've submitted a few too many recently. Please wait a bit and try again.",
     "freeDatabaseLimitReached": "Free accounts can have up to {{limit}} databases active at once.",
     "featureGateError": "This feature needs NoteFerry Pro.",
-    "generic": "Something went wrong. Please try again."
+    "generic": "Something went wrong. Please try again.",
+    "moderate": {
+        "authenticationRequired": "Your session has expired. Please sign in again.",
+        "notionConnectionNotFound": "This Notion connection could not be found. Try reconnecting it from Settings.",
+        "notionConnectionRevoked": "Notion access was revoked for this connection. Reconnect it from Settings to continue.",
+        "notionResourceNotShared": "This Notion database hasn't been shared with NoteFerry's integration yet.",
+        "notionUnauthorized": "NoteFerry couldn't authenticate with Notion. Try reconnecting from Settings.",
+        "notionValidationError": "Notion rejected that value. Double-check the field and try again.",
+        "dataSourceNotFound": "This database could not be found. It may have been deleted or unshared.",
+        "dataSourceSchemaChanged": "This database's structure changed in Notion. Refresh it from Settings to continue.",
+        "invalidPageDraft": "Something about this page isn't valid yet. Check the highlighted fields and try again.",
+        "databaseError": "NoteFerry couldn't reach its servers. Please try again in a moment."
+    },
+    "minor": {
+        "networkHiccup": "Connection hiccup — we'll keep trying in the background."
+    },
+    "dialog": {
+        "title": "Something went wrong",
+        "dismiss": "Dismiss"
+    },
+    "severe": {
+        "title": "NoteFerry hit a snag",
+        "message": "Something went wrong and this screen needs to restart. Your data is safe.",
+        "retry": "Try again",
+        "contactSupport": "Contact support",
+        "errorDetails": "Error details",
+        "mail": {
+            "unavailableTitle": "No mail app available",
+            "unavailableMessage": "Set up a mail account on this device to email support.",
+            "subject": "NoteFerry Crash Report",
+            "body": "\n\n—\nNoteFerry {{version}} ({{build}})"
+        }
+    }
 }

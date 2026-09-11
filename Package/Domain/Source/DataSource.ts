@@ -24,8 +24,9 @@ import * as Schema from "effect/Schema";
 export/**
        * The current schema version of {@link CachedDataSourceSchema}. Bump this
        * literal — and add an explicit `Schema.transform` from the previous
-       * version — whenever the cached shape changes, so that stale local caches
-       * decode safely instead of silently misbehaving after an app update.
+       * version — whenever the cached shape changes incompatibly, so that stale
+       * local caches decode safely instead of silently misbehaving after an app
+       * update. Backwards-compatible optional fields do not require a bump.
        *
        * @category DataSource
        * @since 1.0.0
@@ -148,10 +149,12 @@ export/**
 const CachedDataSourceSchema = Schema.Struct({
     Access: Schema.Literals([ "Available", "Locked" ]),
     ConnectionId: Id.NotionConnectionId,
+    CoverSvg: Schema.optional(Schema.String),
     CoverUrl: Schema.optional(Schema.String),
     DataSourceId: Id.NotionDataSourceId,
     DatabaseId: Id.NotionDatabaseId,
     Icon: Schema.optional(Schema.String),
+    IconSvg: Schema.optional(Schema.String),
     IconType: Schema.optional(Schema.Literals([ "Emoji", "Image", "Native" ])),
     NotionLastEditedTime: Schema.DateFromString,
     Properties: Schema.Array(PropertyDefinition),

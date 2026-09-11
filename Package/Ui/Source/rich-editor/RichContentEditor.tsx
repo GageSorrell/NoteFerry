@@ -671,7 +671,11 @@ const Styles = StyleSheet.create({
     BlockTypeButton: { alignItems: "center", height: 30, justifyContent: "center", width: 30 },
     BlockTypeGlyph: { fontSize: 12, fontWeight: "600" },
     Blocks: { gap: 2 },
-    CodeInput: { fontFamily: "monospace", fontSize: 14 },
+    /* "iA Writer Mono" -- kept as a literal here (rather than importing
+     * `ResolveFontFamily`/`TextFamily` from `Primitive/Text.tsx`) since this
+     * is a plain `TextInput`, not a `@noteferry/ui` `Text`. Loaded by the app
+     * under this exact name -- see `Domain/Runtime/Fonts.ts`. */
+    CodeInput: { fontFamily: "iA Writer Mono", fontSize: 14 },
     Container: { minHeight: 192 },
     Disabled: { opacity: 0.4 },
     Divider: { height: StyleSheet.hairlineWidth, width: "100%" },

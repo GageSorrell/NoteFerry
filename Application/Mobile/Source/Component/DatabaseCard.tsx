@@ -11,7 +11,7 @@
 
 import type * as Domain from "@noteferry/domain";
 import * as React from "react";
-import { Defs, LinearGradient, Rect, Stop, Svg, SvgXml } from "react-native-svg";
+import { Defs, LinearGradient, Rect, Stop, Svg, SvgUri, SvgXml } from "react-native-svg";
 import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
 import { ItemTitle } from "@noteferry/ui/Primitive/Text";
 import { Pressable } from "@noteferry/ui/Primitive/Pressable";
@@ -129,13 +129,21 @@ const GetBlurredSvgGradient = (Xml: string): SvgGradient | null =>
 };
 
 /** Renders remote SVG covers without losing their large blurred gradients. */
-const DatabaseSvgCover = ({ Uri }: { readonly Uri: string; }): React.JSX.Element =>
+const DatabaseSvgCover = ({ CachedXml, Uri }: {
+    readonly CachedXml?: string | undefined;
+    readonly Uri: string;
+}): React.JSX.Element =>
 {
     const Styles = useStyles();
-    const [ Xml, SetXml ] = React.useState<string | null | undefined>();
+    const [ RemoteXml, SetRemoteXml ] = React.useState<string | null | undefined>();
 
     React.useEffect(() =>
     {
+        if (CachedXml)
+        {
+            return undefined;
+        }
+
         let IsMounted = true;
 
         void LoadSvg(Uri)
@@ -143,14 +151,14 @@ const DatabaseSvgCover = ({ Uri }: { readonly Uri: string; }): React.JSX.Element
             {
                 if (IsMounted)
                 {
-                    SetXml(Value);
+                    SetRemoteXml(Value);
                 }
             })
             .catch(() =>
             {
                 if (IsMounted)
                 {
-                    SetXml(null);
+                    SetRemoteXml(null);
                 }
             });
 
@@ -158,7 +166,9 @@ const DatabaseSvgCover = ({ Uri }: { readonly Uri: string; }): React.JSX.Element
         {
             IsMounted = false;
         };
-    }, [ Uri ]);
+    }, [ CachedXml, Uri ]);
+
+    const Xml = CachedXml ?? RemoteXml;
 
     const Gradient = Xml ? GetBlurredSvgGradient(Xml) : null;
 
@@ -250,6 +260,28 @@ const DatabaseIcon = React.memo(({ Source }: DatabaseIconProps): React.JSX.Eleme
 
     if (IsImageUrl(Source.Icon) || Source.IconType === "Image")
     {
+        if (Source.IconSvg)
+        {
+            return (
+                <SvgXml
+                    height={ 24 }
+                    width={ 24 }
+                    xml={ Source.IconSvg }
+                />
+            );
+        }
+
+        if (IsSvgUrl(Source.Icon))
+        {
+            return (
+                <SvgUri
+                    height={ 24 }
+                    uri={ Source.Icon }
+                    width={ 24 }
+                />
+            );
+        }
+
         return (
             <Image
                 accessibilityIgnoresInvertColors
@@ -279,7 +311,7 @@ const DatabaseCard = ({ OnPress, Source, Square = false }: DatabaseCardProps): R
     const Theme = useTheme();
     const Styles = useStyles();
     const { t } = useTranslation("component");
-    const CoverIsSvg = Source.CoverUrl ? IsSvgUrl(Source.CoverUrl) : false;
+    const CoverIsSvg = Boolean(Source.CoverSvg) || (Source.CoverUrl ? IsSvgUrl(Source.CoverUrl) : false);
     const RippleColor = Theme.Mode === "Dark"
         ? "rgba(255, 255, 255, 0.16)"
         : "rgba(0, 0, 0, 0.16)";
@@ -307,7 +339,10 @@ const DatabaseCard = ({ OnPress, Source, Square = false }: DatabaseCardProps): R
                 {Source.CoverUrl
                     ? CoverIsSvg
                         ? (
-                            <DatabaseSvgCover Uri={ Source.CoverUrl } />
+                            <DatabaseSvgCover
+                                CachedXml={ Source.CoverSvg }
+                                Uri={ Source.CoverUrl }
+                            />
                         )
                         : (
                             <Image

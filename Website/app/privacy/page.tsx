@@ -10,9 +10,11 @@
 import { privacyEffectiveDate, privacySections } from "@/content/privacy-content";
 import { LegalPageShell } from "@/components/site/legal/legal-page-shell";
 import type { Metadata } from "next";
+import { siteConfig } from "@/content/site-config";
 
 export/** Route-level metadata for `/privacy`. */
 const metadata: Metadata = {
+    alternates: { canonical: `${ siteConfig.canonicalUrl }/privacy` },
     title: "Privacy Policy"
 };
 

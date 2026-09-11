@@ -16,6 +16,7 @@ import { OnboardingMockTiming, useDevelopmentOnboarding } from "@/features/onboa
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AdoptNotionAuthorization } from "@/Domain/Runtime/NoteFerryApi";
 import { BottomSheet, type BottomSheet as BottomSheetHandle } from "@noteferry/ui/Primitive/BottomSheet";
+import { PresentError } from "@/Domain/Observability";
 import { SignInModalView } from "@/features/onboarding/onboarding-views";
 import { SignInWithOAuth } from "@/Domain/Auth/OAuth";
 import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
@@ -98,8 +99,7 @@ const SignInModal = () =>
                 await Complete();
             }
 
-            /* eslint-disable-next-line no-console */
-            console.error("Notion sign-in or authorization failed", Error);
+            PresentError(Error, "SignIn");
         }
         finally
         {

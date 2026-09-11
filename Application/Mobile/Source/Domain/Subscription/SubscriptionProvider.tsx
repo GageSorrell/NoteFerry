@@ -20,6 +20,7 @@ import {
 import type { PurchasesPackage } from "react-native-purchases";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
+import { ReportError } from "@/Domain/Observability";
 import { SetConfirmedFree } from "@/Domain/Ads/Entitlement";
 import { useAuth } from "@/Domain/Auth/NoteFerryAuthProvider";
 import { LoadPurchases } from "./Purchases";
@@ -316,9 +317,13 @@ const SubscriptionProvider = (
             catch (Error_)
             {
                 /* Status remains unresolved: ads stay suppressed *
-                 * and checkout remains unavailable until retry.  */
-                /* eslint-disable-next-line no-console */
-                console.error("Failed to initialize subscriptions", Error_);
+                 * and checkout remains unavailable until retry.
+                 * `ReportError` only, not `PresentError` -- this runs from a
+                 * provider's init effect, not a user-initiated action with an
+                 * obvious screen to show a dialog over, and the degraded
+                 * (ads-suppressed, checkout-unavailable) state is already
+                 * silently self-consistent rather than actively broken. */
+                ReportError(Error_, "Moderate", "SubscriptionProvider:Init");
             }
             finally
             {

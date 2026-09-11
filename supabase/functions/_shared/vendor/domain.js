@@ -369,10 +369,12 @@ var CachedDataSourceTemplate = Schema7.Struct({
 var CachedDataSourceSchema = Schema7.Struct({
   Access: Schema7.Literals(["Available", "Locked"]),
   ConnectionId: NotionConnectionId,
+  CoverSvg: Schema7.optional(Schema7.String),
   CoverUrl: Schema7.optional(Schema7.String),
   DataSourceId: NotionDataSourceId,
   DatabaseId: NotionDatabaseId,
   Icon: Schema7.optional(Schema7.String),
+  IconSvg: Schema7.optional(Schema7.String),
   IconType: Schema7.optional(Schema7.Literals(["Emoji", "Image", "Native"])),
   NotionLastEditedTime: Schema7.DateFromString,
   Properties: Schema7.Array(PropertyDefinition),

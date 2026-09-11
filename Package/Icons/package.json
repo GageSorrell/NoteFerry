@@ -38,7 +38,7 @@
         "optional": false
     },
     "react-native-svg": {
-        "optional": false
+        "optional": true
     }
   },
   "devDependencies": {

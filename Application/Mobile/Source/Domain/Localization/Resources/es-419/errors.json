@@ -4,5 +4,37 @@
     "rateLimitExceeded": "Enviaste demasiadas solicitudes hace poco. Espera un momento e inténtalo de nuevo.",
     "freeDatabaseLimitReached": "Las cuentas gratuitas pueden tener hasta {{limit}} bases de datos activas a la vez.",
     "featureGateError": "Esta función requiere NoteFerry Pro.",
-    "generic": "Algo salió mal. Inténtalo de nuevo."
+    "generic": "Algo salió mal. Inténtalo de nuevo.",
+    "moderate": {
+        "authenticationRequired": "Tu sesión venció. Vuelve a iniciar sesión.",
+        "notionConnectionNotFound": "No se encontró esta conexión de Notion. Intenta reconectarla desde Configuración.",
+        "notionConnectionRevoked": "Se revocó el acceso de Notion para esta conexión. Reconéctala desde Configuración para continuar.",
+        "notionResourceNotShared": "Esta base de datos de Notion todavía no se compartió con la integración de NoteFerry.",
+        "notionUnauthorized": "NoteFerry no pudo autenticarse con Notion. Intenta reconectar desde Configuración.",
+        "notionValidationError": "Notion rechazó ese valor. Revisa el campo e inténtalo de nuevo.",
+        "dataSourceNotFound": "No se encontró esta base de datos. Puede que se haya eliminado o dejado de compartir.",
+        "dataSourceSchemaChanged": "La estructura de esta base de datos cambió en Notion. Actualízala desde Configuración para continuar.",
+        "invalidPageDraft": "Algo en esta página todavía no es válido. Revisa los campos resaltados e inténtalo de nuevo.",
+        "databaseError": "NoteFerry no pudo conectarse con sus servidores. Inténtalo de nuevo en un momento."
+    },
+    "minor": {
+        "networkHiccup": "Hubo un problema de conexión — seguiremos intentándolo en segundo plano."
+    },
+    "dialog": {
+        "title": "Algo salió mal",
+        "dismiss": "Descartar"
+    },
+    "severe": {
+        "title": "NoteFerry tuvo un problema",
+        "message": "Algo salió mal y esta pantalla necesita reiniciarse. Tus datos están a salvo.",
+        "retry": "Intentar de nuevo",
+        "contactSupport": "Contactar soporte",
+        "errorDetails": "Detalles del error",
+        "mail": {
+            "unavailableTitle": "No hay una app de correo disponible",
+            "unavailableMessage": "Configura una cuenta de correo en este dispositivo para escribirle a soporte.",
+            "subject": "Reporte de fallo de NoteFerry",
+            "body": "\n\n—\nNoteFerry {{version}} ({{build}})"
+        }
+    }
 }

@@ -36,11 +36,11 @@ const dataDeleted: ReadonlyArray<string> = [
 ];
 
 export/**
- * What isn't deleted by this action, and why — the retention-period
- * disclosure Google Play requires.
- */
+       * What isn't deleted by this action, and why — the retention-period
+       * disclosure Google Play requires.
+       */
 const dataRetained: ReadonlyArray<string> = [
-    "Deletion is immediate — NoteFerry doesn't hold any of the data above "
+    "Deletion is immediate: NoteFerry doesn't hold any of the data above "
         + "for an additional retention period afterward.",
     "Pages already created in your Notion workspace are untouched: "
         + "NoteFerry doesn't own that content and deleting your NoteFerry "

@@ -147,7 +147,7 @@ const DeleteAccountAction = () =>
         return (
             <div className="mt-10 flex flex-col items-center gap-3 sm:items-start">
                 <Button
-                    className="w-full sm:w-auto"
+                    className="w-full sm:w-auto cursor-pointer"
                     onClick={ () => void handleSignIn() }
                     size="lg">
                     Continue with Notion
@@ -164,7 +164,7 @@ const DeleteAccountAction = () =>
         <div className="mt-10 flex flex-col items-center gap-3 sm:items-start">
             <div className="flex flex-wrap items-center gap-3">
                 <Button
-                    className="w-full sm:w-auto"
+                    className="w-full sm:w-auto cursor-pointer"
                     disabled={ status === "deleting" }
                     onClick={ () => setIsConfirmOpen(true) }
                     size="lg"
@@ -175,10 +175,11 @@ const DeleteAccountAction = () =>
                     Delete my account
                 </Button>
                 <Button
+                    className="cursor-pointer"
                     disabled={ status === "deleting" }
                     onClick={ () => void handleSignOut() }
-                    variant="ghost">
-                    Not you? Sign out
+                    variant="outline">
+                    Not you?{ "  " }Sign out
                 </Button>
             </div>
             { errorMessage
@@ -196,12 +197,14 @@ const DeleteAccountAction = () =>
                     </DialogDescription>
                     <div className="mt-6 flex justify-end gap-3">
                         <Button
+                            className="cursor-pointer"
                             disabled={ status === "deleting" }
                             onClick={ () => setIsConfirmOpen(false) }
                             variant="outline">
                             Cancel
                         </Button>
                         <Button
+                            className="cursor-pointer"
                             disabled={ status === "deleting" }
                             onClick={ () => void handleConfirmDelete() }
                             variant="destructive">

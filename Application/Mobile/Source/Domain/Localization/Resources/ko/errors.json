@@ -4,5 +4,37 @@
     "rateLimitExceeded": "최근에 요청을 너무 많이 보냈어요. 잠시 후 다시 시도해 주세요.",
     "freeDatabaseLimitReached": "무료 계정은 최대 {{limit}}개의 데이터베이스를 활성화할 수 있어요.",
     "featureGateError": "이 기능을 사용하려면 NoteFerry Pro가 필요해요.",
-    "generic": "문제가 발생했어요. 다시 시도해 주세요."
+    "generic": "문제가 발생했어요. 다시 시도해 주세요.",
+    "moderate": {
+        "authenticationRequired": "세션이 만료되었어요. 다시 로그인해 주세요.",
+        "notionConnectionNotFound": "이 Notion 연결을 찾을 수 없어요. 설정에서 다시 연결해 보세요.",
+        "notionConnectionRevoked": "이 연결에 대한 Notion 액세스 권한이 취소되었어요. 계속하려면 설정에서 다시 연결해 주세요.",
+        "notionResourceNotShared": "이 Notion 데이터베이스가 아직 NoteFerry 통합과 공유되지 않았어요.",
+        "notionUnauthorized": "NoteFerry가 Notion과 인증할 수 없었어요. 설정에서 다시 연결해 보세요.",
+        "notionValidationError": "Notion이 해당 값을 거부했어요. 항목을 확인한 후 다시 시도해 주세요.",
+        "dataSourceNotFound": "이 데이터베이스를 찾을 수 없어요. 삭제되었거나 공유가 해제되었을 수 있어요.",
+        "dataSourceSchemaChanged": "이 데이터베이스의 구조가 Notion에서 변경되었어요. 계속하려면 설정에서 새로고침해 주세요.",
+        "invalidPageDraft": "이 페이지에 아직 유효하지 않은 부분이 있어요. 강조 표시된 항목을 확인한 후 다시 시도해 주세요.",
+        "databaseError": "NoteFerry가 서버에 연결할 수 없었어요. 잠시 후 다시 시도해 주세요."
+    },
+    "minor": {
+        "networkHiccup": "연결이 잠시 불안정했어요 — 백그라운드에서 계속 재시도할게요."
+    },
+    "dialog": {
+        "title": "문제가 발생했어요",
+        "dismiss": "닫기"
+    },
+    "severe": {
+        "title": "NoteFerry에 문제가 발생했어요",
+        "message": "문제가 발생해서 이 화면을 다시 시작해야 해요. 데이터는 안전해요.",
+        "retry": "다시 시도",
+        "contactSupport": "지원팀에 문의",
+        "errorDetails": "오류 세부정보",
+        "mail": {
+            "unavailableTitle": "사용 가능한 메일 앱이 없어요",
+            "unavailableMessage": "지원팀에 메일을 보내려면 이 기기에 메일 계정을 설정해 주세요.",
+            "subject": "NoteFerry 충돌 보고서",
+            "body": "\n\n—\nNoteFerry {{version}} ({{build}})"
+        }
+    }
 }

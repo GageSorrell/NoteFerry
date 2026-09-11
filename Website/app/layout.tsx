@@ -10,7 +10,9 @@
 
 import "./globals.css";
 import type * as React from "react";
+import { CookieConsentBanner } from "@/components/site/analytics/cookie-consent-banner";
 import { Footer } from "@/components/site/footer";
+import { GoogleAnalytics } from "@/components/site/analytics/google-analytics";
 import type { Metadata } from "next";
 import { Navbar } from "@/components/site/navbar";
 import { Roboto_Flex } from "next/font/google";
@@ -41,6 +43,7 @@ const robotoFlex = Roboto_Flex({
 
 export/** Site-wide default metadata, inherited by every route. */
 const metadata: Metadata = {
+    alternates: { canonical: siteConfig.canonicalUrl },
     description: siteConfig.description,
     /* No file-based `app/icon.png`/`app/apple-icon.png` — Next resolves
      * file-based icons and this `icons` config independently, and once any
@@ -65,13 +68,20 @@ const metadata: Metadata = {
     openGraph: {
         description: siteConfig.description,
         siteName: siteConfig.name,
-        title: `${ siteConfig.name } — ${ siteConfig.tagline }`,
+        title: `${ siteConfig.name } • ${ siteConfig.tagline }`,
         type: "website",
         url: siteConfig.canonicalUrl
     },
     title: {
-        default: `${ siteConfig.name } — ${ siteConfig.tagline }`,
-        template: `%s — ${ siteConfig.name }`
+        default: `${ siteConfig.name } • ${ siteConfig.tagline }`,
+        template: `%s • ${ siteConfig.name }`
+    },
+    /* No dedicated `twitter-image` file exists, so Next reuses
+     * `opengraph-image.tsx`'s generated card for Twitter too. */
+    twitter: {
+        card: "summary_large_image",
+        description: siteConfig.description,
+        title: `${ siteConfig.name } • ${ siteConfig.tagline }`
     }
 };
 
@@ -90,7 +100,9 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) =>
                         <main className="flex-1">{ children }</main>
                         <Footer />
                     </div>
+                    <CookieConsentBanner />
                 </ThemeProvider>
+                <GoogleAnalytics />
             </body>
         </html>
     );
