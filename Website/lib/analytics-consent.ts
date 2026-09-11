@@ -19,42 +19,31 @@ export type AnalyticsConsent = "granted" | "denied";
 const StorageKey = "noteferry-analytics-consent";
 const ProductionHostname = new URL(siteConfig.canonicalUrl).hostname;
 
-/** Fired on `window` whenever the stored consent choice changes. */
-export /**
-        *
-        */
+export/** Fired on `window` whenever the stored consent choice changes. */
 const AnalyticsConsentChangedEvent = "noteferry:analytics-consent-changed";
 
-/**
- * Fired on `window` when the footer's "Cookie preferences" link is used to
- * reopen the banner after a choice was already made.
- */
-export /**
-        *
-        */
+export/**
+       * Fired on `window` when the footer's "Cookie preferences" link is used
+       * to reopen the banner after a choice was already made.
+       */
 const ReopenCookiePreferencesEvent = "noteferry:reopen-cookie-preferences";
 
-/**
- * Whether the page is being viewed on the real production domain, rather
- * than local dev or a Vercel preview deployment — analytics stays off
- * everywhere else so those never report traffic into the live property.
- */
-export /**
-        *
-        */
+export/**
+       * Whether the page is being viewed on the real production domain,
+       * rather than local dev or a Vercel preview deployment — analytics
+       * stays off everywhere else so those never report traffic into the
+       * live property.
+       */
 const isProductionHost = (): boolean =>
 {
     return typeof window !== "undefined" && window.location.hostname === ProductionHostname;
 };
 
-/**
- * Reads the visitor's stored consent choice, or `null` if they haven't
- * chosen yet (or `localStorage` is unavailable — a private window, or this
- * running during server-side rendering).
- */
-export /**
-        *
-        */
+export/**
+       * Reads the visitor's stored consent choice, or `null` if they haven't
+       * chosen yet (or `localStorage` is unavailable — a private window, or
+       * this running during server-side rendering).
+       */
 const getStoredAnalyticsConsent = (): AnalyticsConsent | null =>
 {
     if (typeof window === "undefined")
@@ -74,13 +63,10 @@ const getStoredAnalyticsConsent = (): AnalyticsConsent | null =>
     }
 };
 
-/**
- * Records the visitor's choice and notifies any mounted
- * `GoogleAnalytics`/`CookieConsentBanner` instances.
- */
-export /**
-        *
-        */
+export/**
+       * Records the visitor's choice and notifies any mounted
+       * `GoogleAnalytics`/`CookieConsentBanner` instances.
+       */
 const setStoredAnalyticsConsent = (consent: AnalyticsConsent): void =>
 {
     try
@@ -95,10 +81,7 @@ const setStoredAnalyticsConsent = (consent: AnalyticsConsent): void =>
     window.dispatchEvent(new Event(AnalyticsConsentChangedEvent));
 };
 
-/** Reopens the cookie-preferences banner even after a choice was already made. */
-export /**
-        *
-        */
+export/** Reopens the cookie-preferences banner even after a choice was already made. */
 const reopenCookiePreferences = (): void =>
 {
     window.dispatchEvent(new Event(ReopenCookiePreferencesEvent));

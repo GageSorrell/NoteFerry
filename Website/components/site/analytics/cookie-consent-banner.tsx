@@ -23,13 +23,11 @@ import {
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
-/**
- * Shows itself the first time a visitor (on production) has no recorded
- * consent choice, and again whenever `reopenCookiePreferences` fires.
- */
-export /**
-        *
-        */
+export/**
+       * Shows itself the first time a visitor (on production) has no
+       * recorded consent choice, and again whenever
+       * `reopenCookiePreferences` fires.
+       */
 const CookieConsentBanner = () =>
 {
     const [ isVisible, setIsVisible ] = useState(false);
