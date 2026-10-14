@@ -23,5 +23,39 @@
         "nativeDatabaseAdCard": {
             "adBadge": "Anzeige"
         }
+    },
+    "notionMarkdown": {
+        "blockKinds": {
+            "paragraph": "Text",
+            "heading1": "Überschrift 1",
+            "heading2": "Überschrift 2",
+            "heading3": "Überschrift 3",
+            "heading4": "Überschrift 4",
+            "bulletedListItem": "Aufzählungsliste",
+            "numberedListItem": "Nummerierte Liste",
+            "toDo": "Aufgabe",
+            "quote": "Zitat",
+            "code": "Code",
+            "divider": "Trennlinie",
+            "callout": "Hervorhebung",
+            "toggle": "Toggle-Liste",
+            "equation": "Formel"
+        },
+        "colors": {
+            "default": "Standard",
+            "gray": "Grau",
+            "brown": "Braun",
+            "orange": "Orange",
+            "yellow": "Gelb",
+            "green": "Grün",
+            "blue": "Blau",
+            "purple": "Lila",
+            "pink": "Pink",
+            "red": "Rot"
+        },
+        "colorPicker": {
+            "textSection": "Text",
+            "backgroundSection": "Hintergrund"
+        }
     }
 }

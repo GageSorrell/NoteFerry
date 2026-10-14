@@ -21,7 +21,7 @@ import { DataSourcesApi } from "./DataSourcesApi.js";
 import { DestinationsApi } from "./DestinationsApi.js";
 import { ExportRequestsApi } from "./ExportRequestsApi.js";
 import { FeedbackApi } from "./FeedbackApi.js";
-import { HttpApi } from "effect/unstable/httpapi";
+import { HttpApi } from "effect/http-api";
 import { PagesApi } from "./PagesApi.js";
 import { ProfileApi } from "./ProfileApi.js";
 import { SubscriptionsApi } from "./SubscriptionsApi.js";

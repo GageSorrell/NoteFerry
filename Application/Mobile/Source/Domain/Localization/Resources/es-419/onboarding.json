@@ -76,6 +76,7 @@
             "searchPlaceholder": "Buscar bases de datos",
             "selectedCount_one": "{{count}} base de datos seleccionada",
             "selectedCount_other": "{{count}} bases de datos seleccionadas",
+            "selectedCountFree": "{{count}}/3 bases de datos seleccionadas",
             "selectDatabase": "Seleccionar {{title}}",
             "moreThan100Pages": ">100 páginas",
             "pageCount_one": "{{count}} página",
@@ -110,7 +111,6 @@
         "accessibilityLabel": "Terminando la autorización de Notion"
     },
     "destinationConfig": {
-        "back": "‹ Atrás",
         "defaultTitle": "Configurar",
         "subtitle": "Configura un destino de entrada rápida para esta fuente de datos.",
         "name": "Nombre",

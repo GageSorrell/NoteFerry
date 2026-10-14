@@ -11,9 +11,11 @@
     "./Package/Domain",
     "./Package/Icons",
     "./Package/NotionMarkdown",
+    "./Package/ReactNativeNotionMarkdown",
     "./Package/Ui",
     "./Website",
     "./Script/AvdDemoMode",
+    "./Script/MetroDevProcesses",
     "./Script/PatchReactNativeTools",
     "./Script/RnwDevProcesses"
   ],
@@ -38,6 +40,12 @@
   },
   "type": "module",
   "scripts": {
+    "check:functions": "tsc -p supabase/functions/_typecheck && node --test supabase/functions/_typecheck/*.test.mjs",
+    "build:mobile-dependencies": "npm run build --workspace Package/NotionMarkdown && npm run build --workspace Package/ReactNativeNotionMarkdown && npm run build --workspace Package/Domain && npm run build --workspace Package/Api && npm run build --workspace Package/Ui",
+    "eas-build-post-install": "npm run build:mobile-dependencies",
+    "metro:ls": "npm run build -w @noteferry/metro-dev-processes && node Script/MetroDevProcesses/Distribution/index.js ls",
+    "metro:kill": "npm run build -w @noteferry/metro-dev-processes && node Script/MetroDevProcesses/Distribution/index.js kill",
+    "metro:kill-all": "npm run build -w @noteferry/metro-dev-processes && node Script/MetroDevProcesses/Distribution/index.js kill-all",
     "rnw:ls": "npm run build -w @noteferry/rnw-dev-processes && node Script/RnwDevProcesses/Distribution/index.js ls",
     "rnw:kill": "npm run build -w @noteferry/rnw-dev-processes && node Script/RnwDevProcesses/Distribution/index.js kill",
     "rnw:kill-all": "npm run build -w @noteferry/rnw-dev-processes && node Script/RnwDevProcesses/Distribution/index.js kill-all"
@@ -45,18 +53,21 @@
   "overrides": {
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "react-server-dom-webpack": "19.2.3"
+    "react-server-dom-webpack": "19.2.3",
+    "@types/react": "19.2.18"
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.6",
     "@noteferry/ui": "1.0.0",
-    "@sorrell/eslint-config": "2.3.0",
+    "@sorrell/eslint-config": "2.5.0",
     "eslint": "9.39.5",
     "eslint-plugin-react-perf": "3.3.3",
     "react-native": "0.86.2",
     "typescript": "6.0.3"
   },
   "allowScripts": {
-    "react-native-enriched-markdown@1.0.2": true
+    "react-native-enriched-markdown@1.0.2": true,
+    "@sentry/cli@2.58.6": true,
+    "@sentry/cli@3.7.0": true
   }
 }

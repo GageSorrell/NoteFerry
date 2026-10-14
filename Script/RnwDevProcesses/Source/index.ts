@@ -15,7 +15,7 @@
  */
 
 import * as ProcessManager from "./ProcessManager.js";
-import { Argument, Command } from "effect/unstable/cli";
+import { Argument, Command } from "effect/cli";
 import { Console, Effect } from "effect";
 import { NodeRuntime, NodeServices } from "@effect/platform-node";
 
@@ -99,7 +99,7 @@ const LsCommand = Command.make(
     ])
 );
 
-const PidArgument = Argument.integer("pid").pipe(
+const PidArgument = Argument.Int("pid").pipe(
     Argument.withDescription(
         "The process ID to kill, from `ls`. When invoked via `npm run rnw:kill`, pass it " +
         "after `--` (e.g. `npm run rnw:kill -- 12345`) so npm forwards it through instead " +

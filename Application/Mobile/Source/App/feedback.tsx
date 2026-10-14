@@ -97,7 +97,9 @@ const FeedbackScreen = (): React.JSX.Element =>
     return (
         <View style={ Styles.Container }>
             <Stack.Screen options={ { headerShown: true, title: HeaderTitle } } />
-            <SafeAreaView style={ Styles.SafeArea }>
+            <SafeAreaView
+                edges={ [ "bottom" ] }
+                style={ Styles.SafeArea }>
                 <Description Style={ Styles.Subtitle }>
                     { IsBugReport
                         ? t("subtitle.bugReport")

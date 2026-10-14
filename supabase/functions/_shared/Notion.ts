@@ -16,6 +16,7 @@
  * @license   MIT
  */
 
+import type { NotionBlock } from "@noteferry/react-native-notion-markdown/Core";
 import type { NotionBlockRequest } from "@noteferry/notion-markdown";
 
 /** The current Notion API version. */
@@ -232,14 +233,20 @@ export type NotionIcon =
         readonly custom_emoji: { readonly id: string; readonly name: string; readonly url: string };
     }
     | { readonly type: "external"; readonly external: { readonly url: string } }
-    | { readonly type: "file"; readonly file: { readonly url: string } }
+     | {
+         readonly type: "file";
+         readonly file: { readonly expiry_time?: string; readonly url: string };
+     }
     | { readonly type: "icon"; readonly icon: { readonly name: string; readonly color?: string } }
     | null;
 
 /** Notion's file union, as used by database covers. */
 export type NotionFile =
     | { readonly type: "external"; readonly external: { readonly url: string } }
-    | { readonly type: "file"; readonly file: { readonly url: string } }
+     | {
+         readonly type: "file";
+         readonly file: { readonly expiry_time?: string; readonly url: string };
+     }
     | null;
 
 /** One item of a Notion rich-text array (only `plain_text` is used). */
@@ -303,12 +310,14 @@ export type NotionDatabaseObject =
 /** A Notion page object containing visual metadata used as a database fallback. */
 export type NotionPageObject =
 {
+    readonly created_time?: string;
     readonly id: string;
     readonly cover?: NotionFile;
     readonly icon?: NotionIcon;
     readonly last_edited_time?: string;
     readonly parent?: NotionParent;
     readonly properties?: Readonly<Record<string, NotionPagePropertyValue>>;
+    readonly url?: string;
 };
 
 /** The first page of a data-source query, sufficient for a capped row count. */
@@ -736,7 +745,11 @@ export const SendFileUpload = async (
 {
     const Form = new FormData();
 
-    Form.append("file", new Blob([ Bytes ], { type: ContentType }), Filename);
+    Form.append(
+        "file",
+        new Blob([ Bytes.buffer as ArrayBuffer ], { type: ContentType }),
+        Filename
+    );
 
     const Response = await fetch(`${ApiBase}/file_uploads/${FileUploadId}/send`, {
         body: Form,
@@ -757,10 +770,16 @@ export const SendFileUpload = async (
     return await Response.json() as NotionFileUploadObject;
 };
 
+/**
+ * An official Notion block object as either body converter builds it: the
+ * legacy Markdown converter's, or the block editor core's (see `PageBody.ts`).
+ */
+export type NotionBlockChild = NotionBlockRequest | NotionBlock;
+
 /** The Notion Create Page request body NoteFerry sends. */
 export interface NotionCreatePageBody
 {
-    readonly children?: ReadonlyArray<NotionBlockRequest>;
+    readonly children?: ReadonlyArray<NotionBlockChild>;
     readonly cover?: unknown;
     readonly icon?: unknown;
     readonly parent: { readonly type: "data_source_id"; readonly data_source_id: string };
@@ -777,7 +796,7 @@ export interface NotionCreatePageBody
 export const CreatePage = async (
     AccessToken: string,
     Body: NotionCreatePageBody
-): Promise<{ readonly id: string }> =>
+): Promise<NotionPageObject> =>
 {
     const Response = await fetch(`${ApiBase}/pages`, {
         body: JSON.stringify(Body),
@@ -790,15 +809,23 @@ export const CreatePage = async (
         return await ThrowNotionApiError(Response);
     }
 
-    return await Response.json() as { readonly id: string };
+    return await Response.json() as NotionPageObject;
 };
 
-/** Appends one API-sized chunk of official block children to an existing page. */
+/**
+ * Appends one API-sized chunk of official block children to a page or block,
+ * returning the ids of the blocks it created, in the order they were given.
+ * Notion reports only these first-level blocks, not their descendants — so a
+ * caller that must append beneath a block has to have sent that block as one
+ * of `Children` itself.
+ *
+ * https://developers.notion.com/reference/patch-block-children
+ */
 export const AppendBlockChildren = async (
     AccessToken: string,
     BlockId: string,
-    Children: ReadonlyArray<NotionBlockRequest>
-): Promise<void> =>
+    Children: ReadonlyArray<NotionBlockChild>
+): Promise<ReadonlyArray<string>> =>
 {
     const Response = await fetch(`${ApiBase}/blocks/${BlockId}/children`, {
         body: JSON.stringify({ children: Children }),
@@ -810,4 +837,17 @@ export const AppendBlockChildren = async (
     {
         return await ThrowNotionApiError(Response);
     }
+
+    const Created = await Response.json() as { readonly results?: ReadonlyArray<{ readonly id?: string }> };
+    const Ids = (Created.results ?? []).map((Block) => Block.id);
+
+    if (Ids.length !== Children.length || Ids.some((Id) => typeof Id !== "string"))
+    {
+        throw new NotionApiError(
+            502,
+            `Notion reported ${ Ids.length } created blocks for ${ Children.length } appended.`
+        );
+    }
+
+    return Ids as ReadonlyArray<string>;
 };

@@ -76,6 +76,7 @@
             "searchPlaceholder": "Datenbanken durchsuchen",
             "selectedCount_one": "{{count}} Datenbank ausgewählt",
             "selectedCount_other": "{{count}} Datenbanken ausgewählt",
+            "selectedCountFree": "{{count}}/3 Datenbanken ausgewählt",
             "selectDatabase": "{{title}} auswählen",
             "moreThan100Pages": ">100 Seiten",
             "pageCount_one": "{{count}} Seite",
@@ -110,7 +111,6 @@
         "accessibilityLabel": "Notion-Autorisierung wird abgeschlossen"
     },
     "destinationConfig": {
-        "back": "‹ Zurück",
         "defaultTitle": "Konfigurieren",
         "subtitle": "Richte ein Schnelleingabeziel für diese Datenquelle ein.",
         "name": "Name",

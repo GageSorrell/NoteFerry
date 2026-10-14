@@ -5,7 +5,8 @@
         "notifications": "Benachrichtigungen",
         "quickActions": "Schnellaktionen",
         "workspaces": "Workspaces",
-        "databaseSettings": "Datenbankeinstellungen"
+        "databaseSettings": "Datenbankeinstellungen",
+        "account": "Kontoeinstellungen"
     },
     "general": {
         "onLaunch": {
@@ -22,6 +23,18 @@
             "oneColumn": "Eine Datenbank pro Zeile",
             "twoColumn": "Zwei quadratische Karten pro Zeile"
         },
+        "recentPages": {
+            "title": "Zuletzt erstellte Seiten anzeigen",
+            "description": "Zuletzt mit NoteFerry erstellte Seiten auf dem Startbildschirm anzeigen."
+        },
+        "recentPageDatabaseName": {
+            "title": "Datenbanknamen anzeigen",
+            "description": "Den Namen der Zieldatenbank auf jeder Karte anzeigen."
+        },
+        "recentPageCovers": {
+            "title": "Seiten-Cover anzeigen",
+            "description": "Coverbilder auf Karten kürzlich erstellter Seiten anzeigen."
+        },
         "highContrast": {
             "title": "Hoher Kontrast",
             "description": "Erhöht den Kontrast von Trennlinien, Rahmen und Schaltern.",
@@ -33,10 +46,6 @@
             "systemShort": "System",
             "standardShort": "Aus",
             "highShort": "An"
-        },
-        "homeScreenOrder": {
-            "title": "Reihenfolge des Startbildschirms",
-            "description": "Ziehe, um die auf dem Startbildschirm angezeigten Datenbanken neu anzuordnen."
         },
         "proGate": {
             "title": "Verfügbar mit NoteFerry Pro",
@@ -90,15 +99,15 @@
         "appInfo": "NoteFerry {{version}} (Build {{build}})"
     },
     "accountSettings": {
-        "back": "Zurück",
-        "title": "Kontoeinstellungen",
         "notion": {
-            "heading": "Notion",
-            "manageButton": "NoteFerry-Verbindung in Notion verwalten"
+            "title": "Notion-Verbindung",
+            "description": "Verwalte die NoteFerry-Verbindung in deinem Notion-Konto.",
+            "manageButton": "Verwalten"
         },
         "yourData": {
-            "heading": "Deine Daten",
-            "requestButton": "Meine Kontodaten anfordern",
+            "title": "Deine Daten",
+            "description": "Fordere eine Kopie deiner NoteFerry-Kontodaten an. Wir schicken sie dir per E-Mail, sobald sie bereit ist.",
+            "requestButton": "Anfordern",
             "requesting": "Wird angefordert…"
         },
         "dangerZone": {
@@ -199,8 +208,8 @@
             "active": "Aktiv"
         },
         "replaceActive": "Aktive ersetzen",
-        "customize": "Anpassen",
-        "remove": "Entfernen",
+        "customize": "{{title}} anpassen",
+        "remove": "{{title}} entfernen",
         "customizeGate": {
             "title": "Formulare mit Pro anpassen",
             "message": "Mit Pro kannst du Aliasse, Sichtbarkeit, Pflichtfelder, Reihenfolge und Standardwerte ändern.",
@@ -213,6 +222,16 @@
             "message": "{{title}} bleibt in Notion unverändert.",
             "cancel": "Abbrechen",
             "confirm": "Entfernen"
+        },
+        "editAction": {
+            "edit": "Bearbeiten",
+            "save": "Speichern"
+        },
+        "exitEditConfirm": {
+            "title": "Bearbeitung beenden?",
+            "message": "Du kannst die Reihenfolge deiner Datenbanken weiter bearbeiten oder die Bearbeitung beenden und zurückgehen.",
+            "keepEditing": "Weiter bearbeiten",
+            "stopEditing": "Bearbeitung beenden"
         }
     }
 }

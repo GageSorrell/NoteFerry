@@ -64,7 +64,10 @@ const ApplyEffectiveSettings = (
             NotifyOnSubscriptionSales: Profile.Settings.NotifyOnSubscriptionSales,
             QuickActionDataSourceIds: Profile.Settings.QuickActionDataSourceIds?.slice(0, 1),
             SelectedConnectionId: Profile.Settings.SelectedConnectionId,
-            ShowAllWorkspaceDatabases: Profile.Settings.ShowAllWorkspaceDatabases
+            ShowAllWorkspaceDatabases: Profile.Settings.ShowAllWorkspaceDatabases,
+            ShowRecentPageCovers: Profile.Settings.ShowRecentPageCovers,
+            ShowRecentPageDatabaseName: Profile.Settings.ShowRecentPageDatabaseName,
+            ShowRecentPages: Profile.Settings.ShowRecentPages
         }
     };
 };
@@ -165,7 +168,11 @@ export const UpdateSettingsForUser = (UserId: string, Patch: Domain.Settings.App
                     : Current.QuickActionDataSourceIds,
             SelectedConnectionId: Patch.SelectedConnectionId ?? Current.SelectedConnectionId,
             ShowAllWorkspaceDatabases: Patch.ShowAllWorkspaceDatabases
-                ?? Current.ShowAllWorkspaceDatabases
+                ?? Current.ShowAllWorkspaceDatabases,
+            ShowRecentPageCovers: Patch.ShowRecentPageCovers ?? Current.ShowRecentPageCovers,
+            ShowRecentPageDatabaseName: Patch.ShowRecentPageDatabaseName
+                ?? Current.ShowRecentPageDatabaseName,
+            ShowRecentPages: Patch.ShowRecentPages ?? Current.ShowRecentPages
         };
 
         const SettingsJson = yield* Effect.try({

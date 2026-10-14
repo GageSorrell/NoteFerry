@@ -62,7 +62,9 @@ const QuickActionSettingsScreen = (): React.JSX.Element =>
 
     return (
         <View style={ Styles.Container }>
-            <SafeAreaView style={ Styles.SafeArea }>
+            <SafeAreaView
+                edges={ [ "bottom" ] }
+                style={ Styles.SafeArea }>
                 <Description>
                     { t("quickActionSettings.description") }
                 </Description>

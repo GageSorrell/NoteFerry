@@ -1,0 +1,15 @@
+{
+    "extends": "@sorrell/tsconfig/expo",
+    "compilerOptions": {
+        "noEmit": false,
+        "module": "NodeNext",
+        "moduleDetection": "force",
+        "moduleResolution": "NodeNext",
+        "target": "ES2022",
+        "outDir": "Distribution",
+        "rootDir": "Source",
+        "tsBuildInfoFile": "Intermediate/TypeScript/tsconfig.tsbuildinfo",
+        "types": [ "node" ]
+    },
+    "include": [ "Source" ]
+}

@@ -10,7 +10,7 @@
  */
 
 import * as Domain from "@noteferry/domain";
-import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
+import { HttpApiEndpoint, HttpApiGroup } from "effect/http-api";
 
 export/**
        * Permanently delete the current user's Supabase Auth user. Every

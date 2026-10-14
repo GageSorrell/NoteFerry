@@ -13,9 +13,9 @@
  * @license   MIT
  */
 
-import { ChildProcess, ChildProcessSpawner } from "effect/unstable/process";
+import { ChildProcess, ChildProcessSpawner } from "effect/process";
 import { Effect, Option, Stream } from "effect";
-import { CliError } from "effect/unstable/cli";
+import { CliError } from "effect/cli";
 import type { PlatformError } from "effect/PlatformError";
 
 /**

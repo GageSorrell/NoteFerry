@@ -12,7 +12,7 @@
  */
 
 import * as Domain from "@noteferry/domain";
-import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
+import { HttpApiEndpoint, HttpApiGroup } from "effect/http-api";
 
 export/**
        * Record a request for the current user's account data.

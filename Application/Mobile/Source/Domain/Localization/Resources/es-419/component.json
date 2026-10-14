@@ -23,5 +23,39 @@
         "nativeDatabaseAdCard": {
             "adBadge": "Anuncio"
         }
+    },
+    "notionMarkdown": {
+        "blockKinds": {
+            "paragraph": "Texto",
+            "heading1": "Título 1",
+            "heading2": "Título 2",
+            "heading3": "Título 3",
+            "heading4": "Título 4",
+            "bulletedListItem": "Lista con viñetas",
+            "numberedListItem": "Lista numerada",
+            "toDo": "Tarea",
+            "quote": "Cita",
+            "code": "Código",
+            "divider": "Divisor",
+            "callout": "Bloque destacado",
+            "toggle": "Lista desplegable",
+            "equation": "Ecuación"
+        },
+        "colors": {
+            "default": "Predeterminado",
+            "gray": "Gris",
+            "brown": "Marrón",
+            "orange": "Naranja",
+            "yellow": "Amarillo",
+            "green": "Verde",
+            "blue": "Azul",
+            "purple": "Morado",
+            "pink": "Rosa",
+            "red": "Rojo"
+        },
+        "colorPicker": {
+            "textSection": "Texto",
+            "backgroundSection": "Fondo"
+        }
     }
 }

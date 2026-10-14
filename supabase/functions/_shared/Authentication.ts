@@ -17,7 +17,7 @@
 import * as Domain from "@noteferry/domain";
 import { Effect } from "effect";
 import { GetUserId } from "./Database.ts";
-import { HttpServerRequest } from "effect/unstable/http";
+import { HttpServerRequest } from "effect/http";
 
 /**
  * Yields the authenticated user's id from the request's `Authorization`

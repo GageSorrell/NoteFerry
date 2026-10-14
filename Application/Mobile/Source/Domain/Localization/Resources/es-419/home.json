@@ -9,6 +9,19 @@
         "title": "Bases de datos",
         "empty": "Aún no se encontraron bases de datos."
     },
+    "recent": {
+        "title": "Recientes",
+        "untitled": "Sin título",
+        "cardAccessibilityLabel": "Abrir {{title}} en Notion",
+        "time": {
+            "now": "ahora",
+            "minute": "hace {{count}} min",
+            "hour": "hace {{count}} h",
+            "day": "hace {{count}} d",
+            "month": "hace {{count}} m",
+            "year": "hace {{count}} a"
+        }
+    },
     "lockedDatabase": {
         "title": "Desbloquea esta base de datos con Pro",
         "message": "Free incluye tres bases de datos activas. Mejora tu plan para tener bases de datos ilimitadas, o reemplaza una base de datos activa en la configuración de la base de datos.",

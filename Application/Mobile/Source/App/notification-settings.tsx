@@ -89,7 +89,9 @@ const NotificationSettingsScreen = (): React.JSX.Element =>
 
     return (
         <View style={ Styles.Container }>
-            <SafeAreaView style={ Styles.SafeArea }>
+            <SafeAreaView
+                edges={ [ "bottom" ] }
+                style={ Styles.SafeArea }>
                 <SettingsContainer>
                     <Setting
                         Description={ t("notificationSettings.offline.description") }

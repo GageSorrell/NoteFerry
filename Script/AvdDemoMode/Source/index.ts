@@ -1,8 +1,8 @@
 /**
  * `avd-demo-mode` — toggles Android System UI demo mode on a running AVD: a
- * fixed 10:00 clock, a full non-charging battery, full wifi, and hidden
- * notification icons, for clean screenshots and recordings. Also scales UI
- * animations and heads-up notifications to match.
+ * fixed 10:00 clock, a full non-charging battery, and full wifi, for clean
+ * screenshots and recordings. Optionally hides the clock and notification
+ * icons as well. Also scales UI animations and heads-up notifications to match.
  *
  * Runs the same commands as enabling demo mode by hand with
  * `Script/AvdDemoMode.ps1`, plus their inverse to disable it, plus the
@@ -19,11 +19,11 @@
 
 import * as Adb from "./Adb.js";
 import * as DemoMode from "./DemoMode.js";
-import { CliError, Command, Flag } from "effect/unstable/cli";
+import { CliError, Command, Flag } from "effect/cli";
 import { Console, Effect, Option } from "effect";
 import { NodeRuntime, NodeServices } from "@effect/platform-node";
 
-const AvdFlag = Flag.string("avd").pipe(
+const AvdFlag = Flag.String("avd").pipe(
     Flag.withAlias("a"),
     Flag.withMetavar("name-or-serial"),
     Flag.withDescription(
@@ -33,12 +33,16 @@ const AvdFlag = Flag.string("avd").pipe(
     Flag.optional
 );
 
-const EnableFlag = Flag.boolean("enable").pipe(
+const EnableFlag = Flag.Boolean("enable").pipe(
     Flag.withDescription("Turn demo mode on. Cannot be combined with --disable.")
 );
 
-const DisableFlag = Flag.boolean("disable").pipe(
+const DisableFlag = Flag.Boolean("disable").pipe(
     Flag.withDescription("Turn demo mode off. Cannot be combined with --enable.")
+);
+
+const HiddenFlag = Flag.Boolean("hidden").pipe(
+    Flag.withDescription("Hide the clock and status bar notification icons while enabling demo mode. Requires --enable.")
 );
 
 /** Parsed flag values, exactly as `Command.make`'s handler receives them. */
@@ -47,13 +51,15 @@ interface ParsedFlags
     readonly Avd: Option.Option<string>;
     readonly Disable: boolean;
     readonly Enable: boolean;
+    readonly Hidden: boolean;
 }
 
 /** Decides the demo-mode state a run should reach, honoring `--enable`/`--disable`, or toggling. */
 const ResolveTargetState = Effect.fn("ResolveTargetState")(function* (
     Serial: string,
     Enable: boolean,
-    Disable: boolean
+    Disable: boolean,
+    Hidden: boolean
 )
 {
     if (Enable && Disable)
@@ -61,6 +67,14 @@ const ResolveTargetState = Effect.fn("ResolveTargetState")(function* (
         return yield* new CliError.UserError({
             cause: new Error("--enable and --disable were both given."),
             userMessage: "--enable and --disable cannot be used together."
+        });
+    }
+
+    if (Hidden && !Enable)
+    {
+        return yield* new CliError.UserError({
+            cause: new Error("--hidden was given without --enable."),
+            userMessage: "--hidden requires --enable and cannot be used with --disable."
         });
     }
 
@@ -84,9 +98,10 @@ const AvdDemoModeCommand = Command.make(
     {
         Avd: AvdFlag,
         Disable: DisableFlag,
-        Enable: EnableFlag
+        Enable: EnableFlag,
+        Hidden: HiddenFlag
     },
-    Effect.fn(function* ({ Avd, Disable, Enable }: ParsedFlags)
+    Effect.fn(function* ({ Avd, Disable, Enable, Hidden }: ParsedFlags)
     {
         const Target = yield* Adb.ResolveAvd(Avd);
         const Label = Option.match(Target.Name, {
@@ -96,16 +111,17 @@ const AvdDemoModeCommand = Command.make(
 
         yield* Console.log(`Target AVD: ${Label}`);
 
-        const State = yield* ResolveTargetState(Target.Serial, Enable, Disable);
+        const State = yield* ResolveTargetState(Target.Serial, Enable, Disable, Hidden);
 
-        yield* DemoMode.SetDemoMode(Target.Serial, State);
+        yield* DemoMode.SetDemoMode(Target.Serial, State, Hidden);
     })
 ).pipe(
     Command.withDescription(
         "Toggles Android System UI demo mode on a running AVD: a fixed 10:00 clock, a full " +
-        "non-charging battery, full wifi, and hidden notification icons, for clean screenshots " +
-        "and recordings. Also sets animation scale to 0.5 and disables heads-up notifications " +
-        "while demo mode is on, restoring both to normal when it's off."
+        "non-charging battery, and full wifi, for clean screenshots and recordings. Use " +
+        "--hidden with --enable to hide the clock and status bar notification icons. Also sets " +
+        "animation scale to 0.5 and disables heads-up notifications while demo mode is on, " +
+        "restoring both to normal when it's off."
     ),
     Command.withExamples([
         {
@@ -115,6 +131,10 @@ const AvdDemoModeCommand = Command.make(
         {
             command: "avd-demo-mode --enable",
             description: "Turn demo mode on, even if it's already on."
+        },
+        {
+            command: "avd-demo-mode --enable --hidden",
+            description: "Turn demo mode on with the clock and status bar notification icons hidden."
         },
         {
             command: "avd-demo-mode --disable --avd Pixel_6_API_34",

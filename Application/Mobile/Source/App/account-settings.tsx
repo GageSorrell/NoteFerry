@@ -14,14 +14,15 @@
 import * as WebBrowser from "expo-web-browser";
 import { Alert, Linking, ScrollView, View } from "react-native";
 import { Button } from "@noteferry/ui/Primitive/Button";
-import { Description, Heading1, Heading2 } from "@noteferry/ui/Primitive/Text";
+import { ButtonLabel, Description, Heading2 } from "@noteferry/ui/Primitive/Text";
 import { DeleteAccount, RequestAccountData } from "@/Domain/Runtime/NoteFerryApi";
-import { MakeStyles, TextStyle, Token, ViewStyle } from "@noteferry/ui/Core";
+import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
+import ExternalLink from "lucide-react-native/icons/external-link";
 import { PresentError } from "@/Domain/Observability";
+import { Setting, SettingsContainer } from "@noteferry/ui/Primitive/Setting";
 import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/Domain/Auth/NoteFerryAuthProvider";
-import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSubscription } from "@/Domain/Subscription";
 import { useTranslation } from "react-i18next";
 import { LoadPurchases } from "@/Domain/Subscription/Purchases";
@@ -30,8 +31,8 @@ const NotionIntegrationsUrl = "https://www.notion.so/my-integrations";
 
 const AccountSettingsScreen = (): React.JSX.Element =>
 {
-    const Router = useLazyRouter();
     const Styles = useStyles();
+    const Theme = useTheme();
     const { SignOut } = useAuth();
     const { Status } = useSubscription();
     const { t } = useTranslation("settings");
@@ -114,36 +115,44 @@ const AccountSettingsScreen = (): React.JSX.Element =>
 
     return (
         <View style={ Styles.Container }>
-            <SafeAreaView style={ Styles.SafeArea }>
-                <Button
-                    AccessibilityLabel={ t("accountSettings.back") }
-                    Appearance="Link"
-                    OnPress={ Router.back }
-                    Style={ Styles.Back }>
-                    { t("accountSettings.back") }
-                </Button>
-
-                <Heading1>{ t("accountSettings.title") }</Heading1>
-
+            <SafeAreaView
+                edges={ [ "bottom" ] }
+                style={ Styles.SafeArea }>
                 <ScrollView
                     contentContainerStyle={ Styles.List }
                     style={ Styles.Scroll }>
-                    <Heading2 Style={ Styles.SectionHeading }>{ t("accountSettings.notion.heading") }</Heading2>
-                    <Button
-                        Appearance="Cell"
-                        OnPress={ () => void HandleManageInNotion() }>
-                        { t("accountSettings.notion.manageButton") }
-                    </Button>
-
-                    <Heading2 Style={ Styles.SectionHeading }>{ t("accountSettings.yourData.heading") }</Heading2>
-                    <Button
-                        Appearance="Cell"
-                        Disabled={ IsRequestingData }
-                        OnPress={ () => void HandleRequestData() }>
-                        { IsRequestingData
-                            ? t("accountSettings.yourData.requesting")
-                            : t("accountSettings.yourData.requestButton") }
-                    </Button>
+                    <SettingsContainer>
+                        <Setting
+                            Description={ t("accountSettings.notion.description") }
+                            Title={ t("accountSettings.notion.title") }>
+                            <Button
+                                OnPress={ () => void HandleManageInNotion() }
+                                Size="Small">
+                                <ButtonLabel
+                                    Color={ Token.Semantic.Primary }
+                                    Style={ Styles.ManageButtonLabel }>
+                                    { t("accountSettings.notion.manageButton") }
+                                </ButtonLabel>
+                                <ExternalLink
+                                    color={ Theme.Semantic.Primary }
+                                    size={ 14 }
+                                    strokeWidth={ 1.8 }
+                                />
+                            </Button>
+                        </Setting>
+                        <Setting
+                            Description={ t("accountSettings.yourData.description") }
+                            Title={ t("accountSettings.yourData.title") }>
+                            <Button
+                                Disabled={ IsRequestingData }
+                                OnPress={ () => void HandleRequestData() }
+                                Size="Small">
+                                { IsRequestingData
+                                    ? t("accountSettings.yourData.requesting")
+                                    : t("accountSettings.yourData.requestButton") }
+                            </Button>
+                        </Setting>
+                    </SettingsContainer>
 
                     <Heading2 Style={ Styles.SectionHeading }>{ t("accountSettings.dangerZone.heading") }</Heading2>
                     <Description Style={ Styles.DangerDescription }>
@@ -164,9 +173,6 @@ const AccountSettingsScreen = (): React.JSX.Element =>
 };
 
 const useStyles = MakeStyles({
-    Back: ViewStyle({
-        alignSelf: "flex-start"
-    }),
     Container: ViewStyle({
         backgroundColor: Token.Semantic.BackgroundSidebar,
         flex: 1
@@ -178,9 +184,15 @@ const useStyles = MakeStyles({
         gap: Token.Spacing.M,
         paddingVertical: Token.Spacing.L
     }),
+    /* Matches `Button`'s own label size for a plain-string child — the
+     * "Manage" label is rendered by hand (to sit beside the external-link
+     * glyph) so it needs the same size applied explicitly. */
+    ManageButtonLabel: TextStyle({
+        fontSize: 12,
+        lineHeight: 22
+    }),
     SafeArea: ViewStyle({
         flex: 1,
-        gap: Token.Spacing.S,
         paddingHorizontal: Token.Spacing.Xl,
         paddingVertical: Token.Spacing.Xl
     }),

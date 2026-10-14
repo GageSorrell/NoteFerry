@@ -23,6 +23,7 @@ export * as Destination from "./Destination.js";
 export * as Profile from "./Profile.js";
 export * as Settings from "./Settings.js";
 export * as PageDraft from "./PageDraft.js";
+export * as Page from "./Page.js";
 export * as Command from "./Command.js";
 export * as Error from "./Error.js";
 export * as Subscription from "./Subscription.js";

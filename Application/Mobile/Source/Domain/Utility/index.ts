@@ -11,3 +11,4 @@
 
 export * from "./Asset";
 export * from "./DatabaseIcon";
+export * from "./DatabaseOrder";

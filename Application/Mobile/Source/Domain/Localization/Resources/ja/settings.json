@@ -5,7 +5,8 @@
         "notifications": "通知",
         "quickActions": "クイックアクション",
         "workspaces": "ワークスペース",
-        "databaseSettings": "データベース設定"
+        "databaseSettings": "データベース設定",
+        "account": "アカウント設定"
     },
     "general": {
         "onLaunch": {
@@ -22,6 +23,18 @@
             "oneColumn": "1行に1つのデータベース",
             "twoColumn": "1行に正方形のカードを2つ"
         },
+        "recentPages": {
+            "title": "最近のページを表示",
+            "description": "NoteFerryで最近作成したページをホーム画面に表示します。"
+        },
+        "recentPageDatabaseName": {
+            "title": "データベース名を表示",
+            "description": "各カードに保存先データベース名を表示します。"
+        },
+        "recentPageCovers": {
+            "title": "ページカバーを表示",
+            "description": "最近のページカードにカバー画像を表示します。"
+        },
         "highContrast": {
             "title": "コントラストを上げる",
             "description": "区切り線、枠線、スイッチのコントラストを上げます。",
@@ -33,10 +46,6 @@
             "systemShort": "システム",
             "standardShort": "オフ",
             "highShort": "オン"
-        },
-        "homeScreenOrder": {
-            "title": "ホーム画面の順序",
-            "description": "ホーム画面に表示されるデータベースの順序は、ドラッグして変更できます。"
         },
         "proGate": {
             "title": "NoteFerry Proで利用できます",
@@ -90,15 +99,15 @@
         "appInfo": "NoteFerry {{version}}(ビルド {{build}})"
     },
     "accountSettings": {
-        "back": "戻る",
-        "title": "アカウント設定",
         "notion": {
-            "heading": "Notion",
-            "manageButton": "NotionでNoteFerryとの連携を管理する"
+            "title": "Notion連携",
+            "description": "Notionのアカウントから、NoteFerryとの連携を管理します。",
+            "manageButton": "管理"
         },
         "yourData": {
-            "heading": "あなたのデータ",
-            "requestButton": "アカウントデータをリクエストする",
+            "title": "あなたのデータ",
+            "description": "NoteFerryアカウントデータのコピーをリクエストします。準備ができ次第、メールでお送りします。",
+            "requestButton": "リクエスト",
             "requesting": "リクエスト中…"
         },
         "dangerZone": {
@@ -199,8 +208,8 @@
             "active": "アクティブ"
         },
         "replaceActive": "アクティブなものと入れ替える",
-        "customize": "カスタマイズ",
-        "remove": "削除",
+        "customize": "{{title}}をカスタマイズ",
+        "remove": "{{title}}を削除",
         "customizeGate": {
             "title": "Proでフォームをカスタマイズ",
             "message": "Proではエイリアス、表示/非表示、必須項目、並び順、初期値まで変更できます。",
@@ -213,6 +222,16 @@
             "message": "{{title}}はNotion側では変更されません。",
             "cancel": "キャンセル",
             "confirm": "削除"
+        },
+        "editAction": {
+            "edit": "編集",
+            "save": "保存"
+        },
+        "exitEditConfirm": {
+            "title": "編集を終了しますか?",
+            "message": "データベースの並べ替えを続けるか、編集を終了して戻ることができます。",
+            "keepEditing": "編集を続ける",
+            "stopEditing": "編集を終了"
         }
     }
 }

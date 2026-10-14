@@ -44,6 +44,22 @@ export const PageCoverInput = Schema.Union([
 export type PageCoverInput = Schema.Schema.Type<typeof PageCoverInput>;
 
 export/**
+       * The formats a page body can arrive in.
+       *
+       * - `PlainText`: literal text. Nothing in it is interpreted, so Markdown
+       *   punctuation reaches Notion as the characters that were typed.
+       * - `NotionMarkdown`: Notion's Enhanced Markdown, as the block editor
+       *   serializes it. Requires NoteFerry Pro.
+       *
+       * @category Command
+       * @since 1.0.0
+       */
+const PageBodyFormat = Schema.Literals([ "PlainText", "NotionMarkdown" ]);
+
+/** {@inheritDoc PageBodyFormat} */
+export type PageBodyFormat = Schema.Schema.Type<typeof PageBodyFormat>;
+
+export/**
        * A request to create a page in a destination's data source. The client
        * generates {@link Id.OperationId} before sending so the same attempt can
        * be recognized if it is retried after a crash or timeout.
@@ -52,8 +68,14 @@ export/**
        * @since 1.0.0
        */
 const CreatePageCommand = Schema.Struct({
-    /** Enriched Markdown converted to official Notion block children by the server. */
+    /** The page body, converted to official Notion block children by the server according to {@link PageBodyFormat}. */
     Body: Schema.optional(Schema.String),
+    /**
+     * How `Body` is written. Current clients always send it; a command
+     * without it comes from a client that predates the field, and its body
+     * keeps the conversion those clients were built against.
+     */
+    BodyFormat: Schema.optional(PageBodyFormat),
     Cover: Schema.optional(PageCoverInput),
     DestinationId: Id.DestinationId,
     OperationId: Id.OperationId,

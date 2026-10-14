@@ -9,6 +9,19 @@
         "title": "データベース",
         "empty": "データベースがまだ見つかりません。"
     },
+    "recent": {
+        "title": "最近作成したページ",
+        "untitled": "無題",
+        "cardAccessibilityLabel": "{{title}}をNotionで開く",
+        "time": {
+            "now": "たった今",
+            "minute": "{{count}}分前",
+            "hour": "{{count}}時間前",
+            "day": "{{count}}日前",
+            "month": "{{count}}か月前",
+            "year": "{{count}}年前"
+        }
+    },
     "lockedDatabase": {
         "title": "Proでこのデータベースのロックを解除",
         "message": "無料プランではアクティブなデータベースを3つまで利用できます。アップグレードすると無制限に利用でき、またはデータベース設定でアクティブなデータベースを入れ替えることもできます。",

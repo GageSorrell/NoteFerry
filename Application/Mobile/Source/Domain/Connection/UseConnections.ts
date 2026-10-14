@@ -20,13 +20,22 @@ import {
 } from "@/Domain/Runtime/NoteFerryApi";
 import { useCallback, useEffect, useState } from "react";
 
+/** Options controlling a single {@link UseConnections.Refetch} call. */
+export interface RefetchOptions
+{
+    /** When `true`, refresh in the background without toggling `IsLoading` —
+     *  for a pull-to-refresh gesture, where the caller drives its own
+     *  refreshing indicator and the existing list should stay on screen. */
+    readonly Silent?: boolean;
+}
+
 /** The state returned by {@link useConnections}. */
 export interface UseConnections
 {
     readonly Connections: ReadonlyArray<Domain.NotionConnection.NotionConnection>;
     readonly DataSources: ReadonlyArray<Domain.DataSource.CachedDataSourceSchema>;
     readonly IsLoading: boolean;
-    readonly Refetch: () => Promise<void>;
+    readonly Refetch: (Options?: RefetchOptions) => Promise<void>;
 }
 
 export/**
@@ -45,9 +54,14 @@ const useConnections = (): UseConnections =>
         useState<ReadonlyArray<Domain.DataSource.CachedDataSourceSchema>>([ ]);
     const [ IsLoading, SetIsLoading ] = useState(true);
 
-    const Refetch = useCallback(async () =>
+    const Refetch = useCallback(async (Options?: RefetchOptions) =>
     {
-        SetIsLoading(true);
+        const Silent = Options?.Silent ?? false;
+
+        if (!Silent)
+        {
+            SetIsLoading(true);
+        }
 
         try
         {
@@ -86,7 +100,10 @@ const useConnections = (): UseConnections =>
         }
         finally
         {
-            SetIsLoading(false);
+            if (!Silent)
+            {
+                SetIsLoading(false);
+            }
         }
     }, [ ]);
 

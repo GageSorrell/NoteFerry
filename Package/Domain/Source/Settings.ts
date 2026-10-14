@@ -72,7 +72,10 @@ const AppSettings = Schema.Struct({
     NotifyOnSubscriptionSales: Schema.optional(Schema.Boolean),
     QuickActionDataSourceIds: Schema.optional(Schema.Array(Id.NotionDataSourceId)),
     SelectedConnectionId: Schema.optional(Id.NotionConnectionId),
-    ShowAllWorkspaceDatabases: Schema.optional(Schema.Boolean)
+    ShowAllWorkspaceDatabases: Schema.optional(Schema.Boolean),
+    ShowRecentPageCovers: Schema.optional(Schema.Boolean),
+    ShowRecentPageDatabaseName: Schema.optional(Schema.Boolean),
+    ShowRecentPages: Schema.optional(Schema.Boolean)
 });
 
 /** {@inheritDoc AppSettings} */
@@ -96,6 +99,9 @@ export interface ResolvedAppSettings
     readonly QuickActionDataSourceIds: ReadonlyArray<Id.NotionDataSourceId>;
     readonly SelectedConnectionId: Id.NotionConnectionId | undefined;
     readonly ShowAllWorkspaceDatabases: boolean;
+    readonly ShowRecentPageCovers: boolean;
+    readonly ShowRecentPageDatabaseName: boolean;
+    readonly ShowRecentPages: boolean;
 }
 
 /**
@@ -113,7 +119,10 @@ export const DefaultAppSettings: ResolvedAppSettings = {
     NotifyOnSubscriptionSales: false,
     QuickActionDataSourceIds: [ ],
     SelectedConnectionId: undefined,
-    ShowAllWorkspaceDatabases: false
+    ShowAllWorkspaceDatabases: false,
+    ShowRecentPageCovers: false,
+    ShowRecentPageDatabaseName: false,
+    ShowRecentPages: true
 };
 
 /**
@@ -139,6 +148,12 @@ export const WithDefaults = (Stored: AppSettings): ResolvedAppSettings =>
             ?? DefaultAppSettings.QuickActionDataSourceIds).slice(0, MaxQuickActionCount),
         SelectedConnectionId: Stored.SelectedConnectionId,
         ShowAllWorkspaceDatabases: Stored.ShowAllWorkspaceDatabases
-            ?? DefaultAppSettings.ShowAllWorkspaceDatabases
+            ?? DefaultAppSettings.ShowAllWorkspaceDatabases,
+        ShowRecentPageCovers: Stored.ShowRecentPageCovers
+            ?? DefaultAppSettings.ShowRecentPageCovers,
+        ShowRecentPageDatabaseName: Stored.ShowRecentPageDatabaseName
+            ?? DefaultAppSettings.ShowRecentPageDatabaseName,
+        ShowRecentPages: Stored.ShowRecentPages
+            ?? DefaultAppSettings.ShowRecentPages
     };
 }

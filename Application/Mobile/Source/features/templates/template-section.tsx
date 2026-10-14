@@ -38,6 +38,12 @@ const Semantic = Token.Semantic;
 
 const ItemExtent = 52;
 
+/* `Sortable.Handle`'s own intrinsic footprint when given no children of its
+ * own (its default `padding: 6` around a 14px `GripVertical`) -- reused as a
+ * leading spacer wherever a row has no handle of its own, so its icon still
+ * starts at the same x position as a handled `TemplateRow`'s icon. */
+const HandleFootprint = 26;
+
 /** {@inheritDoc TemplateSection} */
 export interface TemplateSectionProps
 {
@@ -175,10 +181,13 @@ const TemplateSection = ({
                 Accessibility={ { Label: "Use no template", Role: "button" } }
                 OnPress={ () => OnTemplateChange({ Type: "None" }) }
                 style={ Styles.Row }>
-                <Ban
-                    color={ Theme.Semantic.IconSecondary }
-                    size={ 18 }
-                />
+                <View style={ Styles.HandleSpacer } />
+                <View style={ Styles.IconSlot }>
+                    <Ban
+                        color={ Theme.Semantic.IconSecondary }
+                        size={ 18 }
+                    />
+                </View>
                 <Body Style={ Styles.RowName }>No template</Body>
                 { Template.Type === "None" ? <Check size={ 16 } /> : null }
             </Pressable>
@@ -258,6 +267,7 @@ const TemplateSection = ({
                                     <View
                                         key={ Id }
                                         style={ Styles.Row }>
+                                        <View style={ Styles.HandleSpacer } />
                                         <IconBlock
                                             Icon={ ResolveTemplateIconData(Entry.Icon, Entry.IconType) }
                                             Muted
@@ -299,8 +309,23 @@ const useStyles = MakeStyles({
         gap: Token.Spacing.Xs,
         paddingVertical: Token.Spacing.S
     }),
+    /* Reserves `HandleFootprint` for a row with no `Sortable.Handle` of its
+     * own ("No template", and a hidden template's row), so its icon still
+     * lines up with a handled `TemplateRow`'s. */
+    HandleSpacer: ViewStyle({
+        width: HandleFootprint
+    }),
     HiddenSection: ViewStyle({
         marginTop: Token.Spacing.S
+    }),
+    /* Matches `IconBlock`'s own `Size="Small"` container footprint, so a raw
+     * Lucide icon (no `IconBlock` wrapper) still centers within the same
+     * width/height and lines up with `IconBlock`'s icon beside it. */
+    IconSlot: ViewStyle({
+        alignItems: "center",
+        height: 20,
+        justifyContent: "center",
+        width: 20
     }),
     MenuButton: ViewStyle({
         alignItems: "center",

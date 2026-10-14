@@ -29,6 +29,5 @@ Application/Mobile/.expo/
 # does not depend on, to keep the upload small.
 Application/Windows
 Application/Mac
-Package/Api
-Package/Domain
 Package/Icons
+Website

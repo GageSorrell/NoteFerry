@@ -11,7 +11,7 @@
  */
 
 import * as Domain from "@noteferry/domain";
-import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
+import { HttpApiEndpoint, HttpApiGroup } from "effect/http-api";
 
 export/**
        * The current user's profile, including their resolved app-wide settings.

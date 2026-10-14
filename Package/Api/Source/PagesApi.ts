@@ -13,7 +13,8 @@
  */
 
 import * as Domain from "@noteferry/domain";
-import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
+import { HttpApiEndpoint, HttpApiGroup } from "effect/http-api";
+import * as Schema from "effect/Schema";
 
 export/**
        * Create a page in a destination's data source. The server records the
@@ -39,12 +40,33 @@ const Create = HttpApiEndpoint.post(
             Domain.Error.NotionRateLimited,
             Domain.Error.NotionValidationError,
             Domain.Error.NotionUnavailable,
+            Domain.Error.DestinationNotFound,
             Domain.Error.FreeCreationWindowExceeded,
             Domain.Error.FeatureGateError,
-            Domain.Error.DatabaseError
+            Domain.Error.DatabaseError,
+            Domain.Error.PageCreationInProgress
         ],
         payload: Domain.Command.CreatePageCommand,
         success: Domain.Command.CreatePageResult
+    }
+);
+
+export/**
+       * Lists the current user's five most recently-created successful pages.
+       *
+       * @category Pages
+       * @since 1.0.0
+       */
+const Recent = HttpApiEndpoint.get(
+    "Recent",
+    "/recent",
+    {
+        error:
+        [
+            Domain.Error.AuthenticationRequired,
+            Domain.Error.DatabaseError
+        ],
+        success: Schema.Array(Domain.Page.RecentPage)
     }
 );
 
@@ -54,4 +76,4 @@ export/**
        * @category Pages
        * @since 1.0.0
        */
-const PagesApi = HttpApiGroup.make("Pages").add(Create);
+const PagesApi = HttpApiGroup.make("Pages").add(Create, Recent);

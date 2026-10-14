@@ -20,11 +20,12 @@
 
 import * as Domain from "@noteferry/domain";
 import { ActivityIndicator, ScrollView, View } from "react-native";
-import { Body, Description, Heading1, Heading2, LabelText } from "@noteferry/ui/Primitive/Text";
+import { Body, Description, Heading2, LabelText } from "@noteferry/ui/Primitive/Text";
 import { Button } from "@noteferry/ui/Primitive/Button";
 import { Checkbox } from "@noteferry/ui/Primitive/Checkbox";
 import { Input } from "@noteferry/ui/Primitive/Input";
 import { MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@noteferry/ui/Core";
+import { Stack, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { BehaviorPicker } from "@/Component/BehaviorPicker";
 import { GetDataSource, RefreshDataSource } from "@/Domain/Runtime/NoteFerryApi";
@@ -32,8 +33,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { TemplateSection } from "@/features/templates/template-section";
 import { useConnections } from "@/Domain/Connection";
 import { useDestinations } from "@/features/destinations/use-destinations";
-import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
-import { useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 /** Per-field UI toggles held while the form is open. */
@@ -48,7 +47,6 @@ const EmptyTemplateConfiguration: Domain.Destination.TemplateConfiguration =
 
 const DestinationConfigScreen = () =>
 {
-    const Router = useLazyRouter();
     const Theme = useTheme();
     const Styles = useStyles();
     const { t } = useTranslation("onboarding");
@@ -246,18 +244,11 @@ const DestinationConfigScreen = () =>
 
     return (
         <View style={ Styles.Container }>
-            <SafeAreaView style={ Styles.SafeArea }>
-                <Button
-                    Appearance="Link"
-                    OnPress={ Router.back }
-                    Style={ Styles.Back }>
-                    { t("destinationConfig.back") }
-                </Button>
-
-                <Heading1>
-                    { Params.title ?? t("destinationConfig.defaultTitle") }
-                </Heading1>
-                <Description Style={ Styles.Subtitle }>
+            <Stack.Screen options={ { title: Params.title ?? t("destinationConfig.defaultTitle") } } />
+            <SafeAreaView
+                edges={ [ "bottom" ] }
+                style={ Styles.SafeArea }>
+                <Description>
                     { t("destinationConfig.subtitle") }
                 </Description>
 
@@ -371,10 +362,8 @@ const DestinationConfigScreen = () =>
 };
 
 const useStyles = MakeStyles({
-    Back: ViewStyle({
-        alignSelf: "flex-start"
-    }),
     Container: ViewStyle({
+        backgroundColor: Token.Semantic.BackgroundSidebar,
         flex: 1
     }),
     DestinationRow: ViewStyle({
@@ -419,9 +408,6 @@ const useStyles = MakeStyles({
     }),
     SectionHeading: TextStyle({
         marginTop: Token.Spacing.L
-    }),
-    Subtitle: TextStyle({
-        marginTop: Token.Spacing.Xs
     }),
     ToggleCol: ViewStyle({
         alignItems: "center",

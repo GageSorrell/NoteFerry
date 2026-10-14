@@ -16,11 +16,11 @@
 
 import type * as Domain from "@noteferry/domain";
 import * as Effect from "effect/Effect";
-import { pipe } from "effect/Function";
-import { FetchHttpClient, HttpClient, HttpClientRequest } from "effect/unstable/http";
-import { HttpApiClient } from "effect/unstable/httpapi";
+import { FetchHttpClient, HttpClient, HttpClientRequest } from "effect/http";
+import { HttpApiClient } from "effect/http-api";
 import { NoteFerryApi } from "@noteferry/api";
 import { Supabase } from "./Supabase";
+import { pipe } from "effect/Function";
 
 const baseUrl = `${ process.env.EXPO_PUBLIC_SUPABASE_URL }/functions/v1/api`;
 
@@ -465,6 +465,27 @@ const CreatePage = async (
             const Client = yield* MakeClient(Token);
 
             return yield* Client.Pages.Create({ payload: Command });
+        }),
+        Effect.provide(FetchHttpClient.layer)
+    ));
+};
+
+export/**
+       * Lists the current user's most recently-created successful pages.
+       *
+       * @category Api
+       * @since 1.0.0
+       */
+const ListRecentPages = async (): Promise<readonly Domain.Page.RecentPage[]> =>
+{
+    const Token = await GetAccessToken();
+
+    return Effect.runPromise(pipe(
+        Effect.gen(function* ()
+        {
+            const Client = yield* MakeClient(Token);
+
+            return yield* Client.Pages.Recent();
         }),
         Effect.provide(FetchHttpClient.layer)
     ));

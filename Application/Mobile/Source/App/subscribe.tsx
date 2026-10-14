@@ -20,7 +20,7 @@ import {
     type PurchasesError,
     type PurchasesPackage
 } from "react-native-purchases";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { PresentError } from "@/Domain/Observability";
 import { PurchaseSyncPendingError } from "@/Domain/Subscription/SubscriptionProvider";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -126,7 +126,9 @@ const SubscribeScreen = (): React.JSX.Element =>
         try
         {
             await Restore();
-            Alert.alert(t("subscribe.alerts.restoreSuccess.title"), t("subscribe.alerts.restoreSuccess.body"));
+            Alert.alert(
+                t("subscribe.alerts.restoreSuccess.title"), t("subscribe.alerts.restoreSuccess.body")
+            );
         }
         catch (Error_)
         {
@@ -138,7 +140,7 @@ const SubscribeScreen = (): React.JSX.Element =>
         }
     };
 
-    const RetrySetup = async (): Promise<void> =>
+    const RetrySetup = useCallback(async (): Promise<void> =>
     {
         try
         {
@@ -146,9 +148,15 @@ const SubscribeScreen = (): React.JSX.Element =>
         }
         catch
         {
-            Alert.alert(t("subscribe.alerts.stillFinishingSetup.title"), t("subscribe.alerts.stillFinishingSetup.body"));
+            Alert.alert(
+                t("subscribe.alerts.stillFinishingSetup.title"),
+                t("subscribe.alerts.stillFinishingSetup.body")
+            );
         }
-    };
+    }, [ Refresh, t ]);
+
+    const OpenTerms = useCallback(() => Linking.openURL(TermsUrl), [ ]);
+    const OpenPrivacy = useCallback(() => Linking.openURL(PrivacyUrl), [ ]);
 
     return (
         <View style={ Styles.Container }>
@@ -213,6 +221,7 @@ const SubscribeScreen = (): React.JSX.Element =>
                         : null }
 
                     <Button
+                        Appearance="Blue"
                         Disabled={ IsBusy || IsFinishingPurchase || !SelectedPackage }
                         OnPress={ () => void Buy() }>
                         { IsBusy || IsFinishingPurchase
@@ -220,7 +229,6 @@ const SubscribeScreen = (): React.JSX.Element =>
                             : t("subscribe.actions.continueWith", { term: TermLabels[Selected] }) }
                     </Button>
                     <Button
-                        Appearance="Link"
                         Disabled={ IsBusy }
                         OnPress={ RestorePurchases }>
                         { t("subscribe.actions.restore") }
@@ -229,7 +237,7 @@ const SubscribeScreen = (): React.JSX.Element =>
                         ? (
                             <Button
                                 Appearance="Link"
-                                OnPress={ () => void RetrySetup() }>
+                                OnPress={ RetrySetup }>
                                 { t("subscribe.actions.retrySetup") }
                             </Button>
                         )
@@ -241,12 +249,12 @@ const SubscribeScreen = (): React.JSX.Element =>
                     <View style={ Styles.Links }>
                         <Button
                             Appearance="Link"
-                            OnPress={ () => void Linking.openURL(TermsUrl) }>
+                            OnPress={ OpenTerms }>
                             { t("subscribe.terms") }
                         </Button>
                         <Button
                             Appearance="Link"
-                            OnPress={ () => void Linking.openURL(PrivacyUrl) }>
+                            OnPress={ OpenPrivacy }>
                             { t("subscribe.privacy") }
                         </Button>
                     </View>
@@ -270,7 +278,7 @@ const useStyles = MakeStyles({
     CardHeading: ViewStyle({ alignItems: "center", flexDirection: "row", justifyContent: "space-between" }),
     Container: ViewStyle({ backgroundColor: Token.Semantic.BackgroundSidebar, flex: 1 }),
     Content: ViewStyle({ gap: Token.Spacing.L, padding: Token.Spacing.Xl }),
-    Links: ViewStyle({ flexDirection: "row", gap: Token.Spacing.M }),
+    Links: ViewStyle({ flexDirection: "row", gap: Token.Spacing.M, justifyContent: "center" }),
     SafeArea: ViewStyle({ flex: 1 }),
     SelectedCard: ViewStyle({ borderColor: Token.Semantic.Blue, borderWidth: 2 })
 });

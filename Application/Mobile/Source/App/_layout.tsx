@@ -352,7 +352,12 @@ const RootNavigator = () =>
                         headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
                         title: t("settings:titles.workspaces")
                     } } />
-                <Stack.Screen name="account-settings" />
+                <Stack.Screen name="account-settings"
+                    options={ {
+                        headerShown: true,
+                        headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
+                        title: t("settings:titles.account")
+                    } } />
                 <Stack.Screen name="feedback"
                     options={ {
                         headerShown: true,
@@ -386,13 +391,21 @@ const RootNavigator = () =>
                         headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar },
                         title: t("settings:titles.databaseSettings")
                     } } />
-                <Stack.Screen name="destination-config" />
+                <Stack.Screen name="destination-config"
+                    options={ {
+                        headerShown: true,
+                        headerStyle: { backgroundColor: Theme.Semantic.BackgroundSidebar }
+                    } } />
             </Stack.Protected>
             <Stack.Protected guard={ __DEV__ }>
                 <Stack.Screen name="onboarding-scenarios" />
                 <Stack.Screen
                     name="rich-editor-lab"
                     options={ { headerShown: true, title: "Rich editor lab" } }
+                />
+                <Stack.Screen
+                    name="notion-markdown-lab"
+                    options={ { headerShown: true, title: "Notion markdown lab" } }
                 />
             </Stack.Protected>
             {/* Unguarded (not even by an auth-independent condition, unlike

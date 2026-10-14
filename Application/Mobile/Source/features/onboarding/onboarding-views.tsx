@@ -41,6 +41,7 @@ import { OnboardingScreen } from "@/features/onboarding/onboarding-screen";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { Thunk } from "@sorrell/effect/Function";
 import { router } from "expo-router";
+import { useSubscription } from "@/Domain/Subscription";
 import { useTranslation } from "react-i18next";
 
 /** Props shared by views with a single primary action. */
@@ -434,6 +435,7 @@ const DatabaseSelectionView = ({
 {
     const [ Search, SetSearch ] = React.useState("");
     const Styles = useOnboardingResultStyles();
+    const { HasProAccess } = useSubscription();
     const { t } = useTranslation("onboarding");
     const SortedDatabases: ReadonlyArray<Domain.DataSource.OnboardingDatabase> =
         React.useMemo(
@@ -551,7 +553,12 @@ const DatabaseSelectionView = ({
                         importantForAccessibility={ SelectedIds.size === 0
                             ? "no-hide-descendants"
                             : "auto" }>
-                        { t("sync.databaseSelection.selectedCount", { count: SelectedIds.size }) }
+                        { t(
+                            HasProAccess
+                                ? "sync.databaseSelection.selectedCount"
+                                : "sync.databaseSelection.selectedCountFree",
+                            { count: SelectedIds.size }
+                        ) }
                     </Description>
 
                     <View

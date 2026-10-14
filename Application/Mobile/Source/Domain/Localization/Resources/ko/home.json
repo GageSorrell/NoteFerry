@@ -9,6 +9,19 @@
         "title": "데이터베이스",
         "empty": "아직 데이터베이스가 없어요."
     },
+    "recent": {
+        "title": "최근",
+        "untitled": "제목 없음",
+        "cardAccessibilityLabel": "Notion에서 {{title}} 열기",
+        "time": {
+            "now": "지금",
+            "minute": "{{count}}분 전",
+            "hour": "{{count}}시간 전",
+            "day": "{{count}}일 전",
+            "month": "{{count}}개월 전",
+            "year": "{{count}}년 전"
+        }
+    },
     "lockedDatabase": {
         "title": "Pro로 이 데이터베이스 잠금 해제",
         "message": "무료 플랜은 활성 데이터베이스 3개까지 사용할 수 있어요. 업그레이드하면 무제한으로 사용하거나, 데이터베이스 설정에서 활성 데이터베이스를 교체할 수 있어요.",

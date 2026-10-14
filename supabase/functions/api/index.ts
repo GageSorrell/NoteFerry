@@ -6,7 +6,7 @@
  * Every group — `Connections`, `DataSources`, `Destinations` and `Pages` — is
  * implemented against the shared `@noteferry/api` contract.
  *
- * @module noteferry/functions/api
+ * @module noteferry-monorepo/functions/api
  *
  * @file      index.ts
  * @author    Gage Sorrell <gage@sorrell.sh>
@@ -29,13 +29,12 @@ import * as Profile from "../_shared/Profile.ts";
 import * as Subscriptions from "../_shared/Subscriptions.ts";
 import { AdminClient, PrivateSchema } from "../_shared/Database.ts";
 import { Effect, Layer } from "effect";
-import { Etag, HttpPlatform, HttpRouter } from "effect/unstable/http";
+import { Etag, HttpPlatform, HttpRouter } from "effect/http";
 import { BuildAuthorizationUrl } from "../_shared/Notion.ts";
-import { HttpApiBuilder } from "effect/unstable/httpapi";
+import { HttpApiBuilder } from "effect/http-api";
 import { NoteFerryApi } from "@noteferry/api";
 import { RequireUser } from "../_shared/Authentication.ts";
 
-/* eslint-disable-next-line jsdoc/require-jsdoc */
 const ToNotionConnection = (Row: Record<string, unknown>): Domain.NotionConnection.NotionConnection =>
 {
     return {
@@ -110,7 +109,11 @@ const ConnectionsLive = HttpApiBuilder.group(NoteFerryApi, "Connections", (Handl
 
                 if (!ClientId)
                 {
-                    return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: "NOTION_OAUTH_CLIENT_ID is not set." }));
+                    return yield* Effect.fail(
+                        new Domain.Error.DatabaseError({
+                            Message: "NOTION_OAUTH_CLIENT_ID is not set."
+                        })
+                    );
                 }
 
                 const State = crypto.randomUUID();
@@ -333,7 +336,14 @@ const PagesLive = HttpApiBuilder.group(NoteFerryApi, "Pages", (Handlers) =>
             const UserId = yield* RequireUser;
 
             return yield* Pages.CreateForUser(UserId, Input.payload);
-        })));
+        }))
+        .handle("Recent", () =>
+            Effect.gen(function* ()
+            {
+                const UserId = yield* RequireUser;
+
+                return yield* Pages.ListRecentForUser(UserId);
+            })));
 
 const ProfileLive = HttpApiBuilder.group(NoteFerryApi, "Profile", (Handlers) =>
     Handlers
@@ -474,7 +484,7 @@ Deno.serve(async (Request_: Request) =>
         Url.pathname = Url.pathname.slice(Index + Marker.length) || "/";
     }
 
-    const Response_ = await handler(new Request(Url.toString(), Request_ as unknown as RequestInit));
+    const OutResponse = await handler(new Request(Url.toString(), Request_ as unknown as RequestInit));
 
-    return Cors.WithCors(Response_, Request_.headers.get("Origin"));
+    return Cors.WithCors(OutResponse, Request_.headers.get("Origin"));
 });

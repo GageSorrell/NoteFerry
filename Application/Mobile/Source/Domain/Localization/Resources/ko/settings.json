@@ -5,7 +5,8 @@
         "notifications": "알림",
         "quickActions": "퀵 액션",
         "workspaces": "워크스페이스",
-        "databaseSettings": "데이터베이스 설정"
+        "databaseSettings": "데이터베이스 설정",
+        "account": "계정 설정"
     },
     "general": {
         "onLaunch": {
@@ -22,6 +23,18 @@
             "oneColumn": "한 줄에 데이터베이스 하나",
             "twoColumn": "한 줄에 정사각형 카드 두 개"
         },
+        "recentPages": {
+            "title": "최근 페이지 표시",
+            "description": "NoteFerry로 최근에 만든 페이지를 홈 화면에 표시해요."
+        },
+        "recentPageDatabaseName": {
+            "title": "데이터베이스 이름 표시",
+            "description": "각 최근 페이지 카드에 대상 데이터베이스 이름을 표시해요."
+        },
+        "recentPageCovers": {
+            "title": "페이지 커버 표시",
+            "description": "최근 페이지 카드에 커버 이미지를 표시해요."
+        },
         "highContrast": {
             "title": "고대비",
             "description": "구분선, 테두리, 스위치의 대비를 높여요.",
@@ -33,10 +46,6 @@
             "systemShort": "시스템",
             "standardShort": "꺼짐",
             "highShort": "켜짐"
-        },
-        "homeScreenOrder": {
-            "title": "홈 화면 순서",
-            "description": "홈 화면에 표시되는 데이터베이스 순서를 드래그해서 바꿀 수 있어요."
         },
         "proGate": {
             "title": "NoteFerry Pro에서 사용 가능해요",
@@ -90,15 +99,15 @@
         "appInfo": "NoteFerry {{version}} (빌드 {{build}})"
     },
     "accountSettings": {
-        "back": "뒤로",
-        "title": "계정 설정",
         "notion": {
-            "heading": "Notion",
-            "manageButton": "Notion에서 NoteFerry 연결 관리하기"
+            "title": "Notion 연결",
+            "description": "Notion 계정에서 NoteFerry 연결을 관리하세요.",
+            "manageButton": "관리"
         },
         "yourData": {
-            "heading": "내 데이터",
-            "requestButton": "내 계정 데이터 요청하기",
+            "title": "내 데이터",
+            "description": "NoteFerry 계정 데이터 사본을 요청하세요. 준비되면 이메일로 보내드릴게요.",
+            "requestButton": "요청",
             "requesting": "요청 중…"
         },
         "dangerZone": {
@@ -199,8 +208,8 @@
             "active": "활성"
         },
         "replaceActive": "활성 데이터베이스로 교체",
-        "customize": "맞춤 설정",
-        "remove": "제거",
+        "customize": "{{title}} 맞춤 설정",
+        "remove": "{{title}} 제거",
         "customizeGate": {
             "title": "Pro로 폼을 맞춤 설정해 보세요",
             "message": "Pro에서는 별칭, 표시 여부, 필수 항목, 순서, 기본값까지 바꿀 수 있어요.",
@@ -213,6 +222,16 @@
             "message": "{{title}}은(는) Notion에서 그대로 유지돼요.",
             "cancel": "취소",
             "confirm": "제거"
+        },
+        "editAction": {
+            "edit": "편집",
+            "save": "저장"
+        },
+        "exitEditConfirm": {
+            "title": "편집을 종료할까요?",
+            "message": "데이터베이스 순서를 계속 조정하거나, 편집을 종료하고 돌아갈 수 있어요.",
+            "keepEditing": "계속 편집",
+            "stopEditing": "편집 종료"
         }
     }
 }

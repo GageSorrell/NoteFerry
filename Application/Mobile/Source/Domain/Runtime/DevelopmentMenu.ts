@@ -54,6 +54,11 @@ const RegisterDevelopmentMenu = async (): Promise<void> =>
             shouldCollapse: true
         },
         {
+            callback: () => router.navigate("/notion-markdown-lab" as Href),
+            name: "Notion markdown lab",
+            shouldCollapse: true
+        },
+        {
             callback: () => router.navigate("/onboarding-scenarios" as Href),
             name: "Onboarding scenarios",
             shouldCollapse: true

@@ -76,6 +76,7 @@
             "searchPlaceholder": "데이터베이스 검색",
             "selectedCount_one": "{{count}}개 선택됨",
             "selectedCount_other": "{{count}}개 선택됨",
+            "selectedCountFree": "{{count}}/3개 선택됨",
             "selectDatabase": "{{title}} 선택",
             "moreThan100Pages": "100개 초과",
             "pageCount_one": "{{count}}개 페이지",
@@ -110,7 +111,6 @@
         "accessibilityLabel": "Notion 인증 마무리 중"
     },
     "destinationConfig": {
-        "back": "‹ 뒤로",
         "defaultTitle": "설정",
         "subtitle": "이 데이터 소스의 빠른 입력 대상을 설정하세요.",
         "name": "이름",

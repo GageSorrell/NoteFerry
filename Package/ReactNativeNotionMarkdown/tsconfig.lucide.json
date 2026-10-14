@@ -1,0 +1,12 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "noEmit": false
+    },
+    "include": [
+        "Source/LucideIcons.ts",
+        "Source/Component/Icon/IconSet.ts",
+        "Source/Component/Icon/LucideIconSet.tsx"
+    ],
+    "exclude": []
+}

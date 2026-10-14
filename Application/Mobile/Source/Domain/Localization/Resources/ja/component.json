@@ -23,5 +23,39 @@
         "nativeDatabaseAdCard": {
             "adBadge": "広告"
         }
+    },
+    "notionMarkdown": {
+        "blockKinds": {
+            "paragraph": "テキスト",
+            "heading1": "見出し1",
+            "heading2": "見出し2",
+            "heading3": "見出し3",
+            "heading4": "見出し4",
+            "bulletedListItem": "箇条書きリスト",
+            "numberedListItem": "番号付きリスト",
+            "toDo": "ToDo",
+            "quote": "引用",
+            "code": "コード",
+            "divider": "区切り線",
+            "callout": "コールアウト",
+            "toggle": "トグルリスト",
+            "equation": "数式"
+        },
+        "colors": {
+            "default": "デフォルト",
+            "gray": "グレー",
+            "brown": "ブラウン",
+            "orange": "オレンジ",
+            "yellow": "イエロー",
+            "green": "グリーン",
+            "blue": "ブルー",
+            "purple": "パープル",
+            "pink": "ピンク",
+            "red": "レッド"
+        },
+        "colorPicker": {
+            "textSection": "テキスト",
+            "backgroundSection": "背景"
+        }
     }
 }

@@ -76,6 +76,7 @@
             "searchPlaceholder": "データベースを検索",
             "selectedCount_one": "{{count}}件選択中",
             "selectedCount_other": "{{count}}件選択中",
+            "selectedCountFree": "{{count}}/3件選択中",
             "selectDatabase": "{{title}}を選択",
             "moreThan100Pages": "100件超",
             "pageCount_one": "{{count}}件",
@@ -110,7 +111,6 @@
         "accessibilityLabel": "Notionの認証を完了しています"
     },
     "destinationConfig": {
-        "back": "‹ 戻る",
         "defaultTitle": "設定",
         "subtitle": "このデータソース用のクイック入力先を設定します。",
         "name": "名前",

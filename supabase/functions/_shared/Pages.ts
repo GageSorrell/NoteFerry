@@ -17,8 +17,8 @@
  */
 
 import * as Domain from "@noteferry/domain";
-import { ChunkNotionBlocks, MarkdownToNotionBlocks } from "@noteferry/notion-markdown";
 import * as Notion from "./Notion.ts";
+import { PlanPageBody, RichBodyFeature, WithRateLimitRetry } from "./PageBody.ts";
 import { CallNotionData, type ConnectionTokens, LoadConnectionTokens, RateLimited } from "./NotionAuth.ts";
 import { AdminClient, PrivateSchema } from "./Database.ts";
 import { Effect } from "effect";
@@ -28,6 +28,7 @@ import { Effect } from "effect";
 export interface CreatePageInput
 {
     readonly Body?: string | undefined;
+    readonly BodyFormat?: Domain.Command.PageBodyFormat | undefined;
     readonly Cover?: Domain.Command.PageCoverInput | undefined;
     readonly DestinationId: Domain.Id.DestinationId;
     readonly OperationId: Domain.Id.OperationId;
@@ -182,6 +183,89 @@ interface StoredConfiguration
     };
 }
 
+const PageTitle = (Page: Notion.NotionPageObject): string =>
+{
+    const TitleProperty = Object.values(Page.properties ?? {}).find((Property) =>
+        Property.type === "title" || Property.title !== undefined);
+    const Title = TitleProperty?.title?.map((Item) => Item.plain_text ?? "").join("").trim();
+
+    return Title ?? "";
+};
+
+const PageIconMetadata = (Icon: Notion.NotionIcon | undefined): {
+    readonly Icon: string | null;
+    readonly IconExpiresAt: string | null;
+    readonly IconType: "Emoji" | "Image" | "Native" | null;
+} =>
+{
+    if (!Icon)
+    {
+        return { Icon: null, IconType: null, IconExpiresAt: null };
+    }
+
+    if (Icon.type === "emoji")
+    {
+        return { Icon: Icon.emoji, IconType: "Emoji", IconExpiresAt: null };
+    }
+
+    if (Icon.type === "custom_emoji")
+    {
+        return { Icon: Icon.custom_emoji.url, IconType: "Image", IconExpiresAt: null };
+    }
+
+    if (Icon.type === "external")
+    {
+        return { Icon: Icon.external.url, IconType: "Image", IconExpiresAt: null };
+    }
+
+    if (Icon.type === "file")
+    {
+        return {
+            Icon: Icon.file.url,
+            IconExpiresAt: Icon.file.expiry_time ?? null,
+            IconType: "Image"
+        };
+    }
+
+    return { Icon: Icon.icon.name, IconType: "Native", IconExpiresAt: null };
+};
+
+const PageCoverMetadata = (Cover: Notion.NotionFile | undefined) =>
+{
+    if (!Cover)
+    {
+        return { CoverExpiresAt: null, CoverUrl: null };
+    }
+
+    if (Cover.type === "external")
+    {
+        return { CoverExpiresAt: null, CoverUrl: Cover.external.url };
+    }
+
+    return {
+        CoverExpiresAt: Cover.file.expiry_time ?? null,
+        CoverUrl: Cover.file.url
+    };
+};
+
+const PageMetadata = (Page: Notion.NotionPageObject) =>
+{
+    const Icon = PageIconMetadata(Page.icon);
+    const Cover = PageCoverMetadata(Page.cover);
+
+    return {
+        notion_metadata_checked_at: new Date().toISOString(),
+        notion_page_created_at: Page.created_time ?? null,
+        notion_page_title: PageTitle(Page),
+        notion_page_url: Page.url ?? null,
+        page_cover_expires_at: Cover.CoverExpiresAt,
+        page_cover_url: Cover.CoverUrl,
+        page_icon: Icon.Icon,
+        page_icon_expires_at: Icon.IconExpiresAt,
+        page_icon_type: Icon.IconType
+    };
+};
+
 /**
  * Creates a Notion page for a destination from a NoteFerry command, recording the
  * attempt for idempotent retries.
@@ -219,7 +303,7 @@ export const CreateForUser = (UserId: string, Command: CreatePageInput) =>
         const { data: DataSource, error: DataSourceError } = yield* Effect.promise(async () =>
             await AdminClient
                 .from("data_sources")
-                .select("property_schema")
+                .select("property_schema, title")
                 .eq("connection_id", ConnectionId)
                 .eq("notion_data_source_id", DataSourceId)
                 .eq("user_id", UserId)
@@ -236,6 +320,7 @@ export const CreateForUser = (UserId: string, Command: CreatePageInput) =>
         }
 
         const Properties = DataSource.property_schema as readonly Domain.Property.PropertyDefinition[];
+        const DatabaseName = DataSource.title as string | null;
         const { data: IsPro } = yield* Effect.promise(async () =>
             await PrivateSchema.rpc("user_has_pro", { p_user_id: UserId }));
 
@@ -285,15 +370,26 @@ export const CreateForUser = (UserId: string, Command: CreatePageInput) =>
         }
 
         const Configuration = Destination.configuration as StoredConfiguration;
-        const PageChildren = Command.Body === undefined || Command.Body.trim() === ""
-            ? undefined
-            : yield* Effect.try({
-                catch: (Error_) => new Domain.Error.NotionValidationError({ Message: String(Error_) }),
-                try: () => MarkdownToNotionBlocks(
-                    Command.Body ?? "",
-                    { FailOnUnsupported: true }
-                ).Blocks
-            });
+
+        /* Convert the body before anything is reserved or sent, so a body
+         * that is gated or unusable never consumes a creation slot or leaves
+         * a page behind. */
+        const Body = PlanPageBody(Command.Body, Command.BodyFormat, IsPro === true);
+
+        if (Body._tag === "Gated")
+        {
+            return yield* Effect.fail(new Domain.Error.FeatureGateError({ Feature: RichBodyFeature }));
+        }
+
+        if (Body._tag === "TooLong")
+        {
+            return yield* Effect.fail(new Domain.Error.InvalidPageDraft({ Message: Body.Message }));
+        }
+
+        if (Body._tag === "Invalid")
+        {
+            return yield* Effect.fail(new Domain.Error.NotionValidationError({ Message: Body.Message }));
+        }
 
         for (const Field of IsPro === true
             ? Configuration.FieldConfiguration?.Fields ?? []
@@ -363,25 +459,26 @@ export const CreateForUser = (UserId: string, Command: CreatePageInput) =>
             }
 
             let NotionCover: unknown;
-            if (Command.Cover?.Type === "External")
+            const Cover = Command.Cover;
+            if (Cover?.Type === "External")
             {
-                NotionCover = { external: { url: Command.Cover.Url }, type: "external" };
+                NotionCover = { external: { url: Cover.Url }, type: "external" };
             }
-            else if (Command.Cover?.Type === "Upload")
+            else if (Cover?.Type === "Upload")
             {
                 const Upload = yield* Effect.tryPromise({
                     catch: (Error_) => Error_,
                     try: async () =>
                     {
-                        const ContentType = Command.Cover?.MimeType ?? "image/jpeg";
-                        const Filename = Command.Cover?.Name ?? "cover.jpg";
+                        const ContentType = Cover.MimeType ?? "image/jpeg";
+                        const Filename = Cover.Name ?? "cover.jpg";
                         const Created = await CallNotionData(Tokens, ConnectionId, (Token) =>
                             Notion.CreateFileUpload(Token, { ContentType, Filename }));
                         await CallNotionData(Tokens, ConnectionId, (Token) =>
                             Notion.SendFileUpload(
                                 Token,
                                 Created.id,
-                                DecodeBase64(Command.Cover?.Base64 ?? ""),
+                                DecodeBase64(Cover.Base64),
                                 Filename,
                                 ContentType
                             ));
@@ -391,24 +488,25 @@ export const CreateForUser = (UserId: string, Command: CreatePageInput) =>
                 NotionCover = Upload;
             }
 
-            const NotionIcon = Command.Icon?.Type === "Emoji"
-                ? { emoji: Command.Icon.Emoji, type: "emoji" }
-                : Command.Icon?.Type === "External"
-                    ? { external: { url: Command.Icon.Url }, type: "external" }
-                    : Command.Icon?.Type === "Upload"
+            const Icon = Command.Icon;
+            const NotionIcon = Icon?.Type === "Emoji"
+                ? { emoji: Icon.Emoji, type: "emoji" }
+                : Icon?.Type === "External"
+                    ? { external: { url: Icon.Url }, type: "external" }
+                    : Icon?.Type === "Upload"
                         ? yield* Effect.tryPromise({
                             catch: (Error_) => Error_,
                             try: async () =>
                             {
-                                const ContentType = Command.Icon?.MimeType ?? "image/png";
-                                const Filename = Command.Icon?.Name ?? "icon.png";
+                                const ContentType = Icon.MimeType ?? "image/png";
+                                const Filename = Icon.Name ?? "icon.png";
                                 const Created = await CallNotionData(Tokens, ConnectionId, (Token) =>
                                     Notion.CreateFileUpload(Token, { ContentType, Filename }));
                                 await CallNotionData(Tokens, ConnectionId, (Token) =>
                                     Notion.SendFileUpload(
                                         Token,
                                         Created.id,
-                                        DecodeBase64(Command.Icon?.Base64 ?? ""),
+                                        DecodeBase64(Icon.Base64),
                                         Filename,
                                         ContentType
                                     ));
@@ -421,29 +519,29 @@ export const CreateForUser = (UserId: string, Command: CreatePageInput) =>
                 catch: (Error_) => Error_,
                 try: () => CallNotionData(Tokens, ConnectionId, async (Token) =>
                 {
-                    const ChildChunks = PageChildren === undefined ? [] : ChunkNotionBlocks(PageChildren);
                     const Page = await Notion.CreatePage(Token, {
-                        ...(ChildChunks[0] === undefined ? { } : { children: ChildChunks[0] }),
+                        ...(Body.Plan.Initial.length === 0 ? { } : { children: Body.Plan.Initial }),
                         ...(NotionCover === undefined ? { } : { cover: NotionCover }),
                         ...(NotionIcon === undefined ? { } : { icon: NotionIcon }),
                         parent: { data_source_id: DataSourceId, type: "data_source_id" },
                         properties: NotionProperties
                     });
 
-                    for (const Chunk of ChildChunks.slice(1))
-                    {
-                        await Notion.AppendBlockChildren(
-                            Token,
-                            Page.id,
-                            Chunk
-                        );
-                    }
+                    /* Whatever the Create Page request could not carry: later
+                     * chunks of a long body, and children nested deeper or
+                     * wider than one request allows, each appended to the
+                     * block Notion just reported creating. */
+                    await Body.Plan.AppendRemaining(
+                        Page.id,
+                        WithRateLimitRetry((ParentId, Children) =>
+                            Notion.AppendBlockChildren(Token, ParentId, Children))
+                    );
 
                     return Page;
                 })
             });
         }).pipe(
-            Effect.catchAll((Error_) => Effect.fail(MapCreateError(Error_, DataSourceId))),
+            Effect.catch((Error_) => Effect.fail(MapCreateError(Error_, DataSourceId))),
             Effect.tapError((Mapped) =>
                 Effect.promise(async () =>
                     await AdminClient
@@ -455,12 +553,143 @@ export const CreateForUser = (UserId: string, Command: CreatePageInput) =>
         yield* Effect.promise(async () =>
             await AdminClient
                 .from("operations")
-                .update({ notion_page_id: Page.id, state: "succeeded" })
-                .eq("id", Command.OperationId));
+                .update({
+                    connection_id: ConnectionId,
+                    database_name: DatabaseName,
+                    notion_page_id: Page.id,
+                    ...PageMetadata(Page),
+                    state: "succeeded"
+                })
+                .eq("id", Command.OperationId)
+                .eq("user_id", UserId));
 
         return {
             NotionPageId: Page.id as Domain.Id.NotionPageId,
             OperationId: Command.OperationId
         };
+    });
+};
+
+const BuildPageUrl = (PageId: string): string =>
+    `https://www.notion.so/${ PageId.replaceAll("-", "") }`;
+
+const ShouldRefreshMetadata = (Row: Record<string, unknown>, Now: number): boolean =>
+{
+    if (Row.notion_metadata_checked_at === null || Row.notion_metadata_checked_at === undefined)
+    {
+        return true;
+    }
+
+    const RefreshBefore = Now + (5 * 60 * 1_000);
+    return [ Row.page_icon_expires_at, Row.page_cover_expires_at ]
+        .some((Value) => Value !== null
+            && Value !== undefined
+            && new Date(Value as string).getTime() <= RefreshBefore);
+};
+
+const RecentPageFromRow = (
+    Row: Record<string, unknown>,
+    Refreshed?: Notion.NotionPageObject | null
+): Domain.Page.RecentPage =>
+{
+    const Payload = (Row.payload ?? {}) as Record<string, unknown>;
+    const PayloadIcon = Payload.Icon as Record<string, unknown> | undefined;
+    const PageId = Row.notion_page_id as string;
+    const Icon = Refreshed ? PageIconMetadata(Refreshed.icon) : null;
+    const Cover = Refreshed ? PageCoverMetadata(Refreshed.cover) : null;
+    const IconValue = Refreshed
+        ? Icon?.Icon ?? undefined
+        : Row.page_icon as string | null
+            ?? (PayloadIcon?.Type === "Emoji" ? PayloadIcon.Emoji as string : undefined);
+    const IconType = Refreshed
+        ? Icon?.IconType ?? undefined
+        : Row.page_icon_type as "Emoji" | "Image" | "Native" | null
+            ?? (PayloadIcon?.Type === "Emoji" ? "Emoji" : undefined);
+    const CoverUrl = Refreshed
+        ? Cover?.CoverUrl ?? undefined
+        : Row.page_cover_url as string | null ?? undefined;
+
+    return {
+        ...(CoverUrl === undefined ? {} : { CoverUrl }),
+        CreatedAt: new Date(
+            (Refreshed?.created_time
+                ?? Row.notion_page_created_at
+                ?? Row.created_at) as string
+        ),
+        ...(Row.database_name ? { DatabaseName: Row.database_name as string } : {}),
+        ...(IconValue === undefined ? {} : { Icon: IconValue }),
+        ...(IconType === undefined ? {} : { IconType }),
+        NotionPageId: PageId as Domain.Id.NotionPageId,
+        OperationId: Row.id as Domain.Id.OperationId,
+        Title: (Refreshed ? PageTitle(Refreshed) : null)
+            || Row.notion_page_title as string
+            || Payload.Title as string
+            || "",
+        Url: Refreshed?.url
+            ?? Row.notion_page_url as string
+            ?? BuildPageUrl(PageId)
+    };
+};
+
+/** Lists recent successful pages, refreshing expiring Notion-hosted artwork. */
+export const ListRecentForUser = (UserId: string) =>
+{
+    return Effect.gen(function* ()
+    {
+        const { data: Rows, error } = yield* Effect.promise(async () =>
+            await AdminClient
+                .from("operations")
+                .select("*")
+                .eq("user_id", UserId)
+                .eq("state", "succeeded")
+                .not("notion_page_id", "is", null)
+                .order("created_at", { ascending: false })
+                .limit(5));
+
+        if (error)
+        {
+            return yield* Effect.fail(new Domain.Error.DatabaseError({ Message: error.message }));
+        }
+
+        const Results: Array<Domain.Page.RecentPage> = [];
+        for (const Value of (Rows ?? []) as ReadonlyArray<Record<string, unknown>>)
+        {
+            let Refreshed: Notion.NotionPageObject | null = null;
+            const ConnectionId = Value.connection_id as string | null;
+
+            if (ConnectionId && ShouldRefreshMetadata(Value, Date.now()))
+            {
+                Refreshed = yield* Effect.gen(function* ()
+                {
+                    const Tokens = yield* LoadConnectionTokens(UserId, ConnectionId);
+                    return yield* Effect.tryPromise({
+                        catch: () => null,
+                        try: () => CallNotionData(
+                            Tokens,
+                            ConnectionId,
+                            (Token) => Notion.RetrievePage(
+                                Token,
+                                Value.notion_page_id as string
+                            )
+                        )
+                    });
+                }).pipe(Effect.catch(() => Effect.succeed(null)));
+
+                if (Refreshed)
+                {
+                    const Metadata = PageMetadata(Refreshed);
+                    yield* Effect.promise(async () =>
+                        await AdminClient
+                            .from("operations")
+                            .update(Metadata)
+                            .eq("id", Value.id)
+                            .eq("user_id", UserId));
+                }
+            }
+
+            Results.push(RecentPageFromRow(Value, Refreshed));
+        }
+
+        return Results;
     });
 };

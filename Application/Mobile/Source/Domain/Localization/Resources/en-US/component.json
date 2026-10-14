@@ -23,5 +23,39 @@
         "nativeDatabaseAdCard": {
             "adBadge": "Ad"
         }
+    },
+    "notionMarkdown": {
+        "blockKinds": {
+            "paragraph": "Text",
+            "heading1": "Heading 1",
+            "heading2": "Heading 2",
+            "heading3": "Heading 3",
+            "heading4": "Heading 4",
+            "bulletedListItem": "Bulleted list",
+            "numberedListItem": "Numbered list",
+            "toDo": "To-do",
+            "quote": "Quote",
+            "code": "Code",
+            "divider": "Divider",
+            "callout": "Callout",
+            "toggle": "Toggle",
+            "equation": "Equation"
+        },
+        "colors": {
+            "default": "Default",
+            "gray": "Gray",
+            "brown": "Brown",
+            "orange": "Orange",
+            "yellow": "Yellow",
+            "green": "Green",
+            "blue": "Blue",
+            "purple": "Purple",
+            "pink": "Pink",
+            "red": "Red"
+        },
+        "colorPicker": {
+            "textSection": "Text",
+            "backgroundSection": "Background"
+        }
     }
 }

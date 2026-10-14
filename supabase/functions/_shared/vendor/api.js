@@ -11,7 +11,7 @@ __export(AccountApi_exports, {
   Delete: () => Delete
 });
 import * as Domain from "@noteferry/domain";
-import { HttpApiEndpoint, HttpApiGroup } from "effect/unstable/httpapi";
+import { HttpApiEndpoint, HttpApiGroup } from "effect/http-api";
 var Delete = HttpApiEndpoint.delete("Delete", "/", {
   error: [
     Domain.Error.AuthenticationRequired,
@@ -32,8 +32,8 @@ __export(ConnectionsApi_exports, {
   StartAuthorizationResult: () => StartAuthorizationResult
 });
 import * as Domain2 from "@noteferry/domain";
-import { HttpApiEndpoint as HttpApiEndpoint2, HttpApiGroup as HttpApiGroup2 } from "effect/unstable/httpapi";
-import { Schema } from "effect";
+import { HttpApiEndpoint as HttpApiEndpoint2, HttpApiGroup as HttpApiGroup2 } from "effect/http-api";
+import * as Schema from "effect/Schema";
 var StartAuthorizationResult = Schema.Struct({
   AuthorizationUrl: Schema.String
 });
@@ -91,8 +91,8 @@ __export(DataSourcesApi_exports, {
   SwapFreeActivePayload: () => SwapFreeActivePayload
 });
 import * as Domain3 from "@noteferry/domain";
-import { HttpApiEndpoint as HttpApiEndpoint3, HttpApiGroup as HttpApiGroup3 } from "effect/unstable/httpapi";
-import { Schema as Schema2 } from "effect";
+import { HttpApiEndpoint as HttpApiEndpoint3, HttpApiGroup as HttpApiGroup3 } from "effect/http-api";
+import * as Schema2 from "effect/Schema";
 var RefreshDataSourcePayload = Schema2.Struct({
   ConnectionId: Domain3.Id.NotionConnectionId,
   DataSourceId: Domain3.Id.NotionDataSourceId
@@ -197,8 +197,8 @@ __export(DestinationsApi_exports, {
   UpdateDestinationPayload: () => UpdateDestinationPayload
 });
 import * as Domain4 from "@noteferry/domain";
-import { HttpApiEndpoint as HttpApiEndpoint4, HttpApiGroup as HttpApiGroup4 } from "effect/unstable/httpapi";
-import { Schema as Schema3 } from "effect";
+import { HttpApiEndpoint as HttpApiEndpoint4, HttpApiGroup as HttpApiGroup4 } from "effect/http-api";
+import * as Schema3 from "effect/Schema";
 var CreateDestinationPayload = Schema3.Struct({
   ConnectionId: Domain4.Id.NotionConnectionId,
   DataSourceId: Domain4.Id.NotionDataSourceId,
@@ -270,7 +270,7 @@ __export(ExportRequestsApi_exports, {
   ExportRequestsApi: () => ExportRequestsApi
 });
 import * as Domain5 from "@noteferry/domain";
-import { HttpApiEndpoint as HttpApiEndpoint5, HttpApiGroup as HttpApiGroup5 } from "effect/unstable/httpapi";
+import { HttpApiEndpoint as HttpApiEndpoint5, HttpApiGroup as HttpApiGroup5 } from "effect/http-api";
 var Create2 = HttpApiEndpoint5.post("Create", "/", {
   error: [
     Domain5.Error.AuthenticationRequired,
@@ -288,8 +288,8 @@ __export(FeedbackApi_exports, {
   FeedbackKind: () => FeedbackKind
 });
 import * as Domain6 from "@noteferry/domain";
-import { HttpApiEndpoint as HttpApiEndpoint6, HttpApiGroup as HttpApiGroup6 } from "effect/unstable/httpapi";
-import { Schema as Schema4 } from "effect";
+import { HttpApiEndpoint as HttpApiEndpoint6, HttpApiGroup as HttpApiGroup6 } from "effect/http-api";
+import * as Schema4 from "effect/Schema";
 var FeedbackKind = Schema4.Literals(["Feedback", "BugReport"]);
 var CreateFeedbackPayload = Schema4.Struct({
   Kind: FeedbackKind,
@@ -307,16 +307,18 @@ var Create3 = HttpApiEndpoint6.post("Create", "/", {
 var FeedbackApi = HttpApiGroup6.make("Feedback").add(Create3);
 
 // Package/Api/Distribution/Api.js
-import { HttpApi } from "effect/unstable/httpapi";
+import { HttpApi } from "effect/http-api";
 
 // Package/Api/Distribution/PagesApi.js
 var PagesApi_exports = {};
 __export(PagesApi_exports, {
   Create: () => Create4,
-  PagesApi: () => PagesApi
+  PagesApi: () => PagesApi,
+  Recent: () => Recent
 });
 import * as Domain7 from "@noteferry/domain";
-import { HttpApiEndpoint as HttpApiEndpoint7, HttpApiGroup as HttpApiGroup7 } from "effect/unstable/httpapi";
+import { HttpApiEndpoint as HttpApiEndpoint7, HttpApiGroup as HttpApiGroup7 } from "effect/http-api";
+import * as Schema5 from "effect/Schema";
 var Create4 = HttpApiEndpoint7.post("Create", "/", {
   error: [
     Domain7.Error.AuthenticationRequired,
@@ -329,14 +331,23 @@ var Create4 = HttpApiEndpoint7.post("Create", "/", {
     Domain7.Error.NotionRateLimited,
     Domain7.Error.NotionValidationError,
     Domain7.Error.NotionUnavailable,
+    Domain7.Error.DestinationNotFound,
     Domain7.Error.FreeCreationWindowExceeded,
     Domain7.Error.FeatureGateError,
-    Domain7.Error.DatabaseError
+    Domain7.Error.DatabaseError,
+    Domain7.Error.PageCreationInProgress
   ],
   payload: Domain7.Command.CreatePageCommand,
   success: Domain7.Command.CreatePageResult
 });
-var PagesApi = HttpApiGroup7.make("Pages").add(Create4);
+var Recent = HttpApiEndpoint7.get("Recent", "/recent", {
+  error: [
+    Domain7.Error.AuthenticationRequired,
+    Domain7.Error.DatabaseError
+  ],
+  success: Schema5.Array(Domain7.Page.RecentPage)
+});
+var PagesApi = HttpApiGroup7.make("Pages").add(Create4, Recent);
 
 // Package/Api/Distribution/ProfileApi.js
 var ProfileApi_exports = {};
@@ -346,7 +357,7 @@ __export(ProfileApi_exports, {
   UpdateSettings: () => UpdateSettings
 });
 import * as Domain8 from "@noteferry/domain";
-import { HttpApiEndpoint as HttpApiEndpoint8, HttpApiGroup as HttpApiGroup8 } from "effect/unstable/httpapi";
+import { HttpApiEndpoint as HttpApiEndpoint8, HttpApiGroup as HttpApiGroup8 } from "effect/http-api";
 var Get2 = HttpApiEndpoint8.get("Get", "/", {
   error: [
     Domain8.Error.AuthenticationRequired,
@@ -372,14 +383,14 @@ __export(SubscriptionsApi_exports, {
   SubscriptionsApi: () => SubscriptionsApi
 });
 import * as Domain9 from "@noteferry/domain";
-import { HttpApiEndpoint as HttpApiEndpoint9, HttpApiGroup as HttpApiGroup9 } from "effect/unstable/httpapi";
-import { Schema as Schema5 } from "effect";
-var RegisterDevicePayload = Schema5.Struct({
-  DeviceId: Schema5.String,
+import { HttpApiEndpoint as HttpApiEndpoint9, HttpApiGroup as HttpApiGroup9 } from "effect/http-api";
+import * as Schema6 from "effect/Schema";
+var RegisterDevicePayload = Schema6.Struct({
+  DeviceId: Schema6.String,
   Platform: Domain9.Subscription.DevicePlatform,
-  PushToken: Schema5.String
+  PushToken: Schema6.String
 });
-var RemoveDevicePayload = Schema5.Struct({ DeviceId: Schema5.String });
+var RemoveDevicePayload = Schema6.Struct({ DeviceId: Schema6.String });
 var CommonErrors = [
   Domain9.Error.AuthenticationRequired,
   Domain9.Error.DatabaseError,
@@ -404,12 +415,12 @@ var Sale = HttpApiEndpoint9.get("Sale", "/Sale", {
 var RegisterDevice = HttpApiEndpoint9.post("RegisterDevice", "/Devices", {
   error: CommonErrors,
   payload: RegisterDevicePayload,
-  success: Schema5.Void
+  success: Schema6.Void
 });
 var RemoveDevice = HttpApiEndpoint9.post("RemoveDevice", "/Devices/Remove", {
   error: CommonErrors,
   payload: RemoveDevicePayload,
-  success: Schema5.Void
+  success: Schema6.Void
 });
 var SubscriptionsApi = HttpApiGroup9.make("Subscriptions").add(Status, Allowance, Refresh2, Sale, RegisterDevice, RemoveDevice);
 

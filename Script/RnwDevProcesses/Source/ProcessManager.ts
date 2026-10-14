@@ -23,8 +23,8 @@
  */
 
 import { Effect } from "effect";
-import { CliError } from "effect/unstable/cli";
-import { ChildProcess, ChildProcessSpawner } from "effect/unstable/process";
+import { CliError } from "effect/cli";
+import { ChildProcess, ChildProcessSpawner } from "effect/process";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 

@@ -103,7 +103,9 @@ const SettingsScreen = (): React.JSX.Element =>
 
     return (
         <View style={ Styles.Container }>
-            <SafeAreaView style={ Styles.SafeArea }>
+            <SafeAreaView
+                edges={ [ "bottom" ] }
+                style={ Styles.SafeArea }>
                 <SettingsTable>
                     <SettingsTableRow
                         AccessibilityLabel={ SubscriptionLabel }

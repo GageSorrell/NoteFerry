@@ -76,6 +76,7 @@
             "searchPlaceholder": "Search databases",
             "selectedCount_one": "{{count}} database selected",
             "selectedCount_other": "{{count}} databases selected",
+            "selectedCountFree": "{{count}}/3 databases selected",
             "selectDatabase": "Select {{title}}",
             "moreThan100Pages": ">100 pages",
             "pageCount_one": "{{count}} page",
@@ -110,7 +111,6 @@
         "accessibilityLabel": "Finishing Notion authorization"
     },
     "destinationConfig": {
-        "back": "‹ Back",
         "defaultTitle": "Configure",
         "subtitle": "Set up a quick-entry destination for this data source.",
         "name": "Name",

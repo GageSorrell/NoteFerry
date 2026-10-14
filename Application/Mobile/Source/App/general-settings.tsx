@@ -1,7 +1,8 @@
 /**
  * General app settings. Reached from the "General" row on the settings
- * screen: launch behavior, home screen layout and database order, and
- * contrast.
+ * screen: launch behavior, home screen layout, and contrast. Home-screen
+ * database order is set from the Database settings screen's edit mode
+ * instead — see `database-settings.tsx`.
  *
  * @module noteferry/app/general-settings
  *
@@ -13,16 +14,15 @@
 
 import type * as Domain from "@noteferry/domain";
 import { Alert, ScrollView, View } from "react-native";
-import { Body, Description, Heading2 } from "@noteferry/ui/Primitive/Text";
+import { Body } from "@noteferry/ui/Primitive/Text";
 import { BottomSheet, BottomSheetDescription, BottomSheetTitle, BottomSheetView } from "@noteferry/ui/Primitive/BottomSheet";
 import { MenuGroup, MenuItem, MenuItemCheck } from "@noteferry/ui/Primitive/Menu";
 import { Pressable } from "@noteferry/ui/Primitive/Pressable";
 import { RadioGroup, RadioGroupItem } from "@noteferry/ui/Primitive/RadioGroup";
 import { Setting, SettingsContainer } from "@noteferry/ui/Primitive/Setting";
-import { Sortable } from "@noteferry/ui/Primitive/Sortable";
+import { Switch } from "@noteferry/ui/Primitive/Switch";
 import ChevronDown from "lucide-react-native/icons/chevron-down";
-import GripVertical from "lucide-react-native/icons/grip-vertical";
-import { MakeStyles, TextStyle, Token, ViewStyle, useTheme, useToken } from "@noteferry/ui/Core";
+import { MakeStyles, Token, ViewStyle, useToken } from "@noteferry/ui/Core";
 import { useCallback, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SupportedLocales } from "@/Domain/Localization";
@@ -33,8 +33,6 @@ import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSettings } from "@/features/settings/use-settings";
 import { useSubscription } from "@/Domain/Subscription";
 import { useTranslation } from "react-i18next";
-
-const SortableItemExtent = 44;
 
 interface LayoutOption
 {
@@ -71,7 +69,6 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
     const { HasProAccess } = useSubscription();
     const { DataSources } = useConnections();
     const Router = useLazyRouter();
-    const Theme = useTheme();
     const { t } = useTranslation("settings");
     const { Current: CurrentLanguage, SetLanguage } = useLanguage();
     const ContrastSheetRef = useRef<BottomSheet | null>(null);
@@ -111,13 +108,6 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
     const SelectedLanguage =
         LanguageOptions.find((Option: LanguageOption) => Option.Value === CurrentLanguage)
             ?? LanguageOptions[ 0 ];
-
-    const DatabaseOrder = AppSettings.DatabaseOrder.length > 0
-        ? AppSettings.DatabaseOrder
-        : DataSources.map((Source: Domain.DataSource.CachedDataSourceSchema) => Source.DataSourceId);
-    const DataSourceById = new Map(DataSources.map((
-        Source: Domain.DataSource.CachedDataSourceSchema
-    ) => [ Source.DataSourceId, Source ] as const));
 
     const LaunchOptions: ReadonlyArray<LaunchOption> = [
         { Key: "Home", Label: t("general.onLaunch.homeScreen"), Value: { Type: "Home" } },
@@ -204,22 +194,11 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
         void Update({ LaunchBehavior: Value });
     }, [ HasProAccess, ShowSettingsGate, Update, t ]);
 
-    const HandleReorder = useCallback((NextOrder: ReadonlyArray<string>) =>
-    {
-        if (!HasProAccess)
-        {
-            ShowSettingsGate(t("general.proGate.orderMessage"));
-            return;
-        }
-
-        void Update({
-            DatabaseOrder: NextOrder as ReadonlyArray<Domain.Id.NotionDataSourceId>
-        });
-    }, [ HasProAccess, ShowSettingsGate, Update, t ]);
-
     return (
         <View style={ Styles.Container }>
-            <SafeAreaView style={ Styles.SafeArea }>
+            <SafeAreaView
+                edges={ [ "bottom" ] }
+                style={ Styles.SafeArea }>
                 <ScrollView
                     contentContainerStyle={ Styles.List }
                     style={ Styles.Scroll }>
@@ -240,6 +219,35 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
                                     size={ 16 }
                                 />
                             </Pressable>
+                        </Setting>
+                        <Setting
+                            Description={ t("general.recentPages.description") }
+                            Title={ t("general.recentPages.title") }>
+                            <Switch
+                                OnValueChange={ (Value: boolean) =>
+                                    void Update({ ShowRecentPages: Value }) }
+                                Value={ AppSettings.ShowRecentPages }
+                            />
+                        </Setting>
+                        <Setting
+                            Description={ t("general.recentPageDatabaseName.description") }
+                            Title={ t("general.recentPageDatabaseName.title") }>
+                            <Switch
+                                Disabled={ !AppSettings.ShowRecentPages }
+                                OnValueChange={ (Value: boolean) =>
+                                    void Update({ ShowRecentPageDatabaseName: Value }) }
+                                Value={ AppSettings.ShowRecentPageDatabaseName }
+                            />
+                        </Setting>
+                        <Setting
+                            Description={ t("general.recentPageCovers.description") }
+                            Title={ t("general.recentPageCovers.title") }>
+                            <Switch
+                                Disabled={ !AppSettings.ShowRecentPages }
+                                OnValueChange={ (Value: boolean) =>
+                                    void Update({ ShowRecentPageCovers: Value }) }
+                                Value={ AppSettings.ShowRecentPageCovers }
+                            />
                         </Setting>
                         <Setting
                             Description={ t("general.homeScreenLayout.description") }
@@ -325,46 +333,6 @@ const GeneralSettingsScreen = (): React.JSX.Element =>
                             </Pressable>
                         </Setting>
                     </SettingsContainer>
-
-                    { DataSources.length > 1
-                        ? (
-                            <View>
-                                <Heading2 Style={ Styles.SectionHeading }>{ t("general.homeScreenOrder.title") }</Heading2>
-                                <Description Style={ Styles.SectionSubtitle }>
-                                    { t("general.homeScreenOrder.description") }
-                                </Description>
-                                <Sortable.Root
-                                    ItemExtent={ SortableItemExtent }
-                                    OnValueChange={ HandleReorder }
-                                    Value={ DatabaseOrder }>
-                                    <Sortable.List>
-                                        { DatabaseOrder.map((Id: Domain.Id.NotionDataSourceId) =>
-                                        {
-                                            const Source = DataSourceById.get(Id);
-
-                                            return (
-                                                <Sortable.Item
-                                                    Id={ Id }
-                                                    key={ Id }>
-                                                    <View style={ Styles.SortableRow }>
-                                                        <Body NumberOfLines={ 1 }>
-                                                            { Source?.Title ?? Id }
-                                                        </Body>
-                                                        <Sortable.Handle>
-                                                            <GripVertical
-                                                                color={ Theme.Semantic.IconSecondary }
-                                                                size={ 16 }
-                                                            />
-                                                        </Sortable.Handle>
-                                                    </View>
-                                                </Sortable.Item>
-                                            );
-                                        }) }
-                                    </Sortable.List>
-                                </Sortable.Root>
-                            </View>
-                        )
-                        : null }
                 </ScrollView>
             </SafeAreaView>
             <BottomSheet
@@ -512,13 +480,6 @@ const useStyles = MakeStyles({
         alignSelf: "stretch",
         flex: 1
     }),
-    SectionHeading: TextStyle({
-        marginTop: Token.Spacing.M
-    }),
-    SectionSubtitle: TextStyle({
-        marginBottom: 4,
-        marginTop: -6
-    }),
     Sheet: ViewStyle({
         flex: 1,
         paddingHorizontal: Token.Spacing.SheetHorizontal,
@@ -533,16 +494,6 @@ const useStyles = MakeStyles({
     SheetMenuOption: ViewStyle({
         minHeight: 48,
         paddingHorizontal: 12
-    }),
-    SortableRow: ViewStyle({
-        alignItems: "center",
-        backgroundColor: Token.Semantic.BackgroundModal,
-        borderRadius: Token.Radii.Large,
-        flexDirection: "row",
-        height: SortableItemExtent - 4,
-        justifyContent: "space-between",
-        marginBottom: 4,
-        paddingHorizontal: Token.Spacing.M
     })
 });
 

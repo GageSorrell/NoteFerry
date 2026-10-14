@@ -15,6 +15,7 @@ import {
     type AppStateStatus,
     Platform,
     type PressableStateCallbackType,
+    RefreshControl,
     ScrollView,
     View
 } from "react-native";
@@ -31,7 +32,9 @@ import { ImageStyle, MakeStyles, TextStyle, Token, ViewStyle, useTheme } from "@
 import { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DatabaseCard } from "@/Component/DatabaseCard";
+import { PageCard } from "@/Component/PageCard";
 import { Image } from "expo-image";
+import { OrderDataSources } from "@/Domain/Utility/DatabaseOrder";
 import { RegisterQuickActions } from "@/Domain/Runtime/QuickActions";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WorkspaceMenu } from "@/Component/WorkspaceMenu";
@@ -41,6 +44,8 @@ import { useLazyRouter } from "@/Domain/Utility/LazyRouter";
 import { useSettings } from "@/features/settings/use-settings";
 import { useSubscription } from "@/Domain/Subscription";
 import { useTranslation } from "react-i18next";
+import { useRecentPages } from "@/features/recent-pages/use-recent-pages";
+import { OpenNotionPage } from "@/Domain/Utility/OpenNotionPage";
 
 /* Only the *first* home-screen mount of an app session should honor
  * `LaunchBehavior`; a returning visit from inside the app (e.g. back from
@@ -62,34 +67,6 @@ const CreatePageHref = (Source: Domain.DataSource.CachedDataSourceSchema) =>
         },
         pathname: "/create-page" as const
     };
-};
-
-/** Applies `DatabaseOrder`, keeping unlisted sources in their existing order. */
-const OrderDataSources = (
-    DataSources: ReadonlyArray<Domain.DataSource.CachedDataSourceSchema>,
-    DatabaseOrder: ReadonlyArray<Domain.Id.NotionDataSourceId>
-): ReadonlyArray<Domain.DataSource.CachedDataSourceSchema> =>
-{
-    if (DatabaseOrder.length === 0)
-    {
-        return DataSources;
-    }
-
-    const ByDataSourceId = new Map(DataSources.map((
-        Source: Domain.DataSource.CachedDataSourceSchema
-    ) => [ Source.DataSourceId, Source ] as const));
-    const Ordered = DatabaseOrder
-        .map((Id: Domain.Id.NotionDataSourceId) => ByDataSourceId.get(Id))
-        .filter((
-            Source: Domain.DataSource.CachedDataSourceSchema | undefined
-        ): Source is Domain.DataSource.CachedDataSourceSchema => Source !== undefined);
-    const OrderedIds = new Set(DatabaseOrder);
-
-    return [
-        ...Ordered,
-        ...DataSources.filter((Source: Domain.DataSource.CachedDataSourceSchema) =>
-            !OrderedIds.has(Source.DataSourceId))
-    ];
 };
 
 interface NotionAvatarProps
@@ -156,6 +133,10 @@ const HomeScreen = () =>
         Update: UpdateSettings
     } = useSettings();
     const {
+        RecentPages,
+        Refetch: RefetchRecentPages
+    } = useRecentPages(AppSettings.ShowRecentPages);
+    const {
         Allowance,
         HasProAccess,
         Refresh: RefreshSubscription,
@@ -167,6 +148,7 @@ const HomeScreen = () =>
     const [ PlansLastOpenedAt, SetPlansLastOpenedAt ] = useState<number | null>(null);
     const [ CurrentTime, SetCurrentTime ] = useState(() => Date.now());
     const [ IsAddingWorkspace, SetIsAddingWorkspace ] = useState(false);
+    const [ IsRefreshing, SetIsRefreshing ] = useState(false);
     const Router = useLazyRouter();
     const Theme = useTheme();
     const Styles = useStyles();
@@ -223,7 +205,6 @@ const HomeScreen = () =>
         }
         catch (Error)
         {
-            /* eslint-disable-next-line no-console */
             console.error("Failed to add workspace", Error);
         }
         finally
@@ -251,12 +232,35 @@ const HomeScreen = () =>
         Router.push(CreatePageHref(Source))();
     }, [ Router, t ]);
 
+    /* Pull-to-refresh re-checks the databases visible to each Notion
+     * connection — newly revoked or restored access, renamed databases, etc.
+     * `Silent` keeps the existing cards on screen instead of swapping them
+     * for the full-screen loading spinner. */
+    const HandleRefresh = useCallback(async (): Promise<void> =>
+    {
+        SetIsRefreshing(true);
+
+        try
+        {
+            await Promise.all([
+                RefetchConnections({ Silent: true }),
+                RefetchRecentPages(true),
+                RefetchSettings()
+            ]);
+        }
+        finally
+        {
+            SetIsRefreshing(false);
+        }
+    }, [ RefetchConnections, RefetchRecentPages, RefetchSettings ]);
+
     useFocusEffect(useCallback(() =>
     {
         void RefreshSubscription();
         void RefetchConnections();
         void RefetchSettings();
-    }, [ RefetchConnections, RefetchSettings, RefreshSubscription ]));
+        void RefetchRecentPages(true);
+    }, [ RefetchConnections, RefetchRecentPages, RefetchSettings, RefreshSubscription ]));
 
     useEffect(() =>
     {
@@ -452,13 +456,20 @@ const HomeScreen = () =>
 
                 <ScrollView
                     contentContainerStyle={ Styles.List }
+                    refreshControl={
+                        <RefreshControl
+                            onRefresh={ () => void HandleRefresh() }
+                            refreshing={ IsRefreshing }
+                            tintColor={ Theme.Semantic.Cursor }
+                        />
+                    }
                     style={ Styles.ListContainer }>
                     <Description
                         Style={ Styles.SectionTitle }
                         Weight="500">
                         { t("databases.title") }
                     </Description>
-                    { IsLoading
+                    { IsLoading || IsLoadingSettings
                         ? <ActivityIndicator color={ Theme.Semantic.Cursor } />
                         : OrderedDataSources.length === 0
                             ? <Body>{ t("databases.empty") }</Body>
@@ -500,6 +511,31 @@ const HomeScreen = () =>
                                         )) }
                                     </View>
                                 ) }
+
+                    { AppSettings.ShowRecentPages && RecentPages.length > 0
+                        ? (
+                            <>
+                                <Description
+                                    Style={ Styles.SectionTitle }
+                                    Weight="500">
+                                    { t("recent.title") }
+                                </Description>
+                                <View style={ Styles.DatabaseCards }>
+                                    { RecentPages.map((Page: Domain.Page.RecentPage) => (
+                                        <PageCard
+                                            CurrentTime={ CurrentTime }
+                                            OnPress={ () =>
+                                                void OpenNotionPage(Page.NotionPageId, Page.Url) }
+                                            Page={ Page }
+                                            ShowCover={ AppSettings.ShowRecentPageCovers }
+                                            ShowDatabaseName={ AppSettings.ShowRecentPageDatabaseName }
+                                            key={ Page.OperationId }
+                                        />
+                                    )) }
+                                </View>
+                            </>
+                        )
+                        : null }
 
                     { IsFree && Sale && DismissedSaleId !== Sale.CampaignId
                         ? (

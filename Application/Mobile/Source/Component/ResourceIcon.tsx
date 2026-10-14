@@ -1,9 +1,11 @@
 /**
  * Renders a database or page's optional Notion icon — emoji, native
- * (Lucide-mapped) glyph, or a remote raster/SVG image — falling back to a
- * skeleton placeholder while there is nothing to show yet or a remote icon
- * fails to load. Shared by the onboarding database/page tables and the
- * database settings table so both render icons identically.
+ * (Lucide-mapped) glyph, or a remote raster/SVG image — showing a skeleton
+ * placeholder while a remote icon's bytes are still being fetched (or
+ * decoded into memory), and falling back to a generic page glyph when no
+ * icon is supplied at all or a remote icon fails to load. Shared by the
+ * onboarding database/page tables and the database settings table so both
+ * render icons identically.
  *
  * @module noteferry/Component/ResourceIcon
  *
@@ -20,6 +22,7 @@ import { ItemTitle } from "@noteferry/ui/Primitive/Text";
 import { Skeleton } from "@noteferry/ui/Primitive/Skeleton";
 import { Image } from "expo-image";
 import { SvgUri } from "react-native-svg";
+import { View } from "react-native";
 
 /** A database or page's optional Notion icon, ahead of client-side normalization. */
 export interface ResourceIconSource
@@ -60,12 +63,23 @@ const ResourceIcon = ({ Resource }: ResourceIconProps): React.JSX.Element =>
      * the same way a missing icon does, rather than leaving a broken image. */
     const [ ImageFailed, SetImageFailed ] = React.useState(false);
 
-    /* Reserves the icon's footprint even when there is no icon to show (or it
-     * has not yet been determined whether a fallback is needed), so the
-     * title next to it doesn't shift once that determination lands. */
+    /* A remote icon's bytes can still be in flight (network fetch, or
+     * decoding into memory) after Notion has already told us it exists --
+     * tracked so a skeleton covers exactly that window, distinct from the
+     * `!Resource.Icon` branch below, which is a resolved "no icon" state,
+     * not a loading one. */
+    const [ ImageLoaded, SetImageLoaded ] = React.useState(false);
+
+    /* An absent icon is a resolved Notion state, not a loading state. */
     if (!Resource.Icon || ImageFailed)
     {
-        return <Skeleton Style={ Styles.IconPlaceholder } />;
+        return (
+            <IconBlock
+                Icon={ { Src: "file-text", Type: "Lucide" } }
+                Size="Small"
+                Style={ Styles.FallbackIcon }
+            />
+        );
     }
 
     if (Resource.IconType === "Native")
@@ -83,24 +97,33 @@ const ResourceIcon = ({ Resource }: ResourceIconProps): React.JSX.Element =>
         if (IsSvgUrl(Resource.Icon))
         {
             return (
-                <SvgUri
-                    height={ 22 }
-                    onError={ () => SetImageFailed(true) }
-                    uri={ Resource.Icon }
-                    width={ 22 }
-                />
+                <View style={ Styles.IconSlot }>
+                    <SvgUri
+                        height={ 22 }
+                        onError={ () => SetImageFailed(true) }
+                        onLoad={ () => SetImageLoaded(true) }
+                        style={ Styles.LoadedLayer }
+                        uri={ Resource.Icon }
+                        width={ 22 }
+                    />
+                    { !ImageLoaded ? <Skeleton Style={ Styles.IconPlaceholder } /> : null }
+                </View>
             );
         }
 
         return (
-            <Image
-                accessibilityIgnoresInvertColors
-                cachePolicy="memory-disk"
-                contentFit="contain"
-                onError={ () => SetImageFailed(true) }
-                source={ { uri: Resource.Icon } }
-                style={ Styles.Icon }
-            />
+            <View style={ Styles.IconSlot }>
+                <Image
+                    accessibilityIgnoresInvertColors
+                    cachePolicy="memory-disk"
+                    contentFit="contain"
+                    onError={ () => SetImageFailed(true) }
+                    onLoad={ () => SetImageLoaded(true) }
+                    source={ { uri: Resource.Icon } }
+                    style={ [ Styles.Icon, Styles.LoadedImageLayer ] }
+                />
+                { !ImageLoaded ? <Skeleton Style={ Styles.IconPlaceholder } /> : null }
+            </View>
         );
     }
 
@@ -118,15 +141,46 @@ const useStyles = MakeStyles({
         fontSize: 20,
         lineHeight: 24
     }),
+    /* IconBlock's Small glyph is 14px; scale it to 18px without changing the
+     * component's 20px layout footprint. */
+    FallbackIcon: ViewStyle({
+        transform: [ { scale: 18 / 14 } ]
+    }),
     Icon: ImageStyle({
         borderRadius: 4,
         height: 22,
         width: 22
     }),
-    /* Matches Icon's footprint so a missing/undetermined icon still reserves
-     * the same space in the row. */
+    /* Covers `IconSlot` while `LoadedLayer` (the actual image/SVG,
+     * loading underneath) hasn't fired `onLoad` yet. */
     IconPlaceholder: ViewStyle({
         height: 22,
         width: 22
+    }),
+    /* Reserves the icon's footprint for as long as its remote content is
+     * loading -- `LoadedLayer` is positioned absolutely within this, so it
+     * doesn't itself hold that footprint open once `IconPlaceholder` is
+     * gone. */
+    IconSlot: ViewStyle({
+        height: 22,
+        width: 22
+    }),
+    /* Absolutely fills `IconSlot` so the loading `IconPlaceholder` can
+     * overlay it at the same size and position. `Image`'s `style` needs this
+     * `ImageStyle`-typed version; `LoadedLayer` below is its `ViewStyle`
+     * twin for `SvgUri`. */
+    LoadedImageLayer: ImageStyle({
+        bottom: 0,
+        left: 0,
+        position: "absolute",
+        right: 0,
+        top: 0
+    }),
+    LoadedLayer: ViewStyle({
+        bottom: 0,
+        left: 0,
+        position: "absolute",
+        right: 0,
+        top: 0
     })
 });

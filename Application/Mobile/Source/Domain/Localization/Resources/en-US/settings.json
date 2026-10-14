@@ -5,7 +5,8 @@
         "notifications": "Notifications",
         "quickActions": "Quick Actions",
         "workspaces": "Workspaces",
-        "databaseSettings": "Database settings"
+        "databaseSettings": "Database settings",
+        "account": "Account settings"
     },
     "general": {
         "onLaunch": {
@@ -22,6 +23,18 @@
             "oneColumn": "One database per row",
             "twoColumn": "Two square cards per row"
         },
+        "recentPages": {
+            "title": "Show Recent pages",
+            "description": "Show pages recently created with NoteFerry on the Home screen."
+        },
+        "recentPageDatabaseName": {
+            "title": "Show database name",
+            "description": "Show the destination database name on each Recent page card."
+        },
+        "recentPageCovers": {
+            "title": "Show page covers",
+            "description": "Render page cover images on Recent page cards."
+        },
         "highContrast": {
             "title": "High contrast",
             "description": "Increase the contrast of dividers, borders, and switches.",
@@ -33,10 +46,6 @@
             "systemShort": "System",
             "standardShort": "Disabled",
             "highShort": "Enabled"
-        },
-        "homeScreenOrder": {
-            "title": "Home screen order",
-            "description": "Drag to reorder the databases shown on the home screen."
         },
         "proGate": {
             "title": "Available with NoteFerry Pro",
@@ -90,15 +99,15 @@
         "appInfo": "NoteFerry {{version}} (build {{build}})"
     },
     "accountSettings": {
-        "back": "Back",
-        "title": "Account settings",
         "notion": {
-            "heading": "Notion",
-            "manageButton": "Manage the NoteFerry connection in Notion"
+            "title": "Notion connection",
+            "description": "Manage the NoteFerry connection from your Notion account.",
+            "manageButton": "Manage"
         },
         "yourData": {
-            "heading": "Your data",
-            "requestButton": "Request my account data",
+            "title": "Your data",
+            "description": "Request a copy of your NoteFerry account data. We'll email it to you once it's ready.",
+            "requestButton": "Request",
             "requesting": "Requesting…"
         },
         "dangerZone": {
@@ -199,8 +208,8 @@
             "active": "Active"
         },
         "replaceActive": "Replace active",
-        "customize": "Customize",
-        "remove": "Remove",
+        "customize": "Customize {{title}}",
+        "remove": "Remove {{title}}",
         "customizeGate": {
             "title": "Customize forms with Pro",
             "message": "Pro lets you change aliases, visibility, required fields, order, and defaults.",
@@ -213,6 +222,16 @@
             "message": "{{title}} stays unchanged in Notion.",
             "cancel": "Cancel",
             "confirm": "Remove"
+        },
+        "editAction": {
+            "edit": "Edit",
+            "save": "Save"
+        },
+        "exitEditConfirm": {
+            "title": "Stop editing?",
+            "message": "You can keep reordering your databases, or stop editing and go back.",
+            "keepEditing": "Keep Editing",
+            "stopEditing": "Stop Editing"
         }
     }
 }

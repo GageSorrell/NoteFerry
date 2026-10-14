@@ -129,6 +129,7 @@ const SyncScreen = () =>
 
         SetPending(true);
         let CachedCount = 0;
+        let FirstError: unknown;
 
         for (const Database of Databases)
         {
@@ -144,16 +145,26 @@ const SyncScreen = () =>
                  * `ReportError` only (Sentry visibility), not `PresentError`:
                  * a Toast/dialog per failed database in this loop would be
                  * noisy for something that isn't blocking. */
+                FirstError ??= Error;
                 ReportError(Error, "Minor", "SyncCacheOnboardingDatabase");
             }
         }
 
         SetPending(false);
 
-        if (CachedCount > 0)
+        if (CachedCount === 0)
         {
-            Router.replace("/enable-notifications")();
+            /* Keep the picker available for retry, but do not fail silently
+             * when every selected database could not be cached. */
+            if (FirstError !== undefined)
+            {
+                PresentError(FirstError, "SyncCacheOnboardingDatabase");
+            }
+
+            return;
         }
+
+        Router.replace("/enable-notifications")();
     };
 
     const OnRetry = (): void =>

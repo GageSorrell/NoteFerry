@@ -56,6 +56,10 @@
       "import": "./Distribution/PageDraft.js",
       "types": "./Distribution/PageDraft.d.ts"
     },
+    "./Page": {
+      "import": "./Distribution/Page.js",
+      "types": "./Distribution/Page.d.ts"
+    },
     "./Property": {
       "import": "./Distribution/Property.js",
       "types": "./Distribution/Property.d.ts"
@@ -66,7 +70,7 @@
     "build": "tsc -p ./tsconfig.json"
   },
   "dependencies": {
-    "effect": "4.0.0-rc.109"
+    "effect": "4.0.3"
   },
   "devDependencies": {
     "@sorrell/tsconfig": "2.1.0",

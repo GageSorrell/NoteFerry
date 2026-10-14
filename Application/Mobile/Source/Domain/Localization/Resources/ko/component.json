@@ -23,5 +23,39 @@
         "nativeDatabaseAdCard": {
             "adBadge": "광고"
         }
+    },
+    "notionMarkdown": {
+        "blockKinds": {
+            "paragraph": "텍스트",
+            "heading1": "제목 1",
+            "heading2": "제목 2",
+            "heading3": "제목 3",
+            "heading4": "제목 4",
+            "bulletedListItem": "글머리 기호 목록",
+            "numberedListItem": "번호 매기기 목록",
+            "toDo": "할 일",
+            "quote": "인용",
+            "code": "코드",
+            "divider": "구분선",
+            "callout": "콜아웃",
+            "toggle": "토글 목록",
+            "equation": "수식"
+        },
+        "colors": {
+            "default": "기본값",
+            "gray": "회색",
+            "brown": "갈색",
+            "orange": "주황색",
+            "yellow": "노란색",
+            "green": "초록색",
+            "blue": "파란색",
+            "purple": "보라색",
+            "pink": "분홍색",
+            "red": "빨간색"
+        },
+        "colorPicker": {
+            "textSection": "텍스트",
+            "backgroundSection": "배경"
+        }
     }
 }

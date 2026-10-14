@@ -5,14 +5,14 @@
  * and `react-i18next`.
  *
  * This deliberately doesn't render a full screen component (e.g.
- * `general-settings.tsx`) — that screen's tree pulls in `@gorhom/bottom-sheet`,
- * `react-native-reanimated` gesture-driven sorting, and several
- * network-backed hooks (`useSettings`, `useSubscription`, `useConnections`),
- * none of which are about localization. Exercising the real translation
- * pipeline end to end, the way this test does, is what actually catches a
- * broken key or an unregistered namespace; mocking the rest of that tree
- * just to satisfy a render call would add a lot of fragile setup for no
- * additional localization coverage.
+ * `general-settings.tsx` or `database-settings.tsx`) — those screens' trees
+ * pull in `@gorhom/bottom-sheet`, `react-native-reanimated` gesture-driven
+ * sorting, and several network-backed hooks (`useSettings`, `useSubscription`,
+ * `useConnections`), none of which are about localization. Exercising the
+ * real translation pipeline end to end, the way this test does, is what
+ * actually catches a broken key or an unregistered namespace; mocking the
+ * rest of that tree just to satisfy a render call would add a lot of
+ * fragile setup for no additional localization coverage.
  *
  * @file      translation-smoke.test.tsx
  * @author    Gage Sorrell <gage@sorrell.sh>

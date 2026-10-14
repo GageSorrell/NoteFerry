@@ -1,6 +1,6 @@
 {
   "name": "@noteferry/avd-demo-mode",
-  "description": "Toggles Android System UI demo mode, animation scale, and heads-up notifications on a running AVD, for clean screenshots and recordings.",
+  "description": "Toggles Android System UI demo mode, animation scale, and heads-up notifications on a running AVD, for clean screenshots and recordings, with optional hidden status bar icons.",
   "private": true,
   "homepage": "https://noteferry.sorrell.sh",
   "version": "1.0.0",
@@ -28,11 +28,16 @@
   },
   "scripts": {
     "build": "tsc -p ./tsconfig.json",
-    "start": "node ./Distribution/index.js"
+    "start": "npm run toggle",
+    "toggle": "node ./Distribution/index.js",
+    "enable": "node ./Distribution/index.js --enable",
+    "enable:hide": "node ./Distribution/index.js --enable --hidden",
+    "enable:show": "node ./Distribution/index.js --enable --no-hidden",
+    "disable": "node ./Distribution/index.js --disable"
   },
   "dependencies": {
-    "@effect/platform-node": "4.0.0-rc.109",
-    "effect": "4.0.0-rc.109",
+    "@effect/platform-node": "4.0.3",
+    "effect": "4.0.3",
     "ora": "9.4.1"
   },
   "devDependencies": {

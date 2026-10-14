@@ -40,17 +40,29 @@ const AnimationScaleSettings: ReadonlyArray<string> = [
 const DemoBroadcast = (...Extra: ReadonlyArray<string>): ReadonlyArray<string> =>
     [ "am", "broadcast", "-a", "com.android.systemui.demo", ...Extra ];
 
-const EnableFeatures: ReadonlyArray<DemoModeFeature> = [
+/** Builds the shell command that controls the status bar's clock and icon areas. */
+const StatusBarVisibility = (Hidden: boolean): ReadonlyArray<string> =>
+    [
+        "cmd", "statusbar", "send-disable-flag",
+        ...(Hidden ? [ "system-icons", "clock", "notification-icons" ] : [ "none" ])
+    ];
+
+const EnableFeatures = (Hidden: boolean): ReadonlyArray<DemoModeFeature> => [
     {
         Feature: "Demo mode",
         Steps: [ [ "settings", "put", "global", "sysui_demo_allowed", "1" ] ]
+    },
+    {
+        Feature: "Status bar visibility",
+        Steps: [ [ ...StatusBarVisibility(Hidden) ] ]
     },
     {
         Feature: "Clock",
         Steps: [
             DemoBroadcast(
                 "-e", "command", "clock",
-                "-e", "hhmm", "1000"
+                "-e", "hhmm", "1000",
+                "-e", "visible", Hidden ? "false" : "true"
             )
         ]
     },
@@ -80,7 +92,7 @@ const EnableFeatures: ReadonlyArray<DemoModeFeature> = [
         Steps: [
             DemoBroadcast(
                 "-e", "command", "notifications",
-                "-e", "visible", "false"
+                "-e", "visible", Hidden ? "false" : "true"
             )
         ]
     },
@@ -103,6 +115,10 @@ const DisableFeatures: ReadonlyArray<DemoModeFeature> = [
             DemoBroadcast("-e", "command", "exit"),
             [ "settings", "put", "global", "sysui_demo_allowed", "0" ]
         ]
+    },
+    {
+        Feature: "Status bar visibility",
+        Steps: [ [ ...StatusBarVisibility(false) ] ]
     },
     {
         Feature: "Animation scale",
@@ -140,9 +156,9 @@ export/**
        * @category DemoMode
        * @since 1.0.0
        */
-const SetDemoMode = Effect.fn("SetDemoMode")(function* (Serial: string, Target: DemoModeState)
+const SetDemoMode = Effect.fn("SetDemoMode")(function* (Serial: string, Target: DemoModeState, Hidden: boolean)
 {
-    const Features = Target === "Enabled" ? EnableFeatures : DisableFeatures;
+    const Features = Target === "Enabled" ? EnableFeatures(Hidden) : DisableFeatures;
 
     for (const { Feature, Steps } of Features)
     {

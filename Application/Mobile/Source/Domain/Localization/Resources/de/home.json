@@ -9,6 +9,19 @@
         "title": "Datenbanken",
         "empty": "Noch keine Datenbanken gefunden."
     },
+    "recent": {
+        "title": "Zuletzt erstellt",
+        "untitled": "Ohne Titel",
+        "cardAccessibilityLabel": "{{title}} in Notion öffnen",
+        "time": {
+            "now": "jetzt",
+            "minute": "vor {{count}} Min.",
+            "hour": "vor {{count}} Std.",
+            "day": "vor {{count}} Tg.",
+            "month": "vor {{count}} Mon.",
+            "year": "vor {{count}} J."
+        }
+    },
     "lockedDatabase": {
         "title": "Diese Datenbank mit Pro freischalten",
         "message": "Mit Free hast du bis zu drei aktive Datenbanken. Upgrade für unbegrenzte Datenbanken, oder ersetze eine aktive Datenbank in den Datenbankeinstellungen.",
